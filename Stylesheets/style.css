@@ -1,0 +1,35 @@
+body {
+    background: white;
+}
+
+/* Override button background color */
+.close-btn {
+    background-color: transparent;
+    border: none;
+}
+
+/* Styling for empty avatar icon */
+.empty-avatar {
+    font-size: 2rem; /* Adjust size as needed */
+    color: white; /* Color of the icon */
+    padding: 20px; /* Add some padding for spacing */
+    text-align: center; /* Center the icon */
+}
+
+/* Updated styling for the sidebar */
+#side_nav {
+    background: black;
+    width: 250px; /* Adjust width as needed */
+    min-height: 100vh;
+}
+
+/* Updated styling for the content */
+.content {
+    flex: 1; /* Allow content to expand and fill remaining space */
+    padding: 20px; /* Add some padding */
+}
+
+/* Adjustments for the admin header */
+.adminHeader {
+    margin-left: 250px; /* Same as sidebar width to align with the sidebar */
+}
