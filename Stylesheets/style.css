@@ -73,3 +73,23 @@ body {
 a{
     color: white !important;
 }
+
+.sideNav:hover{
+border-radius:2px;
+border:0.5px solid white;
+}
+
+.sideNav .active{
+    background:white;
+    color:black;
+}
+
+.test{
+    display: flex;
+    background:rgba(0, 0, 0, 0.914);
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    color:white;
+}
