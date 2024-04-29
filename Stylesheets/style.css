@@ -31,10 +31,16 @@ html,body
 
 
 #side_nav {
-    background: black;
+    background: url(/resources/pictures/sidebar_bg.png);
     width: 250px; 
     min-height: 100vh;
+    color:black !important;
+    background-size: contain;
+
+    background-repeat: no-repeat;
+    background-attachment:fixed;
 }
+
 
 
 .content {
@@ -62,7 +68,7 @@ html,body
     border-radius:2px;
     margin:2%;
     padding:5px;
-    color:black;
+    color:black !important;
 }
 
 .sideNav li.active a, .sidebar li.active a:hover{
@@ -70,11 +76,11 @@ html,body
 }
 
 .sideNav li a{
-    color: white;
+    color: rgb(0, 0, 0) !important;
 }
 
 .sideNav{
-    color:white;
+    color:rgb(0, 0, 0) !important;
 
 
     margin:2%;
@@ -83,12 +89,12 @@ html,body
 }
 
 a{
-    color: white !important;
+    color: rgb(0, 0, 0) !important;
 }
 
 .sideNav:hover{
 border-radius:2px;
-border:0.5px solid white;
+border:0.5px solid rgb(3, 3, 3);
 }
 
 .sideNav .active{
@@ -138,4 +144,19 @@ border:0.5px solid white;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='%23000' class='bi bi-list' viewBox='0 0 16 16'%3e%3cpath fill-rule='evenodd' d='M2 4.5A.5.5 0 0 1 2.5 4h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 4.5zm0 3A.5.5 0 0 1 2.5 7h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 7.5zm0 3A.5.5 0 0 1 2.5 10h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 10.5z'/%3e%3c/svg%3e");
   }
   
-  
+
+#adminDashHeader{
+    background:url(/resources/pictures/header_bg.png);
+    background-size:cover;
+  background-repeat: no-repeat;
+}
+
+.contentContainer{
+    -webkit-box-shadow: -3px 3px 10px 3px #dddddd;
+-moz-box-shadow: -3px 3px 10px 3px #dddddd;
+box-shadow: -3px 3px 10px 3px #dddddd;
+margin-top:5%;
+padding:20px;
+border-radius: 12px;
+min-height:70vh;
+}
