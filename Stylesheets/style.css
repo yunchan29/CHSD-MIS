@@ -125,6 +125,11 @@ border:0.5px solid white;
     color:black !important;
 }
 
+.navigationBar a.nav-link:hover{
+ 
+    border-radius: 20px;
+    transform: scale(1.05);
+}
 .navBrandLogo{
     color:black !important;
 }
