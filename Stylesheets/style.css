@@ -2,46 +2,58 @@ body {
     background: white;
 }
 
-/* Override button background color */
+html,body
+{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden; 
+    margin-right: 0px !important;
+    scroll-behavior:smooth;
+ 
+ 
+}
+
+
 .close-btn {
     background-color: transparent;
     border: none;
 }
 
-/* Styling for empty avatar icon */
+
 .empty-avatar {
-    font-size: 2rem; /* Adjust size as needed */
-    color: white; /* Color of the icon */
-    padding: 20px; /* Add some padding for spacing */
-    text-align: center; /* Center the icon */
+    font-size: 2rem;
+    color: white; 
+    padding: 20px; 
+    text-align: center; 
 }
 
-/* Updated styling for the sidebar */
+
 #side_nav {
     background: black;
-    width: 250px; /* Adjust width as needed */
+    width: 250px; 
     min-height: 100vh;
 }
 
-/* Updated styling for the content */
+
 .content {
-    flex: 1; /* Allow content to expand and fill remaining space */
-    padding: 20px; /* Add some padding */
+    flex: 1; 
+    padding: 20px; 
 }
 
-/* Adjustments for the admin header */
+
 .adminHeader {
-    margin-left: 250px; /* Same as sidebar width to align with the sidebar */
+    margin-left: 250px; 
 }
-
 .sideBarList {
     margin-top:25%;
 
     display: flex;
     flex-direction: column; 
     justify-content: center;
-    align-items: left; /* Centers items vertically */
-/* Ensure the list takes up the full height of the sidebar */
+    align-items: left; 
+
 }
 
 
@@ -92,6 +104,11 @@ border:0.5px solid white;
     height: 100vh;
     overflow: hidden;
     color:rgb(255, 255, 255);
+    flex-direction: column;
+}
+
+.test a{
+    margin:2px;
 }
 
 .navigationBar{
