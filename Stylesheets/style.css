@@ -104,12 +104,12 @@ border:0.5px solid rgb(3, 3, 3);
 
 .test{
     display: flex;
-    background:rgba(0, 0, 0, 0.914);
+    background:rgba(175, 175, 175, 0.914);
     justify-content: center;
     align-items: center;
     height: 100vh;
     overflow: hidden;
-    color:rgb(255, 255, 255);
+    color:rgb(0, 0, 0);
     flex-direction: column;
 }
 
@@ -127,6 +127,17 @@ border:0.5px solid rgb(3, 3, 3);
   z-index: 1;
 }
 
+.navigationBar2{
+    background:rgba(255, 255, 255, 0.038);
+  background-size: auto;
+  background-position: top;
+  background-repeat: no-repeat;
+  background-attachment:fixed;
+  color:rgb(255, 255, 255) !important;
+  z-index: 1;
+}
+
+
 .navigationBar a.nav-link{
     color:black !important;
 }
@@ -139,6 +150,16 @@ border:0.5px solid rgb(3, 3, 3);
 .navBrandLogo{
     color:black !important;
 }
+
+.navBrandLogo2{
+    color:rgb(255, 255, 255) !important;
+}
+
+
+.navigationBar2 a.nav-link{
+    color:rgb(255, 255, 255) !important;
+}
+
 
 .dark-burger .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='%23000' class='bi bi-list' viewBox='0 0 16 16'%3e%3cpath fill-rule='evenodd' d='M2 4.5A.5.5 0 0 1 2.5 4h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 4.5zm0 3A.5.5 0 0 1 2.5 7h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 7.5zm0 3A.5.5 0 0 1 2.5 10h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 10.5z'/%3e%3c/svg%3e");
