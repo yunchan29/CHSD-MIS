@@ -24,9 +24,21 @@
 </head>
 <body>
     <div class="main-container d-flex">
+       
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('PCsideBar.html')
+                .then(res => res.text())
+                .then(text => {
+                    let oldelem = document.querySelector(".sidebar");
+                    let newelem = document.createElement("div");
+                    newelem.innerHTML = text;
+                    oldelem.parentNode.replaceChild(newelem, oldelem);
+                });
+            });
+        </script>
         <div class="sidebar" id="side_nav">
             <div class="header-box text-center">
-                <!-- Empty avatar icon -->
                 <div class="empty-avatar">
                     <a class="navbar-brand fs-4" href="#">
                         <img src="/resources/pictures/calambaLogo.png" alt="CHSD" width="75" height="75" class="d-inline-block align-text-top">
@@ -43,7 +55,6 @@
                 <li class="sideNav"><a href="/index.html" class="text-decoration-none">Log out</a></li>
             </ul>
         </div>
-
         <div class="content">
             <div class="adminHeader">
                 <div class="container-fluid bg-dark py-3" id="adminDashHeader">
@@ -62,29 +73,7 @@
         </div>
     </div>
 
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-      
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-          apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-          authDomain: "chsd-mis.firebaseapp.com",
-          projectId: "chsd-mis",
-          storageBucket: "chsd-mis.appspot.com",
-          messagingSenderId: "694967679357",
-          appId: "1:694967679357:web:65cffd50f13739f934f414",
-          measurementId: "G-XBQTQFRLJ5"
-        };
-      
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-    </script>
+    <script type="module" src="/Database/firebase.js"></script>
 
     <script>
         // Function to update date and time
@@ -99,21 +88,7 @@
         // Update time every second
         setInterval(updateTime, 1000);
     </script>
-    <script>
-        // JavaScript to handle click event on sidebar items
-        document.addEventListener("DOMContentLoaded", function() {
-            var sideNavItems = document.querySelectorAll('.sideNav');
-            sideNavItems.forEach(function(item) {
-                item.addEventListener('click', function() {
-                    // Remove the 'active' class from all items
-                    sideNavItems.forEach(function(item) {
-                        item.classList.remove('active');
-                    });
-                    // Add the 'active' class to the clicked item
-                    this.classList.add('active');
-                });
-            });
-        });
+    <script src="PCsideBar.js">
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
