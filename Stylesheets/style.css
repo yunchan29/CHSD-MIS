@@ -204,7 +204,7 @@ cursor:pointer;
 .Pcard .card-title{
     background: rgb(255, 255, 255);
     border-radius:20px;
-    padding:12px;
+    padding:20px;
     font-weight:500;
     font-size: medium;
     -webkit-box-shadow: inset 8px 12px 14px -0.5px #dddddd;
