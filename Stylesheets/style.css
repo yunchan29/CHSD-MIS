@@ -181,3 +181,14 @@ padding:20px;
 border-radius: 12px;
 min-height:70vh;
 }
+
+.services{
+    display: flex;
+    background:rgba(175, 175, 175, 0.914);
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    color:rgb(0, 0, 0);
+    flex-direction: column;
+}
