@@ -170,6 +170,9 @@ border:0.5px solid rgb(3, 3, 3);
     background:url(/resources/pictures/header_bg.png);
     background-size:cover;
   background-repeat: no-repeat;
+  -webkit-box-shadow: -4.5px 3px 7.5px -0.5px #dddddd;
+  -moz-box-shadow: -4.5px 3px 7.5px -0.5px #dddddd;
+  box-shadow: -4.5px 3px 7.5px -0.5px #dddddd;
 }
 
 .contentContainer{
@@ -192,3 +195,37 @@ min-height:70vh;
     color:rgb(0, 0, 0);
     flex-direction: column;
 }
+
+.Pcard .card-body:hover{
+transform:scale(1.02);
+cursor:pointer;
+}
+
+.Pcard .card-title{
+    background: rgb(255, 255, 255);
+    border-radius:20px;
+    padding:12px;
+    font-weight:500;
+    font-size: medium;
+    -webkit-box-shadow: inset 8px 12px 14px -0.5px #dddddd;
+-moz-box-shadow: inset 8px 12px 14px -0.5px #dddddd;
+box-shadow: inset 8px 12px 14px -0.5px #dddddd;
+text-align: center;
+}
+
+.Pcard .card-body{
+    background:#99D2FF;
+    border-radius: 20px;
+    -webkit-box-shadow: -8px 6px 10px -1px #dddddd;
+-moz-box-shadow: -8px 6px 10px -1px #dddddd;
+box-shadow: -8px 6px 10px -1px #dddddd;
+}
+
+.Pcard .card-text{
+    font-weight:500;
+}
+
+.Pcard{
+    border: none !important;
+}
+
