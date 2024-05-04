@@ -6,6 +6,12 @@
   <title>QR Code Scanner</title>
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Only flip the back camera feed */
+    #preview.flipped {
+      transform: scaleX(-1);
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -13,7 +19,7 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">
-            Skibidi sigma pomni
+            QR Code Scanner
           </div>
           <div class="card-body text-center">
             <video id="preview" class="w-100"></video>
@@ -49,7 +55,10 @@
           if (cameraId !== null) {
             currentCamera = cameraId;
           }
-          scanner.start(cameras[currentCamera]);
+          const constraints = {
+            video: { facingMode: (currentCamera === 0) ? 'environment' : 'user' }
+          };
+          scanner.start(constraints);
         } else {
           console.error('No cameras found.');
         }
@@ -66,6 +75,12 @@
       scanner.stop();
       currentCamera = (currentCamera + 1) % 2; // Assuming there are only two cameras, change it according to your setup
       startScanner(currentCamera);
+      // Apply or remove flipped class based on camera
+      if (currentCamera === 0) {
+        document.getElementById('preview').classList.add('flipped');
+      } else {
+        document.getElementById('preview').classList.remove('flipped');
+      }
     });
   </script>
 </body>
