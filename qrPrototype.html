@@ -3,14 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bootstrap QR Code Scanner</title>
+  <title>QR Code Scanner</title>
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    #preview {
-      transform: scaleX(-1); /* Default inversion for back camera */
-    }
-  </style>
 </head>
 <body>
   <div class="container">
@@ -18,7 +13,7 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">
-            QR Code Scanner
+            Skibidi sigma pomni
           </div>
           <div class="card-body text-center">
             <video id="preview" class="w-100"></video>
@@ -54,17 +49,7 @@
           if (cameraId !== null) {
             currentCamera = cameraId;
           }
-          const constraints = {
-            video: { facingMode: (currentCamera === 0) ? 'environment' : 'user' }
-          };
-          if (currentCamera === 0) {
-            // Apply horizontal flip for back camera
-            document.getElementById('preview').classList.add('flipped');
-          } else {
-            // Remove horizontal flip for front camera
-            document.getElementById('preview').classList.remove('flipped');
-          }
-          scanner.start(constraints);
+          scanner.start(cameras[currentCamera]);
         } else {
           console.error('No cameras found.');
         }
