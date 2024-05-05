@@ -230,3 +230,38 @@ padding:25px;
     border: none !important;
 }
 
+/* Add the following CSS at the end of your style.css file */
+
+/* CSS for the content container */
+.content {
+    flex: 1; /* Take remaining space */
+    overflow: hidden; /* Hide overflow content */
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Column layout */
+    padding: 20px; /* Add padding */
+}
+
+.contentContainer {
+    overflow-y: auto; /* Enable vertical scrolling */
+    flex-grow: 1; /* Expand to fill available space */
+}
+
+.adminHeader {
+    padding: 10px; /* Add padding */
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* Take full width */
+    }
+    .adminHeader {
+        margin-left: 0; /* Remove margin */
+    }
+}
+
+
+.search-bar{
+    max-width: 200px;
+    margin-bottom: 10px;
+}
