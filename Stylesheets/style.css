@@ -265,3 +265,28 @@ padding:25px;
     max-width: 200px;
     margin-bottom: 10px;
 }
+
+.carousel-item {
+    max-height: 300px; /* Set a fixed height for the carousel items */
+}
+
+.indexHeaderImage{
+    width:100%;
+    max-height:300px;
+}
+
+.bgGradient{
+    background: url("/resources/pictures/card.png");
+    background-size:cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.adminCard{
+    border-radius: 30px !important;
+    border: none !important;
+    max-width:300px;
+    padding:5%;
+    
+}
+
