@@ -306,3 +306,7 @@ width:100%;
 border-radius:12px ;
 min-width:400px;
 }
+
+.sidebar{
+background: rgba(255, 255, 255, 0.474) !important;
+}
