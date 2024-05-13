@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Printable Page with Excel Export</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Additional styles for the printable page */
+    @media print {
+      /* Hide print and export buttons when printing */
+      .print-button,
+      .export-button {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Printable Page</h1>
+    <p>This is a sample printable page.</p>
+    <!-- Print Button -->
+    <button class="btn btn-primary print-button" onclick="window.print()">Print</button>
+    <!-- Export to Excel Button -->
+    <button class="btn btn-success export-button" onclick="exportToExcel()">Export to Excel</button>
+  </div>
+
+  <!-- Bootstrap JS and jQuery (optional, for some Bootstrap features) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- SheetJS (XLSX) library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+  <script>
+    function exportToExcel() {
+    
+      const data = [['Title', 'Content'], ['Printable Page', 'This is a sample printable page.']];
+
+    
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+      
+      XLSX.writeFile(wb, 'printable_page.xlsx');
+    }
+  </script>
+</body>
+</html>
