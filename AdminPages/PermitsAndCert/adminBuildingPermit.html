@@ -57,9 +57,8 @@
                     </div>
                 </div>
             </div>
-            <div class="contentContainer">
-               <h4 class="text-center">Building Permit</h4>
-               <div class="container">
+            <!-- Bootstrap Table -->
+            <div class="container">
                 
                 <h5>Profile</h5>
                 <div class="d-flex justify-content-end mb-3">
@@ -81,21 +80,104 @@
                     <tr>
                       <td>Diwata Pares Overload</td>
                       <td>2024-05-01</td>
-                      <td>Processing</td>
-                      <td><a class="btn btn-primary text-white">View</a></td>
+                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                          <option selected>Pending</option>
+                          <option value="1">To Process</option>
+                          <option value="2">For Approval</option>
+                          <option value="3">For Release</option>
+                          <option value="3">Released</option>
+                 
+
+
+                        </select></td>
+                        <td>
+                          <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
+                      <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
                     </tr>
                     <tr>
                       <td>Kapares Romnick</td>
                       <td>2024-04-15</td>
-                      <td>Approved</td>
-                      <td><a class="btn btn-primary text-white">View</a></td>
+                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                          <option selected>Pending</option>
+                          <option value="1">To Process</option>
+                          <option value="2">For Approval</option>
+                          <option value="3">For Release</option>
+                          <option value="3">Released</option>
+
+
+                        </select></td>
+                        <td> <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
+                      <a class="btn btn-primary text-white"data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
+                    </tr>
+
+                    <tr>
+                      <td>Diyata Pares Overcook</td>
+                      <td>2024-04-15</td>
+                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                          <option selected>Pending</option>
+                          <option value="1">To Process</option>
+                          <option value="2">For Approval</option>
+                          <option value="3">For Release</option>
+                          <option value="3">Released</option>
+
+
+                        </select></td>
+                        <td><a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
+                      <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
                     </tr>
                   </tbody>
                 </table>
              </div>
+             <!-- End of Bootstrap Table -->
+             
+          </div>
+          
+      </div>
+  </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Application</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!--Application Modal Content-->
+        <div class="container">
+          <div class="step-progress">
+            <div class="step completed">
+              <div class="circle">1</div>
+              <div class="label">Step 1</div>
             </div>
+            <div class="step">
+              <div class="circle">2</div>
+              <div class="label">Step 2</div>
+            </div>
+            <div class="step">
+              <div class="circle">3</div>
+              <div class="label">Step 3</div>
+            </div>
+            <div class="step">
+              <div class="circle">4</div>
+              <div class="label">Step 4</div>
+            </div>
+          </div>
+        
+          
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
+      </div>
     </div>
+  </div>
+</div>
+
 
     <script type="module" src="/Database/firebase.js"></script>
 
