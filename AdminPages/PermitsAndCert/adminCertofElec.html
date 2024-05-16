@@ -24,9 +24,8 @@
 </head>
 <body>
     <div class="main-container d-flex">
-        <div class="sidebar" id="side_nav">
-            <div class="header-box text-center">
-                <!-- Empty avatar icon -->
+        <div class="sideNav" id="side_nav">
+            <div class="header-box text-center px-2 pt-3 pb-4">
                 <div class="empty-avatar">
                     <a class="navbar-brand fs-4" href="#">
                         <img src="/resources/pictures/calambaLogo.png" alt="CHSD" width="75" height="75" class="d-inline-block align-text-top">
@@ -39,9 +38,7 @@
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none">Dashboard</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none">Building Permit</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none">Certificate of Occupancy</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none">Certificate of Electrical Inspection</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCPayments.html" class="text-decoration-none">Payments</a></li>
-                <li class="sideNav"><a href="/index.html" class="text-decoration-none">Log out</a></li>
+                <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none">Certificate of Electrical Inspection</a></li>
             </ul>
         </div>
 
@@ -58,7 +55,79 @@
                 </div>
             </div>
             <div class="contentContainer">
-               <h4 class="text-center">Certificate of Occupancy</h4>
+               <h4 class="text-center">Certificate of Electrical Inspection</h4>
+                <!-- Bootstrap Table -->
+            <div class="container">
+                
+                <h5>Profile</h5>
+                <div class="d-flex justify-content-end mb-3">
+                  <input type="text" class="form-control search-bar" placeholder="Search">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
+                  </div>
+                </div>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Date Filed</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Diwata Pares Overload</td>
+                      <td>2024-05-01</td>
+                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                          <option selected>Pending</option>
+                          <option value="1">To Process</option>
+                          <option value="2">For Approval</option>
+                          <option value="3">For Release</option>
+                          <option value="3">Released</option>
+                 
+
+
+                        </select></td>
+                        <td>
+                          <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
+                      <a class="btn btn-primary text-white" href="/AdminPages/PermitsAndCert/applicationFormPCEdit.html">Edit</a></td>
+                    </tr>
+                    <tr>
+                      <td>Kapares Romnick</td>
+                      <td>2024-04-15</td>
+                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                          <option selected>Pending</option>
+                          <option value="1">To Process</option>
+                          <option value="2">For Approval</option>
+                          <option value="3">For Release</option>
+                          <option value="3">Released</option>
+
+
+                        </select></td>
+                        <td> <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
+                      <a class="btn btn-primary text-white"data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
+                    </tr>
+
+                    <tr>
+                      <td>Diyata Pares Overcook</td>
+                      <td>2024-04-15</td>
+                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                          <option selected>Pending</option>
+                          <option value="1">To Process</option>
+                          <option value="2">For Approval</option>
+                          <option value="3">For Release</option>
+                          <option value="3">Released</option>
+
+
+                        </select></td>
+                        <td><a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
+                      <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+             </div>
+             <!-- End of Bootstrap Table -->
             </div>
         </div>
     </div>

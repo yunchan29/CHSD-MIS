@@ -98,7 +98,7 @@ a{
 .sideNav li:hover{
 border-radius:12px !important;
 border-bottom: 3px solid#139bff;
-transform: scale(1.02);
+
 
 }
 
@@ -430,4 +430,20 @@ background: rgba(255, 255, 255, 0.474) !important;
     }
 
 
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:active {
+    text-decoration: none;
 }
