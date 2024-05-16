@@ -12,7 +12,46 @@
 </head>
 <body>
 
-
+<!-- Modal -->
+<div class="modal fade" id="BuildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="BuildingPermitModalLabel">Application</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!--Application Modal Content-->
+          <div class="container">
+            <div class="step-progress">
+              <div class="step completed">
+                <div class="circle">1</div>
+                <div class="label">Step 1</div>
+              </div>
+              <div class="step">
+                <div class="circle">2</div>
+                <div class="label">Step 2</div>
+              </div>
+              <div class="step">
+                <div class="circle">3</div>
+                <div class="label">Step 3</div>
+              </div>
+              <div class="step">
+                <div class="circle">4</div>
+                <div class="label">Step 4</div>
+              </div>
+            </div>
+          
+            
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+          <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -40,8 +40,6 @@
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none">Building Permit</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none">Certificate of Occupancy</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none">Certificate of Electrical Inspection</a></li>
-                
-                
             </ul>
         </div>
 
@@ -71,88 +69,133 @@
                     </div>
                 </div>
             </div>
-            <!-- Bootstrap Table -->
-            <div class="container">
-                
-                <h5>Profile</h5>
-                <div class="d-flex justify-content-end mb-3">
-                  <input type="text" class="form-control search-bar" placeholder="Search">
-                  <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
-                  </div>
-                </div>
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Date Filed</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Diwata Pares Overload</td>
-                      <td>2024-05-01</td>
-                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                          <option selected>Pending</option>
-                          <option value="1">To Process</option>
-                          <option value="2">For Approval</option>
-                          <option value="3">For Release</option>
-                          <option value="3">Released</option>
-                 
-
-
-                        </select></td>
-                        <td>
-                          <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                      <a class="btn btn-primary text-white" href="/AdminPages/PermitsAndCert/applicationFormPCEdit.html">Edit</a></td>
-                    </tr>
-                    <tr>
-                      <td>Kapares Romnick</td>
-                      <td>2024-04-15</td>
-                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                          <option selected>Pending</option>
-                          <option value="1">To Process</option>
-                          <option value="2">For Approval</option>
-                          <option value="3">For Release</option>
-                          <option value="3">Released</option>
-
-
-                        </select></td>
-                        <td> <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                      <a class="btn btn-primary text-white"data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
-                    </tr>
-
-                    <tr>
-                      <td>Diyata Pares Overcook</td>
-                      <td>2024-04-15</td>
-                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                          <option selected>Pending</option>
-                          <option value="1">To Process</option>
-                          <option value="2">For Approval</option>
-                          <option value="3">For Release</option>
-                          <option value="3">Released</option>
-
-
-                        </select></td>
-                        <td><a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                      <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
-                    </tr>
-                  </tbody>
-                </table>
-             </div>
-             <!-- End of Bootstrap Table -->
-             
-          </div>
-          
+            <div class="contentContainer">
+                <h2 class="text-center">Building Permit Application</h2>
+  <form>
+    <!-- First row -->
+    <div class="row mb-3">
+      <div class="col">
+        <label for="firstName" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="firstName" placeholder="Enter First Name">
       </div>
+      <div class="col">
+        <label for="middleName" class="form-label">Middle Name</label>
+        <input type="text" class="form-control" id="middleName" placeholder="Enter Middle Name">
+      </div>
+      <div class="col">
+        <label for="lastName" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name">
+      </div>
+      <div class="col">
+        <label for="suffix" class="form-label">Suffix</label>
+        <input type="text" class="form-control" id="suffix" placeholder="Enter Suffix">
+      </div>
+    </div>
+    
+    <!-- Second row -->
+    <div class="row mb-3">
+      <div class="col">
+        <label for="address" class="form-label">Address</label>
+        <input type="text" class="form-control" id="address" placeholder="Enter Address">
+      </div>
+    </div>
+
+    <!-- Third row -->
+    <div class="row mb-3">
+      <div class="col">
+        <label for="province" class="form-label">Province</label>
+        <input type="text" class="form-control" id="province" placeholder="Enter Province">
+      </div>
+      <div class="col">
+        <label for="city" class="form-label">City or Municipality</label>
+        <input type="text" class="form-control" id="city" placeholder="Enter City or Municipality">
+      </div>
+      <div class="col">
+        <label for="barangay" class="form-label">Barangay</label>
+        <input type="text" class="form-control" id="barangay" placeholder="Enter Barangay">
+      </div>
+    </div>
+
+    <!-- Order of Payment Section -->
+    <h5>Order of Payment</h5>
+    <!-- First row of Order of Payment -->
+    <div class="row mb-3">
+      <div class="col">
+        <label for="area" class="form-label">Area</label>
+        <input type="text" class="form-control" id="area" placeholder="Enter Area">
+      </div>
+      <div class="col">
+        <label for="linearMeter" class="form-label">Linear Meter</label>
+        <input type="text" class="form-control" id="linearMeter" placeholder="Enter Linear Meter">
+      </div>
+      <div class="col">
+        <label for="sanitary" class="form-label">Sanitary</label>
+        <input type="text" class="form-control" id="sanitary" placeholder="Enter Sanitary">
+      </div>
+      <div class="col">
+        <label for="electrical" class="form-label">Electrical</label>
+        <input type="text" class="form-control" id="electrical" placeholder="Enter Electrical">
+      </div>
+    </div>
+
+    <!-- User Application Management Section -->
+    <h5>User Application Management</h5>
+    <!-- First row of User Application Management -->
+    <div class="row mb-3">
+      <div class="col">
+        <label for="clientId" class="form-label">Client ID Number</label>
+        <input type="text" class="form-control" id="clientId" placeholder="Enter Client ID Number">
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#BuildingPermitModal">Print/Preview</a>
+  </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+<div class="modal fade" id="BuildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="BuildingPermitModalLabel">Application</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!--Application Modal Content-->
+          <div class="container">
+            <div class="step-progress">
+              <div class="step completed">
+                <div class="circle">1</div>
+                <div class="label">Step 1</div>
+              </div>
+              <div class="step">
+                <div class="circle">2</div>
+                <div class="label">Step 2</div>
+              </div>
+              <div class="step">
+                <div class="circle">3</div>
+                <div class="label">Step 3</div>
+              </div>
+              <div class="step">
+                <div class="circle">4</div>
+                <div class="label">Step 4</div>
+              </div>
+            </div>
+          
+            
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+          <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
+        </div>
+      </div>
+    </div>
   </div>
-
-
-
-
-
 
     <script type="module" src="/Database/firebase.js"></script>
 
