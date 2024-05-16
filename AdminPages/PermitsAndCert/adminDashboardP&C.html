@@ -38,9 +38,8 @@
 </head>
 <body>
     <div class="main-container d-flex">
-       
-        <div class="sidebar" id="side_nav">
-            <div class="header-box text-center">
+        <div class="sideNav" id="side_nav">
+            <div class="header-box text-center px-2 pt-3 pb-4">
                 <div class="empty-avatar">
                     <a class="navbar-brand fs-4" href="#">
                         <img src="/resources/pictures/calambaLogo.png" alt="CHSD" width="75" height="75" class="d-inline-block align-text-top">
@@ -50,12 +49,10 @@
                 <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none">Dashboard</a></li>
+                <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none">Dashboard</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none">Building Permit</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none">Certificate of Occupancy</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none">Certificate of Electrical Inspection</a></li>
-                
-                
             </ul>
         </div>
         <div class="content">
@@ -111,16 +108,12 @@
                             </div>
                         </div>
                     </div>
-                   
-                   
-                    
                 </div>
             </div>
         </div>
     </div>
 
     <script type="module" src="/Database/firebase.js"></script>
-
     <script>
         // Function to update date and time
         function updateTime() {
@@ -133,8 +126,16 @@
 
         // Update time every second
         setInterval(updateTime, 1000);
+
+        // Add active class to the clicked item
+        document.querySelectorAll(".sideBarList .sideNav").forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelector(".sideBarList .sideNav.active").classList.remove('active');
+                this.classList.add('active');
+            });
+        });
     </script>
-   
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </body>

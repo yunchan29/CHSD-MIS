@@ -32,13 +32,16 @@ html,body
 
 #side_nav {
     background: url(/resources/pictures/sidebar_bg.png);
-    width: 250px; 
-    min-height: 100vh;
+    width: 100%; 
+    max-width:250px;
+    height:100vh;
     color:black !important;
-    background-size: contain;
-
+    background-size:cover;
     background-repeat: no-repeat;
-    background-attachment:fixed;
+    background-attachment:scroll;
+    -webkit-box-shadow: -3px 3px 10px 3px #dddddd;
+    -moz-box-shadow: -3px 3px 10px 3px #dddddd;
+    box-shadow: -3px 3px 10px 3px #dddddd;
 }
 
 
@@ -71,7 +74,7 @@ html,body
     color:black !important;
 }
 
-.sideNav li.active a, .sidebar li.active a:hover{
+.sideNav li.active a, .sideNav li.active a:hover{
     color:black;
 }
 
@@ -92,14 +95,18 @@ a{
     color: rgb(0, 0, 0) !important;
 }
 
-.sideNav:hover{
-border-radius:2px;
-border:0.5px solid rgb(3, 3, 3);
+.sideNav li:hover{
+border-radius:12px !important;
+border-bottom: 3px solid#139bff;
+transform: scale(1.02);
+
 }
 
 .sideNav .active{
-    background:white;
-    color:black;
+    background: #139bff !important;
+    
+    border-radius: 12px !important;
+    padding:10px !important;
 }
 
 .test{
