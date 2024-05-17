@@ -35,10 +35,10 @@
                 <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none">Dashboard</a></li>
-                <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none">Building Permit</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none">Certificate of Occupancy</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none">Certificate of Electrical Inspection</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none"><i class="fa-solid fa-building-circle-check"></i> Building Permit</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none"><i class="fa-solid fa-person-shelter"></i> Certificate of Occupancy</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none"><i class="fa-solid fa-bolt"></i> Certificate of Electrical Inspection</a></li>
             </ul>
         </div>
 
@@ -105,7 +105,7 @@
                          </select></td>
                          <td>
                            <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                       <a class="btn btn-primary text-white" href="/AdminPages/PermitsAndCert/applicationFormPCEdit.html">Edit</a></td>
+                           <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a></td>
                      </tr>
                      <tr>
                        <td>Kapares Romnick</td>
@@ -122,22 +122,7 @@
                          <td> <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
                        <a class="btn btn-primary text-white"data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
                      </tr>
- 
-                     <tr>
-                       <td>Diyata Pares Overcook</td>
-                       <td>2024-04-15</td>
-                       <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                           <option selected>Pending</option>
-                           <option value="1">To Process</option>
-                           <option value="2">For Approval</option>
-                           <option value="3">For Release</option>
-                           <option value="3">Released</option>
- 
- 
-                         </select></td>
-                         <td><a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                       <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
-                     </tr>
+
                    </tbody>
                  </table>
               </div>
@@ -149,11 +134,68 @@
       </div>
   </div>
 
-
-
-
-
-
+  <!--Application-->
+  <!-- Modal -->
+  <div class="modal fade" id="buildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="BuildingPermitModalLabel"><i class="fa-solid fa-user"></i> Application</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!--Application Modal Content-->
+                <div class="container">
+                    <div class="step-progress mb-4">
+                        <div class="step completed">
+                            <div class="circle"></div>
+                            <div class="label">Form</div>
+                        </div>
+                        <div class="step">
+                            <div class="circle"></div>
+                            <div class="label">Order of Payment</div>
+                        </div>
+                        <div class="step">
+                            <div class="circle"></div>
+                            <div class="label">Certificate</div>
+                        </div>
+                    </div>
+                    <form>
+                        <div class="mb-3">
+                            <label for="hsdFormNo" class="form-label">HSD Form No.</label>
+                            <div class="d-flex">
+                                <input type="text" class="form-control me-2" id="hsdFormNo" placeholder="HSDForm No.">
+                                <button type="button" class="btn btn-secondary" onclick="window.print();"><i class="fa-solid fa-print"></i> Print</button>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="buildingPermitNo" class="form-label">Building Permit No.</label>
+                                <input type="text" class="form-control" id="buildingPermitNo" placeholder="Permit No.">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="issuedOn" class="form-label">Issued on:</label>
+                                <input type="date" class="form-control" id="issuedOn">
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="ownerName" class="form-label">Owner/Applicant (Last Name, First Name, MI)</label>
+                                <input type="text" class="form-control" id="ownerName" placeholder="Last Name, First Name, MI">
+                            </div>
+                        </div>
+                        
+                       
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
     <script type="module" src="/Database/firebase.js"></script>
 
     <script>
@@ -185,8 +227,24 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          let currentStep = 1; // Start from the first step
+          
+          function goToNextStep() {
+            if (currentStep < 3) {
+              currentStep++;
+              document.querySelectorAll('.step')[currentStep - 1].classList.add('completed');
+            }
+          }
+      
+          document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
+        });
+      </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
+    
 </body>
 </html>
