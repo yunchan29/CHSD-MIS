@@ -125,7 +125,7 @@
                                 </td>
                                 <td>
                                     <a class="btn btn-success text-white">Save </a> 
-                                    <a class="btn btn-secondary text-white">Remarks</a>
+                                    <a class="btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1" >Remarks</a>
                                     <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
                                 </td>
                             </tr>
@@ -182,7 +182,7 @@
                         </div>
                         <form>
                             <div class="mb-3">
-                                <div class="d-flex">
+                                <div class="d-flex col-md-3">
                                     <input type="text" class="form-control me-2" id="hsdFormNo" placeholder="HSD Form No.">
                                     <button type="button" class="btn btn-secondary" onclick="window.print();"><i class="fa-solid fa-print"></i> Print</button>
                                 </div>
@@ -270,6 +270,32 @@
         </div>
     </div>
 
+
+   
+  
+  <!-- Modal -->
+<div class="modal fade" id="remarksModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Remarks</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Message</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
     <script type="module" src="/Database/firebase.js"></script>
     <script>
         // Function to update date and time
@@ -314,6 +340,7 @@
           document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
         });
     </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
