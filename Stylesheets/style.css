@@ -490,3 +490,28 @@ border-radius: 12px;
 .homepage{
     padding:5%;
 }
+
+.avatar-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0 auto;
+}
+.avatar-placeholder img {
+    width: 100%;
+    height: auto;
+}
+.avatar-text {
+    text-align: center;
+    margin-top: 10px;
+}
+.header-box {
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+}

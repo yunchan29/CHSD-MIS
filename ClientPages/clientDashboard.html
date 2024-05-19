@@ -47,20 +47,24 @@
 <body>
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
-            <div class="header-box text-center px-2 pt-3 pb-4">
-                <div class="empty-avatar">
-                    <a class="navbar-brand fs-4" href="#">
-                        <img src="/resources/pictures/calambaLogo.png" alt="CHSD" width="75" height="75" class="d-inline-block align-text-top">
-                    </a>
+            <div class="container">
+                <div class="header-box text-center pt-3 pb-4">
+                    <div class="avatar-placeholder">
+                        <img src="/resources/pictures/avatar2.jpg" alt="Avatar">
+                    </div>
+                    <div class="avatar-text">
+                        <!-- Client ID and Name -->
+                        <div>Client ID: 232345</div>
+                        <div>Juan Dela Cruz</div>
+                    </div>
+                    <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
                 </div>
-                <h4 class="fs-4"><span class="text-dark">Housing and Settlements Department</span></h4>
-                <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-                <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none"><i class="fa-solid fa-building-circle-check"></i> Building Permit</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none"><i class="fa-solid fa-person-shelter"></i> Certificate of Occupancy</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none"><i class="fa-solid fa-bolt"></i> Certificate of Electrical Inspection</a></li>
+                <li class="sideNav active"><a href="" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="sideNav"><a href="" class="text-decoration-none"><i class="fa-solid fa-user"></i> Profile</a></li>
+                <li class="sideNav"><a href="/index.html" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
+               
             </ul>
         </div>
 
@@ -73,80 +77,50 @@
                                 <p><span id="date"></span> | <span id="time"></span></p>
                             </div>
                             <div class="col text-end">
-                                <!-- Avatar with Bootstrap Dropdown -->
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle" href="#" role="button" id="avatarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="/resources/pictures/avatar.jpg" alt="Avatar" width="40" height="40" class="rounded-circle">
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="avatarDropdown">
-                                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="/index.html">Logout</a></li>
-                                    </ul>
-                                </div>
+                                
+                                <a class="navbar-brand fs-4" href="index.html">
+                                    <img src="/resources/pictures/calambaLogo.png" alt="CHSD" width="75" height="75" class="d-inline-block align-text-top">
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="contentContainer">
-                <h4 class="text-center">Building Permit</h4>
+                <h4 class="text-start">Dashboard</h4>
                 <!-- Bootstrap Table -->
                 <div class="container">
-                    <h5>Profile</h5>
+                   
                     <div class="d-flex justify-content-end mb-3">
-                        <input type="text" class="form-control search-bar" placeholder="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
-                        </div>
+                       
                     </div>
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Name</th>
+                                <th>Request</th>
                                 <th>Date Filed</th>
                                 <th>Status</th>
                                 <th>Action</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Juan Dela Cruz</td>
+                                <td>Building Permit</td>
                                 <td>2024-05-01</td>
-                                <td>
-                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                        <option selected>Pending</option>
-                                        <option value="1">To Process</option>
-                                        <option value="2">For Approval</option>
-                                        <option value="3">For Release</option>
-                                        <option value="3">Released</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <a class="btn btn-success text-white">Save </a> 
-                                    <a class="btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1" >Remarks</a>
-                                    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
-                                </td>
+                                <td>For Approval</td>
+                                <td><a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks"><i class="fa-solid fa-comment"></i> View Remarks</a></td>
+                                
                             </tr>
+
                             <tr>
-                                <td>Ramon Reyes</td>
-                                <td>2024-04-15</td>
-                                <td>
-                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                        <option selected>Pending</option>
-                                        <option value="1">To Process</option>
-                                        <option value="2">For Approval</option>
-                                        <option value="3">For Release</option>
-                                        <option value="3">Released</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <a class="btn btn-success text-white">Save </a> 
-                                    <a class="btn btn-secondary text-white">Remarks</a>
-                                    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
-                                </td>
+                                <td>Occupancy Permit</td>
+                                <td>2024-03-01</td>
+                                <td>Pending</td>
+                                <td><a class="btn btn-primary text-white"><i class="fa-solid fa-comment"></i> View Remarks</a></td>
+                                
                             </tr>
+                            
                         </tbody>
                     </table>
                 </div>
@@ -274,7 +248,7 @@
    
   
   <!-- Modal -->
-<div class="modal fade" id="remarksModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -282,10 +256,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="mb-3">
-            
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Write a message"></textarea>
-          </div>
+          <p>Hello, please wait for the approval of your application, thank you!</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
