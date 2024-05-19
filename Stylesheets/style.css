@@ -452,6 +452,10 @@ a:active {
     max-width: 80%; 
 }
 
+.modal-dialog.medium-modal{
+    max-width:60%;
+}
+
 .form-control {
     margin-bottom: 1rem; /* Add margin between form controls */
 }
