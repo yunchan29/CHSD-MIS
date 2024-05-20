@@ -500,18 +500,37 @@ border-radius: 12px;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    position: relative; /* Add this line */
     margin: 0 auto;
 }
+
 .avatar-placeholder img {
     width: 100%;
     height: auto;
 }
+
 .avatar-text {
     text-align: center;
     margin-top: 10px;
 }
-.header-box {
-    text-align: center;
-    padding-top: 1rem;
-    padding-bottom: 1.5rem;
+
+.plus-button {
+    width: 30px;
+    height: 30px;
+    background-color: #007bff;
+    color: white;
+    font-size: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 5px; /* Adjust this value as needed */
+    right: 5px; /* Adjust this value as needed */
+    border: 2px solid white;
+    z-index: 1;
+}
+
+.plus-button:hover {
+    background-color: #0056b3;
 }
