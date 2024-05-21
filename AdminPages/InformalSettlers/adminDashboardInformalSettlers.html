@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="main-container d-flex">
-        <div class="sidebar" id="side_nav">
+        <div class="sideNav" id="side_nav">
             <div class="header-box text-center">
                 <!-- Empty avatar icon -->
                 <div class="empty-avatar">
@@ -23,10 +23,10 @@
                 <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav"><a href="/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html" class="text-decoration-none">Profile</a></li>
-                <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersApplication.html" class="text-decoration-none">Application</a></li>
-                <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersReport.html" class="text-decoration-none">Report</a></li>
-                <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersPayment.html" class="text-decoration-none">Payment</a></li>
+                <li class="sideNav active"><a href="/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html" class="text-decoration-none"><i class="fa-solid fa-user"></i> Profile</a></li>
+                <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersApplication.html" class="text-decoration-none"><i class="fa-solid fa-folder"></i> Housing Application</a></li>
+                <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersReport.html" class="text-decoration-none"><i class="fa-solid fa-chart-column"></i> Application Report</a></li>
+                <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersPayment.html" class="text-decoration-none"><i class="fa-solid fa-user-pen"></i> User Manager</a></li>
             </ul>
         </div>
 
@@ -57,7 +57,6 @@
                 </div>
             </div>
             <div class="contentContainer">
-               <h4 class="text-center">Informal Settlers Information System</h4>
                
                <!-- Bootstrap Table -->
                <div class="container">
@@ -72,61 +71,44 @@
                   <table class="table">
                     <thead>
                       <tr>
+                        <th>Survey Number</th>
                         <th>Name</th>
-                        <th>Date Filed</th>
+                        <th>Date Profiled</th>
                         <th>Status</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Diwata Pares Overload</td>
-                        <td>2024-05-01</td>
-                        <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                            <option selected>Pending</option>
-                            <option value="1">To Process</option>
-                            <option value="2">For Approval</option>
-                            <option value="3">For Release</option>
-                            <option value="3">Released</option>
-                   
-
-
-                          </select></td>
+                        <td>2024-321</td>
+                        <td>Gelo Cruz</td>
+                        <td>4/3/24</td>
+                        <td>Profiling Completed</td>
                           <td>
-                            <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                        <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">View</a></td>
+                           <a class="btn btn-danger text-white">Delete</a>
+                           <a class="btn btn-primary text-white">Edit</a></td>
                       </tr>
                       <tr>
-                        <td>Kapares Romnick</td>
-                        <td>2024-04-15</td>
-                        <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                            <option selected>Pending</option>
-                            <option value="1">To Process</option>
-                            <option value="2">For Approval</option>
-                            <option value="3">For Release</option>
-                            <option value="3">Released</option>
-
-
-                          </select></td>
-                          <td> <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                        <a class="btn btn-primary text-white"data-bs-toggle="modal" data-bs-target="#exampleModal">View</a></td>
+                        <td>2024-321</td>
+                        <td>Marvin Delos Reyes</td>
+                        <td>1/4/24</td>
+                        <td>Profiling Completed</td>
+                          <td>
+                            <a class="btn btn-danger text-white">Delete</a>
+                            <a class="btn btn-primary text-white">Edit</a></td>
                       </tr>
-
                       <tr>
-                        <td>Diyata Pares Overcook</td>
-                        <td>2024-04-15</td>
-                        <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                            <option selected>Pending</option>
-                            <option value="1">To Process</option>
-                            <option value="2">For Approval</option>
-                            <option value="3">For Release</option>
-                            <option value="3">Released</option>
-
-
-                          </select></td>
-                          <td><a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                        <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">View</a></td>
+                        <td>2024-321</td>
+                        <td>Drake Lamar</td>
+                        <td>3/12/24</td>
+                        <td>Profiling Completed</td>
+                          <td>
+                            <a class="btn btn-danger text-white">Delete</a>
+                            <a class="btn btn-primary text-white">Edit</a>
+                          </td>
                       </tr>
+                  
+
                     </tbody>
                   </table>
                </div>
@@ -217,5 +199,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
 </body>
 </html>
