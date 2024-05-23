@@ -17,21 +17,28 @@
             </div>
             <div class="loginField2 text-center">
                 <img class="img-fluid" src="/resources/pictures/calambaLogo.png">
+                <h5>Log in</h5>
                 <hr>
-                <h4>Log in</h4>
+                
                 <form>
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                      
+                        <input type="text" class="form-control" id="username" placeholder="Username">
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                        
+                        <input type="password" class="form-control" id="password" placeholder="Password">
+                        <a class="justify-content-end text-primary" href="#">Forgot Password?</a>
                     </div>
                     <a type="submit" href="clientDashboard.html"" class="btn btn-primary text-white">Login</a><br>
-                    <a href="#">Forgot your password?</a>
-                    <br><br><p>Don't have an account yet?</p>
-                    <a class="btn btn-link p-0 text-primary" data-bs-toggle="modal" data-bs-target="#registerModal" style="text-decoration: none;">Register</a>
+                    <div class="container">
+                      <div class="d-flex justify-content-center align-items-center">
+                          <p class="mb-0">Don't have an account?</p>
+                          <a class="btn btn-link p-0 text-primary ml-2" data-bs-toggle="modal" data-bs-target="#registerModal" style="text-decoration: none;">Register</a>
+                      </div>
+                  </div>
+                    
+                    
                 </form>
             </div>
            

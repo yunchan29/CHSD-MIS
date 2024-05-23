@@ -281,7 +281,8 @@ padding:25px;
 }
 
 .indexHeaderImage{
-    width:100%;
+    max-width:100%;
+    height:auto;
     
 }
 
@@ -488,7 +489,10 @@ border-radius: 12px;
 }
 
 .homepage{
-    padding:5%;
+  
+    padding:8%;
+    overflow: scroll;
+    
 }
 
 .avatar-placeholder {
