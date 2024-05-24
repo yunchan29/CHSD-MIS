@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/Stylesheets/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-   
 </head>
 <body>
     <div class="test">
@@ -16,16 +15,16 @@
                 <img class="img-fluid" src="/resources/pictures/calambaLogo.png">
                 <hr>
                 <h4>Admin</h4>
-                <form>
+                <form id="login-form">
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email" autocomplete="username">
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password" autocomplete="current-password">
                     </div>
-                    <a type="submit" href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="btn btn-primary text-white">Login</a><br>
+                    <button type="submit" class="btn btn-primary text-white">Login</button><br>
                     <p>Forgot your password?</p>
                 </form>
             </div>
@@ -34,6 +33,8 @@
 
     <script id="replace_with_navbar" src="adminNav.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-AO+Ht9sOGi4eJGA2uY4xNez6sn/feLtvcmDgkxvJzRjSk4WZnr4j6Z8nSWv9eTp5" crossorigin="anonymous"></script>
+    <script type="module" defer src="/Database/firebase.js"></script>
+
 </body>
 </html>
