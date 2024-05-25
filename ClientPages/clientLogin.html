@@ -20,108 +20,23 @@
                 <h5>Log in</h5>
                 <hr>
                 
-                <form>
+                <form id="login-form"> <!-- Add an ID to the form -->
                     <div class="mb-3">
-                      
-                        <input type="text" class="form-control" id="username" placeholder="Username">
+                        <input type="email" class="form-control" id="email" placeholder="Email" required> <!-- Change to 'email' for Firebase compatibility -->
                     </div>
                     <div class="mb-3">
-                        
-                        <input type="password" class="form-control" id="password" placeholder="Password">
+                        <input type="password" class="form-control" id="password" placeholder="Password" required>
                         <a class="justify-content-end text-primary" href="#">Forgot Password?</a>
                     </div>
-                    <a type="submit" href="clientDashboard.html"" class="btn btn-primary text-white">Login</a><br>
-                    <div class="container">
-                      <div class="d-flex justify-content-center align-items-center">
-                          <p class="mb-0">Don't have an account?</p>
-                          <a class="btn btn-link p-0 text-primary ml-2" data-bs-toggle="modal" data-bs-target="#registerModal" style="text-decoration: none;">Register</a>
-                      </div>
-                  </div>
-                    
-                    
+                    <button type="submit" class="btn btn-primary text-white">Login</button><br>
                 </form>
             </div>
-           
         </div>
-        <!--Register Modal-->
-     
- <!-- Modal -->
-<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog medium-modal modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Register</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <!-- First Name and Last Name Row -->
-            <div class="row mb-3">
-              <div class="col">
-                
-                <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
-              </div>
-              <div class="col">
-             
-                <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
-              </div>
-            </div>
-            <!-- Client ID or Email Row -->
-            <div class="mb-3">
-             
-              <input type="text" class="form-control" id="clientIdEmail" placeholder="Client ID or Email" required>
-            </div>
-            <!-- New Password Row -->
-            <div class="mb-3">
-             
-              <input type="password" class="form-control" id="newPassword" placeholder="New Password" required>
-            </div>
-            <!-- Confirm New Password Row -->
-            <div class="mb-3">
-              
-              <input type="password" class="form-control" id="confirmNewPassword" placeholder="Confirm New Password" required>
-            </div>
-            <!-- Birthday Row -->
-            <div class="mb-3">
-              <label for="birthday" class="form-label">Birthday</label>
-              <input type="date" class="form-control" id="birthday" required>
-            </div>
-            <!-- Gender Row -->
-            <div class="mb-3">
-              <label class="form-label">Gender</label>
-              <div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male" required>
-                  <label class="form-check-label" for="genderMale">Male</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female" required>
-                  <label class="form-check-label" for="genderFemale">Female</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="gender" id="genderOther" value="other" required>
-                  <label class="form-check-label" for="genderOther">Other</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="gender" id="genderPreferNotToSay" value="prefer_not_to_say" required>
-                  <label class="form-check-label" for="genderPreferNotToSay">Prefer not to say</label>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Dismiss</button>
-          <button type="button" class="btn btn-primary">Register</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  
-  
-          <script id="replace_with_navbar" src="nav2.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+        <!-- Include other parts of your HTML here -->
+
+        <script id="replace_with_navbar" src="nav2.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+        <script defer src="/Database/firebase.js" type="module"></script>
     </body>
 </html>
