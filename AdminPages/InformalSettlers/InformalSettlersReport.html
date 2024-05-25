@@ -58,24 +58,35 @@
             <div class="contentContainer">
                <h4 class="text-center">Application Report</h4>
                <div class="contentContainer">
-               <div class="row mt-3">
-                <div class="col">
-                    <label for="dateFrom">Date From</label>
-                <input class="form-control" type="date" title="dateFrom" placeholder="">
-                </div>
-                <div class="col">
-                    <label for="dateTo"></label>
-                    <input class="form-control" type="date" title="dateTo" placeholder="">
-                </div>
-                <div class="col">
-                    <label for="ageFor">Age from</label>
-                    <input type="date" class="form-control" title="ageFrom" placeholder="">
-                </div>
-                <div class="col">
-                    <label for="ageTo"></label>
-                    <input type="date" class="form-control" title="ageTo" placeholder="">
-                </div>
-               </div>
+                <div class="container mt-3">
+                    
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="dateFrom">Date</label>
+                                <input class="form-control" type="date" id="dateFrom" placeholder="">
+                            </div>
+                            <div class="col-md-1 d-flex align-items-center justify-content-center">
+                                <span class="to-label">to</span>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="dateTo"></label>
+                                <input class="form-control" type="date" id="dateTo" placeholder="">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <label for="ageFrom">Age</label>
+                                <input type="number" class="form-control" id="ageFrom" placeholder="">
+                            </div>
+                            <div class="col-md-1 d-flex align-items-center justify-content-center">
+                                <span class="to-label">to</span>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="ageTo"></label>
+                                <input type="number" class="form-control" id="ageTo" placeholder="">
+                            </div>
+                        </div>
+                    
 
                <div class="row">
                   <div class="col">
@@ -100,13 +111,26 @@
              </div>
              <div class="row">
                 <div class="col-md-3">
-                  <label for="name">Gender</label>
-                  <input class="form-control" type="text" title="name" placeholder="">
-                </div>
-                <div class="col-md-3">
-                  <label for="classification">Civil Status</label>
-                  <input class="form-control" type="text" title="classification" placeholder="">
-                </div>
+                    <label for="">Gender</label>
+                    <select class="form-control" id="" name="">
+                      <option value="">Male</option>
+                      <option value="">Female</option>
+                      <option value="">Prefer not to say</option>
+                      
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="">Civil Status</label>
+                    
+                    <select class="form-control" id="" name="">
+                      <option value="">Single</option>
+                      <option value="">Married</option>
+                      <option value="">Widowed</option>
+                      <option value="">Live in</option>
+                      <option value="">Single Parent</option>
+                      <option value="">Separated</option>
+                    </select>
+                  </div>
                 <div class="col-md-6">
                     <label for="classification">Survey No.</label>
                   <input class="form-control" type="text" title="classification" placeholder="">
