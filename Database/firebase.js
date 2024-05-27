@@ -1,7 +1,9 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-functions.js";
+// firebase.js
+
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 // Your Firebase configuration object
 const firebaseConfig = {
