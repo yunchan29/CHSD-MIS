@@ -36,35 +36,59 @@ async function checkUserRole(user, role) {
   }
 }
 
-// Function to handle login form submission
-function handleLoginForm() {
-  const loginForm = document.getElementById('login-form');
-  if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        console.log("User signed in:", user.uid);
-
-        if (await checkUserRole(user, 'adminPC')) {
-          window.location.href = "/AdminPages/PermitsAndCert/adminDashboardP&C.html";
-        } else if (await checkUserRole(user, 'adminIS')) {
-          window.location.href = "/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html";
-        } else {
-          window.location.href = "/ClientPages/clientDashboard.html";
+// Function to handle regular user login form submission
+function handleUserLoginForm() {
+    const userLoginForm = document.getElementById('user-login-form');
+    if (userLoginForm) {
+      userLoginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('user-email').value;
+        const password = document.getElementById('user-password').value;
+  
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+  
+          console.log("User signed in:", user.uid);
+          window.location.href = "/ClientPages/clientDashboard.html"; // Redirect to client dashboard
+        } catch (error) {
+          console.error("Error signing in:", error.code, error.message);
+          alert("Login failed: " + error.message);
         }
-      } catch (error) {
-        console.error("Error signing in:", error.code, error.message);
-        alert("Login failed: " + error.message);
-      }
-    });
+      });
+    }
   }
-}
+  
+  // Function to handle admin login form submission
+  function handleAdminLoginForm() {
+    const adminLoginForm = document.getElementById('admin-login-form');
+    if (adminLoginForm) {
+      adminLoginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('admin-email').value;
+        const password = document.getElementById('admin-password').value;
+  
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+  
+          console.log("Admin signed in:", user.uid);
+  
+          if (await checkUserRole(user, 'adminPC')) {
+            window.location.href = "/AdminPages/PermitsAndCert/adminDashboardP&C.html"; // Redirect adminPC to dashboard
+          } else if (await checkUserRole(user, 'adminIS')) {
+            window.location.href = "/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html"; // Redirect adminIS to dashboard
+          } else {
+            alert("You do not have permission to access this admin portal.");
+          }
+        } catch (error) {
+          console.error("Error signing in:", error.code, error.message);
+          alert("Login failed: " + error.message);
+        }
+      });
+    }
+  }
+  
 
 // Function to monitor authentication state
 function monitorAuthState() {
