@@ -36,6 +36,20 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/Stylesheets/**",
+        "destination": "/Stylesheets/$1"
+      },
+      {
+        "source": "/Database/**",
+        "destination": "/Database/$1"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
     ]
   }
 }

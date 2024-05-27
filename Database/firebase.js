@@ -1,10 +1,9 @@
-// firebase.js
-
+// Import Firebase modules
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+
 
 // Your Firebase configuration object
 const firebaseConfig = {
@@ -18,133 +17,90 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase services
-const auth = getAuth(app); // Get the Auth service for authentication
-const db = getFirestore(app); // Get the Firestore service for database operations
-const functions = getFunctions(app); // Get the Functions service for callable functions
+const auth = getAuth(app);
+const db = getFirestore(app);
+const functions = getFunctions(app);
 
-// Function to check user role based on custom claims
+// Function to check user role
 async function checkUserRole(user, role) {
-    try {
-        // Get the ID token result for the current user
-        const idTokenResult = await user.getIdTokenResult();
-        // Check if the user has the specified custom claim
-        return idTokenResult.claims[role] === true;
-    } catch (error) {
-        console.error("Error fetching user data:", error);
-        throw error; // Throw error for debugging or error handling
+  try {
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      return userData.roles && userData.roles[role] === true;
     }
-}
-
-// Function to handle login form submission
-function handleLoginForm() {
-  const loginForm = document.getElementById('login-form');
-  if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        console.log("User signed in:", user.uid);
-
-        if (await checkUserRole(user, 'adminPC')) {
-          window.location.href = "/AdminPages/PermitsAndCert/adminDashboardP&C.html";
-        } else if (await checkUserRole(user, 'adminIS')) {
-          window.location.href = "/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html";
-        } else {
-          window.location.href = "/ClientPages/clientDashboard.html";
-        }
-      } catch (error) {
-        console.error("Error signing in:", error.code, error.message);
-        alert("Login failed: " + error.message);
-      }
-    });
+    return false;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    throw error;
   }
 }
 
+// Function to handle login form submission
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    // Get email and password from the form inputs
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
     try {
-        const idTokenResult = await user.getIdTokenResult();
-        return idTokenResult.claims[role] === true;
-    } catch (error) {
-        console.error("Error fetching user data:", error);
-        throw error;
-    }
-}
+        // Sign in the user with email and password
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user; // Get the authenticated user object
 
-// Function to handle admin login form submission
-function handleAdminLoginForm() {
-    const form = document.getElementById('admin-login-form');
-    if (form) {
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const email = document.getElementById('admin-email').value;
-            const password = document.getElementById('admin-password').value;
+        console.log("User signed in:", user.uid); // Log user's UID for debugging
 
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                console.log("Admin signed in:", user.uid);
-
-                if (await checkUserRole(user, 'adminPC')) {
-                    window.location.href = "/AdminPages/PermitsAndCert/adminDashboardP&C.html";
-                } else if (await checkUserRole(user, 'adminIS')) {
-                    window.location.href = "/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html";
-                } else {
-                    alert("You do not have permission to access this admin portal.");
-                }
-            } catch (error) {
-                console.error("Error signing in:", error.code, error.message);
-                alert("Login failed: " + error.message);
-            }
-        });
-    } else {
-        console.error('Admin login form not found');
-    }
-}
-
-// Function to monitor authentication state
-function monitorAuthState() {
-    onAuthStateChanged(auth, (user) => {
-        const userInfo = document.getElementById('user-info');
-        if (user) {
-            console.log("User is logged in:", user.uid);
-            if (userInfo) {
-                userInfo.innerHTML = `Logged in as: ${user.email}`;
-            }
+        if (await checkUserRole(user, 'adminPC')) {
+            window.location.href = "/AdminPages/PermitsAndCert/adminDashboardP&C.html";
+        } else if (await checkUserRole(user, 'adminIS')) {
+            window.location.href = "/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html";
         } else {
-            console.log("No user is logged in.");
-            if (userInfo) {
-                userInfo.innerHTML = "Not logged in";
-            }
+            window.location.href = "/ClientPages/clientDashboard.html";
         }
-    });
-}
 
-// Function to handle logout
-function handleLogout() {
-    const logoutButton = document.getElementById('logoutButton');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', async (event) => {
-            event.preventDefault();
-            try {
-                await signOut(auth);
-                window.location.href = '/ClientPages/clientLogin.html';
-            } catch (error) {
-                console.error('Error logging out:', error);
-            }
-        });
+    } catch (error) {
+        console.error("Error signing in:", error.code, error.message);
+        alert("Login failed: " + error.message); // Alert user with login error message
+    }
+});
+
+// Function to handle user authentication state change
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log("User is logged in:", user.uid); // Log user's UID for debugging
+        // Example: Update UI based on user's authentication state
+        document.getElementById('user-info').innerHTML = `Logged in as: ${user.email}`;
     } else {
-        console.error('Logout button not found');
+        console.log("No user is logged in."); // Log when no user is logged in
+        // Example: Reset UI to default state
+        document.getElementById('user-info').innerHTML = "Not logged in";
+    }
+});
+
+// Function to handle logout button click
+document.getElementById('logoutButton').addEventListener('click', async (event) => {
+    event.preventDefault(); // Prevent the default click behavior
+    try {
+        await signOut(auth); // Sign out the current user
+        window.location.href = '/ClientPages/clientLogin.html'; // Redirect to login page after logout
+    } catch (error) {
+        console.error('Error logging out:', error); // Log error if logout fails
+    }
+});
+
+// Function to call a Firebase callable function
+async function callFirebaseFunction() {
+    try {
+        const addMessage = httpsCallable(functions, 'addMessage');
+        const result = await addMessage({ text: 'Hello, world!' });
+        console.log(result.data);
+    } catch (error) {
+        console.error('Error calling Firebase function:', error);
     }
 }
 
-// Initialize Firebase and set up event listeners
-document.addEventListener('DOMContentLoaded', () => {
-    handleAdminLoginForm();
-    monitorAuthState();
-    handleLogout();
+// Example: Call Firebase function on button click
+document.getElementById('callFunctionButton').addEventListener('click', async (event) => {
+    event.preventDefault(); // Prevent the default click behavior
+    await callFirebaseFunction(); // Call the Firebase callable function
 });
