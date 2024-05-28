@@ -1,8 +1,6 @@
-// Import Firebase modules
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getFunctions } from 'firebase/functions';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Your Firebase configuration object
 const firebaseConfig = {
@@ -21,26 +19,32 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase services
 const auth = getAuth(app); // Get the Auth service for authentication
 const db = getFirestore(app); // Get the Firestore service for database operations
-const functions = getFunctions(app); // Get the Functions service for callable functions
 
-// Function to check user role
-async function checkUserRole(user, role) {
+async function checkUserRole(userUid) {
   try {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      return userData.roles && userData.roles[role] === true;
-    }
-    return false;
+    const adminPCRef = doc(db, 'roles', 'adminPC');
+    const adminPCSnapshot = await getDoc(adminPCRef);
+    const isAdminPC = adminPCSnapshot.exists() && adminPCSnapshot.data()[userUid] === true;
+
+    const adminISRef = doc(db, 'roles', 'adminIS');
+    const adminISSnapshot = await getDoc(adminISRef);
+    const isAdminIS = adminISSnapshot.exists() && adminISSnapshot.data()[userUid] === true;
+
+    return { isAdminPC, isAdminIS };
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error fetching user roles:", error);
     throw error;
   }
 }
 
-// Function to handle admin login form submission
-function handleAdminLoginForm() {
+
+
+
+
+async function handleAdminLoginForm() {
   const form = document.getElementById('admin-login-form');
+  console.log('Admin login form:', form);
+  
   if (form) {
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -53,18 +57,22 @@ function handleAdminLoginForm() {
 
         console.log("Admin signed in:", user.uid);
 
-        // Redirect based on user role after successful login
-        if (await checkUserRole(user, 'adminPC')) {
+        const { isAdminPC, isAdminIS } = await checkUserRole(user.uid);
+        console.log('User roles:', { isAdminPC, isAdminIS });
+
+        if (isAdminPC) {
+          console.log("Redirecting to adminPC dashboard");
           window.location.href = "/AdminPages/PermitsAndCert/adminDashboardP&C.html";
-        } else if (await checkUserRole(user, 'adminIS')) {
+        } else if (isAdminIS) {
+          console.log("Redirecting to adminIS dashboard");
           window.location.href = "/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html";
         } else {
+          console.log("Redirecting to client dashboard");
           window.location.href = "/ClientPages/clientDashboard.html";
         }
-
       } catch (error) {
         console.error("Error signing in:", error.code, error.message);
-        alert("Login failed: " + error.message); // Alert user with login error message
+        alert("Login failed: " + error.message);
       }
     });
   } else {
@@ -72,10 +80,13 @@ function handleAdminLoginForm() {
   }
 }
 
-// Function to monitor authentication state
+
+
 function monitorAuthState() {
   onAuthStateChanged(auth, (user) => {
     const userInfo = document.getElementById('user-info');
+    console.log('Auth state changed:', user);
+    
     if (user) {
       console.log("User is logged in:", user.uid);
       if (userInfo) {
@@ -90,12 +101,14 @@ function monitorAuthState() {
   });
 }
 
-// Function to handle logout
 function handleLogout() {
   const logoutButton = document.getElementById('logoutButton');
+  console.log('Logout button:', logoutButton);
+  
   if (logoutButton) {
     logoutButton.addEventListener('click', async (event) => {
       event.preventDefault();
+      
       try {
         await signOut(auth);
         window.location.href = '/ClientPages/clientLogin.html';
@@ -108,9 +121,40 @@ function handleLogout() {
   }
 }
 
+
+function handleUserLoginForm() {
+  const form = document.getElementById('user-login-form');
+  console.log('User login form:', form);
+  
+  if (form) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = document.getElementById('user-email').value;
+      const password = document.getElementById('user-password').value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        console.log("User signed in:", user.uid);
+
+        // Redirect to user dashboard
+        window.location.href = "/ClientPages/clientDashboard.html";
+      } catch (error) {
+        console.error("Error signing in:", error.code, error.message);
+        alert("Login failed: " + error.message);
+      }
+    });
+  } else {
+    console.error('User login form not found');
+  }
+}
+
 // Initialize Firebase and set up event listeners
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM fully loaded and parsed in firebase.js');
   handleAdminLoginForm();
+  handleUserLoginForm(); // Call the user login form handler
   monitorAuthState();
   handleLogout();
 });

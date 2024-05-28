@@ -252,61 +252,9 @@
             </div>
         </div>
     </div>
-    <script src="/Database/dist/bundle.js"></script>
+    <script type="module" src="/Database/firebase.js"></script>
 
 
-    <!-- Your Firebase configuration and initialization -->
-    <script type="module">
-         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js';
-    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js';
-
-        const firebaseConfig = {
-           apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-    authDomain: "chsd-mis.firebaseapp.com",
-    projectId: "chsd-mis",
-    storageBucket: "chsd-mis.appspot.com",
-    messagingSenderId: "694967679357",
-    appId: "1:694967679357:web:65cffd50f13739f934f414",
-    measurementId: "G-XBQTQFRLJ5"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
-        // Get auth instance
-        const auth = firebase.auth();
-
-        // Function to check if the user is logged in
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                // Redirect to login page if not logged in
-                window.location.href = '/ClientPages/clientLogin.html';
-            }
-        });
-
-        function logout() {
-    console.log('Logout function called');
-    firebase.auth().signOut().then(function() {
-        // Sign-out successful.
-        window.location.href = '/ClientPages/clientLogin.html';
-    }).catch(function(error) {
-        // An error happened.
-        console.error('Sign Out Error', error);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-        const logoutButton = document.getElementById('logoutButton');
-        if (logoutButton) {
-            logoutButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default anchor tag behavior
-                logout(); // Call the logout function
-            });
-        }
-    });
-
-
-        // Additional code to update the dashboard UI can go here
-    </script>
 
     <!-- Bootstrap and other scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
