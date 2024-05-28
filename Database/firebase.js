@@ -1,3 +1,4 @@
+
 // Import Firebase modules
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
@@ -16,7 +17,9 @@ const firebaseConfig = {
     measurementId: "G-XBQTQFRLJ5"
 };
 
+
 // Initialize Firebase services
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const functions = getFunctions(app);
@@ -36,58 +39,31 @@ async function checkUserRole(user, role) {
   }
 }
 
-// Function to handle regular user login form submission
-function handleUserLoginForm() {
-    const userLoginForm = document.getElementById('user-login-form');
-    if (userLoginForm) {
-      userLoginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('user-email').value;
-        const password = document.getElementById('user-password').value;
+//user login
+
+
+
   
-        try {
-          const userCredential = await signInWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
-  
-          console.log("User signed in:", user.uid);
-          window.location.href = "/ClientPages/clientDashboard.html"; // Redirect to client dashboard
-        } catch (error) {
-          console.error("Error signing in:", error.code, error.message);
-          alert("Login failed: " + error.message);
-        }
-      });
-    }
-  }
-  
-  // Function to handle admin login form submission
-  function handleAdminLoginForm() {
-    const adminLoginForm = document.getElementById('admin-login-form');
-    if (adminLoginForm) {
-      adminLoginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('admin-email').value;
-        const password = document.getElementById('admin-password').value;
-  
-        try {
-          const userCredential = await signInWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
-  
-          console.log("Admin signed in:", user.uid);
-  
-          if (await checkUserRole(user, 'adminPC')) {
-            window.location.href = "/AdminPages/PermitsAndCert/adminDashboardP&C.html"; // Redirect adminPC to dashboard
-          } else if (await checkUserRole(user, 'adminIS')) {
-            window.location.href = "/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html"; // Redirect adminIS to dashboard
-          } else {
-            alert("You do not have permission to access this admin portal.");
-          }
-        } catch (error) {
-          console.error("Error signing in:", error.code, error.message);
-          alert("Login failed: " + error.message);
-        }
-      });
-    }
-  }
+ // In firebase.js
+function handleAdminLoginForm() {
+  // Ensure the function waits until the DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('admin-login-form');
+      if (form) {
+          form.addEventListener('submit', (event) => {
+              event.preventDefault();
+              // Your form submission logic here
+              console.log('Form submitted');
+          });
+      } else {
+          console.error('Form not found');
+      }
+  });
+}
+
+// Export or execute the function if needed
+export { handleAdminLoginForm };
+
   
 
 // Function to monitor authentication state
@@ -130,3 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
   monitorAuthState();
   handleLogout();
 });
+
+// Initialize Firebase and set up event listeners
+document.addEventListener('DOMContentLoaded', () => {
+handleUserLoginForm();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  handleAdminLoginForm();
+  });
