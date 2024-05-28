@@ -16,6 +16,7 @@ const firebaseConfig = {
     measurementId: "G-XBQTQFRLJ5"
 };
 
+
 // Initialize Firebase services
 const auth = getAuth(app); // Get the Auth service for authentication
 const db = getFirestore(app); // Get the Firestore service for database operations
@@ -104,3 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
   monitorAuthState();
   handleLogout();
 });
+
+// Initialize Firebase and set up event listeners
+document.addEventListener('DOMContentLoaded', () => {
+handleUserLoginForm();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  handleAdminLoginForm();
+  });
