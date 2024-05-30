@@ -117,44 +117,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Juan Dela Cruz</td>
-                                <td>2024-05-01</td>
-                                <td>
-                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                        <option selected>Pending</option>
-                                        <option value="1">Processing</option>
-                                        <option value="3">To pay</option>
-                                        <option value="2">For Approval</option>
-                                        <option value="3">For Release</option>
-                                        <option value="3">Claimed</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <a class="btn btn-success text-white">Save </a> 
-                                    <a class="btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1" >Remarks</a>
-                                    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Ramon Reyes</td>
-                                <td>2024-04-15</td>
-                                <td>
-                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                        <option selected>Pending</option>
-                                        <option value="1">Processing</option>
-                                        <option value="3">To pay</option>
-                                        <option value="2">For Approval</option>
-                                        <option value="3">For Release</option>
-                                        <option value="3">Claimed</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <a class="btn btn-success text-white">Save </a> 
-                                    <a class="btn btn-secondary text-white">Remarks</a>
-                                    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
-                                </td>
-                            </tr>
+                            
                         </tbody>
                     </table>
    <!-- Application Modal -->
@@ -346,6 +309,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" id="nextStepButton2" class="btn btn-primary">Next</button>
+               
                 
             </div>
         </div>
@@ -382,7 +346,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="finishButton">Finish</button>
+               
+                <button type="button" class="btn btn-primary" id="submitProfile">Finish</button>
+             
             </div>
         </div>
     </div>
@@ -539,7 +505,7 @@
 
         document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
         document.getElementById('nextStepButton2').addEventListener('click', goToNextStep);
-        document.getElementById('finishButton').addEventListener('click', finishApplication);
+        document.getElementById('submitProfile').addEventListener('click', finishApplication);
     });
 </script>
 
