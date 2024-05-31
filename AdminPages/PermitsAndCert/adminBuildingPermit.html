@@ -95,6 +95,7 @@
             <div class="contentContainer">
                 <h4 class="text-center">Building Permit</h4>
                 <!-- Bootstrap Table -->
+                
                 <div class="container">
                     <h5>Profile</h5>
                     <div class="row mt-4">
@@ -107,6 +108,7 @@
                             <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
+             <div id="buildingPermitDiv">
                     <table class="table">
                         <thead>
                             <tr>
@@ -120,6 +122,10 @@
                             
                         </tbody>
                     </table>
+
+                    </div>
+
+            
    <!-- Application Modal -->
 <div class="modal fade" id="buildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
@@ -164,10 +170,28 @@
                             </div>
                         </div>
                         <div class="row g-3">
-                            <div class="col-md-12">
-                                <input type="text" class="form-control" id="ownerName" placeholder="Owner/Applicant (Last Name, First Name, MI)">
+                            <label for="ownerName">Owner/Applicant Name:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name">
                             </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
+                            </div>
+
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
+                            </div>
+
                         </div>
+
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phoneNumber" required>
+                          </div>
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <input type="text" class="form-control" id="addressTelNo" placeholder="Address and Tel No.">
@@ -444,7 +468,11 @@
             if (currentStep === 2) {
                 const buildingPermitNo = document.getElementById('buildingPermitNo').value;
                 const issuedOn = document.getElementById('basic-url').value;
-                const ownerName = document.getElementById('ownerName').value;
+                const ownerLastName = document.getElementById('ownerLastName').value;
+                const ownerFirstName = document.getElementById('ownerFirstName').value;
+                const ownerMiddleName = document.getElementById('ownerMiddleName').value;
+                const ownerMaidenName = document.getElementById('ownerMaidenName').value;
+
                 const addressTelNo = document.getElementById('addressTelNo').value;
                 const projectLocation = document.getElementById('projectLocation').value;
                 const hsdFormNo = document.getElementById('hsdFormNo').value;
@@ -455,7 +483,7 @@
                 // Populate the Order of Payment modal
                 document.getElementById('orderBuildingPermitNo').textContent = buildingPermitNo;
                 document.getElementById('orderIssuedOn').textContent = issuedOn;
-                document.getElementById('orderOwnerName').textContent = ownerName;
+                document.getElementById('orderOwnerName').textContent =ownerFirstName +" "+ ownerMiddleName+" " +ownerLastName +" "+ ownerMaidenName;
                 document.getElementById('orderAddressTelNo').textContent = addressTelNo;
                 document.getElementById('orderProjectLocation').textContent = projectLocation;
                 document.getElementById('orderHSDFormNo').textContent = hsdFormNo;

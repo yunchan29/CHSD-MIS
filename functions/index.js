@@ -10,10 +10,34 @@
 const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const twilio = require('twilio');
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+admin.initializeApp();
+
+// Twilio credentials
+const accountSid = 'AC61400b5e5c92dcfba1ff121492f04bd8';  // Replace with your Twilio Account SID
+const authToken = 'e01b5e15c2ede3b0098f7df260ec3af2';    // Replace with your Twilio Auth Token
+const twilioNumber = '+13186978270';  // Replace with your Twilio phone number
+
+const client = new twilio(accountSid, authToken);
+
+exports.sendSmsNotification = functions.https.onCall((data, context) => {
+  const { phoneNumber, message } = data;
+
+  return client.messages.create({
+    body: message,
+    to: phoneNumber,
+    from: twilioNumber
+  })
+  .then((message) => {
+    console.log(`Message sent: ${message.sid}`);
+    return { success: true };
+  })
+  .catch((error) => {
+    console.error("Error sending message:", error);
+    return { success: false, error: error.message };
+  });
+});
+

@@ -122,17 +122,20 @@ async function handleLogout(event) {
 }
 
 // Add new building permit
-// Add new building permit
 async function addBuildingPermit(event) {
   event.preventDefault();
-  
+
   // Retrieve form values
   const buildingPermitNo = document.getElementById('buildingPermitNo').value;
   const issuedOn = document.getElementById('basic-url').value;
-  const ownerName = document.getElementById('ownerName').value;
   const addressTelNo = document.getElementById('addressTelNo').value;
   const projectLocation = document.getElementById('projectLocation').value;
   const hsdFormNo = document.getElementById('hsdFormNo').value;
+  const ownerLastName = document.getElementById('ownerLastName').value;
+  const ownerFirstName = document.getElementById('ownerFirstName').value;
+  const ownerMiddleName = document.getElementById('ownerMiddleName').value;
+  const ownerMaidenName = document.getElementById('ownerMaidenName').value;
+  const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
 
   // Retrieve selected checkboxes for scope of work and project justification
   const scopeOfWork = [];
@@ -184,50 +187,99 @@ async function addBuildingPermit(event) {
       projectJustification
     });
     alert("Profile added successfully!");
+    window.location.reload();
     console.log("Document successfully added to Firestore");
+
+   //miskona
+    await sendSmsNotification(addressTelNo, 'Your building permit application has been received.');
   } catch (error) {
     console.error("Error adding document: ", error);
     alert("Failed to add profile: " + error.message);
   }
 }
 
-
-// Load profiles from Firestore
+//I miss
 async function loadProfiles() {
   const querySnapshot = await getDocs(collection(db, "buildingPermits"));
-  const tableBody = document.querySelector("tbody");
+  const buildingPermitDiv = document.getElementById("buildingPermitDiv");
+  if (!buildingPermitDiv) {
+    console.error("buildingPermitDiv not found in the DOM.");
+    return;
+  }
+  const tableBody = buildingPermitDiv.querySelector("tbody");
+  if (!tableBody) {
+    console.error("Table body not found in buildingPermitDiv.");
+    return;
+  }
   tableBody.innerHTML = ""; // Clear existing rows
 
   querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    const row = document.createElement("tr");
+      const data = doc.data();
+      const row = document.createElement("tr");
 
-    row.innerHTML = `
-      <td>${data.ownerName}</td>
-      <td>${data.issuedOn}</td>
-      <td>
-        <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${doc.id}">
-          <option value="Pending" ${data.status === "Pending" ? 'selected' : ''}>Pending</option>
-          <option value="Processing" ${data.status === "Processing" ? 'selected' : ''}>Processing</option>
-          <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''}>To Pay</option>
-          <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''}>For Approval</option>
-          <option value="For Release" ${data.status === "Release" ? 'selected' : ''}>For Release</option>
-          <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''}>Claimed</option>
-        </select>
-      </td>
-      <td>
-        <a class="btn btn-success text-white save-btn" data-id="${doc.id}">Save</a>
-        <a class="btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1">Remarks</a>
-        <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
-        <button class="btn btn-danger text-white archive-btn" data-id="${doc.id}">Archive</button>
-      </td>
-    `;
-    tableBody.appendChild(row);
+      row.innerHTML = `
+          <td>${data.ownerName}</td>
+          <td>${data.issuedOn}</td>
+          <td>
+              <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${doc.id}">
+                  <option value="Pending" ${data.status === "Pending" ? 'selected' : ''}>Pending</option>
+                  <option value="Processing" ${data.status === "Processing" ? 'selected' : ''}>Processing</option>
+                  <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''}>To Pay</option>
+                  <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''}>For Approval</option>
+                  <option value="For Release" ${data.status === "Release" ? 'selected' : ''}>For Release</option>
+                  <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''}>Claimed</option>
+              </select>
+          </td>
+          <td>
+              <a class="btn btn-success text-white save-btn" data-id="${doc.id}">Save</a>
+              <a class="btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1">Remarks</a>
+              <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
+              <button class="btn btn-danger text-white archive-btn" data-id="${doc.id}">Archive</button>
+          </td>
+      `;
+      tableBody.appendChild(row);
   });
 
   // Attach event listeners to save and archive buttons after profiles are loaded
   attachSaveButtonListeners();
   attachArchiveButtonListeners();
+}
+
+// Example usage: call loadProfiles when the page is ready or when needed
+document.addEventListener("DOMContentLoaded", () => {
+  console.log('DOM fully loaded and parsed in firebase.js');
+  attachEventListeners(); // Attach event listeners to forms and buttons
+  monitorAuthState(); // Monitor authentication state changes
+  loadProfiles(); // Load profiles from Firestore
+});
+
+// Function to attach event listeners to forms and buttons
+function attachEventListeners() {
+  const adminLoginForm = document.getElementById('admin-login-form');
+  const userLoginForm = document.getElementById('user-login-form');
+  const adminLogoutButton = document.getElementById('admin-logout-btn');
+  const userLogoutButton = document.getElementById('user-logout-btn');
+  const addBuildingPermitButton = document.getElementById('submitProfile');
+
+  if (adminLoginForm) {
+    adminLoginForm.addEventListener('submit', handleAdminLogin);
+  }
+
+  if (userLoginForm) {
+    userLoginForm.addEventListener('submit', handleUserLogin);
+  }
+
+  if (adminLogoutButton) {
+    adminLogoutButton.addEventListener('click', handleLogout);
+  }
+
+  if (userLogoutButton) {
+    userLogoutButton.addEventListener('click', handleLogout);
+  }
+
+  if (addBuildingPermitButton) {
+    addBuildingPermitButton.addEventListener('click', addBuildingPermit);
+  }
 }
 
 // Attach event listeners to Save buttons
@@ -310,40 +362,25 @@ async function handleSaveBuildingPermit(event) {
   await loadProfiles();
 }
 
-// Initialize Firebase and set up event listeners
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM fully loaded and parsed in firebase.js');
-  attachEventListeners(); // Attach event listeners to forms and buttons
-  monitorAuthState(); // Monitor authentication state changes
-  loadProfiles(); // Load profiles from Firestore
-});
+// Function to send SMS notification (dummy implementation)
+async function sendSmsNotification(phoneNumber, message) {
+  try {
+    const response = await fetch('http://localhost:3000/send-sms', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ phoneNumber, message }),
+      mode: 'cors', 
+    });
 
-// Function to attach event listeners to forms and buttons
-function attachEventListeners() {
-  const adminLoginForm = document.getElementById('admin-login-form');
-  const userLoginForm = document.getElementById('user-login-form');
-  const adminLogoutButton = document.getElementById('admin-logout-btn');
-  const userLogoutButton = document.getElementById('user-logout-btn');
-  const addBuildingPermitButton = document.getElementById('submitProfile');
-
-  if (adminLoginForm) {
-    adminLoginForm.addEventListener('submit', handleAdminLogin);
-  }
-
-  if (userLoginForm) {
-    userLoginForm.addEventListener('submit', handleUserLogin);
-  }
-
-  if (adminLogoutButton) {
-    adminLogoutButton.addEventListener('click', handleLogout);
-  }
-
-  if (userLogoutButton) {
-    userLogoutButton.addEventListener('click', handleLogout);
-  }
-
-  if (addBuildingPermitButton) {
-    addBuildingPermitButton.addEventListener('click', addBuildingPermit);
+    if (response.ok) {
+      console.log('SMS sent successfully!');
+    } else {
+      console.error('Failed to send SMS.');
+    }
+  } catch (error) {
+    console.error('Error:', error);
   }
 }
 

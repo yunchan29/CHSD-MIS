@@ -28,6 +28,28 @@
         "firebase-debug.*.log",
         "*.local"
       ]
+    },
+    {
+      "source": "hsdmis",
+      "codebase": "hsdmis",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    },
+    {
+      "source": "hsd-mis",
+      "codebase": "hsd-mis",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
     }
   ],
   "hosting": {
