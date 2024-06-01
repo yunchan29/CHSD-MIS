@@ -438,20 +438,20 @@ async function loadChatMessages() {
       const uid = data.uid;
 
       try {
-        const permitQuerySnapshot = await getDocs(query(collection(db, "buildingPermits"), where("ownerUid", "==", uid)));
-        if (!permitQuerySnapshot.empty) {
-          const permitDoc = permitQuerySnapshot.docs[0];
-          const permitData = permitDoc.data();
-          const ownerName = permitData.ownerName;
+        const permitRef = doc(db, "buildingPermits", uid); // Correct usage of doc
+        const permitSnapshot = await getDoc(permitRef);
 
+        if (permitSnapshot.exists()) {
+          const permitData = permitSnapshot.data();
+          const ownerName = permitData.ownerName;
           return { ownerName, message: data.message };
         } else {
           console.log(`No building permit found for ownerUid: ${uid}`);
-          return { ownerName: 'Unknown', message: data.message }; // Fallback if no permit found
+          return { ownerName: 'User', message: data.message }; // Fallback if no permit found
         }
       } catch (error) {
         console.error("Error fetching building permit:", error);
-        return { ownerName: 'Unknown', message: data.message }; // Error fallback
+        return { ownerName: 'User', message: data.message }; // Error fallback
       }
     });
 
@@ -464,7 +464,6 @@ async function loadChatMessages() {
     });
   });
 }
-
 
 
 // Initialize Firebase and set up event listeners
