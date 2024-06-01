@@ -44,7 +44,9 @@ html,body
     box-shadow: -3px 3px 10px 3px #dddddd;
 }
 
-
+.contentWrap{
+    margin-top:6%;
+}
 
 .content {
     flex: 1; 
@@ -615,3 +617,17 @@ border-radius: 12px;
     align-self: flex-start;
     text-align: left;
 }
+
+.aboutWrap{
+    width:60%;
+    text-indent: 5px;
+    text-align: center;
+    padding:5%;
+    margin-top:30px;
+}
+
+.hsdLogo{
+    width:100px;
+}
+
+

@@ -426,45 +426,21 @@ async function sendMessage(event) {
   }
 }
 
+// Load chat messages
 async function loadChatMessages() {
   const chatMessagesQuery = query(collection(db, "chatMessages"), orderBy("timestamp"));
   const chatMessagesDiv = document.getElementById("chat-messages");
 
-  onSnapshot(chatMessagesQuery, async (snapshot) => {
+  onSnapshot(chatMessagesQuery, (snapshot) => {
     chatMessagesDiv.innerHTML = '';
-
-    const messagePromises = snapshot.docs.map(async (doc) => {
+    snapshot.forEach((doc) => {
       const data = doc.data();
-      const uid = data.uid;
-
-      try {
-        const permitRef = doc(db, "buildingPermits", uid); // Correct usage of doc
-        const permitSnapshot = await getDoc(permitRef);
-
-        if (permitSnapshot.exists()) {
-          const permitData = permitSnapshot.data();
-          const ownerName = permitData.ownerName;
-          return { ownerName, message: data.message };
-        } else {
-          console.log(`No building permit found for ownerUid: ${uid}`);
-          return { ownerName: 'User', message: data.message }; // Fallback if no permit found
-        }
-      } catch (error) {
-        console.error("Error fetching building permit:", error);
-        return { ownerName: 'User', message: data.message }; // Error fallback
-      }
-    });
-
-    const messages = await Promise.all(messagePromises);
-
-    messages.forEach(({ ownerName, message }) => {
       const messageElement = document.createElement('div');
-      messageElement.textContent = `${ownerName}: ${message}`;
+      messageElement.textContent = `${data.uid}: ${data.message}`;
       chatMessagesDiv.appendChild(messageElement);
     });
   });
 }
-
 
 // Initialize Firebase and set up event listeners
 document.addEventListener('DOMContentLoaded', () => {
