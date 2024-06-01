@@ -10,16 +10,12 @@
     <link rel="stylesheet" href="/Stylesheets/custom.css"> <!-- Link to your custom CSS file -->
 </head>
 <body>
-    <div class="main-container d-flex">
+    <div class="main-container contentWrap d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center">
                 <!-- Empty avatar icon -->
-                <div class="empty-avatar">
-                    <a class="navbar-brand fs-4" href="#">
-                        <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="d-inline-block align-text-top">
-                    </a>
-                </div>
-                <h4 class="fs-4"><span class="text-dark">City Housing and Settlements Department</span></h4>
+               
+               
                 <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
@@ -31,32 +27,7 @@
         </div>
 
         <div class="content">
-            <div class="adminHeader">
-                <div class="container-fluid bg-dark py-3" id="adminDashHeader">
-                    <div class="container">
-                        <div class="row align-items-center">
-                            <div class="col text-start text-black">
-                                <p><span id="date"></span> | <span id="time"></span></p>
-                            </div>
-                            <div class="col text-end">
-                                <!-- Avatar with Bootstrap Dropdown -->
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle" href="#" role="button" id="avatarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="/resources/pictures/avatar.jpg" alt="Avatar" width="40" height="40" class="rounded-circle">
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="avatarDropdown">
-                                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li class="sideNav"><a  id="admin-logout-btn" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
-
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
             <div class="contentContainer">
                
                <!-- Bootstrap Table -->
@@ -432,7 +403,7 @@
       </div>
   </div>
 </div>
-
+<script id="replace_with_navbar" src="nav5.js"></script>
 <script type="module" src="/Database/firebase.js">
 </script>
 

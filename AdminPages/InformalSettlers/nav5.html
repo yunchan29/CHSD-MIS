@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>External Nav Bar</title>
+    <link rel="stylesheet" href="/Stylesheets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .deleteBtn {
+            display: none !important;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</head>
+<body>
+<!--Navigation Bar-->
+<nav class="navigationBar navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand fs-4" href="index.html">
+            <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="d-inline-block align-text-top">
+        </a>
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center">
+            <h5 class="navBrandLogo text-center text-lg-start fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+            </div>
+            <!--Burger btn-->
+            <button class="navbar-toggler shadow-none border-0 dark-burger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        
+
+        <!--Sidebar-->
+        <div class="sidebar offcanvas offcanvas-start" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+            <div class="offcanvas-header">
+                <!--Header-->
+                <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel"><img src="/resources/pictures/calambaLogo.png" alt="Logo" width="80" height="80" class="d-inline-block align-text-top"></h5>
+                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <!--Nav body-->
+            <div class="offcanvas-body d-flex flex-column flex-lg-row p-4 p-lg-0">
+                <ul class="navbar-nav justify-content-end fs-5 flex-grow-1 pe-3">
+                    <div class="row align-items-center">
+                        <div class="col text-end">
+                            <!-- Avatar with Bootstrap Dropdown -->
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" href="#" role="button" id="avatarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="/resources/pictures/avatar.jpg" alt="Avatar" width="40" height="40" class="rounded-circle">
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="avatarDropdown">
+                                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li class="sideNav"><a id="admin-logout-btn" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+<script src="/Database/firebase.js" type="module"></script>
+</body>
+</html>
