@@ -252,17 +252,7 @@
     <script>
 
 
-        // Function to update date and time
-        function updateTime() {
-            var now = new Date();
-            var date = now.toDateString();
-            var time = now.toLocaleTimeString();
-            document.getElementById('date').textContent = date;
-            document.getElementById('time').textContent = time;
-        }
-
-        // Update time every second
-        setInterval(updateTime, 1000);
+       
 
         document.addEventListener('DOMContentLoaded', () => {
             let currentStep = 1; // Start from the first step
