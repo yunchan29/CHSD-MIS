@@ -48,6 +48,12 @@ html,body
     margin-top:6%;
 }
 
+@media(max-width:991px){
+.contentWrap{
+    margin-top: 20%;
+}
+}
+
 .content {
     flex: 1; 
     padding: 20px; 
@@ -492,7 +498,7 @@ border-radius: 12px;
 
 .homepage{
   
-    padding:8%;
+    padding:7%;
     overflow: scroll;
     
 }
