@@ -62,7 +62,7 @@
             </div>
             <ul class="sideBarList list-unstyled px-2">
                 <li class="sideNav"><a href="/ClientPages/clientDashboard.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-                <li class="sideNav active"><a href="clientProfile.html" class="text-decoration-none"><i class="fa-solid fa-comment"></i> Chat</a></li>
+                <li class="sideNav active"><a href="clientProfile.html" class="text-decoration-none"><i class="fa-solid fa-user"></i> Profile</a></li>
                 <li class="sideNav" id="logoutButton"><a href="#" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
                
             </ul>
@@ -87,18 +87,84 @@
                 </div>
             </div>
             <div class="contentContainer">
-                <h4 class="text-start">Message</h4>
-                <!-- Add this HTML to your chat page -->
-                <div id="chat-container" class="client-chat">
-                    <div id="chat-messages" class="messages"></div>
-                    <form id="send-message-form">
-                        <input type="text" id="message-input" placeholder="Type your message here...">
-                        <button type="submit">Send</button>
-                    </form>
+                <h4 class="text-start">Profile</h4>
+                <div class="avatar-placeholder">
+                    <img src="/resources/pictures/avatar3.png">
+                    <div class="plus-button">+</div>
                 </div>
-            
 
-               
+                <!--Content-->
+                <h6>General Information</h6>
+                <div class="row">
+                    <div class="col">
+                        <label for="clientID">Client ID</label>
+                    <input type="text" class="form-control" title="clientID" placeholder="232345">
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="lastName">Last Name</label>
+                      <input type="text" class="form-control" title="lastName" placeholder="Shift">
+                        </div>
+                        <div class="col">
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" title="firstName" placeholder="Taylor">
+                        </div>
+                        <div class="col">
+                            <label for="middleName">Middle Name</label>
+                            <input type="text" class="form-control" title="middleName" placeholder="Batumbakal">
+                        </div>
+
+                        <h6>Contact</h6>
+                        <div class="row">
+                            <div class="col">
+                                <label for="mobileNumber">Mobile Number</label>
+                               <input type="text" class="form-control" title="mobileNumber" placeholder="9XX-XXXXXXXX">
+                            </div>
+                            <div class="col">
+                                <label for="telephoneNumber">Telephone Number</label>
+                            <input type="text" class="form-control" title="telephoneNumber" placeholder="XXX-XXXX">
+                            </div>
+                        </div>
+                        <h6>Address</h6>
+                        <div class="row">
+                          <div class="col">
+                            <label for="houseNo">House No.</label>
+                            <input type="text" class="form-control" title="houseNo" placeholder="454">
+                          </div>
+                          <div class="col">
+                            <label for="houseNo">Street/Village</label>
+                            <input type="text" class="form-control" title="streetVillage" placeholder="Cornelia St.">
+                          </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="province">Province</label>
+                             <input type="text" class="form-control" title="province" placeholder="Laguna">
+                            </div>
+                            <div class="col">
+                                <label for="city">City/Municipality</label>
+                             <input type="text" class="form-control" title="city" placeholder="Calamba City">
+                            </div>
+                        </div>
+                        <div class="row">
+                           <div class="col">
+                            <label for="barangay">Barangay</label>
+                            <input type="text" class="form-control" title="barangay" placeholder="San Jose">  
+                           </div>                    
+                           <div class="col">
+                            <label for="zipCode">Zip Code</label>
+                            <input type="text" class="form-control" title="zipCode" placeholder="4027">  
+                           </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a class="btn btn-danger text-white">Cancel</a>
+                           <a class="btn btn-primary text-white">Apply Changes</a>
+                           </div>
+                    </div>
+                           
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
   

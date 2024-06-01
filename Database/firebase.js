@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Your Firebase configuration object
 const firebaseConfig = {
@@ -136,6 +136,8 @@ async function addBuildingPermit(event) {
   const ownerMiddleName = document.getElementById('ownerMiddleName').value;
   const ownerMaidenName = document.getElementById('ownerMaidenName').value;
   const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
+  const ownerEmail = document.getElementById('ownerEmail').value; // Add email field to your form
+  const defaultPassword = 'sample'; // Set a default password or generate one dynamically
 
   // Retrieve selected checkboxes for scope of work and project justification
   const scopeOfWork = [];
@@ -172,10 +174,16 @@ async function addBuildingPermit(event) {
     projectLocation,
     hsdFormNo,
     scopeOfWork,
-    projectJustification
+    projectJustification,
+    ownerEmail // Log the owner's email for debugging
   });
 
   try {
+    // Create a new user in Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, ownerEmail, defaultPassword);
+    const user = userCredential.user;
+
+    // Add the building permit document to Firestore and link the user ID
     await addDoc(collection(db, "buildingPermits"), {
       buildingPermitNo,
       issuedOn,
@@ -184,21 +192,23 @@ async function addBuildingPermit(event) {
       projectLocation,
       hsdFormNo,
       scopeOfWork,
-      projectJustification
+      projectJustification,
+      ownerUid: user.uid // Link the user ID to the building permit
     });
+
     alert("Profile added successfully!");
     window.location.reload();
-    console.log("Document successfully added to Firestore");
+    console.log("Document successfully added to Firestore and user account created");
 
-   //miskona
+    // Send SMS notification
     await sendSmsNotification(addressTelNo, 'Your building permit application has been received.');
   } catch (error) {
-    console.error("Error adding document: ", error);
-    alert("Failed to add profile: " + error.message);
+    console.error("Error adding document or creating user: ", error);
+    alert("Failed to add profile or create user: " + error.message);
   }
 }
 
-//I miss
+// Load profiles from Firestore
 async function loadProfiles() {
   const querySnapshot = await getDocs(collection(db, "buildingPermits"));
   const buildingPermitDiv = document.getElementById("buildingPermitDiv");
@@ -260,7 +270,8 @@ function attachEventListeners() {
   const adminLogoutButton = document.getElementById('admin-logout-btn');
   const userLogoutButton = document.getElementById('user-logout-btn');
   const addBuildingPermitButton = document.getElementById('submitProfile');
-
+  const sendMessageForm = document.getElementById('send-message-form');
+  
   if (adminLoginForm) {
     adminLoginForm.addEventListener('submit', handleAdminLogin);
   }
@@ -279,6 +290,10 @@ function attachEventListeners() {
 
   if (addBuildingPermitButton) {
     addBuildingPermitButton.addEventListener('click', addBuildingPermit);
+  }
+
+  if (sendMessageForm) {
+    sendMessageForm.addEventListener('submit', sendMessage);
   }
 }
 
@@ -384,10 +399,79 @@ async function sendSmsNotification(phoneNumber, message) {
   }
 }
 
+// Chat functionality
+
+// Send message
+// Send message
+async function sendMessage(event) {
+  event.preventDefault();
+
+  const messageInput = document.getElementById('message-input');
+  const message = messageInput.value;
+  const user = auth.currentUser;
+
+  if (message.trim() === '') {
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "chatMessages"), {
+      uid: user.uid,
+      message: message,
+      timestamp: new Date()
+    });
+    messageInput.value = '';
+  } catch (error) {
+    console.error("Error sending message: ", error);
+  }
+}
+
+async function loadChatMessages() {
+  const chatMessagesQuery = query(collection(db, "chatMessages"), orderBy("timestamp"));
+  const chatMessagesDiv = document.getElementById("chat-messages");
+
+  onSnapshot(chatMessagesQuery, async (snapshot) => {
+    chatMessagesDiv.innerHTML = '';
+
+    const messagePromises = snapshot.docs.map(async (doc) => {
+      const data = doc.data();
+      const uid = data.uid;
+
+      try {
+        const permitQuerySnapshot = await getDocs(query(collection(db, "buildingPermits"), where("ownerUid", "==", uid)));
+        if (!permitQuerySnapshot.empty) {
+          const permitDoc = permitQuerySnapshot.docs[0];
+          const permitData = permitDoc.data();
+          const ownerName = permitData.ownerName;
+
+          return { ownerName, message: data.message };
+        } else {
+          console.log(`No building permit found for ownerUid: ${uid}`);
+          return { ownerName: 'Unknown', message: data.message }; // Fallback if no permit found
+        }
+      } catch (error) {
+        console.error("Error fetching building permit:", error);
+        return { ownerName: 'Unknown', message: data.message }; // Error fallback
+      }
+    });
+
+    const messages = await Promise.all(messagePromises);
+
+    messages.forEach(({ ownerName, message }) => {
+      const messageElement = document.createElement('div');
+      messageElement.textContent = `${ownerName}: ${message}`;
+      chatMessagesDiv.appendChild(messageElement);
+    });
+  });
+}
+
+
+
 // Initialize Firebase and set up event listeners
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM fully loaded and parsed in firebase.js');
   attachEventListeners(); // Attach event listeners to forms and buttons
   monitorAuthState(); // Monitor authentication state changes
   loadProfiles(); // Load profiles from Firestore
+  loadChatMessages(); // Load chat messages from Firestore
 });
