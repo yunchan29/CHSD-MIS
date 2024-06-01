@@ -34,7 +34,7 @@ html,body
     background: url(/resources/pictures/sidebar_bg.png);
     width: 100%; 
     max-width:250px;
-    height:100vh;
+    height:80vh;
     color:black !important;
     background-size:cover;
     background-repeat: no-repeat;
