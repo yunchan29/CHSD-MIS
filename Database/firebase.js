@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Your Firebase configuration object
+
 const firebaseConfig = {
   apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
   authDomain: "chsd-mis.firebaseapp.com",
@@ -13,14 +13,14 @@ const firebaseConfig = {
   measurementId: "G-XBQTQFRLJ5"
 };
 
-// Initialize Firebase app with configuration
+
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services
-const auth = getAuth(app); // Get the Auth service for authentication
-const db = getFirestore(app); // Get the Firestore service for database operations
 
-// Check user roles in Firestore
+const auth = getAuth(app); 
+const db = getFirestore(app); 
+
+
 async function checkUserRole(userUid) {
   try {
     const adminPCRef = doc(db, 'roles', 'adminPC');
@@ -38,7 +38,7 @@ async function checkUserRole(userUid) {
   }
 }
 
-// Handle admin login form submission
+
 async function handleAdminLogin(event) {
   event.preventDefault();
   const email = document.getElementById('admin-email').value;
@@ -69,7 +69,7 @@ async function handleAdminLogin(event) {
   }
 }
 
-// Handle user login form submission
+
 async function handleUserLogin(event) {
   event.preventDefault();
   const email = document.getElementById('user-email').value;
@@ -81,7 +81,7 @@ async function handleUserLogin(event) {
 
     console.log("User signed in:", user.uid);
 
-    // Redirect to user dashboard
+
     window.location.href = "/ClientPages/clientDashboard.html";
   } catch (error) {
     console.error("Error signing in:", error.code, error.message);
@@ -89,7 +89,6 @@ async function handleUserLogin(event) {
   }
 }
 
-// Monitor authentication state changes
 function monitorAuthState() {
   onAuthStateChanged(auth, (user) => {
     const userInfo = document.getElementById('user-info');
@@ -109,7 +108,7 @@ function monitorAuthState() {
   });
 }
 
-// Handle user logout
+
 async function handleLogout(event) {
   event.preventDefault();
 
@@ -121,11 +120,11 @@ async function handleLogout(event) {
   }
 }
 
-// Add new building permit
+
 async function addBuildingPermit(event) {
   event.preventDefault();
 
-  // Retrieve form values
+  
   const buildingPermitNo = document.getElementById('buildingPermitNo').value;
   const issuedOn = document.getElementById('basic-url').value;
   const addressTelNo = document.getElementById('addressTelNo').value;
@@ -136,10 +135,10 @@ async function addBuildingPermit(event) {
   const ownerMiddleName = document.getElementById('ownerMiddleName').value;
   const ownerMaidenName = document.getElementById('ownerMaidenName').value;
   const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
-  const ownerEmail = document.getElementById('ownerEmail').value; // Add email field to your form
-  const defaultPassword = 'sample'; // Set a default password or generate one dynamically
+  const ownerEmail = document.getElementById('ownerEmail').value; 
+  const defaultPassword = 'sample'; 
 
-  // Retrieve selected checkboxes for scope of work and project justification
+  
   const scopeOfWork = [];
   if (document.getElementById('option1').checked) {
     scopeOfWork.push(document.getElementById('option1').nextElementSibling.textContent);
@@ -165,7 +164,7 @@ async function addBuildingPermit(event) {
     projectJustification.push(document.getElementById('justification3').nextElementSibling.textContent);
   }
 
-  // Log the retrieved data for debugging
+  
   console.log("Form Data:", {
     buildingPermitNo,
     issuedOn,
@@ -175,15 +174,15 @@ async function addBuildingPermit(event) {
     hsdFormNo,
     scopeOfWork,
     projectJustification,
-    ownerEmail // Log the owner's email for debugging
+    ownerEmail 
   });
 
   try {
-    // Create a new user in Firebase Auth
+    
     const userCredential = await createUserWithEmailAndPassword(auth, ownerEmail, defaultPassword);
     const user = userCredential.user;
 
-    // Add the building permit document to Firestore and link the user ID
+    
     await addDoc(collection(db, "buildingPermits"), {
       buildingPermitNo,
       issuedOn,
@@ -193,14 +192,14 @@ async function addBuildingPermit(event) {
       hsdFormNo,
       scopeOfWork,
       projectJustification,
-      ownerUid: user.uid // Link the user ID to the building permit
+      ownerUid: user.uid
     });
 
     alert("Profile added successfully!");
     window.location.reload();
     console.log("Document successfully added to Firestore and user account created");
 
-    // Send SMS notification
+    
     await sendSmsNotification(addressTelNo, 'Your building permit application has been received.');
   } catch (error) {
     console.error("Error adding document or creating user: ", error);
@@ -208,7 +207,7 @@ async function addBuildingPermit(event) {
   }
 }
 
-// Load profiles from Firestore
+
 async function loadProfiles() {
   const querySnapshot = await getDocs(collection(db, "buildingPermits"));
   const buildingPermitDiv = document.getElementById("buildingPermitDiv");
@@ -221,7 +220,7 @@ async function loadProfiles() {
     console.error("Table body not found in buildingPermitDiv.");
     return;
   }
-  tableBody.innerHTML = ""; // Clear existing rows
+  tableBody.innerHTML = ""; 
 
   querySnapshot.forEach((doc) => {
       const data = doc.data();
@@ -250,20 +249,20 @@ async function loadProfiles() {
       tableBody.appendChild(row);
   });
 
-  // Attach event listeners to save and archive buttons after profiles are loaded
+
   attachSaveButtonListeners();
   attachArchiveButtonListeners();
 }
 
-// Example usage: call loadProfiles when the page is ready or when needed
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log('DOM fully loaded and parsed in firebase.js');
-  attachEventListeners(); // Attach event listeners to forms and buttons
-  monitorAuthState(); // Monitor authentication state changes
-  loadProfiles(); // Load profiles from Firestore
+  attachEventListeners();
+  monitorAuthState(); 
+  loadProfiles(); 
 });
 
-// Function to attach event listeners to forms and buttons
+
 function attachEventListeners() {
   const adminLoginForm = document.getElementById('admin-login-form');
   const userLoginForm = document.getElementById('user-login-form');
@@ -297,7 +296,7 @@ function attachEventListeners() {
   }
 }
 
-// Attach event listeners to Save buttons
+
 function attachSaveButtonListeners() {
   const saveButtons = document.querySelectorAll('.save-btn');
   saveButtons.forEach(button => {
@@ -305,7 +304,7 @@ function attachSaveButtonListeners() {
   });
 }
 
-// Attach event listeners to Archive buttons
+
 function attachArchiveButtonListeners() {
   const archiveButtons = document.querySelectorAll('.archive-btn');
   archiveButtons.forEach(button => {
@@ -313,17 +312,17 @@ function attachArchiveButtonListeners() {
   });
 }
 
-// Handle archive building permit button click
+
 async function handleArchiveBuildingPermit(event) {
   event.preventDefault();
 
   const buildingPermitId = event.target.getAttribute('data-id');
 
-  // Display confirmation dialog
+  
   const confirmed = confirm("Are you sure you want to archive this document?");
   
   if (!confirmed) {
-    return; // Exit if user cancels
+    return; 
   }
 
   try {
@@ -333,13 +332,13 @@ async function handleArchiveBuildingPermit(event) {
     if (buildingPermitSnapshot.exists()) {
       const buildingPermitData = buildingPermitSnapshot.data();
       
-      // Add the document to the archived collection
+  
       await setDoc(doc(db, "archivedBuildingPermits", buildingPermitId), buildingPermitData);
       
-      // Delete the document from the current collection
+    
       await deleteDoc(buildingPermitRef);
 
-      // Remove the row from the UI after archiving
+      
       event.target.closest('tr').remove();
 
       console.log("Document archived successfully!");
@@ -353,13 +352,13 @@ async function handleArchiveBuildingPermit(event) {
   }
 }
 
-// Handle save building permit button click
+
 async function handleSaveBuildingPermit(event) {
   event.preventDefault();
 
   const buildingPermitId = event.target.getAttribute('data-id');
   const row = event.target.closest('tr');
-  const statusSelect = row.querySelector('.status-select'); // Select within the same row
+  const statusSelect = row.querySelector('.status-select'); 
 
   const status = statusSelect.value;
 
@@ -373,11 +372,11 @@ async function handleSaveBuildingPermit(event) {
     console.error("Error updating document: ", error);
     alert("Failed to update status: " + error.message);
   }
-  // Optional: Reload profiles after update
+  
   await loadProfiles();
 }
 
-// Function to send SMS notification (dummy implementation)
+
 async function sendSmsNotification(phoneNumber, message) {
   try {
     const response = await fetch('http://localhost:3000/send-sms', {
@@ -399,10 +398,6 @@ async function sendSmsNotification(phoneNumber, message) {
   }
 }
 
-// Chat functionality
-
-// Send message
-// Send message
 async function sendMessage(event) {
   event.preventDefault();
 
@@ -426,27 +421,26 @@ async function sendMessage(event) {
   }
 }
 
-// Load chat messages
-async function loadChatMessages() {
-  const chatMessagesQuery = query(collection(db, "chatMessages"), orderBy("timestamp"));
-  const chatMessagesDiv = document.getElementById("chat-messages");
+//async function loadChatMessages() {
+  //const chatMessagesQuery = query(collection(db, "chatMessages"), orderBy("timestamp"));
+  //const chatMessagesDiv = document.getElementById("chat-messages");
 
-  onSnapshot(chatMessagesQuery, (snapshot) => {
-    chatMessagesDiv.innerHTML = '';
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      const messageElement = document.createElement('div');
-      messageElement.textContent = `${data.uid}: ${data.message}`;
-      chatMessagesDiv.appendChild(messageElement);
-    });
-  });
-}
+  //onSnapshot(chatMessagesQuery, (snapshot) => {
+   // chatMessagesDiv.innerHTML = '';
+    //snapshot.forEach((doc) => {
+     // const data = doc.data();
+      //const messageElement = document.createElement('div');
+     // messageElement.textContent = `${data.uid}: ${data.message}`;
+      //chatMessagesDiv.appendChild(messageElement);
+    //});
+  //});
+//}
 
-// Initialize Firebase and set up event listeners
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM fully loaded and parsed in firebase.js');
-  attachEventListeners(); // Attach event listeners to forms and buttons
-  monitorAuthState(); // Monitor authentication state changes
-  loadProfiles(); // Load profiles from Firestore
-  loadChatMessages(); // Load chat messages from Firestore
+  attachEventListeners(); 
+  monitorAuthState(); 
+  loadProfiles(); 
+  loadChatMessages(); 
 });
