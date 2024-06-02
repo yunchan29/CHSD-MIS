@@ -442,5 +442,5 @@ document.addEventListener('DOMContentLoaded', () => {
   attachEventListeners(); 
   monitorAuthState(); 
   loadProfiles(); 
-  loadChatMessages(); 
+ // loadChatMessages(); 
 });
