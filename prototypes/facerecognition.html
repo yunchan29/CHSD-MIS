@@ -9,22 +9,33 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
-    <h1>Face Recognition Prototype</h1>
-    <video id="video" width="720" height="560" autoplay muted></video>
-    
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Face Recognition Prototype</h1>
+        <div class="text-center">
+            <button id="startButton" class="btn btn-primary">Start Face Recognition</button>
+        </div>
+        <div class="row mt-4 justify-content-center">
+            <div class="col-md-8">
+                <video id="video" width="100%" height="auto" autoplay muted style="max-width: 100%;"></video>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-pw5kU3y9RGCX9jMeFPrY3nT4R1nJwiUy6XLZt2Z/6VRRI1j0U7fCZ0T6v7UsPlK/" crossorigin="anonymous"></script>
     
-
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const firebaseConfig = {
+      
+const firebaseConfig = {
   apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
   authDomain: "chsd-mis.firebaseapp.com",
   projectId: "chsd-mis",
@@ -34,21 +45,26 @@ import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, g
   measurementId: "G-XBQTQFRLJ5"
 };
 
-const app = initializeApp(firebaseConfig);
 
-
-
-const db = getFirestore(app); 
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
         async function setupCamera() {
             const video = document.getElementById('video');
-            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-            video.srcObject = stream;
-            return new Promise((resolve) => {
-                video.onloadedmetadata = () => {
-                    resolve(video);
-                };
-            });
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                video.srcObject = stream;
+                await new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        resolve(video);
+                    };
+                });
+                return true;
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                return false;
+            }
         }
 
         async function loadModels() {
@@ -58,27 +74,36 @@ const db = getFirestore(app);
         }
 
         async function start() {
+            const startButton = document.getElementById('startButton');
+            startButton.disabled = true;
+            
+            const videoSetupSuccess = await setupCamera();
+            if (!videoSetupSuccess) {
+                startButton.innerText = 'Failed to access camera';
+                startButton.classList.remove('btn-primary');
+                startButton.classList.add('btn-danger');
+                return;
+            }
+
             await loadModels();
-            const video = await setupCamera();
+            const video = document.getElementById('video');
             video.play();
 
-            video.addEventListener('play', () => {
-                const canvas = faceapi.createCanvasFromMedia(video);
-                document.body.append(canvas);
-                const displaySize = { width: video.width, height: video.height };
-                faceapi.matchDimensions(canvas, displaySize);
+            const canvas = faceapi.createCanvasFromMedia(video);
+            document.body.append(canvas);
+            const displaySize = { width: video.width, height: video.height };
+            faceapi.matchDimensions(canvas, displaySize);
 
-                setInterval(async () => {
-                    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
-                    if (detections.length > 0) {
-                        await storeFacialData(detections);
-                    }
-                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
-                    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                    faceapi.draw.drawDetections(canvas, resizedDetections);
-                    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-                }, 100);
-            });
+            setInterval(async () => {
+                const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+                if (detections.length > 0) {
+                    await storeFacialData(detections);
+                }
+                const resizedDetections = faceapi.resizeResults(detections, displaySize);
+                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                faceapi.draw.drawDetections(canvas, resizedDetections);
+                faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+            }, 100);
         }
 
         async function storeFacialData(detections) {
@@ -86,14 +111,14 @@ const db = getFirestore(app);
             const descriptors = detections.map(det => Array.from(det.descriptor));
 
             try {
-                await db.collection("facialData").doc(userId).set({ descriptors });
+                await setDoc(doc(db, "facialData", userId), { descriptors });
                 console.log("Facial data stored successfully!");
             } catch (e) {
                 console.error("Error storing facial data: ", e);
             }
         }
 
-        start();
+        document.getElementById('startButton').addEventListener('click', start);
     </script>
 </body>
 </html>
