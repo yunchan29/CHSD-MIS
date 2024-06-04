@@ -444,3 +444,35 @@ document.addEventListener('DOMContentLoaded', () => {
   loadProfiles(); 
  // loadChatMessages(); 
 });
+
+
+//Facial Recognition
+async function storeFacialData(detections) {
+  const userId = "some_unique_user_id"; // Replace with actual user ID logic
+  const descriptors = detections.map(det => Array.from(det.descriptor));
+
+  try {
+    await db.collection("facialData").doc(userId).set({ descriptors });
+    console.log("Facial data stored successfully!");
+  } catch (e) {
+    console.error("Error storing facial data: ", e);
+  }
+}
+
+video.addEventListener('play', () => {
+  const canvas = faceapi.createCanvasFromMedia(video);
+  document.body.append(canvas);
+  const displaySize = { width: video.width, height: video.height };
+  faceapi.matchDimensions(canvas, displaySize);
+
+  setInterval(async () => {
+    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+    if (detections.length > 0) {
+      await storeFacialData(detections);
+    }
+    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    faceapi.draw.drawDetections(canvas, resizedDetections);
+    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+  }, 100);
+});
