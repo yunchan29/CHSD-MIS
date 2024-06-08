@@ -1,20 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <head>
-        <title>Services</title>
-        <link rel="stylesheet" href="/Stylesheets/style.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    </head>
-    <body>
-        
-        <div class="services">
-            <h1>Services</h1>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+    <title>Services</title>
+    <link rel="stylesheet" href="/Stylesheets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .header-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 20px;
+            /* Adjust as needed for spacing */
+            object-fit: cover;
+        }
+
+        .accordion-item {
+            margin-bottom: 20px;
+            /* Adjust as needed for spacing */
+        }
+
+        .tab-content {
+            height: 70vh; /* Adjust height as needed */
+            overflow-y: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test contentWrap">
+        <div class="container">
+            <!-- Header image on top -->
+            <img src="/resources/pictures/services.png" alt="Header Image" class="header-image img-fluid">
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="permits-tab" data-bs-toggle="tab" data-bs-target="#permits" type="button" role="tab" aria-controls="permits" aria-selected="true"><h6>Permits and Certificates</h6></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="housing-tab" data-bs-toggle="tab" data-bs-target="#housing" type="button" role="tab" aria-controls="housing" aria-selected="false"><h6>Housing</h6></button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <!-- Permits and Certificates Tab -->
+                <div class="tab-pane fade show active" id="permits" role="tabpanel" aria-labelledby="permits-tab">
+                    <div class="accordion" id="accordionPermits">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <h4>Building Permit Application</h4>
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                                data-bs-parent="#accordionPermits">
+                                <div class="accordion-body">
+                                    <div class="container">
+                                        <p>Official document issued by the City Housing and Settlements Department, allowing an
+                                            individual to legally construct, modify, or demolish a structure within their
+                                            jurisdiction. It ensures that all construction work meets safety, health, and
+                                            environmental protection standards.</p>
+                                        <h6>Requirements:</h6>
+                                        <ul>
+                                            <li>HSD Form No.1</li>
+                                            <li>Building plan 5 sets</li>
+                                            <li>Proof of Ownership(TCT's Deed of sale or may applicant documents)</li>
+                                            <li>Photocopy of tax declaration & current tax receipt</li>
+                                            <li>HOA Clearance</li>
+                                            <li>Brgy. Clearance for Building Permit</li>
+                                            <li>Bill of materials and Specification</li>
+                                            <li>Photocopy of PRC IC/PTR of all signing engineers</li>
+                                            <li>Certificate of Exemption Location Clearance from CPDO</li>
+                                            <li>Structural Analysis(2-Storey and up)</li>
+                                            <li>Fire Clearance</li>
+                                            <li>Boring Test(3-Storey Building)</li>
+                                            <li>Occupancy Permit(Home Improvement/extension)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <h4>Certificate of Occupancy Application</h4>
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                data-bs-parent="#accordionPermits">
+                                <div class="accordion-body">
+                                    <div class="container">
+                                        <p></p>
+                                        <h6>Requirements:</h6>
+                                        <ul>
+                                            <li>Duly Accomplished Certificate of Building Completion Form, SIgned and Sealed by Architect/Civil Engineer, Professional Electrical Engineer, Sanitary Engineer.</li>
+                                            <li>Photocopy of Approved Building</li>
+                                            <li>Permit Form</li>
+                                            <li>Photocopy of Approved Plan</li>
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Must have installed/completed roofs, windows">
+                                                Photocopy of Structure: Front, Back, Left, Right, Lavatory, and CT.
+                                            </li>
+                                            <li>Sketch of Location and Contact Number</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <h4>Certificate of Electrical Inspection Application</h4>
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                                data-bs-parent="#accordionPermits">
+                                <div class="accordion-body">
+                                    <div class="container">
+                                        <p></p>
+                                        <h6>Requirements:</h6>
+                                        <ul>
+                                            <li>Photocopy of Meralco Service Application</li>
+                                            <li>Photocopy of Barangay Clearance</li>
+                                            <li>Proof of Ownership:
+                                                <ol>
+                                                    <li>Photocopy of Land Title</li>
+                                                    <li>Photocopy of Deed of Sale + Xerox copy of title(original owner)</li>
+                                                    <li>Photocopy of Lease Purchase Agreement + Xerox Copy of title HOA</li>
+                                                    <li>HSD Certification/Certifies True Copy of Award</li>
+                                                    <li>Notarized Undertaking if the Title is not named after the Applicant</li>
+                                                </ol>
+                                            </li>
+                                            <li>Photocopy of Certificate of Occupancy-Building Permit</li>
+                                            <li>Picture of Structure and Contact Number</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Housing Tab -->
+                <div class="tab-pane fade" id="housing" role="tabpanel" aria-labelledby="housing-tab">
+                    <div class="accordion" id="accordionHousing">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    <h4>Housing Application</h4>
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+                                data-bs-parent="#accordionHousing">
+                                <div class="accordion-body">
+                                    <div class="container">
+                                        <p></p>
+                                        <h6>Requirements:</h6>
+                                        <ul>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-          <script id="replace_with_navbar" src="nav.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-    </body>
+    </div>
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl);
+        });
+    </script>
+    
+    <script id="replace_with_navbar" src="nav.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+    </script>
+</body>
+
 </html>

@@ -285,7 +285,7 @@ padding:25px;
 }
 
 .carousel-item {
-    max-height: 300px; /* Set a fixed height for the carousel items */
+     /* Set a fixed height for the carousel items */
 }
 
 .indexHeaderImage{
@@ -635,5 +635,4 @@ border-radius: 12px;
 .hsdLogo{
     width:100px;
 }
-
 
