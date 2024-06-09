@@ -62,8 +62,9 @@
                 </div>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav active"><a href="" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="sideNav"><a href="clientDashboard.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
               <!--  <li class="sideNav"><a href="/ClientPages/clientProfile.html" class="text-decoration-none"><i class="fa-solid fa-comment"></i> Chat</a></li>-->
+              <li class="sideNav active"><a href="clientApplication.html" class="text-decoration-none"><i class="fa-solid fa-newspaper"></i> Application</a></li>
                 <li class="sideNav" id="user-logout-btn"><a href="#" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
 
             </ul>
@@ -72,150 +73,317 @@
         <div class="content">
          
             <div class="contentContainer">
-                <h4 class="text-start">Dashboard</h4>
-                <!-- Bootstrap Table -->
                 <div class="container">
-                    <div class="d-flex justify-content-end mb-3">
+                <h4 class="text-start">Application</h4>
+                <!-- Tabs -->
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="permits-tab" data-bs-toggle="tab" data-bs-target="#permits" type="button" role="tab" aria-controls="permits" aria-selected="true"><h6>Permits and Certificates</h6></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="housing-tab" data-bs-toggle="tab" data-bs-target="#housing" type="button" role="tab" aria-controls="housing" aria-selected="false"><h6>Housing</h6></button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <!-- Permits and Certificates Tab -->
+                <div class="tab-pane fade show active" id="permits" role="tabpanel" aria-labelledby="permits-tab">
+                    <div class="accordion" id="accordionPermits">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <h4>Building Permit Application</h4>
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                data-bs-parent="#accordionPermits">
+                                <div class="accordion-body">
+                                    <div class="container">
+                                        <div class="row">
+                                        <p>Official document issued by the City Housing and Settlements Department, allowing an
+                                            individual to legally construct, modify, or demolish a structure within their
+                                            jurisdiction. It ensures that all construction work meets safety, health, and
+                                            environmental protection standards.</p>
+                                        <h6>Requirements:</h6>
+                                        <ul>
+                                            <li>HSD Form No.1</li>
+                                            <li>Building plan 5 sets</li>
+                                            <li>Proof of Ownership(TCT's Deed of sale or may applicant documents)</li>
+                                            <li>Photocopy of tax declaration & current tax receipt</li>
+                                            <li>HOA Clearance</li>
+                                            <li>Brgy. Clearance for Building Permit</li>
+                                            <li>Bill of materials and Specification</li>
+                                            <li>Photocopy of PRC IC/PTR of all signing engineers</li>
+                                            <li>Certificate of Exemption Location Clearance from CPDO</li>
+                                            <li>Structural Analysis(2-Storey and up)</li>
+                                            <li>Fire Clearance</li>
+                                            <li>Boring Test(3-Storey Building)</li>
+                                            <li>Occupancy Permit(Home Improvement/extension)</li>
+                                        </ul>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col text-end">
+                                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Apply</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <h4>Certificate of Occupancy Application</h4>
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                data-bs-parent="#accordionPermits">
+                                <div class="accordion-body">
+                                    <div class="container">
+                                        <p></p>
+                                        <h6>Requirements:</h6>
+                                        <ul>
+                                            <li>Duly Accomplished Certificate of Building Completion Form, SIgned and Sealed by Architect/Civil Engineer, Professional Electrical Engineer, Sanitary Engineer.</li>
+                                            <li>Photocopy of Approved Building</li>
+                                            <li>Permit Form</li>
+                                            <li>Photocopy of Approved Plan</li>
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Must have installed/completed roofs, windows">
+                                                Photocopy of Structure: Front, Back, Left, Right, Lavatory, and CT.
+                                            </li>
+                                            <li>Sketch of Location and Contact Number</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <h4>Certificate of Electrical Inspection Application</h4>
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                                data-bs-parent="#accordionPermits">
+                                <div class="accordion-body">
+                                    <div class="container">
+                                        <p></p>
+                                        <h6>Requirements:</h6>
+                                        <ul>
+                                            <li>Photocopy of Meralco Service Application</li>
+                                            <li>Photocopy of Barangay Clearance</li>
+                                            <li>Proof of Ownership:
+                                                <ol>
+                                                    <li>Photocopy of Land Title</li>
+                                                    <li>Photocopy of Deed of Sale + Xerox copy of title(original owner)</li>
+                                                    <li>Photocopy of Lease Purchase Agreement + Xerox Copy of title HOA</li>
+                                                    <li>HSD Certification/Certifies True Copy of Award</li>
+                                                    <li>Notarized Undertaking if the Title is not named after the Applicant</li>
+                                                </ol>
+                                            </li>
+                                            <li>Photocopy of Certificate of Occupancy-Building Permit</li>
+                                            <li>Picture of Structure and Contact Number</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Request</th>
-                                <th>Date Filed</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Building Permit</td>
-                                <td>2024-05-01</td>
-                                <td>For Approval</td>
-                                <td><a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks"><i class="fa-solid fa-comment"></i> View Remarks</a></td>
-                            </tr>
-                            <tr>
-                                <td>Occupancy Permit</td>
-                                <td>2024-03-01</td>
-                                <td>Pending</td>
-                                <td><a class="btn btn-primary text-white"><i class="fa-solid fa-comment"></i> View Remarks</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
-                <!-- End of Bootstrap Table -->
+
+                <!-- Housing Tab -->
+                <div class="tab-pane fade" id="housing" role="tabpanel" aria-labelledby="housing-tab">
+                    <div class="accordion" id="accordionHousing">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    <h4>Housing Application</h4>
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+                                data-bs-parent="#accordionHousing">
+                                <div class="accordion-body">
+                                    <div class="container">
+                                        <p></p>
+                                        <h6>Requirements:</h6>
+                                        <ul>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+                
+                
+            </div>
+        </div>
+
         </div>
     </div>
 
     <!-- Application Modal -->
-    <div class="modal fade" id="buildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
-            <div class="modal-content buldingPermitApplication">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="BuildingPermitModalLabel"><i class="fa-solid fa-user"></i> Application</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Application Modal Content -->
-                    <div class="container">
-                        <div class="step-progress mb-4">
-                            <div class="step completed">
-                                <div class="circle"></div>
-                                <div class="label">Form</div>
-                            </div>
-                            <div class="step">
-                                <div class="circle"></div>
-                                <div class="label">Order of Payment</div>
-                            </div>
-                            <div class="step">
-                                <div class="circle"></div>
-                                <div class="label">Certificate</div>
+<div class="modal fade" id="buildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+        <div class="modal-content buldingPermitApplication">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="BuildingPermitModalLabel"><i class="fa-solid fa-user"></i> Application</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Application Modal Content -->
+                <div class="container">
+                   
+                    <form>
+                        <div class="mb-3">
+                            <div class="d-flex col-md-6">
+                                <input type="text" class="form-control me-2" id="hsdFormNo" placeholder="HSD Form No.1" disabled>
+                                
+                                <input type="email" class="form-control" id="ownerEmail" placeholder="" disabled>
+                                <button type="button" class="btn btn-secondary" onclick="window.print();"><i class="fa-solid fa-print"></i> Print</button>
+                                
                             </div>
                         </div>
-                        <form>
-                            <div class="mb-3">
-                                <div class="d-flex col-md-3">
-                                    <input type="text" class="form-control me-2" id="hsdFormNo" placeholder="HSD Form No.">
-                                    <button type="button" class="btn btn-secondary" onclick="window.print();"><i class="fa-solid fa-print"></i> Print</button>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="buildingPermitNo" placeholder="Building Permit No." disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon3">Issued on:</span>
+                                    <input type="date" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
                                 </div>
                             </div>
+                        </div>
+                        <div class="row g-3">
+                            <label for="ownerName">Owner/Applicant Name:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
+                            </div>
+
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phoneNumber" placeholder="+63XXXXXXXXXX" required>
+                          </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="addressTelNo" placeholder="Address and Tel No.">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="projectLocation" placeholder="Project Location">
+                            </div>
+                        </div>
+                        <div class="mb-3">
                             <div class="row g-3">
+                                <label for="form-check" class="form-label">Scope of Work</label>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" id="buildingPermitNo" placeholder="Building Permit No.">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="option1" id="option1">
+                                        <label class="form-check-label" for="option1">New Construction</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="option2" id="option2">
+                                        <label class="form-check-label" for="option2">Addition</label>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                   <div class="input-group">
-                                   <span class="input-group-text" id="basic-addon3">Issued on:</span>
-                                  <input type="date" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="option3" id="option3">
+                                        <label class="form-check-label" for="option3">Repair Renovation</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="option4" id="option4">
+                                        <label class="form-check-label" for="option4">Others</label>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="mb-3">
                             <div class="row g-3">
-                                <div class="col-md-12">
-                                    <input type="text" class="form-control" id="ownerName" placeholder="Owner/Applicant (Last Name, First Name, MI)">
-                                </div>
-                            </div>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" id="addressTelNo" placeholder="Address and Tel No.">
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" id="projectLocation" placeholder="Project Location">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="row g-3">
-                                    <label for="form-check" class="form-label">Scope of Work</label>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="option1" id="option1">
-                                            <label class="form-check-label" for="option1">New Construction</label>
-                                        </div>
-										                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="option2" id="option2">
-                                            <label class="form-check-label" for="option2">Addition</label>
-                                        </div>
+                                <label for="form-check" class="form-label">Project Justification</label>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="justification1" id="justification1">
+                                        <label class="form-check-label" for="justification1">Single Attached/Semi-Attached/Duplex</label>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="option3" id="option3">
-                                            <label class="form-check-label" for="option3">Repair Renovation</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="option4" id="option4">
-                                            <label class="form-check-label" for="option4">Others</label>
-                                        </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="justification2" id="justification2">
+                                        <label class="form-check-label" for="justification2">Single/Detached</label>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="row g-3">
-                                    <label for="form-check" class="form-label">Project Justification</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="justification1" id="justification1">
-                                            <label class="form-check-label" for="justification1">Single Attached/Semi-Attached/Duplex</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="justification2" id="justification2">
-                                            <label class="form-check-label" for="justification2">Single/Detached</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="justification3" id="justification3">
-                                            <label class="form-check-label" for="justification3">Row House/Multi-family Dwelling</label>
-                                        </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="justification3" id="justification3">
+                                        <label class="form-check-label" for="justification3">Row House/Multi-family Dwelling</label>
                                     </div>
                                 </div>
+                             
                             </div>
-                        </form>
-                    </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Block number">
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Lot number">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="No. of Units">
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Floor Area Per Unit">
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Total Floor Area">
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Total Estimated Cost">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <!--<button type="button" id="nextStepButton" class="btn btn-primary">Next</button>-->
+                <button type="button" class="btn btn-primary" id="submitProfile">Finish</button>
+                
+            </div>
+        </div>
+    </div>
+</div>
+              </div>
+                <!-- End of Bootstrap Table -->
             </div>
         </div>
     </div>

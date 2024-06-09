@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
@@ -109,6 +109,8 @@ function monitorAuthState() {
 }
 
 
+
+
 async function handleLogout(event) {
   event.preventDefault();
 
@@ -120,11 +122,33 @@ async function handleLogout(event) {
   }
 }
 
+// Function to handle Google Sign-In
+const handleGoogleSignIn = async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    console.log("Google user signed in:", user.uid);
+    console.log("Redirecting to client dashboard");
+    window.location.href = "/ClientPages/clientDashboard.html";
+    // Handle redirect or additional logic after successful Google sign-in
+  } catch (error) {
+    console.error("Error signing in with Google:", error);
+    alert("Failed to sign in with Google. Please try again later.");
+  }
+};
+
+// Event listener for Google Sign-In button
+const googleSignInBtn = document.getElementById('google-signin-btn');
+if (googleSignInBtn) {
+  googleSignInBtn.addEventListener('click', handleGoogleSignIn);
+}
+
 
 async function addBuildingPermit(event) {
   event.preventDefault();
 
-  
+  // Fetch all necessary form data
   const buildingPermitNo = document.getElementById('buildingPermitNo').value;
   const issuedOn = document.getElementById('basic-url').value;
   const addressTelNo = document.getElementById('addressTelNo').value;
@@ -134,37 +158,23 @@ async function addBuildingPermit(event) {
   const ownerFirstName = document.getElementById('ownerFirstName').value;
   const ownerMiddleName = document.getElementById('ownerMiddleName').value;
   const ownerMaidenName = document.getElementById('ownerMaidenName').value;
+  const ownerEmail = document.getElementById('ownerEmail').value;
+
+  // Combine owner names
   const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
-  const ownerEmail = document.getElementById('ownerEmail').value; 
-  const defaultPassword = 'sample'; 
 
-  
+  // Fetch scope of work
   const scopeOfWork = [];
-  if (document.getElementById('option1').checked) {
-    scopeOfWork.push(document.getElementById('option1').nextElementSibling.textContent);
-  }
-  if (document.getElementById('option2').checked) {
-    scopeOfWork.push(document.getElementById('option2').nextElementSibling.textContent);
-  }
-  if (document.getElementById('option3').checked) {
-    scopeOfWork.push(document.getElementById('option3').nextElementSibling.textContent);
-  }
-  if (document.getElementById('option4').checked) {
-    scopeOfWork.push(document.getElementById('option4').nextElementSibling.textContent);
-  }
+  document.querySelectorAll('input[name="scopeOfWork"]:checked').forEach(option => {
+    scopeOfWork.push(option.nextElementSibling.textContent);
+  });
 
+  // Fetch project justification
   const projectJustification = [];
-  if (document.getElementById('justification1').checked) {
-    projectJustification.push(document.getElementById('justification1').nextElementSibling.textContent);
-  }
-  if (document.getElementById('justification2').checked) {
-    projectJustification.push(document.getElementById('justification2').nextElementSibling.textContent);
-  }
-  if (document.getElementById('justification3').checked) {
-    projectJustification.push(document.getElementById('justification3').nextElementSibling.textContent);
-  }
+  document.querySelectorAll('input[name="projectJustification"]:checked').forEach(option => {
+    projectJustification.push(option.nextElementSibling.textContent);
+  });
 
-  
   console.log("Form Data:", {
     buildingPermitNo,
     issuedOn,
@@ -174,38 +184,79 @@ async function addBuildingPermit(event) {
     hsdFormNo,
     scopeOfWork,
     projectJustification,
-    ownerEmail 
+    ownerEmail
   });
 
   try {
-    
-    const userCredential = await createUserWithEmailAndPassword(auth, ownerEmail, defaultPassword);
-    const user = userCredential.user;
+    // Determine if the user is an admin
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("No user logged in.");
+      return;
+    }
 
-    
-    await addDoc(collection(db, "buildingPermits"), {
-      buildingPermitNo,
-      issuedOn,
-      ownerName,
-      addressTelNo,
-      projectLocation,
-      hsdFormNo,
-      scopeOfWork,
-      projectJustification,
-      ownerUid: user.uid
-    });
+    const { isAdminPC, isAdminIS } = await checkUserRole(user.uid);
+    const isAdmin = isAdminPC || isAdminIS;
 
-    alert("Profile added successfully!");
-    window.location.reload();
-    console.log("Document successfully added to Firestore and user account created");
+    if (isAdmin) {
+      // Admin-specific logic: Define defaultPassword
+      const defaultPassword = 'sample'; // This is needed for admin user creation
 
-    
-    await sendSmsNotification(addressTelNo, 'Your building permit application has been received.');
+      // Attempt to create a new user
+      const userCredential = await createUserWithEmailAndPassword(auth, ownerEmail, defaultPassword);
+      const newUser = userCredential.user;
+
+      // If user creation is successful, proceed to add document with ownerUid
+      await addDoc(collection(db, "buildingPermits"), {
+        buildingPermitNo,
+        issuedOn,
+        ownerName,
+        addressTelNo,
+        projectLocation,
+        hsdFormNo,
+        scopeOfWork,
+        projectJustification,
+        ownerUid: newUser.uid // Use newUser.uid instead of user.uid for the new user
+      });
+
+      alert("Profile added successfully!");
+      window.location.reload();
+      console.log("Document successfully added to Firestore and user account created");
+
+      // Optionally send SMS notification
+      await sendSmsNotification(addressTelNo, 'Your building permit application has been received.');
+    } else {
+      // Non-admin user logic: Directly add document to Firestore without user creation
+      await addDoc(collection(db, "buildingPermits"), {
+        buildingPermitNo,
+        issuedOn,
+        ownerName,
+        addressTelNo,
+        projectLocation,
+        hsdFormNo,
+        scopeOfWork,
+        projectJustification
+      });
+
+      alert("Profile added successfully!");
+      window.location.reload();
+      console.log("Document successfully added to Firestore without creating user");
+    }
   } catch (error) {
-    console.error("Error adding document or creating user: ", error);
-    alert("Failed to add profile or create user: " + error.message);
+    // Handle error messages appropriately
+    console.error("Error adding profile or creating user:", error);
+
+    // Check if the error is due to missing email (auth/missing-email)
+    if (error.code === "auth/missing-email") {
+      // Inform the user that user creation is not allowed
+      alert("User creation is not allowed for non-admin users. Please contact an administrator.");
+    } else {
+      // For other errors, inform the user there was a problem adding the profile
+      alert("Failed to add profile. Please try again later.");
+    }
   }
 }
+
 
 
 async function loadProfiles() {
