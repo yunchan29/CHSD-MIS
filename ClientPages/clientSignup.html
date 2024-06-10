@@ -31,16 +31,14 @@
                                 <input type="password" class="form-control" id="client-confirm-password" placeholder="Confirm your password" required>
                             </div>
 
-                           
+                            <label class="form-label">Upload a Valid ID:</label>
                             <input type="file" id="fileInput" accept="image/*" class="form-control mb-3">
                             <img id="imagePreview" class="img-fluid mb-3" style="display: none;" alt="Image Preview">
                             <button type="button" id="scanButton" class="btn btn-secondary mb-3">Scan Document</button>
                             <pre id="ocrOutput" class="text-start border p-3 bg-light"></pre>
                             <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
                             <button type="submit" id="signupButton" class="btn btn-primary text-white" disabled>Sign Up</button><br>
-                            <div id="google-signin-container">
-                                <button class="btn btn-primary" id="google-signin-btn"><i class="fa-brands fa-google" disabled></i> Continue with Google</button>
-                            </div>
+                            
                         </form>
                     </div>
                 </div>
@@ -104,7 +102,7 @@
         function checkApprovalStatus(text) {
             const approvalStatus = document.getElementById('approvalStatus');
             const signupButton = document.getElementById('signupButton');
-            const googleSignIn = document.getElementById('google-signin-btn');
+            
             const lowerCaseText = text.toLowerCase();
             const barangays = [
                 'pansol', 'calamba', 'barangay1', 'barangay2', 'barangay3',
@@ -121,13 +119,13 @@
                 approvalStatus.textContent = 'Approved';
                 approvalStatus.className = 'alert alert-success';
                 signupButton.disabled = false; // Enable the sign-up button
-                googleSignIn.disabled=false;
+                
 
             } else {
                 approvalStatus.textContent = 'Disapproved';
                 approvalStatus.className = 'alert alert-danger';
                 signupButton.disabled = true; // Disable the sign-up button
-                googleSignIn.disabled=true;
+               
             }
             approvalStatus.style.display = 'block';
         }

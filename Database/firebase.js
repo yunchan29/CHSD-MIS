@@ -363,6 +363,47 @@ function attachArchiveButtonListeners() {
   });
 }
 
+async function handleSignUp(event) {
+  event.preventDefault();
+
+  const email = document.getElementById('client-signup-email').value;
+  const password = document.getElementById('client-signup-password').value;
+  const confirmPassword = document.getElementById('client-confirm-password').value;
+
+  // Validate passwords match
+  if (password !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  try {
+    // Create user with email and password
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    console.log("User created successfully:", user.uid);
+
+    // Optionally, you can log the user out and redirect
+    await signOut(auth); // Log out current user if any
+    console.log("User signed out after sign up.");
+
+    // Redirect to login page
+    window.location.replace("/ClientPages/clientLogin.html");
+
+  } catch (error) {
+    console.error("Error signing up:", error.code, error.message);
+    alert("Sign Up failed: " + error.message);
+  }
+}
+
+
+
+// Event listener for sign-up form submission
+const signUpForm = document.getElementById('client-signup-form');
+if (signUpForm) {
+  signUpForm.addEventListener('submit', handleSignUp);
+}
+
 
 async function handleArchiveBuildingPermit(event) {
   event.preventDefault();
