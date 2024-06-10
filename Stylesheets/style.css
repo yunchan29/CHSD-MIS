@@ -330,32 +330,35 @@ min-width:400px;
 background: rgba(255, 255, 255, 0.474) !important;
 }
 
-/*Application Progress Bar*/
-
 .step-progress {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
-  }
-  .step-progress .step {
+}
+
+.step-progress .step {
     position: relative;
     flex: 1;
     text-align: center;
-  }
-  .step-progress .step:not(:last-child)::after {
+}
+
+.step-progress .step:not(:first-child)::before {
     content: '';
     position: absolute;
     top: 50%;
-    right: -50%;
+    left: -50%;
     width: 100%;
     height: 4px;
     background-color: #e9ecef;
     z-index: 0;
-  }
-  .step-progress .step.completed::after {
-    background-color: #007bff;
-  }
-  .step-progress .step .circle {
+    transform: translateY(-50%);
+}
+
+.step-progress .step.completed::before {
+    background-color: #82dc03;
+}
+
+.step-progress .step .circle {
     width: 30px;
     height: 30px;
     line-height: 30px;
@@ -364,15 +367,18 @@ background: rgba(255, 255, 255, 0.474) !important;
     display: inline-block;
     z-index: 1;
     position: relative;
-  }
-  .step-progress .step.completed .circle {
-    background-color: #007bff;
+}
+
+.step-progress .step.completed .circle {
+    background-color: #82dc03;
     color: #fff;
-  }
-  .step-progress .step .label {
+}
+
+.step-progress .step .label {
     margin-top: 10px;
     display: block;
-  }
+}
+
 
   .clientLogin2{
     width:100%;

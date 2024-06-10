@@ -242,13 +242,27 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
         <div class="modal-content buldingPermitApplication">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="BuildingPermitModalLabel"><i class="fa-solid fa-user"></i> Application</h1>
+                <h1 class="modal-title fs-5" id="BuildingPermitModalLabel">Building Permit Application</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <!-- Application Modal Content -->
                 <div class="container">
-                   
+                   <!-- Step Progress Bar -->
+                <div class="step-progress mb-4">
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Form</div>
+                    </div>
+                    <div class="step">
+                        <div class="circle"></div>
+                        <div class="label">Upload Requirements</div>
+                    </div>
+                    <div class="step">
+                        <div class="circle"></div>
+                        <div class="label">Schedule</div>
+                    </div>
+                </div>
                     <form>
                         <div class="mb-3">
                             <div class="d-flex col-md-6">
@@ -375,9 +389,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <!--<button type="button" id="nextStepButton" class="btn btn-primary">Next</button>-->
-                <button type="button" class="btn btn-primary" id="submitProfile">Finish</button>
-                
+                <button type="button" class="btn btn-primary" id="previousStepButton">Previous</button>
+                <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
+               
             </div>
         </div>
     </div>
@@ -388,7 +402,49 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    
+
+  
+  <!--Building Permit Upload Modal -->
+  <div class="modal fade" id="buildingPermitUpload" tabindex="-1" aria-labelledby="buildingPermitUploadLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Building Permit Application</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Step Progress Bar -->
+          <div class="step-progress mb-4">
+            <div class="step completed">
+                <div class="circle"></div>
+                <div class="label">Form</div>
+            </div>
+            <div class="step completed">
+                <div class="circle"></div>
+                <div class="label">Order of Payment</div>
+            </div>
+            <div class="step completed">
+                <div class="circle"></div>
+                <div class="label">Certificate</div>
+            </div>
+        </div>
+        <!--Content-->
+        <h1>Hello World</h1>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="previousStepButton">Previous</button>
+               
+                
+                <button type="button" class="btn btn-primary" id="submitProfile">Finish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Remarks Modal -->
     <div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -407,6 +463,24 @@
     </div>
     <script type="module" src="/Database/firebase.js"></script>
 
+<!-- Application Applied Modal -->
+<div class="modal fade" id="applicationAppliedModal" tabindex="-1" aria-labelledby="ApplicationAppliedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="ApplicationAppliedModalLabel"><i class="fa-solid fa-check-circle"></i> Success</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <h2>Application Applied</h2>
+                <i class="fa-solid fa-check-circle fa-3x text-success"></i>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
     <!-- Bootstrap and other scripts -->
@@ -416,25 +490,37 @@
     <script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
 
 
-    <!-- Your custom JavaScript -->
     <script>
-
-
-       
-
         document.addEventListener('DOMContentLoaded', () => {
             let currentStep = 1; // Start from the first step
-
+    
             function goToNextStep() {
                 if (currentStep < 3) {
+                    document.querySelectorAll('.step')[currentStep].classList.add('completed');
                     currentStep++;
-                    document.querySelectorAll('.step')[currentStep - 1].classList.add('completed');
                 }
-            }
+    
+                // Capture data from the first modal
+                if (currentStep === 2) {      
 
+                    new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
+                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).hide();
+                } 
+            }
+    
+            function finishApplication() {
+                new bootstrap.Modal(document.getElementById('applicationAppliedModal')).show();
+                bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
+            }
+    
             document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
+            
+            document.getElementById('submitProfile').addEventListener('click', finishApplication);
         });
     </script>
+
+        
+ 
 </body>
 </html>
 
