@@ -642,3 +642,11 @@ border-radius: 12px;
     width:100px;
 }
 
+.booked {
+    background-color: #0029b1;
+}
+.available {
+    background-color: #d4edda;
+    cursor: pointer;
+}
+

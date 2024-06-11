@@ -43,6 +43,29 @@
         .d-flex .me-2 {
             margin-right: 1rem; /* Add margin to the right of the input */
         }
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .btn-upload {
+            border: 2px solid #007bff;
+            color: white;
+            background-color: #007bff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
@@ -260,7 +283,7 @@
                     </div>
                     <div class="step">
                         <div class="circle"></div>
-                        <div class="label">Schedule</div>
+                        <div class="label">Appointment</div>
                     </div>
                 </div>
                     <form>
@@ -389,7 +412,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="previousStepButton">Previous</button>
+               
                 <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
                
             </div>
@@ -407,7 +430,7 @@
   
   <!--Building Permit Upload Modal -->
   <div class="modal fade" id="buildingPermitUpload" tabindex="-1" aria-labelledby="buildingPermitUploadLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog wide-modal">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="exampleModalLabel">Building Permit Application</h1>
@@ -422,27 +445,100 @@
             </div>
             <div class="step completed">
                 <div class="circle"></div>
-                <div class="label">Order of Payment</div>
+                <div class="label">Upload Requirements</div>
             </div>
-            <div class="step completed">
+            <div class="step">
                 <div class="circle"></div>
-                <div class="label">Certificate</div>
+                <div class="label">Appointment</div>
             </div>
         </div>
         <!--Content-->
-        <h1>Hello World</h1>
+        <table class="table">
+            <th>Requirements</th>
+            <th>File</th>
+            <th>Action</th>
+            <tr>
+                <td>Building Plan</td>
+                <td></td>
+                <td><div class="upload-btn-wrapper"><button class="btn btn-upload">Upload</button><input type="file" name="myfile" /></div></td>
+            </tr>
+        </table>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="previousStepButton">Previous</button>
-               
-                
-                <button type="button" class="btn btn-primary" id="submitProfile">Finish</button>
+        
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="previousStepButton">Previous</button>
+                <button id="nextStepButton2" class="btn btn-primary" type="button">Next</button>
         </div>
       </div>
     </div>
   </div>
 
+
+ <!-- Appointment Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog wide-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Appointment Schedule</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Step Progress Bar -->
+                <div class="step-progress mb-4">
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Form</div>
+                    </div>
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Upload Requirements</div>
+                    </div>
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Appointment</div>
+                    </div>
+                </div>
+                <!-- Content -->
+                <div class="container">
+                    <h1 class="text-center mt-5 mb-4">Appointment Schedule</h1>
+                    <div class="row">
+                        <div class="col-md-3"></div> <!-- Empty column for spacing -->
+                        <div class="col-md-6">
+                            <!-- Calendar -->
+                            <div id="calendar" class="calendar"></div>
+                        </div>
+                        <div class="col-md-3"></div> <!-- Empty column for spacing -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="previousStepButton2">Previous</button>
+                <button type="button" class="btn btn-primary" id="submitProfile">Finish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment Modal 2 -->
+<div class="modal fade" id="appointmentModal2" tabindex="-1" role="dialog" aria-labelledby="appointmentModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="appointmentModalLabel">Book Appointment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="selectedDateTime"></p>
+                <button type="button" class="btn btn-primary" id="bookAppointmentBtn">Book Appointment</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Remarks Modal -->
     <div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -484,10 +580,53 @@
 
 
     <!-- Bootstrap and other scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script id="replace_with_navbar" src="nav3.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@5.6.0/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@5.6.0/main.min.js"></script>
+
+<!-- Custom JavaScript -->
+<script>
+    $(document).ready(function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            selectable: true,
+            locale: 'en',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth'
+            },
+            dateClick: function (info) {
+                $('#selectedDateTime').text(`Appointment on ${info.dateStr}`);
+                $('#appointmentModal2').modal('show');
+            }
+        });
+
+        calendar.render();
+
+        $('#bookAppointmentBtn').click(function () {
+            alert('Appointment booked!');
+            $('#appointmentModal2').modal('hide');
+            // Example: Send data to server or update UI
+        });
+
+        $('#previousStepButton2').click(function () {
+            // Example: Go to previous step/modal
+            alert('Previous button clicked');
+        });
+
+        $('#submitProfile').click(function () {
+            // Example: Finish profile submission
+            alert('Finish button clicked');
+        });
+    });
+</script>
 
 
     <script>
@@ -495,29 +634,50 @@
             let currentStep = 1; // Start from the first step
     
             function goToNextStep() {
-                if (currentStep < 3) {
-                    document.querySelectorAll('.step')[currentStep].classList.add('completed');
-                    currentStep++;
-                }
-    
-                // Capture data from the first modal
-                if (currentStep === 2) {      
-
-                    new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
+                if (currentStep === 1) {
+                    // Transition from step 1 to step 2
                     bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).hide();
-                } 
+                    new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
+                    currentStep = 2; // Update current step to 2
+                } else if (currentStep === 2) {
+                    // Transition from step 2 to step 3
+                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
+                    new bootstrap.Modal(document.getElementById('appointmentModal')).show();
+                    currentStep = 3; // Update current step to 3
+                }
+            }
+    
+            function goToPreviousStep() {
+                if (currentStep === 2) {
+                    // Transition from step 2 back to step 1
+                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).show();
+                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
+                    currentStep = 1; // Update current step to 1
+                } else if (currentStep === 3) {
+                    // Transition from step 3 back to step 2
+                    bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
+                    new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
+                    currentStep = 2; // Update current step to 2
+                }
             }
     
             function finishApplication() {
+                // Final step: hide appointmentModal and show applicationAppliedModal
+                bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
                 new bootstrap.Modal(document.getElementById('applicationAppliedModal')).show();
-                bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
             }
     
+            // Event listeners for next and previous buttons
             document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
-            
+            document.getElementById('nextStepButton2').addEventListener('click', goToNextStep);
+            document.getElementById('previousStepButton2').addEventListener('click', goToPreviousStep);
+    
+            // Event listener for finishing the application
             document.getElementById('submitProfile').addEventListener('click', finishApplication);
         });
     </script>
+    
+    
 
         
  
