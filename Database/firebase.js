@@ -366,6 +366,8 @@ function attachArchiveButtonListeners() {
 async function handleSignUp(event) {
   event.preventDefault();
 
+  const firstName = document.getElementById('client-first-name').value;
+  const lastName = document.getElementById('client-last-name').value;
   const email = document.getElementById('client-signup-email').value;
   const password = document.getElementById('client-signup-password').value;
   const confirmPassword = document.getElementById('client-confirm-password').value;
@@ -380,8 +382,19 @@ async function handleSignUp(event) {
     // Create user with email and password
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+    const userId = user.uid;
 
-    console.log("User created successfully:", user.uid);
+    console.log("User created successfully:", userId);
+
+    // Save additional user data to Firestore under collection "users"
+    const userRef = doc(db, 'users', userId);
+    await setDoc(userRef, {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+    });
+
+    console.log("User data saved to Firestore under collection 'users'.");
 
     // Optionally, you can log the user out and redirect
     await signOut(auth); // Log out current user if any
@@ -397,7 +410,6 @@ async function handleSignUp(event) {
 }
 
 
-
 // Event listener for sign-up form submission
 const signUpForm = document.getElementById('client-signup-form');
 if (signUpForm) {
@@ -405,6 +417,37 @@ if (signUpForm) {
 }
 
 
+document.addEventListener('DOMContentLoaded', async () => {
+  // Function to fetch user data and update client info
+  async function fetchAndSetClientInfo() {
+      try {
+          // Assuming you have the auth and db references set up already
+          const user = auth.currentUser;
+          if (user) {
+              const userId = user.uid;
+              const userRef = doc(db, 'users', userId);
+              const docSnap = await getDoc(userRef);
+
+              if (docSnap.exists()) {
+                  const userData = docSnap.data();
+                  const { firstName, lastName } = userData;
+
+                  // Update client info in the sidebar
+                  document.getElementById('clientInfo').innerHTML = `
+                      <div>Client ID: ${userId}</div>
+                      <div>${firstName} ${lastName}</div>
+                  `;
+              }
+          }
+      } catch (error) {
+          console.error('Error fetching client info:', error);
+      }
+  }
+
+  // Call the function to fetch and set client info on page load
+  await fetchAndSetClientInfo();
+});
+ 
 async function handleArchiveBuildingPermit(event) {
   event.preventDefault();
 
