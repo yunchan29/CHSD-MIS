@@ -43,7 +43,10 @@
             <!-- Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="permits-tab" data-bs-toggle="tab" data-bs-target="#permits" type="button" role="tab" aria-controls="permits" aria-selected="true"><h6>Permits and Certificates</h6></button>
+                    <button class="nav-link active" id="application-process-tab" data-bs-toggle="tab" data-bs-target="#applicationProcess" type="button" role="tab" aria-controls="applicationProcess" aria-selected="false"><h6>Online Application Process</h6></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="permits-tab" data-bs-toggle="tab" data-bs-target="#permits" type="button" role="tab" aria-controls="permits" aria-selected="true"><h6>Permits and Certificates</h6></button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="housing-tab" data-bs-toggle="tab" data-bs-target="#housing" type="button" role="tab" aria-controls="housing" aria-selected="false"><h6>Housing</h6></button>
@@ -51,11 +54,13 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="downloadableForms-tab" data-bs-toggle="tab" data-bs-target="#downloadableForms" type="button" role="tab" aria-controls="downloadableForms" aria-selected="false"><h6>Downloadable Forms</h6></button>
                 </li>
+              
+                
             </ul>
 
             <div class="tab-content" id="myTabContent">
                 <!-- Permits and Certificates Tab -->
-                <div class="tab-pane fade show active" id="permits" role="tabpanel" aria-labelledby="permits-tab">
+                <div class="tab-pane fade" id="permits" role="tabpanel" aria-labelledby="permits-tab">
                     <div class="accordion" id="accordionPermits">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingOne">
@@ -247,14 +252,44 @@
                                     
                                 </div>
                             </div>
+
+                            
                 
                         </div>
+                        
                         
             
                         
                     </div>
+                    
                 </div>
+                <div class="tab-pane fade show active" id="applicationProcess" role="tabpanel" aria-labelledby="application-process-tab">
+                    <div class="container mt-3">
+                        <h3>Step-by-step Process for Online Application</h3>
+                        <ol>
+                            <li>Determine if you have an existing account. If not, sign up to create a new account.</li>
+                            <li>Log in to your account.</li>
+                            <li>Access your applicant record and select the type of application you need:</li>
+                            <ul>
+                                <li>Housing Application</li>
+                                <li>Building Permit Application</li>
+                                <li>Occupancy Permit Application</li>
+                                <li>Electrical Inspection Application</li>
+                            </ul>
+                            <li>Fill out the necessary application form online, ensuring all required information is provided.</li>
+                            <li>Submit the required documents digitally through the system.</li>
+                            <li>Wait for an email notification instructing you to submit physical copies of the required documents.</li>
+                            <li>Submit the physical copies of documents to the designated office.</li>
+                            <li>Wait for another email notification informing you to proceed with the payment.</li>
+                            <li>Pay the necessary fees online.</li>
+                            <li>Receive your permit or application approval via email or collect it from the office.</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                
             </div>
+            
             
         </div>
     </div>
