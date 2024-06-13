@@ -58,7 +58,7 @@ async function handleAdminLogin(event) {
       window.location.href = "/AdminPages/PermitsAndCert/adminDashboardP&C.html";
     } else if (isAdminIS) {
       console.log("Redirecting to adminIS dashboard");
-      window.location.href = "/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html";
+      window.location.href = "/AdminPages/InformalSettlers/InformalSettlersApplication.html";
     } else {
       console.log("Redirecting to client dashboard");
       window.location.href = "/ClientPages/clientDashboard.html";
