@@ -149,8 +149,10 @@ function checkApprovalStatus(text) {
         ,'sampiruhan','san cristobal','san jose','san juan','sirang lupa','sucol','turbina','ulango','uwisan',
     ];
 
-    const approved = barangays.some(barangay => lowerCaseText.includes(barangay));
-    if (approved) {
+    const containsCalamba = lowerCaseText.includes('calamba');
+    const containsBarangay = barangays.some(barangay => lowerCaseText.includes(barangay));
+
+    if (containsCalamba && containsBarangay) {
         approvalStatus.textContent = 'Approved';
         approvalStatus.className = 'alert alert-success';
         signupButton.disabled = false; // Enable the sign-up button
@@ -162,6 +164,7 @@ function checkApprovalStatus(text) {
     approvalStatus.style.display = 'block';
     document.getElementById('ocrOutput').style.display = 'none'; // Hide OCR output
 }
+
 
 // Ensure script executes after DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
