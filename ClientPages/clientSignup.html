@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,51 +24,96 @@
             font-weight: bold;
             color: #333;
         }
+
+        .loginWrapper {
+            margin-top: 50px;
+            padding: 30px;
+            border: none;
+            border-radius: 10px;
+            background-color: #fff;
+            
+        }
+
+        .hsdLogo {
+            width: 150px;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .modal-dialog {
+            max-width: 600px;
+        }
     </style>
 </head>
+
 <body>
-    <div class="container-fluid">
+    <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-lg-8">
                 <div class="loginWrapper">
                     <div class="loginField text-center">
                         <img class="img-fluid hsdLogo" src="/resources/pictures/chsd.png" alt="Logo">
                         <hr>
-                        <h4>Sign Up</h4>
+                        <h4>Sign Up</h4><br><br>
                         <form id="client-signup-form">
                             <div class="row mb-3">
-                                <div class="col">
+                                <div class="col-md-4 text-start">
                                     <label for="client-first-name" class="form-label">First Name</label>
                                     <input type="text" class="form-control" id="client-first-name" placeholder="Enter your first name" required>
                                 </div>
-                                <div class="col">
+                                <div class="col-md-4 text-start">
+                                    <label for="client-middle-name" class="form-label">Middle Name</label>
+                                    <input type="text" class="form-control" id="client-middle-name" placeholder="Enter your middle name">
+                                </div>
+                                <div class="col-md-4 text-start">
                                     <label for="client-last-name" class="form-label">Last Name</label>
                                     <input type="text" class="form-control" id="client-last-name" placeholder="Enter your last name" required>
                                 </div>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 text-start">
                                 <label for="client-signup-email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="client-signup-email" placeholder="Enter your email" required>
                             </div>
                             <div class="row mb-3">
-                                <div class="col">
+                                <div class="col-md-6 text-start">
                                     <label for="client-signup-password" class="form-label">Password</label>
                                     <input type="password" class="form-control" id="client-signup-password" placeholder="Enter your password" required>
                                 </div>
-                                <div class="col">
+                                <div class="col-md-6 text-start">
                                     <label for="client-confirm-password" class="form-label">Confirm Password</label>
                                     <input type="password" class="form-control" id="client-confirm-password" placeholder="Confirm your password" required>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Upload any ID with Address(make sure the address is readable):</label>
 
-                                <input type="file" id="fileInput" accept="image/*" class="form-control">
+                            <!-- Button to trigger the modal -->
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                                Upload ID with Address
+                            </button><br><br>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="uploadModalLabel">Upload ID with Address</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label class="form-label">Upload any ID with Address (make sure the address is readable):</label>
+                                            <input type="file" id="fileInput" accept="image/*" class="form-control">
+                                            <div class="scanning-status-container" id="scanningStatus" style="display: none;">Scanning document...</div>
+                                            <img id="imagePreview" class="img-fluid mb-3" style="display: none;" alt="Image Preview">
+                                            <pre id="ocrOutput" class="text-start border p-3 bg-light"></pre>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="scanning-status-container" id="scanningStatus" style="display: none;">Scanning document...</div>
-                            <img id="imagePreview" class="img-fluid mb-3" style="display: none;" alt="Image Preview">
-                            
-                            <pre id="ocrOutput" class="text-start border p-3 bg-light"></pre>
+
                             <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
                             <button type="submit" id="signupButton" class="btn btn-primary text-white" disabled>Sign Up</button><br>
                         </form>
@@ -76,7 +122,7 @@
             </div>
         </div>
     </div>
-    
+
     <script type="module" src="/Database/firebase.js"></script>
     <!-- Other scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
@@ -108,71 +154,108 @@
         }
 
         async function handleFileUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+            const file = event.target.files[0];
+            if (!file) return;
 
-    // Display scanning status
-    const scanningStatus = document.getElementById('scanningStatus');
-    scanningStatus.style.display = 'block';
+            // Display scanning status
+            const scanningStatus = document.getElementById('scanningStatus');
+            scanningStatus.style.display = 'block';
 
-    // Display the image preview
-    const imagePreview = document.getElementById('imagePreview');
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        imagePreview.src = e.target.result;
-        imagePreview.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+            // Display the image preview
+            const imagePreview = document.getElementById('imagePreview');
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
 
-    try {
-        const ocrResult = await performOCR(file);
-        checkApprovalStatus(ocrResult); // Check approval status based on OCR result
-    } catch (error) {
-        console.error('Error processing OCR:', error);
-        alert('Failed to perform OCR. Please try again.');
-    } finally {
-        // Hide scanning status
-        scanningStatus.style.display = 'none';
-    }
-}
+            try {
+                const ocrResult = await performOCR(file);
+                populateFormFields(ocrResult); // Populate form fields based on OCR result
+                checkApprovalStatus(ocrResult); // Check approval status based on OCR result
+            } catch (error) {
+                console.error('Error processing OCR:', error);
+                alert('Failed to perform OCR. Please try again.');
+            } finally {
+                // Hide scanning status
+                scanningStatus.style.display = 'none';
+            }
+        }
 
-function checkApprovalStatus(text) {
-    const approvalStatus = document.getElementById('approvalStatus');
-    const signupButton = document.getElementById('signupButton');
-    
-    const lowerCaseText = text.toLowerCase();
-    const barangays = [
-        'pansol', 'calamba', 'barangay1', 'barangay2', 'barangay3',
-        'barangay4', 'barangay5', 'barangay6', 'barangay7', 'bagong kalsada',
-        'banadero', 'banlic', 'barandal', 'batino', 'bubuyan', 'bucal', 'bunggo','burol','camaligan','canlubang','halang','hornalan'
-        ,'kay-anlog','la mesa','laguerta','lawa','lecheria','lingga','looc','mabato','majada labas','makiling','mapagong','masili','maunong',
-        'mayapa','milagrosa','paciano','paciano rizal','palingon','palo-alto','palo alto','parian','prinza','punta','puting lupa','real','saimsim'
-        ,'sampiruhan','san cristobal','san jose','san juan','sirang lupa','sucol','turbina','ulango','uwisan',
-    ];
+        function populateFormFields(text) {
+            const firstNameInput = document.getElementById('client-first-name');
+            const lastNameInput = document.getElementById('client-last-name');
+            const middleNameInput = document.getElementById('client-middle-name');
 
-    const containsCalamba = lowerCaseText.includes('calamba');
-    const containsBarangay = barangays.some(barangay => lowerCaseText.includes(barangay));
+            // Split the text by lines and remove empty lines
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
 
-    if (containsCalamba && containsBarangay) {
-        approvalStatus.textContent = 'Approved';
-        approvalStatus.className = 'alert alert-success';
-        signupButton.disabled = false; // Enable the sign-up button
-    } else {
-        approvalStatus.textContent = 'Disapproved';
-        approvalStatus.className = 'alert alert-danger';
-        signupButton.disabled = true; // Disable the sign-up button
-    }
-    approvalStatus.style.display = 'block';
-    document.getElementById('ocrOutput').style.display = 'none'; // Hide OCR output
-}
+            // Extract the name fields based on the specified layout
+            function extractNameFields(lines) {
+                const namePattern = /(.+),\s+(.+)\s+(.+)/; // Pattern to match "Last Name, First Name Middle Name"
+                for (let i = 0; i < lines.length - 1; i++) {
+                    const match = lines[i].match(namePattern);
+                    if (match) {
+                        const lastName = match[1].trim();
+                        const firstName = match[2].trim();
+                        const middleName = match[3].trim();
 
+                        const highlightedLine = lines[i + 1].trim();
+                        return {
+                            firstName: highlightedLine.includes(firstName) ? firstName : '',
+                            lastName: highlightedLine.includes(lastName) ? lastName : '',
+                            middleName: highlightedLine.includes(middleName) ? middleName : ''
+                        };
+                    }
+                }
+                return { firstName: '', lastName: '', middleName: '' };
+            }
 
-// Ensure script executes after DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    const fileInput = document.getElementById('fileInput');
-    fileInput.addEventListener('change', handleFileUpload);
-});
+            const { firstName, lastName, middleName } = extractNameFields(lines);
 
+            // Populate the form fields
+            firstNameInput.value = firstName;
+            lastNameInput.value = lastName;
+            middleNameInput.value = middleName;
+        }
+
+        function checkApprovalStatus(text) {
+            const approvalStatus = document.getElementById('approvalStatus');
+            const signupButton = document.getElementById('signupButton');
+
+            const lowerCaseText = text.toLowerCase();
+            const barangays = [
+                'pansol', 'calamba', 'barangay1', 'barangay2', 'barangay3',
+                'barangay4', 'barangay5', 'barangay6', 'barangay7', 'bagong kalsada',
+                'banadero', 'banlic', 'barandal', 'batino', 'bubuyan', 'bucal', 'bunggo', 'burol', 'camaligan', 'canlubang', 'halang', 'hornalan'
+                , 'kay-anlog', 'la mesa', 'laguerta', 'lawa', 'lecheria', 'lingga', 'looc', 'mabato', 'majada labas', 'makiling', 'mapagong', 'masili', 'maunong',
+                'mayapa', 'milagrosa', 'paciano', 'paciano rizal', 'palingon', 'palo-alto', 'palo alto', 'parian', 'prinza', 'punta', 'puting lupa', 'real', 'saimsim'
+                , 'sampiruhan', 'san cristobal', 'san jose', 'san juan', 'sirang lupa', 'sucol', 'turbina', 'ulango', 'uwisan',
+            ];
+
+            const containsCalamba = lowerCaseText.includes('calamba');
+            const containsBarangay = barangays.some(barangay => lowerCaseText.includes(barangay));
+
+            if (containsCalamba && containsBarangay) {
+                approvalStatus.textContent = 'Approved';
+                approvalStatus.className = 'alert alert-success';
+                signupButton.disabled = false; // Enable the sign-up button
+            } else {
+                approvalStatus.textContent = 'Disapproved';
+                approvalStatus.className = 'alert alert-danger';
+                signupButton.disabled = true; // Disable the sign-up button
+            }
+            approvalStatus.style.display = 'block';
+            document.getElementById('ocrOutput').style.display = 'none'; // Hide OCR output
+        }
+
+        // Ensure script executes after DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileInput = document.getElementById('fileInput');
+            fileInput.addEventListener('change', handleFileUpload);
+        });
     </script>
 </body>
+
 </html>
