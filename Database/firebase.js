@@ -242,6 +242,7 @@ async function addBuildingPermit(event) {
     }
 }
 
+// Function to load the user's permit status
 async function loadUserPermitStatus() {
     try {
         const user = auth.currentUser;
@@ -250,17 +251,17 @@ async function loadUserPermitStatus() {
             return;
         }
 
-        const userRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userRef);
+        console.log("Fetching permit status for user:", user.uid);
+
+        const permitsRef = collection(db, "users", user.uid, "buildingPermits");
+        const permitsSnapshot = await getDocs(permitsRef);
 
         const tableBody = document.getElementById('permit-status-table');
         tableBody.innerHTML = '';
 
-        if (userDoc.exists()) {
-            const userData = userDoc.data();
-            const permits = userData.buildingPermits || [];
-
-            permits.forEach((permit) => {
+        if (!permitsSnapshot.empty) {
+            permitsSnapshot.forEach((permitDoc) => {
+                const permit = permitDoc.data();
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>Building Permit</td>
@@ -270,10 +271,6 @@ async function loadUserPermitStatus() {
                 `;
                 tableBody.appendChild(row);
             });
-
-            if (permits.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4">No building permits found.</td></tr>';
-            }
         } else {
             tableBody.innerHTML = '<tr><td colspan="4">No building permits found.</td></tr>';
         }
@@ -281,6 +278,8 @@ async function loadUserPermitStatus() {
         console.error("Error fetching permit status:", error);
     }
 }
+
+
 
 // Function to load building permits (for admin view)
 async function loadProfiles() {
