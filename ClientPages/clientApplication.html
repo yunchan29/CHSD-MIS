@@ -845,6 +845,21 @@
         }
         </script>
 
+<script>
+    // Function to format the date as YYYY-MM-DD
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Get today's date and set it as the default value
+    const today = new Date();
+    const dateInput = document.getElementById('basic-url');
+    dateInput.value = formatDate(today);
+</script>
+
         
  
 </body>

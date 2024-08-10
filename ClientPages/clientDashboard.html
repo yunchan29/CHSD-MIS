@@ -55,23 +55,19 @@
                     </div>
                     <div class="avatar-text">
                         <!-- Client ID and Name -->
-                        <div>Client ID: 12345</div>
-                        <div>User Name</div>
+                        <div id="user-name">User Name</div>
                     </div>
                     <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
                 </div>
             </div>
             <ul class="sideBarList list-unstyled px-2">
                 <li class="sideNav active"><a href="" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-              <!--  <li class="sideNav"><a href="/ClientPages/clientProfile.html" class="text-decoration-none"><i class="fa-solid fa-comment"></i> Chat</a></li>-->
-              <li class="sideNav"><a href="clientApplication.html" class="text-decoration-none"><i class="fa-solid fa-newspaper"></i> Application</a></li>
+                <li class="sideNav"><a href="clientApplication.html" class="text-decoration-none"><i class="fa-solid fa-newspaper"></i> Application</a></li>
                 <li class="sideNav" id="user-logout-btn"><a href="#" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
-
             </ul>
         </div>
 
         <div class="content">
-         
             <div class="contentContainer">
                 <h4 class="text-start">Dashboard</h4>
                 <!-- Bootstrap Table -->
@@ -172,7 +168,7 @@
                                             <input class="form-check-input" type="checkbox" value="option1" id="option1">
                                             <label class="form-check-label" for="option1">New Construction</label>
                                         </div>
-										                                        <div class="form-check">
+                                        <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="option2" id="option2">
                                             <label class="form-check-label" for="option2">Addition</label>
                                         </div>
@@ -240,21 +236,14 @@
     </div>
     <script type="module" src="/Database/firebase.js"></script>
 
-
-
     <!-- Bootstrap and other scripts -->
     <script id="replace_with_navbar" src="nav3.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
 
-
     <!-- Your custom JavaScript -->
     <script>
-
-
-       
-
         document.addEventListener('DOMContentLoaded', () => {
             let currentStep = 1; // Start from the first step
 
@@ -270,4 +259,3 @@
     </script>
 </body>
 </html>
-
