@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -21,18 +21,15 @@ const db = getFirestore(app);
 // Function to check user roles
 async function checkUserRole(userUid) {
     try {
-        // Initialize variables
         let isAdminPC = false;
         let isAdminIS = false;
 
-        // Check if the user is in the AdminPC collection
         const adminPCRef = doc(db, 'AdminPC', userUid);
         const adminPCSnapshot = await getDoc(adminPCRef);
         if (adminPCSnapshot.exists()) {
             isAdminPC = adminPCSnapshot.data().isAdmin === true;
         }
 
-        // Check if the user is in the AdminIS collection
         const adminISRef = doc(db, 'AdminIS', userUid);
         const adminISSnapshot = await getDoc(adminISRef);
         if (adminISSnapshot.exists()) {
@@ -105,7 +102,6 @@ function monitorAuthState() {
         if (user) {
             console.log("User is logged in:", user.uid);
             
-            // Fetch and display user's first name and last name
             if (userNameElement) {
                 const userRef = doc(db, 'users', user.uid);
                 const docSnap = await getDoc(userRef);
@@ -162,11 +158,10 @@ if (googleSignInBtn) {
     googleSignInBtn.addEventListener('click', handleGoogleSignIn);
 }
 
-// Function to add a building permit
+// Function to add a building permit and update user's document
 async function addBuildingPermit(event) {
     event.preventDefault();
 
-    // Fetch all necessary form data
     const buildingPermitNo = document.getElementById('buildingPermitNo').value;
     const issuedOn = document.getElementById('basic-url').value;
     const addressTelNo = document.getElementById('addressTelNo').value;
@@ -176,37 +171,21 @@ async function addBuildingPermit(event) {
     const ownerFirstName = document.getElementById('ownerFirstName').value;
     const ownerMiddleName = document.getElementById('ownerMiddleName').value;
     const ownerMaidenName = document.getElementById('ownerMaidenName').value;
-    const ownerEmail = document.getElementById('ownerEmail').value;
+    const ownerEmail = document.getElementById('ownerEmail') ? document.getElementById('ownerEmail').value : null;
 
-    // Combine owner names
     const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
 
-    // Fetch scope of work
     const scopeOfWork = [];
     document.querySelectorAll('input[name="scopeOfWork"]:checked').forEach(option => {
         scopeOfWork.push(option.nextElementSibling.textContent);
     });
 
-    // Fetch project justification
     const projectJustification = [];
     document.querySelectorAll('input[name="projectJustification"]:checked').forEach(option => {
         projectJustification.push(option.nextElementSibling.textContent);
     });
 
-    console.log("Form Data:", {
-        buildingPermitNo,
-        issuedOn,
-        ownerName,
-        addressTelNo,
-        projectLocation,
-        hsdFormNo,
-        scopeOfWork,
-        projectJustification,
-        ownerEmail
-    });
-
     try {
-        // Determine if the user is an admin
         const user = auth.currentUser;
         if (!user) {
             console.error("No user logged in.");
@@ -216,66 +195,94 @@ async function addBuildingPermit(event) {
         const { isAdminPC, isAdminIS } = await checkUserRole(user.uid);
         const isAdmin = isAdminPC || isAdminIS;
 
-        if (isAdmin) {
-            // Admin-specific logic: Define defaultPassword
-            const defaultPassword = 'sample'; // This is needed for admin user creation
+        let ownerUid;
 
-            // Attempt to create a new user
+        if (isAdmin && ownerEmail) {
+            const defaultPassword = 'sample'; 
             const userCredential = await createUserWithEmailAndPassword(auth, ownerEmail, defaultPassword);
             const newUser = userCredential.user;
-
-            // If user creation is successful, proceed to add document with ownerUid
-            await addDoc(collection(db, "buildingPermits"), {
-                buildingPermitNo,
-                issuedOn,
-                ownerName,
-                addressTelNo,
-                projectLocation,
-                hsdFormNo,
-                scopeOfWork,
-                projectJustification,
-                ownerUid: newUser.uid // Use newUser.uid instead of user.uid for the new user
-            });
-
-            alert("Profile added successfully!");
-            window.location.reload();
-            console.log("Document successfully added to Firestore and user account created");
-
-            // Optionally send SMS notification
-            await sendSmsNotification(addressTelNo, 'Your building permit application has been received.');
+            ownerUid = newUser.uid;
         } else {
-            // Non-admin user logic: Directly add document to Firestore without user creation
-            await addDoc(collection(db, "buildingPermits"), {
+            ownerUid = user.uid;
+        }
+
+        const permitDocRef = await addDoc(collection(db, "buildingPermits"), {
+            buildingPermitNo,
+            issuedOn,
+            ownerName,
+            addressTelNo,
+            projectLocation,
+            hsdFormNo,
+            scopeOfWork,
+            projectJustification,
+            ownerUid: ownerUid,
+            status: 'Pending'
+        });
+
+        await updateDoc(doc(db, 'users', ownerUid), {
+            buildingPermits: arrayUnion({
+                permitId: permitDocRef.id,
                 buildingPermitNo,
                 issuedOn,
-                ownerName,
-                addressTelNo,
-                projectLocation,
-                hsdFormNo,
-                scopeOfWork,
-                projectJustification
-            });
+                status: 'Pending',
+                projectLocation
+            })
+        });
 
-            alert("Profile added successfully!");
-            window.location.reload();
-            console.log("Document successfully added to Firestore without creating user");
-        }
+        alert("Building permit application submitted successfully!");
+        window.location.reload();
     } catch (error) {
-        // Handle error messages appropriately
         console.error("Error adding profile or creating user:", error);
 
-        // Check if the error is due to missing email (auth/missing-email)
         if (error.code === "auth/missing-email") {
-            // Inform the user that user creation is not allowed
             alert("User creation is not allowed for non-admin users. Please contact an administrator.");
         } else {
-            // For other errors, inform the user there was a problem adding the profile
-            alert("Failed to add profile. Please try again later.");
+            alert("Failed to submit application. Please try again later.");
         }
     }
 }
 
-// Function to load building permits
+async function loadUserPermitStatus() {
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("No user is signed in.");
+            return;
+        }
+
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+
+        const tableBody = document.getElementById('permit-status-table');
+        tableBody.innerHTML = '';
+
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const permits = userData.buildingPermits || [];
+
+            permits.forEach((permit) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>Building Permit</td>
+                    <td>${permit.issuedOn}</td>
+                    <td>${permit.status}</td>
+                    <td><a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks"><i class="fa-solid fa-comment"></i> View Remarks</a></td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            if (permits.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4">No building permits found.</td></tr>';
+            }
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="4">No building permits found.</td></tr>';
+        }
+    } catch (error) {
+        console.error("Error fetching permit status:", error);
+    }
+}
+
+// Function to load building permits (for admin view)
 async function loadProfiles() {
     const querySnapshot = await getDocs(collection(db, "buildingPermits"));
     const buildingPermitDiv = document.getElementById("buildingPermitDiv");
@@ -486,21 +493,18 @@ async function handleSignUp(event) {
     const password = document.getElementById('client-signup-password').value;
     const confirmPassword = document.getElementById('client-confirm-password').value;
 
-    // Validate passwords match
     if (password !== confirmPassword) {
         alert("Passwords do not match.");
         return;
     }
 
     try {
-        // Create user with email and password
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         const userId = user.uid;
 
         console.log("User created successfully:", userId);
 
-        // Save additional user data to Firestore under collection "users"
         const userRef = doc(db, 'users', userId);
         await setDoc(userRef, {
             firstName: firstName,
@@ -510,11 +514,9 @@ async function handleSignUp(event) {
 
         console.log("User data saved to Firestore under collection 'users'.");
 
-        // Optionally, you can log the user out and redirect
-        await signOut(auth); // Log out current user if any
+        await signOut(auth);
         console.log("User signed out after sign up.");
 
-        // Redirect to login page
         window.location.replace("/ClientPages/clientLogin.html");
 
     } catch (error) {
@@ -542,7 +544,6 @@ async function fetchAndSetClientInfo() {
                 const userData = docSnap.data();
                 const { firstName, lastName } = userData;
 
-                // Update client info in the sidebar
                 document.getElementById('clientInfo').innerHTML = `
                     <div>Client ID: ${userId}</div>
                     <div>${firstName} ${lastName}</div>
@@ -554,11 +555,19 @@ async function fetchAndSetClientInfo() {
     }
 }
 
-// Event listener to load profiles and monitor auth state
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('DOM fully loaded and parsed in firebase.js');
+document.addEventListener('DOMContentLoaded', () => {
     attachEventListeners();
     monitorAuthState();
-    loadProfiles();
-    await fetchAndSetClientInfo(); // Fetch and set client info
+
+    const buildingPermitDiv = document.getElementById("buildingPermitDiv");
+    if (buildingPermitDiv) {
+        loadProfiles();
+    }
+
+    const permitStatusTable = document.getElementById('permit-status-table');
+    if (permitStatusTable) {
+        loadUserPermitStatus();
+    }
+
+    fetchAndSetClientInfo();
 });
