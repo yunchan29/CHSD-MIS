@@ -125,6 +125,9 @@ async function handleSignUp(event) {
         return;
     }
 
+    // Show the loading screen
+    document.getElementById('loading-screen').style.display = 'flex';
+
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -134,7 +137,7 @@ async function handleSignUp(event) {
 
         // If the user selected an avatar, use that
         if (selectedAvatar) {
-            avatarUrl = `/resources/pictures/${selectedAvatar.value}`; // Example path to your avatar images
+            avatarUrl = `/resources/pictures/${selectedAvatar.value}`;
         }
 
         // If the user uploaded an image, upload it to Firebase Storage
@@ -142,28 +145,38 @@ async function handleSignUp(event) {
             const storageRef = ref(storage, `userAvatars/${userId}/${uploadedImageFile.name}`);
             await uploadBytes(storageRef, uploadedImageFile);
             avatarUrl = await getDownloadURL(storageRef);
+            console.log("Uploaded avatar and obtained URL:", avatarUrl);
         }
 
+        // Save user information to Firestore
         const userRef = doc(db, 'users', userId);
         await setDoc(userRef, {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            avatarUrl: avatarUrl, // Save the avatar URL in Firestore
+            avatarUrl: avatarUrl,
         });
 
         console.log("User data saved to Firestore under collection 'users'.");
 
+        // Sign out the user after successful sign-up
         await signOut(auth);
         console.log("User signed out after sign up.");
 
-        window.location.replace("/ClientPages/clientLogin.html");
+        // Slight delay before redirect to ensure all processes are completed
+        setTimeout(() => {
+            window.location.replace("/ClientPages/clientLogin.html");
+        }, 1000); // 1-second delay
 
     } catch (error) {
         console.error("Error signing up:", error.code, error.message);
         alert("Sign Up failed: " + error.message);
+        
+        // Hide the loading screen in case of an error
+        document.getElementById('loading-screen').style.display = 'none';
     }
 }
+
 
 // Function to monitor authentication state and display user info
 function monitorAuthState() {
@@ -173,7 +186,7 @@ function monitorAuthState() {
 
         if (user) {
             console.log("User is logged in:", user.uid);
-            
+
             if (userNameElement) {
                 const userRef = doc(db, 'users', user.uid);
                 const docSnap = await getDoc(userRef);
@@ -420,6 +433,7 @@ function attachEventListeners() {
     const userLogoutButton = document.getElementById('user-logout-btn');
     const addBuildingPermitButton = document.getElementById('submitProfile');
     const sendMessageForm = document.getElementById('send-message-form');
+    const signUpForm = document.getElementById('client-signup-form');
 
     if (adminLoginForm) {
         adminLoginForm.addEventListener('submit', handleAdminLogin);
@@ -443,6 +457,10 @@ function attachEventListeners() {
 
     if (sendMessageForm) {
         sendMessageForm.addEventListener('submit', sendMessage);
+    }
+
+    if (signUpForm) {
+        signUpForm.addEventListener('submit', handleSignUp);
     }
 }
 
