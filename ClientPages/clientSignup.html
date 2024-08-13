@@ -116,7 +116,29 @@
                             <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
                             -->
 
-                            <!-- Enable the sign-up button by default -->
+                            <div class="mb-3 text-start">
+                                <label for="client-avatar" class="form-label">Select Avatar</label>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <input type="radio" id="avatar1" name="avatar" value="avatar1.png">
+                                        <label for="avatar1"><img src="/resources/pictures/avatarMale.png" alt="Avatar 1" width="50" height="50"></label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="avatar2" name="avatar" value="avatar2.png">
+                                        <label for="avatar2"><img src="/resources/pictures/avatarFemale.png" alt="Avatar 2" width="50" height="50"></label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="avatar3" name="avatar" value="avatar3.png">
+                                        <label for="avatar3"><img src="/resources/pictures/avatar3.png" alt="Avatar 3" width="50" height="50"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="mb-3 text-start">
+                                <label for="client-upload-image" class="form-label">Upload Image</label>
+                                <input type="file" class="form-control" id="client-upload-image" accept="image/*">
+                            </div>
+                        
                             <button type="submit" id="signupButton" class="btn btn-primary text-white">Sign Up</button><br>
                         </form>
                     </div>

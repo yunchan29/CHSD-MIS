@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -17,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 // Function to check user roles
 async function checkUserRole(userUid) {
@@ -105,6 +107,63 @@ async function handleUserLogin(event) {
     }
 }
 
+// Function to handle user signup
+async function handleSignUp(event) {
+    event.preventDefault();
+
+    const firstName = document.getElementById('client-first-name').value;
+    const lastName = document.getElementById('client-last-name').value;
+    const email = document.getElementById('client-signup-email').value;
+    const password = document.getElementById('client-signup-password').value;
+    const confirmPassword = document.getElementById('client-confirm-password').value;
+
+    const selectedAvatar = document.querySelector('input[name="avatar"]:checked');
+    const uploadedImageFile = document.getElementById('client-upload-image').files[0];
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        const userId = user.uid;
+
+        let avatarUrl = null;
+
+        // If the user selected an avatar, use that
+        if (selectedAvatar) {
+            avatarUrl = `/resources/pictures/${selectedAvatar.value}`; // Example path to your avatar images
+        }
+
+        // If the user uploaded an image, upload it to Firebase Storage
+        if (uploadedImageFile) {
+            const storageRef = ref(storage, `userAvatars/${userId}/${uploadedImageFile.name}`);
+            await uploadBytes(storageRef, uploadedImageFile);
+            avatarUrl = await getDownloadURL(storageRef);
+        }
+
+        const userRef = doc(db, 'users', userId);
+        await setDoc(userRef, {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            avatarUrl: avatarUrl, // Save the avatar URL in Firestore
+        });
+
+        console.log("User data saved to Firestore under collection 'users'.");
+
+        await signOut(auth);
+        console.log("User signed out after sign up.");
+
+        window.location.replace("/ClientPages/clientLogin.html");
+
+    } catch (error) {
+        console.error("Error signing up:", error.code, error.message);
+        alert("Sign Up failed: " + error.message);
+    }
+}
 
 // Function to monitor authentication state and display user info
 function monitorAuthState() {
@@ -119,8 +178,17 @@ function monitorAuthState() {
                 const userRef = doc(db, 'users', user.uid);
                 const docSnap = await getDoc(userRef);
                 if (docSnap.exists()) {
-                    const { firstName, lastName } = docSnap.data();
+                    const { firstName, lastName, avatarUrl } = docSnap.data();
                     userNameElement.textContent = `${firstName} ${lastName}`;
+
+                    const avatarElement = document.getElementById('client-avatar');
+                    if (avatarUrl) {
+                        avatarElement.src = avatarUrl;
+                        avatarElement.alt = `${firstName} ${lastName}'s Avatar`;
+                    } else {
+                        avatarElement.src = '/resources/pictures/avatar3.png'; // Default avatar
+                        avatarElement.alt = 'Default Avatar';
+                    }
                 } else {
                     console.error("No such document!");
                 }
@@ -298,11 +366,6 @@ async function loadUserPermitStatus() {
     }
 }
 
-
-
-
-
-
 // Function to load building permits (for admin view)
 async function loadProfiles() {
     const querySnapshot = await getDocs(collection(db, "buildingPermits"));
@@ -458,101 +521,7 @@ async function handleArchiveBuildingPermit(event) {
     }
 }
 
-// Function to send SMS notifications
-async function sendSmsNotification(phoneNumber, message) {
-    try {
-        const response = await fetch('http://localhost:3000/send-sms', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ phoneNumber, message }),
-            mode: 'cors',
-        });
-
-        if (response.ok) {
-            console.log('SMS sent successfully!');
-        } else {
-            console.error('Failed to send SMS.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-// Function to send a message
-async function sendMessage(event) {
-    event.preventDefault();
-
-    const messageInput = document.getElementById('message-input');
-    const message = messageInput.value;
-    const user = auth.currentUser;
-
-    if (message.trim() === '') {
-        return;
-    }
-
-    try {
-        await addDoc(collection(db, "chatMessages"), {
-            uid: user.uid,
-            message: message,
-            timestamp: new Date()
-        });
-        messageInput.value = '';
-    } catch (error) {
-        console.error("Error sending message: ", error);
-    }
-}
-
-// Function to handle sign-up
-async function handleSignUp(event) {
-    event.preventDefault();
-
-    const firstName = document.getElementById('client-first-name').value;
-    const lastName = document.getElementById('client-last-name').value;
-    const email = document.getElementById('client-signup-email').value;
-    const password = document.getElementById('client-signup-password').value;
-    const confirmPassword = document.getElementById('client-confirm-password').value;
-
-    if (password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-    }
-
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        const userId = user.uid;
-
-        console.log("User created successfully:", userId);
-
-        const userRef = doc(db, 'users', userId);
-        await setDoc(userRef, {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-        });
-
-        console.log("User data saved to Firestore under collection 'users'.");
-
-        await signOut(auth);
-        console.log("User signed out after sign up.");
-
-        window.location.replace("/ClientPages/clientLogin.html");
-
-    } catch (error) {
-        console.error("Error signing up:", error.code, error.message);
-        alert("Sign Up failed: " + error.message);
-    }
-}
-
-// Event listener for sign-up form submission
-const signUpForm = document.getElementById('client-signup-form');
-if (signUpForm) {
-    signUpForm.addEventListener('submit', handleSignUp);
-}
-
-// Function to fetch and set client info
+// Function to fetch and display client info
 async function fetchAndSetClientInfo() {
     try {
         const user = auth.currentUser;
@@ -563,12 +532,16 @@ async function fetchAndSetClientInfo() {
 
             if (docSnap.exists()) {
                 const userData = docSnap.data();
-                const { firstName, lastName } = userData;
+                const { firstName, lastName, avatarUrl } = userData;
 
                 document.getElementById('clientInfo').innerHTML = `
                     <div>Client ID: ${userId}</div>
                     <div>${firstName} ${lastName}</div>
                 `;
+
+                if (avatarUrl) {
+                    document.getElementById('client-avatar').src = avatarUrl;
+                }
             }
         }
     } catch (error) {
@@ -576,6 +549,7 @@ async function fetchAndSetClientInfo() {
     }
 }
 
+// Document ready function
 document.addEventListener('DOMContentLoaded', async () => {
     attachEventListeners();
     monitorAuthState();
