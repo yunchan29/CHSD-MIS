@@ -48,6 +48,9 @@ async function handleAdminLogin(event) {
     event.preventDefault();
     const email = document.getElementById('admin-email').value;
     const password = document.getElementById('admin-password').value;
+    
+    // Show the loading screen
+    document.getElementById('loading-screen').style.display = 'flex';
 
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -71,6 +74,9 @@ async function handleAdminLogin(event) {
     } catch (error) {
         console.error("Error signing in:", error.code, error.message);
         alert("Login failed: " + error.message);
+        
+        // Hide the loading screen in case of an error
+        document.getElementById('loading-screen').style.display = 'none';
     }
 }
 
@@ -79,6 +85,9 @@ async function handleUserLogin(event) {
     event.preventDefault();
     const email = document.getElementById('user-email').value;
     const password = document.getElementById('user-password').value;
+    
+    // Show the loading screen
+    document.getElementById('loading-screen').style.display = 'flex';
 
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -90,8 +99,12 @@ async function handleUserLogin(event) {
     } catch (error) {
         console.error("Error signing in:", error.code, error.message);
         alert("Login failed: " + error.message);
+        
+        // Hide the loading screen in case of an error
+        document.getElementById('loading-screen').style.display = 'none';
     }
 }
+
 
 // Function to monitor authentication state and display user info
 function monitorAuthState() {
@@ -251,6 +264,9 @@ async function loadUserPermitStatus() {
             return;
         }
 
+        // Show the fetching loading screen
+        document.getElementById('fetching-loading-screen').style.display = 'flex';
+
         console.log("Fetching permit status for user:", user.uid);
 
         const permitsRef = collection(db, "users", user.uid, "buildingPermits");
@@ -276,8 +292,14 @@ async function loadUserPermitStatus() {
         }
     } catch (error) {
         console.error("Error fetching permit status:", error);
+    } finally {
+        // Hide the fetching loading screen once the data has been loaded
+        document.getElementById('fetching-loading-screen').style.display = 'none';
     }
 }
+
+
+
 
 
 
@@ -554,7 +576,7 @@ async function fetchAndSetClientInfo() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     attachEventListeners();
     monitorAuthState();
 
@@ -569,4 +591,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     fetchAndSetClientInfo();
+
+    // Fetch the user's first and last name and set them in the form
+    const user = auth.currentUser;
+    if (user) {
+        const userId = user.uid;
+        const userRef = doc(db, 'users', userId);
+        const docSnap = await getDoc(userRef);
+
+        if (docSnap.exists()) {
+            const userData = docSnap.data();
+            const { firstName, lastName } = userData;
+
+            // Automatically fill in the first and last name fields and disable them
+            document.getElementById('ownerFirstName').value = firstName;
+            document.getElementById('ownerLastName').value = lastName;
+        }
+    }
 });
