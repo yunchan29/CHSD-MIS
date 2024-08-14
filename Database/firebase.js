@@ -350,8 +350,9 @@ async function loadUserPermitStatus() {
 
         console.log("Fetching permit status for user:", user.uid);
 
-        const permitsRef = collection(db, "users", user.uid, "buildingPermits");
-        const permitsSnapshot = await getDocs(permitsRef);
+        const permitsRef = collection(db, "buildingPermits");
+        const q = query(permitsRef, where("ownerUid", "==", user.uid));
+        const permitsSnapshot = await getDocs(q);
 
         const tableBody = document.getElementById('permit-status-table');
         tableBody.innerHTML = '';
@@ -369,7 +370,7 @@ async function loadUserPermitStatus() {
                 tableBody.appendChild(row);
             });
         } else {
-            tableBody.innerHTML = '<tr><td colspan="4">No building permits found.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="4">No permits found.</td></tr>';
         }
     } catch (error) {
         console.error("Error fetching permit status:", error);
