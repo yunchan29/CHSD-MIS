@@ -42,6 +42,7 @@ html,body
     -webkit-box-shadow: -3px 3px 10px 3px #dddddd;
     -moz-box-shadow: -3px 3px 10px 3px #dddddd;
     box-shadow: -3px 3px 10px 3px #dddddd;
+    transition: all 0.2s; 
 }
 
 .contentWrap{
@@ -685,3 +686,17 @@ border-radius: 12px;
     font-size: 18px;
     color: #007bff;
 }
+
+
+@media(max-width: 767px){
+    #side_nav{
+        margin-left:-250px;
+        position: fixed;
+        min-height: 100vh;
+        z-index:2;
+    }
+    #side_nav.active{
+        margin-left:0;
+    }
+}
+

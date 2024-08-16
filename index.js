@@ -25,3 +25,6 @@ exports.assignRole = functions.https.onCall(async (data, context) => {
     return { error: `Error assigning role: ${error.message}` };
   }
 });
+
+
+
