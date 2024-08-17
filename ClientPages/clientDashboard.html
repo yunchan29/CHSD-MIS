@@ -52,8 +52,10 @@
         </div>
         <p class="loading-text">Fetching from database...</p>
     </div>
-
+    
     <div class="main-container d-flex">
+
+        <!--Sidebar-->
         <div class="sideNav" id="side_nav">
             <div class="container">
                 <div class="header-box text-center px-2 pt-3 pb-4 ">
@@ -78,30 +80,33 @@
        
 
         <div class="content">
-            <nav class="navigationBar navbar navbar-expand-lg bg-light">
-                <div class="container-fluid">
-                    <div class="d-flex justify-content-between d-md-none d-block">
-                  <a class="navbar-brand fs-4" href="#">CHSD</a>
-                  
-                  <button class="btn px-1 py-0 open-btn"> <i class="fa-solid fa-bars-staggered"></i></button>
-                 
-                  </div>
-                  
-    
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                      <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                      </li>
-                     
-                    </ul>
-                   
-                  </div>
-                </div>
-              </nav>
+            <!--Navigation Bar-->
+<nav class="navigationBar navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+        <!-- Mobile View -->
+        <div class="d-flex justify-content-between d-md-none d-block">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
+                <h5 class="mb-0 fs-5">CHSD</h5>
+            </a>
+            <button class="btn px-1 py-0 open-btn">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </div>
+
+        <!-- Desktop View -->
+        <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
+                <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+            </a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Additional nav items go here -->
+            </ul>
+        </div>
+    </div>
+</nav>
+
             <div class="contentContainer">
                 <h4 class="text-start">Dashboard</h4>
                 <!-- Bootstrap Table -->

@@ -693,10 +693,21 @@ border-radius: 12px;
         margin-left:-250px;
         position: fixed;
         min-height: 100vh;
-        z-index:2;
+        z-index:3;
     }
     #side_nav.active{
         margin-left:0;
     }
 }
 
+
+/* Smaller screens */
+@media (max-width: 576px) {
+    .loginWrapper {
+        padding: 30px;
+    }
+
+    .form-control {
+        font-size: 0.8rem;
+    }
+}
