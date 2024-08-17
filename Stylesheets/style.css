@@ -704,10 +704,13 @@ border-radius: 12px;
 /* Smaller screens */
 @media (max-width: 576px) {
     .loginWrapper {
-        padding: 30px;
+        padding: 40px;
     }
 
     .form-control {
         font-size: 0.8rem;
+    }
+    .loginField{
+        padding:20%;
     }
 }
