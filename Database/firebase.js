@@ -183,10 +183,12 @@ function monitorAuthState() {
     onAuthStateChanged(auth, async (user) => {
         const userInfo = document.getElementById('user-info');
         const userNameElement = document.getElementById('user-name');
+        const permitStatusTable = document.getElementById('permit-status-table'); // Add this line
 
         if (user) {
             console.log("User is logged in:", user.uid);
 
+            // Fetch and display user info
             if (userNameElement) {
                 const userRef = doc(db, 'users', user.uid);
                 const docSnap = await getDoc(userRef);
@@ -210,6 +212,12 @@ function monitorAuthState() {
             if (userInfo) {
                 userInfo.innerHTML = `Logged in as: ${user.email}`;
             }
+
+            // Fetch and display user permit status
+            if (permitStatusTable) {
+                await loadUserPermitStatus(); // Ensure permits are loaded
+            }
+
         } else {
             console.log("No user is logged in.");
             if (userInfo) {
@@ -336,7 +344,6 @@ async function addBuildingPermit(event) {
     }
 }
 
-// Function to load the user's permit status
 async function loadUserPermitStatus() {
     try {
         const user = auth.currentUser;
@@ -345,14 +352,14 @@ async function loadUserPermitStatus() {
             return;
         }
 
-        // Show the fetching loading screen
         document.getElementById('fetching-loading-screen').style.display = 'flex';
-
         console.log("Fetching permit status for user:", user.uid);
 
         const permitsRef = collection(db, "buildingPermits");
         const q = query(permitsRef, where("ownerUid", "==", user.uid));
         const permitsSnapshot = await getDocs(q);
+
+        console.log("Query result: ", permitsSnapshot.empty ? "No documents found." : `Found ${permitsSnapshot.size} documents`);
 
         const tableBody = document.getElementById('permit-status-table');
         tableBody.innerHTML = '';
@@ -360,6 +367,8 @@ async function loadUserPermitStatus() {
         if (!permitsSnapshot.empty) {
             permitsSnapshot.forEach((permitDoc) => {
                 const permit = permitDoc.data();
+                console.log("Permit data:", permit);
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>Building Permit</td>
@@ -375,10 +384,10 @@ async function loadUserPermitStatus() {
     } catch (error) {
         console.error("Error fetching permit status:", error);
     } finally {
-        // Hide the fetching loading screen once the data has been loaded
         document.getElementById('fetching-loading-screen').style.display = 'none';
     }
 }
+
 
 // Function to load building permits (for admin view)
 async function loadProfiles() {
