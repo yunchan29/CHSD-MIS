@@ -149,13 +149,18 @@ border-bottom: 3px solid#139bff;
 }
 
 .navigationBar2{
-    background:rgba(255, 255, 255, 0);
+    background:rgba(0, 0, 0, 0);
   background-size: auto;
   background-position: top;
   background-repeat: no-repeat;
   background-attachment:fixed;
   color:rgb(0, 0, 0) !important;
   z-index: 1;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content: space-between;
+  overflow:hidden;
+
 }
 
 
@@ -317,6 +322,7 @@ padding:25px;
     display:flex;
     justify-content: center;
     align-items: center;
+    background: rgba(0, 0, 0, 0);
 }
 .loginField{
 background:rgb(237, 237, 237);
@@ -324,6 +330,17 @@ border:none;
 -webkit-box-shadow: -8px 9px 19px 1px #dbdbdb;
 -moz-box-shadow: -8px 9px 19px 1px #dbdbdb;
 box-shadow: -8px 9px 19px 1px #dbdbdb;
+padding:5%;
+width:100%;
+border-radius:12px ;
+min-width:400px;
+}
+
+.signUpField{
+    background:white;
+    -webkit-box-shadow: inset -4.5px 3px 10px 4px #d1d1d1;
+    -moz-box-shadow: inset -4.5px 3px 10px 4px #d1d1d1;
+    box-shadow: inset -4.5px 3px 10px 4px #d1d1d1;
 padding:5%;
 width:100%;
 border-radius:12px ;
@@ -383,25 +400,29 @@ background: rgba(255, 255, 255, 0.474) !important;
     display: block;
 }
 
-
-  .clientLogin2{
-    width:100%;
-    height:100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.clientLoginBackground{
     background:url("/resources/pictures/clientBackgroundBlur.png");
     background-size: cover;
     background-repeat: no-repeat;
     padding:5%;
     background-attachment: scroll;
+}
+
+  .clientLogin2{
+    width:100%;
+    height:100vh;
+    display: flex;
+    justify-content:center;
+    flex-direction: row;
+    align-items: center;
+    
   }
 
   @media(max-width:991px){
     .clientLogin2{
-        justify-content:center;
-        align-items: center;
-    }
+          padding:10%;
+
+          }
   }
 .loginField2 {
     background: rgba(255, 255, 255, 0.114);
@@ -424,6 +445,11 @@ background: rgba(255, 255, 255, 0.474) !important;
     margin-right: 20px;
     text-align: left;
 }
+@media(max-width:991px){
+    .clientLoginHeader{
+        display:none;
+    }
+}
 
 .loginField2 {
     flex: 1;
@@ -434,6 +460,7 @@ background: rgba(255, 255, 255, 0.474) !important;
     color: rgb(255, 225, 0);
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
 }
+
 
 @media (max-width: 991px) {
     .clientLogin2 {
@@ -713,4 +740,13 @@ border-radius: 12px;
     .loginField{
         padding:20%;
     }
+}
+
+
+.clientSignUpWrapper{
+    background:url("/resources/pictures/clientBackgroundBlur.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding:5%;
+    background-attachment: scroll;
 }
