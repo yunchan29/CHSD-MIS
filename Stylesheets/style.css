@@ -149,7 +149,7 @@ border-bottom: 3px solid#139bff;
 }
 
 .navigationBar2{
-    background:rgba(0, 0, 0, 0);
+    background:rgba(0, 0, 0, 0) !important;
   background-size: auto;
   background-position: top;
   background-repeat: no-repeat;
@@ -756,4 +756,32 @@ border-radius: 12px;
     background-repeat: no-repeat;
     padding:5%;
     background-attachment: scroll;
+}
+
+
+ /* Responsive styling */
+ .navbar-brand-text {
+    display: none;
+}
+@media (max-width: 992px) {
+    .navbar-brand-text {
+        display: none;
+    }
+    .navbar-brand-short {
+        display: block;
+    }
+}
+@media (min-width: 993px) {
+    .navbar-brand-text {
+        display: block;
+    }
+    .navbar-brand-short {
+        display: none;
+    }
+}
+
+.stepByStep{
+    background:white;
+    border-radius: 12px;
+    padding:10px;
 }
