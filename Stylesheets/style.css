@@ -138,6 +138,28 @@ border-bottom: 3px solid#139bff;
     margin:2px;
 }
 
+@media(max-width:730px){
+    .test{
+        padding:5%;
+    }
+}
+@media(max-width:650px){
+    .test{
+        padding:7%;
+    }
+}
+@media(max-width:550px){
+    .test{
+        padding:10%;
+    }
+}
+@media(max-width:400px){
+    .test{
+        margin-top: 15%;
+        padding:10%;
+    }
+}
+
 .navigationBar{
     background-image: url(/resources/pictures/navbar_bg.png);
   background-size: auto;
