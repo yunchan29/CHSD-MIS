@@ -360,19 +360,19 @@ min-width:400px;
 
 .signUpField{
     background:white;
-    -webkit-box-shadow: inset -4.5px 3px 10px 4px #d1d1d1;
-    -moz-box-shadow: inset -4.5px 3px 10px 4px #d1d1d1;
-    box-shadow: inset -4.5px 3px 10px 4px #d1d1d1;
+
 padding:5%;
 width:100%;
 border-radius:12px ;
 min-width:400px;
 }
 
-@media(max-width:557px)
+@media(max-width:770px)
 {
     .signUpField{
         padding:10%;
+        max-height:65vh;
+        overflow:auto;
     }
 }
 
@@ -459,6 +459,13 @@ background: rgba(255, 255, 255, 0.474) !important;
     padding: 40px;
 
     min-width: 300px;
+}
+
+@media(max-width:700px){
+    .loginField2{
+        min-width:100px;
+        max-height:65vh;
+    }
 }
 
 .loginField2 {
@@ -776,8 +783,12 @@ border-radius: 12px;
     background:url("/resources/pictures/clientBackgroundBlur.png");
     background-size: cover;
     background-repeat: no-repeat;
-    padding:5%;
+    height:100vh;
     background-attachment: scroll;
+    width:100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
 }
 
 
@@ -807,3 +818,18 @@ border-radius: 12px;
     border-radius: 12px;
     padding:10px;
 }
+
+.navLogo{
+    width:50px;
+}
+
+.navbarLogoText{
+    display:block;
+}
+
+@media(max-width:530px){
+    .navbarLogoText{
+        display:none;
+    }
+}
+
