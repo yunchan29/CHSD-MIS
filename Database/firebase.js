@@ -422,10 +422,10 @@ async function loadProfiles() {
                 </select>
             </td>
             <td>
-                <a class="btn btn-success text-white save-btn" data-id="${doc.id}">Save</a>
-                <a class="btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1">Remarks</a>
-                <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
-                <button class="btn btn-danger text-white archive-btn" data-id="${doc.id}">Archive</button>
+                <a class="mt-2 btn btn-success text-white save-btn" data-id="${doc.id}">Save</a>
+                <a class="mt-2 btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1">Remarks</a>
+                <a class="mt-2 btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
+                <button class="mt-2 btn btn-danger text-white archive-btn" data-id="${doc.id}">Archive</button>
             </td>
         `;
         tableBody.appendChild(row);
