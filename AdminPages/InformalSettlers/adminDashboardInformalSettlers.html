@@ -10,7 +10,7 @@
     
 </head>
 <body>
-    <div class="main-container contentWrap d-flex">
+    <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center">
                 <!-- Empty avatar icon -->
@@ -27,6 +27,33 @@
         </div>
 
         <div class="content">
+           <!--Navigation Bar-->
+<nav class="navigationBar navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+      <!-- Mobile View -->
+      <div class="d-flex justify-content-between d-md-none d-block">
+          <a class="navbar-brand d-flex align-items-center" href="#">
+              <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
+              <h5 class="mb-0 fs-5">CHSD</h5>
+          </a>
+          <button class="btn px-1 py-0 open-btn">
+              <i class="fa-solid fa-bars-staggered"></i>
+          </button>
+      </div>
+
+      <!-- Desktop View -->
+      <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
+          <a class="navbar-brand d-flex align-items-center" href="#">
+              <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
+              <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+          </a>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <!-- Additional nav items go here -->
+          </ul>
+      </div>
+  </div>
+</nav>
+
             
             <div class="contentContainer">
                
@@ -403,33 +430,28 @@
       </div>
   </div>
 </div>
-<script id="replace_with_navbar" src="nav5.js"></script>
+
 <script type="module" src="/Database/firebase.js">
 </script>
 
 
-<script>
-    // JavaScript to handle click event on sidebar items
-    document.addEventListener("DOMContentLoaded", function() {
-        var sideNavItems = document.querySelectorAll('.sideNav');
-        sideNavItems.forEach(function(item) {
-            item.addEventListener('click', function() {
-                // Remove the 'active' class from all items
-                sideNavItems.forEach(function(item) {
-                    item.classList.remove('active');
-                });
-                // Add the 'active' class to the clicked item
-                this.classList.add('active');
-            });
-        });
-    });
-</script>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', (event) => {
       const dateInput = document.getElementById('surveyDate');
       const today = new Date().toISOString().split('T')[0]; // Get today's date in yyyy-mm-dd format
       dateInput.value = today;
+  });
+</script>
+<!--Navigation Bar-->
+<script>
+  document.querySelector('.open-btn').addEventListener('click', function() {
+      document.getElementById('side_nav').classList.add('active');
+  });
+
+  document.querySelector('.close-btn').addEventListener('click', function() {
+      document.getElementById('side_nav').classList.remove('active');
   });
 </script>
 
