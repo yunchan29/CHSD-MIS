@@ -80,6 +80,8 @@
        
 
         <div class="content">
+           
+
             <!--Navigation Bar-->
 <nav class="navigationBar navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
@@ -108,6 +110,7 @@
 </nav>
 
             <div class="contentContainer">
+                <div id="existing-remarks"></div>
                 <h4 class="text-start">Dashboard</h4>
                 <!-- Bootstrap Table -->
                 <div class="container">
@@ -245,26 +248,65 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Remarks</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Hello, please wait for the approval of your application, thank you!</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
-                </div>
-            </div>
+   <!-- Remarks Modal -->
+<div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="remarksModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="remarksModalLabel">Permit Remarks</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body" id="remarks-content">
+          <!-- Remarks will be displayed here -->
+        </div>
+      </div>
     </div>
+  </div>
+
+
 
     <!-- Firebase and custom scripts -->
     <script type="module" src="/Database/firebase.js"></script>
+    <script type="module">
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
+        const db = getFirestore();
+    
+        async function showRemarks(buildingPermitId) {
+            try {
+                const buildingPermitRef = doc(db, "buildingPermits", buildingPermitId);
+                const buildingPermitDoc = await getDoc(buildingPermitRef);
+    
+                if (buildingPermitDoc.exists()) {
+                    const { remarks } = buildingPermitDoc.data();
+                    const remarksContainer = document.getElementById('remarks-content');
+                    remarksContainer.innerHTML = '';
+    
+                    if (Array.isArray(remarks) && remarks.length > 0) {
+                        remarks.forEach((remark, index) => {
+                            const remarkDiv = document.createElement('div');
+                            remarkDiv.className = 'remark mb-2';
+                            remarkDiv.innerHTML = `<strong>Remark ${index + 1}:</strong> ${remark}`;
+                            remarksContainer.appendChild(remarkDiv);
+                        });
+                    } else {
+                        remarksContainer.innerHTML = '<p>No remarks found.</p>';
+                    }
+                } else {
+                    console.warn("Document does not exist.");
+                    alert("Building permit not found.");
+                }
+            } catch (error) {
+                console.error("Error loading remarks:", error);
+                alert("Failed to load remarks. Please try again later.");
+            }
+        }
+    
+        window.showRemarks = showRemarks;  // Make sure showRemarks is globally accessible
+    </script>
+    
+   
+    
 
     <!-- Bootstrap and other scripts -->
   
@@ -281,6 +323,8 @@
             document.getElementById('side_nav').classList.remove('active');
         });
     </script>
+
+    
     
     
     </body>

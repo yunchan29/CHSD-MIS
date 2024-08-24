@@ -369,12 +369,20 @@ async function loadUserPermitStatus() {
                 const permit = permitDoc.data();
                 console.log("Permit data:", permit);
 
+                // Create a button for viewing remarks
+                const viewRemarksButton = `
+    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" onclick="showRemarks('${permitDoc.id}')">
+        <i class="fa-solid fa-comment"></i> View Remarks
+    </a>
+`;
+
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>Building Permit</td>
                     <td>${permit.issuedOn}</td>
                     <td>${permit.status}</td>
-                    <td><a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks"><i class="fa-solid fa-comment"></i> View Remarks</a></td>
+                    <td>${viewRemarksButton}</td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -387,6 +395,49 @@ async function loadUserPermitStatus() {
         document.getElementById('fetching-loading-screen').style.display = 'none';
     }
 }
+
+async function showRemarks(permitId) {
+    try {
+        const permitRef = doc(db, "buildingPermits", permitId);
+        const permitDoc = await getDoc(permitRef);
+
+        if (permitDoc.exists()) {
+            const permit = permitDoc.data();
+            const remarks = permit.remarks || 'No remarks available';
+            document.getElementById('remarks-content').innerText = remarks;
+        } else {
+            console.error("No permit found with ID:", permitId);
+        }
+    } catch (error) {
+        console.error("Error fetching permit remarks:", error);
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Example function to open the remarks modal and show the remarks
+    async function openRemarksModal(permitId) {
+        await showRemarks(permitId);
+        var remarksModal = new bootstrap.Modal(document.getElementById('viewRemarks'));
+        remarksModal.show();
+    }
+
+    // Example function to add click event listeners to table rows
+    function addTableRowListeners() {
+        const rows = document.querySelectorAll('#permit-status-table tr');
+        rows.forEach(row => {
+            row.addEventListener('click', () => {
+                const permitId = row.getAttribute('data-permit-id');
+                if (permitId) {
+                    openRemarksModal(permitId);
+                }
+            });
+        });
+    }
+
+    // Call the function to add listeners after table rows are populated
+    addTableRowListeners();
+});
 
 
 // Function to load building permits (for admin view)
@@ -610,4 +661,88 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('ownerLastName').value = lastName;
         }
     }
+});
+
+
+// Function to load and display remarks in the modal
+async function loadRemarks(buildingPermitId) {
+    try {
+        const buildingPermitRef = doc(db, "buildingPermits", buildingPermitId);
+        const buildingPermitDoc = await getDoc(buildingPermitRef);
+
+        if (buildingPermitDoc.exists()) {
+            const { remarks } = buildingPermitDoc.data();
+            const existingRemarksContainer = document.getElementById('existing-remarks');
+            existingRemarksContainer.innerHTML = '';
+
+            if (Array.isArray(remarks) && remarks.length > 0) {
+                remarks.forEach((remark, index) => {
+                    const remarkDiv = document.createElement('div');
+                    remarkDiv.className = 'remark mb-2';  // Added margin for better spacing
+                    remarkDiv.innerHTML = `<strong>Remark ${index + 1}:</strong> ${remark}`;
+                    existingRemarksContainer.appendChild(remarkDiv);
+                });
+            } else {
+                existingRemarksContainer.innerHTML = '<p>No remarks found.</p>';
+            }
+        } else {
+            console.warn("Document does not exist.");
+            alert("Building permit not found.");
+        }
+    } catch (error) {
+        console.error("Error loading remarks:", error);
+        alert("Failed to load remarks. Please try again later.");
+    }
+}
+
+
+async function saveRemark(buildingPermitId) {
+    const newRemark = document.getElementById('new-remark').value.trim();
+
+    if (newRemark === '') {
+        alert("Remark cannot be empty.");
+        return;
+    }
+
+    try {
+        const remarksRef = doc(db, "buildingPermits", buildingPermitId);
+        await updateDoc(remarksRef, {
+            remarks: arrayUnion(newRemark)
+        });
+
+        document.getElementById('new-remark').value = ''; // Clear the input field
+        loadRemarks(buildingPermitId); // Reload the remarks list
+    } catch (error) {
+        console.error("Error saving remark:", error);
+        alert("Failed to save remark. Please try again later.");
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle Save Remark Button
+    const saveRemarkButton = document.getElementById('save-remark-btn');
+    if (saveRemarkButton) {
+        saveRemarkButton.addEventListener('click', () => {
+            const buildingPermitId = document.querySelector('.save-btn')?.getAttribute('data-id');
+            if (buildingPermitId) {
+                saveRemark(buildingPermitId);
+            } else {
+                console.error('Save Remark button has no data-id attribute');
+            }
+        });
+    } else {
+        console.error('Save Remark button not found');
+    }
+    
+    // Handle Save Button
+    document.querySelectorAll('.save-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const buildingPermitId = event.target.getAttribute('data-id');
+            if (buildingPermitId) {
+                loadRemarks(buildingPermitId);
+            } else {
+                console.error('Save button has no data-id attribute');
+            }
+        });
+    });
 });

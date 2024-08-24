@@ -93,10 +93,12 @@
            
            
             <div class="contentContainer">
+
                 <h4 class="text-center">Building Permit</h4>
                 <!-- Bootstrap Table -->
                 
                 <div class="container">
+                    
                     <h5>Profile</h5>
                     <div class="row mt-4">
                         <div class="col">
@@ -125,8 +127,10 @@
                         <tbody>
                             
                         </tbody>
+                       
                     </table>
-
+                    <div id="existing-remarks"></div>
+                   
                     </div>
 
             
@@ -459,27 +463,28 @@
 
    
   
-  <!-- Modal -->
-<div class="modal fade" id="remarksModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Remarks Modal -->
+<div class="modal fade" id="remarksModal1" tabindex="-1" aria-labelledby="remarksModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Remarks</h1>
+          <h5 class="modal-title" id="remarksModalLabel">Remarks</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="mb-3">
-            
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Write a message"></textarea>
-          </div>
+          <ul id="remarks-list" class="list-group mb-3">
+            <!-- Remarks will be dynamically loaded here -->
+          </ul>
+          <textarea id="new-remark" class="form-control" placeholder="Add a remark"></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" id="save-remark-btn" class="btn btn-primary">Save Remark</button>
         </div>
       </div>
     </div>
   </div>
+  
 
   <!--QR Code Scanner-->
    <!-- Modal -->
