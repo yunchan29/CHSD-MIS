@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f3f3f3;
+        }
+        .loading-container {
+            text-align: center;
+        }
+        .loading-logo {
+            width: 150px; /* Adjust size as needed */
+            margin-bottom: 20px;
+        }
+        .progress {
+            height: 20px;
+            width: 100%;
+            max-width: 400px; /* Adjust as needed */
+            margin: 20px auto;
+        }
+        .progress-bar {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <!-- Sample logo -->
+        <img src="/resources/pictures/chsd.png" alt="Logo" class="loading-logo">
+        <div class="loading">Loading, please wait...</div>
+        <!-- Bootstrap progress bar -->
+        <div class="progress">
+            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script>
+        // Function to simulate loading progress
+        function simulateLoadingProgress() {
+            const progressBar = document.getElementById('progress-bar');
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    // Redirect to main page after reaching 100%
+                    window.location.href = 'index.html'; // Change 'index.html' to your main page
+                } else {
+                    width += 1; // Increment progress
+                    progressBar.style.width = width + '%';
+                    progressBar.setAttribute('aria-valuenow', width);
+                }
+            }, 30); // Adjust the speed of progress bar (lower value = faster)
+        }
+
+        // Start the loading progress simulation
+        window.onload = simulateLoadingProgress;
+    </script>
+</body>
+</html>
