@@ -268,37 +268,49 @@
     <!-- Firebase and custom scripts -->
     <script type="module" src="/Database/firebase.js"></script>
     <script type="module">
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     
         const db = getFirestore();
+        const auth = getAuth();
     
         async function showRemarks(buildingPermitId) {
             try {
-                const buildingPermitRef = doc(db, "buildingPermits", buildingPermitId);
-                const buildingPermitDoc = await getDoc(buildingPermitRef);
+                // Reference to the top-level remarks collection
+                const remarksCollectionRef = collection(db, "remarks");
+                const q = query(remarksCollectionRef, where("buildingPermitId", "==", buildingPermitId));
+                const remarksSnapshot = await getDocs(q);
     
-                if (buildingPermitDoc.exists()) {
-                    const { remarks } = buildingPermitDoc.data();
-                    const remarksContainer = document.getElementById('remarks-content');
-                    remarksContainer.innerHTML = '';
+                // Get the current user
+                const user = auth.currentUser;
+                if (!user) {
+                    document.getElementById('remarks-content').innerText = 'No user logged in';
+                    return;
+                }
     
-                    if (Array.isArray(remarks) && remarks.length > 0) {
-                        remarks.forEach((remark, index) => {
-                            const remarkDiv = document.createElement('div');
-                            remarkDiv.className = 'remark mb-2';
-                            remarkDiv.innerHTML = `<strong>Remark ${index + 1}:</strong> ${remark}`;
-                            remarksContainer.appendChild(remarkDiv);
-                        });
-                    } else {
-                        remarksContainer.innerHTML = '<p>No remarks found.</p>';
-                    }
+                const userUid = user.uid;
+    
+                // Filter remarks for the current user
+                const userRemarks = remarksSnapshot.docs
+                    .map(doc => doc.data())
+                    .filter(remark => remark.userId === userUid);
+    
+                // Display the filtered remarks
+                const remarksContainer = document.getElementById('remarks-content');
+                if (userRemarks.length > 0) {
+                    remarksContainer.innerHTML = userRemarks.map((remark, index) => `
+                        <div class="remark mb-2">
+                            <strong>Remark ${index + 1}:</strong>
+                            <p>${remark.text}</p>
+                            <small>Posted on ${new Date(remark.timestamp.seconds * 1000).toLocaleString()}</small>
+                        </div>
+                    `).join('');
                 } else {
-                    console.warn("Document does not exist.");
-                    alert("Building permit not found.");
+                    remarksContainer.innerHTML = '<p>No remarks available.</p>';
                 }
             } catch (error) {
                 console.error("Error loading remarks:", error);
-                alert("Failed to load remarks. Please try again later.");
+                document.getElementById('remarks-content').innerText = 'Failed to load remarks. Please try again later.';
             }
         }
     

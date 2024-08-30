@@ -371,11 +371,10 @@ async function loadUserPermitStatus() {
 
                 // Create a button for viewing remarks
                 const viewRemarksButton = `
-    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" onclick="showRemarks('${permitDoc.id}')">
-        <i class="fa-solid fa-comment"></i> View Remarks
-    </a>
-`;
-
+                    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" onclick="showRemarks('${permitDoc.id}')">
+                        <i class="fa-solid fa-comment"></i> View Remarks
+                    </a>
+                `;
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -396,22 +395,7 @@ async function loadUserPermitStatus() {
     }
 }
 
-async function showRemarks(permitId) {
-    try {
-        const permitRef = doc(db, "buildingPermits", permitId);
-        const permitDoc = await getDoc(permitRef);
 
-        if (permitDoc.exists()) {
-            const permit = permitDoc.data();
-            const remarks = permit.remarks || 'No remarks available';
-            document.getElementById('remarks-content').innerText = remarks;
-        } else {
-            console.error("No permit found with ID:", permitId);
-        }
-    } catch (error) {
-        console.error("Error fetching permit remarks:", error);
-    }
-}
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -664,36 +648,91 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-// Function to load and display remarks in the modal
+async function showRemarks(permitId) {
+    try {
+        // Reference to the remarks collection
+        const remarksRef = collection(db, "remarks");
+        const q = query(remarksRef, where("buildingPermitId", "==", permitId));
+        const remarksSnapshot = await getDocs(q);
+
+        // Get the current user
+        const user = auth.currentUser;
+        if (!user) {
+            document.getElementById('remarks-content').innerText = 'No user logged in';
+            return;
+        }
+
+        const userUid = user.uid;
+
+        // Filter remarks for the current user
+        const userRemarks = remarksSnapshot.docs
+            .map(doc => doc.data())
+            .filter(remark => remark.userId === userUid);
+
+        // Display the filtered remarks
+        const remarksContent = userRemarks.length > 0
+            ? userRemarks.map(remark => `
+                <div>
+                    <p>${remark.text}</p>
+                    <small>Posted on ${new Date(remark.timestamp.seconds * 1000).toLocaleString()}</small>
+                </div>
+            `).join('')
+            : 'No remarks available';
+        
+        document.getElementById('remarks-content').innerHTML = remarksContent;
+    } catch (error) {
+        console.error("Error fetching permit remarks:", error);
+        document.getElementById('remarks-content').innerText = 'Error fetching remarks';
+    }
+}
+
+
+
+
 async function loadRemarks(buildingPermitId) {
     try {
-        const buildingPermitRef = doc(db, "buildingPermits", buildingPermitId);
-        const buildingPermitDoc = await getDoc(buildingPermitRef);
+        const remarksCollectionRef = collection(db, "remarks");
+        const q = query(remarksCollectionRef, where("buildingPermitId", "==", buildingPermitId));
+        const remarksSnapshot = await getDocs(q);
 
-        if (buildingPermitDoc.exists()) {
-            const { remarks } = buildingPermitDoc.data();
-            const existingRemarksContainer = document.getElementById('existing-remarks');
-            existingRemarksContainer.innerHTML = '';
+        if (remarksSnapshot.empty) {
+            document.getElementById('existing-remarks').innerHTML = '<p>No remarks found.</p>';
+            return;
+        }
 
-            if (Array.isArray(remarks) && remarks.length > 0) {
-                remarks.forEach((remark, index) => {
+        const existingRemarksContainer = document.getElementById('existing-remarks');
+        existingRemarksContainer.innerHTML = '';
+
+        const user = auth.currentUser;
+        if (user) {
+            const currentUserId = user.uid;
+
+            remarksSnapshot.forEach(doc => {
+                const remarkData = doc.data();
+                if (remarkData.userId === currentUserId) {
                     const remarkDiv = document.createElement('div');
-                    remarkDiv.className = 'remark mb-2';  // Added margin for better spacing
-                    remarkDiv.innerHTML = `<strong>Remark ${index + 1}:</strong> ${remark}`;
+                    remarkDiv.className = 'remark mb-2';
+
+                    const remarkText = remarkData.text || 'No text';
+                    const remarkTimestamp = remarkData.timestamp ? new Date(remarkData.timestamp.seconds * 1000).toLocaleString() : 'No timestamp';
+                    const remarkUserId = remarkData.userId || 'Unknown user';
+
+                    remarkDiv.innerHTML = `
+                        <p>${remarkText}</p>
+                        <small>Posted by: ${remarkUserId} on ${remarkTimestamp}</small>
+                    `;
                     existingRemarksContainer.appendChild(remarkDiv);
-                });
-            } else {
-                existingRemarksContainer.innerHTML = '<p>No remarks found.</p>';
-            }
+                }
+            });
         } else {
-            console.warn("Document does not exist.");
-            alert("Building permit not found.");
+            existingRemarksContainer.innerHTML = '<p>No user logged in.</p>';
         }
     } catch (error) {
         console.error("Error loading remarks:", error);
         alert("Failed to load remarks. Please try again later.");
     }
 }
+
 
 
 async function saveRemark(buildingPermitId) {
@@ -705,18 +744,44 @@ async function saveRemark(buildingPermitId) {
     }
 
     try {
-        const remarksRef = doc(db, "buildingPermits", buildingPermitId);
-        await updateDoc(remarksRef, {
-            remarks: arrayUnion(newRemark)
-        });
+        const remarksCollectionRef = collection(db, "remarks");
 
-        document.getElementById('new-remark').value = ''; // Clear the input field
-        loadRemarks(buildingPermitId); // Reload the remarks list
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            alert("No user logged in.");
+            return;
+        }
+
+        const userRef = doc(db, "users", currentUser.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            alert("User document does not exist.");
+            return;
+        }
+
+        const userName = userDoc.data().name || 'Unknown';
+
+        const remarkData = {
+            text: newRemark,
+            timestamp: new Date(),
+            userId: currentUser.uid,
+            userName: userName,
+            buildingPermitId: buildingPermitId // Ensure buildingPermitId is included
+        };
+
+        await addDoc(remarksCollectionRef, remarkData);
+
+        document.getElementById('new-remark').value = '';
+
+        loadRemarks(buildingPermitId);
     } catch (error) {
         console.error("Error saving remark:", error);
         alert("Failed to save remark. Please try again later.");
     }
 }
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // Handle Save Remark Button
@@ -734,7 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Save Remark button not found');
     }
     
-    // Handle Save Button
+    // Handle Load Remarks Button
     document.querySelectorAll('.save-btn').forEach(button => {
         button.addEventListener('click', (event) => {
             const buildingPermitId = event.target.getAttribute('data-id');
