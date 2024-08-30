@@ -667,10 +667,11 @@ async function loadRemarks(buildingPermitId) {
             return;
         }
 
-        const userRef = doc(db, "users", currentUser.uid);
-        const remarksCollectionRef = collection(userRef, "remarks");
+        const remarksCollectionRef = collection(db, "users", currentUser.uid, "remarks");
         const q = query(remarksCollectionRef, where("buildingPermitId", "==", buildingPermitId));
         const remarksSnapshot = await getDocs(q);
+
+        console.log("Remarks snapshot size:", remarksSnapshot.size);
 
         const existingRemarksContainer = document.getElementById('existing-remarks');
         if (!existingRemarksContainer) {
@@ -752,6 +753,7 @@ async function saveRemark(buildingPermitId) {
         // Add remark to the user's remarks subcollection
         const remarksCollectionRef = collection(userRef, "remarks");
         await addDoc(remarksCollectionRef, remarkData);
+        
         console.log("Remark saved successfully:", remarkData);
 
         document.getElementById('new-remark').value = '';
@@ -768,6 +770,22 @@ document.addEventListener('DOMContentLoaded', () => {
     attachEventListeners();
     monitorAuthState();
 
+    // Debug log to check if buildingPermitId is being found
+    const buildingPermitBtn = document.querySelector('.save-btn');
+    if (buildingPermitBtn) {
+        const buildingPermitId = buildingPermitBtn.getAttribute('data-id');
+        console.log("Building Permit ID found on page load:", buildingPermitId);
+        
+        if (buildingPermitId) {
+            loadRemarks(buildingPermitId);
+        } else {
+            console.error('Building Permit ID is not set on the save button');
+        }
+    } else {
+        console.error('No element with class "save-btn" found');
+    }
+
+    // Additional initialization
     const buildingPermitDiv = document.getElementById("buildingPermitDiv");
     if (buildingPermitDiv) {
         loadProfiles();
@@ -807,7 +825,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-
-
-
-
