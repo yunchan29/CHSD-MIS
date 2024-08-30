@@ -699,8 +699,10 @@ async function loadRemarks(buildingPermitId) {
             const remarkUserId = remarkData.userId || 'Unknown user';
 
             remarkDiv.innerHTML = `
-                <p>${remarkText}</p>
-                <small>Posted by: ${remarkUserId} on ${remarkTimestamp}</small>
+                <div style="border:1px solid black; border-radius:12px; margin:1%; padding:10px;">
+                     <p>${remarkText}</p>
+                <small>Posted by: Admin on ${remarkTimestamp}</small>
+                </div>
             `;
             existingRemarksContainer.appendChild(remarkDiv);
         });
@@ -755,6 +757,7 @@ async function saveRemark(buildingPermitId) {
         await addDoc(remarksCollectionRef, remarkData);
         
         console.log("Remark saved successfully:", remarkData);
+        alert("Remarks saved successfully");
 
         document.getElementById('new-remark').value = '';
 
