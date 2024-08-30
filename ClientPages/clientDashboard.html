@@ -257,7 +257,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id="remarks-content">
-          <!-- Remarks will be displayed here -->
+        
         </div>
       </div>
     </div>
@@ -267,56 +267,9 @@
 
     <!-- Firebase and custom scripts -->
     <script type="module" src="/Database/firebase.js"></script>
-    <script type="module">
-        import { getFirestore, collection, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    
-        const db = getFirestore();
-        const auth = getAuth();
-    
-        async function showRemarks(buildingPermitId) {
-            try {
-                // Reference to the top-level remarks collection
-                const remarksCollectionRef = collection(db, "remarks");
-                const q = query(remarksCollectionRef, where("buildingPermitId", "==", buildingPermitId));
-                const remarksSnapshot = await getDocs(q);
-    
-                // Get the current user
-                const user = auth.currentUser;
-                if (!user) {
-                    document.getElementById('remarks-content').innerText = 'No user logged in';
-                    return;
-                }
-    
-                const userUid = user.uid;
-    
-                // Filter remarks for the current user
-                const userRemarks = remarksSnapshot.docs
-                    .map(doc => doc.data())
-                    .filter(remark => remark.userId === userUid);
-    
-                // Display the filtered remarks
-                const remarksContainer = document.getElementById('remarks-content');
-                if (userRemarks.length > 0) {
-                    remarksContainer.innerHTML = userRemarks.map((remark, index) => `
-                        <div class="remark mb-2">
-                            <strong>Remark ${index + 1}:</strong>
-                            <p>${remark.text}</p>
-                            <small>Posted on ${new Date(remark.timestamp.seconds * 1000).toLocaleString()}</small>
-                        </div>
-                    `).join('');
-                } else {
-                    remarksContainer.innerHTML = '<p>No remarks available.</p>';
-                }
-            } catch (error) {
-                console.error("Error loading remarks:", error);
-                document.getElementById('remarks-content').innerText = 'Failed to load remarks. Please try again later.';
-            }
-        }
-    
-        window.showRemarks = showRemarks;  // Make sure showRemarks is globally accessible
-    </script>
-    
+
+  
+   
    
     
 
