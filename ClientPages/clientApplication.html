@@ -95,7 +95,7 @@
                 </div>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav"><a href="" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="sideNav"><a href="clientDashboard.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                 <li class="sideNav"><a href="clientRequirements.html" class="text-decoration-none"><i class="fa-solid fa-list"></i> Requirements List</a></li>
                 
                 <li class="sideNav dropdown active">
@@ -261,38 +261,41 @@
     <script src="/ClientPages/navBarScript.js"></script>
 
     <script>
-        document.querySelector('.open-btn').addEventListener('click', function() {
-            document.getElementById('side_nav').classList.add('active');
-        });
-    
-        document.querySelector('.close-btn').addEventListener('click', function() {
-            document.getElementById('side_nav').classList.remove('active');
-        });
-    </script>
-
-<script>
     document.addEventListener("DOMContentLoaded", function() {
- var sideNavItems = document.querySelectorAll('.sideNav');
+    var sideNav = document.getElementById('side_nav');
+    var openBtn = document.querySelector('.open-btn');
+    var closeBtn = document.querySelector('.close-btn');
+    var dropdownItems = document.querySelectorAll('.sideNav.dropdown');
 
- sideNavItems.forEach(function(item) {
-     item.addEventListener('click', function(e) {
-         if (this.classList.contains('dropdown')) {
-             this.classList.toggle('open');
-         } else {
-             // Remove the 'active' class from all items
-             sideNavItems.forEach(function(item) {
-                 item.classList.remove('active');
-             });
-             // Add the 'active' class to the clicked item
-             this.classList.add('active');
-         }
-     });
- });
+    // Toggle the sidebar for mobile view
+    openBtn.addEventListener('click', function() {
+        sideNav.classList.add('active');
+    });
 
+    closeBtn.addEventListener('click', function() {
+        sideNav.classList.remove('active');
+    });
+
+    // Handle dropdown in sidebar
+    dropdownItems.forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevents clicks from closing the sidebar
+            this.classList.toggle('open');
+        });
+    });
+
+    // Close the sidebar when clicking outside of it (optional)
+    document.addEventListener('click', function(e) {
+        if (!sideNav.contains(e.target) && !openBtn.contains(e.target)) {
+            sideNav.classList.remove('active');
+        }
+    });
 });
 
 
- </script>
+    </script>
+
+
 
     
     
