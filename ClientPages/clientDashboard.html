@@ -73,7 +73,17 @@
             </div>
             <ul class="sideBarList list-unstyled px-2">
                 <li class="sideNav active"><a href="" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-                <li class="sideNav"><a href="clientApplication.html" class="text-decoration-none"><i class="fa-solid fa-newspaper"></i> Application</a></li>
+                <li class="sideNav"><a href="clientRequirements.html" class="text-decoration-none"><i class="fa-solid fa-list"></i> Requirements List</a></li>
+                
+                <li class="sideNav dropdown">
+                    <a href="clientApplication.html" class="text-decoration-none"><i class="fa-solid fa-newspaper"></i> Application <i class="fas fa-caret-down"></i></a>
+                    <ul class="submenu list-unstyled">
+                        <li class="text-center mt-3"><a href="clientBuildingPermit.html" class="text-decoration-none">Building Permit</a></li>
+                        <li class="text-center mt-3"><a href="clientOccupancyApplication.html" class="text-decoration-none">Certificate of Occupancy</a></li>
+                        <li class="text-center mt-3"><a href="clientElectricalApplication.html" class="text-decoration-none">Certificate of Electrical Inspection</a></li>
+                        <li class="text-center mt-3"><a href="clientHousingApplication.html" class="text-decoration-none">Housing Application</a></li>
+                    </ul>
+                </li>
                 <li class="sideNav" id="user-logout-btn"><a href="#" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
             </ul>
         </div>
@@ -288,6 +298,30 @@
             document.getElementById('side_nav').classList.remove('active');
         });
     </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+ var sideNavItems = document.querySelectorAll('.sideNav');
+
+ sideNavItems.forEach(function(item) {
+     item.addEventListener('click', function(e) {
+         if (this.classList.contains('dropdown')) {
+             this.classList.toggle('open');
+         } else {
+             // Remove the 'active' class from all items
+             sideNavItems.forEach(function(item) {
+                 item.classList.remove('active');
+             });
+             // Add the 'active' class to the clicked item
+             this.classList.add('active');
+         }
+     });
+ });
+
+});
+
+
+ </script>
 
     
     

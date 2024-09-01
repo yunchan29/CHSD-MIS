@@ -34,7 +34,7 @@ html,body
     background: url(/resources/pictures/sidebar_bg.png);
     width: 100%; 
     max-width:250px;
-    height:80vh;
+    height:90vh;
     color:black !important;
     background-size:cover;
     background-repeat: no-repeat;
@@ -43,6 +43,7 @@ html,body
     -moz-box-shadow: -3px 3px 10px 3px #dddddd;
     box-shadow: -3px 3px 10px 3px #dddddd;
     transition: all 0.2s; 
+    overflow:hidden;
 }
 
 .contentWrap{
@@ -833,3 +834,24 @@ border-radius: 12px;
     }
 }
 
+.dropdown-menu {
+    display: none;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+    max-height: 0;
+}
+
+.dropdown-menu.show {
+    display: block;
+    max-height: 200px; /* Adjust as needed */
+}
+
+.submenu {
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    max-height: 0;
+}
+
+.dropdown.open .submenu {
+    max-height: 200px; /* Adjust as needed */
+}

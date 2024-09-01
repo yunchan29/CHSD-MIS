@@ -43,34 +43,6 @@
         .d-flex .me-2 {
             margin-right: 1rem; /* Add margin to the right of the input */
         }
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        .card:hover {
-            transform: scale(1.05);
-        }
-        .card-img {
-            height: 250px;
-            background-size: cover;
-            background-position: center;
-        }
-        .card-body {
-    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque */
-    padding: 20px;
-    border-radius: 0 0 15px 15px; /* Match the card's rounded corners */
-}
-
-        .card-title {
-            font-weight: bold;
-        }
-        .card-text {
-            color: #555;
-        }
     </style>
 </head>
 <body>
@@ -95,16 +67,16 @@
                 </div>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav"><a href="" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="sideNav"><a href="clientDashboard.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                 <li class="sideNav"><a href="clientRequirements.html" class="text-decoration-none"><i class="fa-solid fa-list"></i> Requirements List</a></li>
                 
-                <li class="sideNav dropdown active">
+                <li class="sideNav dropdown open">
                     <a href="#" class="text-decoration-none"><i class="fa-solid fa-newspaper"></i> Application <i class="fas fa-caret-down"></i></a>
                     <ul class="submenu list-unstyled">
-                        <li class="text-center mt-3"><a href="clientBuildingPermit.html" class="text-decoration-none">Building Permit</a></li>
-                        <li class="text-center mt-3"><a href="clientOccupancyApplication.html" class="text-decoration-none">Certificate of Occupancy</a></li>
-                        <li class="text-center mt-3"><a href="clientElectricalApplication.html" class="text-decoration-none">Certificate of Electrical Inspection</a></li>
-                        <li class="text-center mt-3"><a href="clientHousingApplication.html" class="text-decoration-none">Housing Application</a></li>
+                        <li class="text-center mt-2"><a href="clientBuildingPermit.html" class="text-decoration-none">Building Permit</a></li>
+                        <li class="text-center mt-2"><a href="clientOccupancyApplication.html" class="text-decoration-none">Occupancy</a></li>
+                        <li class="text-center mt-2 active"><a href="clientElectricalApplication.html" class="text-decoration-none">Electrical Inspection</a></li>
+                        <li class="text-center mt-2"><a href="clientHousingApplication.html" class="text-decoration-none">Housing</a></li>
                     </ul>
                 </li>
                 <li class="sideNav" id="user-logout-btn"><a href="#" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
@@ -143,51 +115,6 @@
 </nav>
 
             <div class="contentContainer">
-                <div class="container my-5">
-                    <div class="row g-4">
-                        <div class="col-md-6 col-lg-3">
-                            <div class="card">
-                                <div class="card-img" style="background-image: url('https://www.permitadvisors.com/wp-content/uploads/2019/12/bldg-permit2.jpg');"></div>
-                                <div class="card-body">
-                                    <h6 class="card-title">Building Permit Application</h6>
-                                    <p class="card-text"></p>
-                                    <a href="clientBuildingPermit.html" class="btn btn-primary text-white">Apply</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="card">
-                                <div class="card-img" style="background-image: url('https://img.freepik.com/free-vector/member-family-home-outdoor-scene_1308-58589.jpg');"></div>
-                                <div class="card-body">
-                                    <h6 class="card-title">Occupancy Permit Application</h6>
-                                    <p class="card-text"></p>
-                                    <a href="clientOccupancyApplication.html" class="btn btn-primary text-white">Apply</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="card">
-                                <div class="card-img" style="background-image: url('https://us.123rf.com/450wm/bbtreesubmission/bbtreesubmission1711/bbtreesubmission171102865/90607378-engineer-checking-up-electricity-device.jpg?ver=6');"></div>
-                                <div class="card-body">
-                                    <h6 class="card-title">Electrical Inspection Certificate Application</h6>
-                                    <p class="card-text"></p>
-                                    <a href="clientElectricalApplication.html" class="btn btn-primary text-white">Apply</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="card">
-                                <div class="card-img" style="background-image: url('https://assets.weforum.org/article/image/large_15gAQdddPzO5Cn18bJ--4zQTUHrfpVxWQbAQ6jhvTSc.jpg');"></div>
-                                <div class="card-body">
-                                    <h6 class="card-title">Housing Application</h6>
-                                    <p class="card-text"></p>
-                                    <a href="clientHousingApplication.html" class="btn btn-primary text-white">Apply</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            
                
             </div>
         </div>
