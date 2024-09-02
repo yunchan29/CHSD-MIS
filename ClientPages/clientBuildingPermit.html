@@ -286,10 +286,18 @@
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <input type="text" class="form-control" id="addressTelNo" placeholder="Address and Tel No.">
+                                <input type="text" class="form-control" id="addressTelNo" placeholder="Address">
                             </div>
+
+
                             <div class="col-md-6">
                                 <input type="text" class="form-control" id="projectLocation" placeholder="Project Location">
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="TelNo" placeholder="Telephone No.">
                             </div>
                         </div>
                         <div class="mb-3">
@@ -955,25 +963,25 @@ function handleDrop(event) {
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-      // Check if user has already accepted the privacy policy
-      if (!localStorage.getItem('privacyPolicyAccepted')) {
-        // Show the privacy policy modal if not accepted
-        var myModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
-        myModal.show();
-      }
+        // Show the privacy policy modal every time the page is loaded
+        var privacyModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
+        privacyModal.show();
   
-      // Handle the "Proceed" button click
-      document.getElementById('acceptPolicyButton').addEventListener('click', function () {
-        // Store the acceptance in localStorage
-        localStorage.setItem('privacyPolicyAccepted', 'true');
-        
-        // Hide the privacy policy modal
-        var myModalEl = document.getElementById('privacyPolicyModal');
-        var modal = bootstrap.Modal.getInstance(myModalEl);
-        modal.hide();
-      });
+        // Handle the "Proceed" button click
+        document.getElementById('acceptPolicyButton').addEventListener('click', function () {
+            // Hide the privacy policy modal
+            var privacyModalEl = document.getElementById('privacyPolicyModal');
+            var privacyModalInstance = bootstrap.Modal.getInstance(privacyModalEl);
+            privacyModalInstance.hide();
+            
+            // Show the building permit modal
+            var buildingPermitModal = new bootstrap.Modal(document.getElementById('buildingPermitModal'));
+            buildingPermitModal.show();
+        });
     });
-  </script>
+</script>
+
+
   
 
 
