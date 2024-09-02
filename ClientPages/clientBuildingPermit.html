@@ -44,6 +44,86 @@
             margin-right: 1rem; /* Add margin to the right of the input */
         }
     </style>
+
+<style>
+    .btn-upload {
+    padding: 8px 16px;
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border: none;
+    cursor: pointer !important;
+}
+.btn-upload:hover {
+    background-color: #45a049;
+}
+.file-item {
+    display: flex;
+    align-items: center;
+}
+.file-name {
+    margin-right: 10px;
+}
+.btn-delete {
+    color: red;
+    cursor: pointer;
+}
+    .content {
+        flex: 1; 
+        overflow: hidden; 
+        display: flex;
+        flex-direction: column; 
+    }
+
+    .content-container {
+        overflow-y: auto; 
+        padding: 20px; 
+    }
+
+    .wide-modal {
+        max-width: 80%;
+    }
+
+    .form-control {
+        margin-bottom: 1rem; 
+    }
+
+    .form-check {
+        margin-bottom: 0.5rem; 
+    }
+
+    .row.g-3 .col-md-6,
+    .row.g-3 .col-md-4,
+    .row.g-3 .col-md-12 {
+        margin-bottom: 1rem; 
+    }
+
+    .d-flex .me-2 {
+        margin-right: 1rem; 
+    }
+    .upload-btn-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
+
+    .btn-upload {
+        border: 2px solid #007bff;
+        color: white;
+        background-color: #007bff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .upload-btn-wrapper input[type=file] {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+    }
+</style>
 </head>
 <body>
    
@@ -115,61 +195,439 @@
 </nav>
 
             <div class="contentContainer">
+                <div class="col">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <!-- Application Modal -->
+<div class="modal fade" id="buildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+        <div class="modal-content buldingPermitApplication">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="BuildingPermitModalLabel">Building Permit Application</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Application Modal Content -->
+                <div class="container">
+                   <!-- Step Progress Bar -->
+                <div class="step-progress mb-4">
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Form</div>
+                    </div>
+                    <div class="step">
+                        <div class="circle"></div>
+                        <div class="label">Upload Requirements</div>
+                    </div>
+                    <div class="step">
+                        <div class="circle"></div>
+                        <div class="label">Appointment</div>
+                    </div>
+                </div>
+                    <form>
+                        <div class="mb-3">
+                            <div class="d-flex col-md-6">
+                                <input type="text" class="form-control me-2" id="hsdFormNo" placeholder="HSD Form No.1" disabled>
+                                
+                                <input type="email" class="form-control" id="ownerEmail" placeholder="" disabled>
+                                <button type="button" class="btn btn-secondary" onclick="window.print();"><i class="fa-solid fa-print"></i> Print</button>
+                                
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="buildingPermitNo" placeholder="Building Permit No." disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon3">Issued on:</span>
+                                    <input type="date" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+                                </div>
+                            </div>
+                        </div>
+                      <div class="row g-3">
+    <label for="ownerName">Owner/Applicant Name:</label>
+    <div class="col-md-3">
+        <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name">
+    </div>
+    <div class="col-md-3">
+        <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name">
+    </div>
+    <div class="col-md-3">
+        <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
+    </div>
+    <div class="col-md-3">
+        <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
+    </div>
+</div>
+
+
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phoneNumber" placeholder="+63XXXXXXXXXX" required>
+                          </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="addressTelNo" placeholder="Address and Tel No.">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="projectLocation" placeholder="Project Location">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="row g-3">
+                                <label for="form-check" class="form-label">Scope of Work</label>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="option1" id="option1">
+                                        <label class="form-check-label" for="option1">New Construction</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="option2" id="option2">
+                                        <label class="form-check-label" for="option2">Addition</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="option3" id="option3">
+                                        <label class="form-check-label" for="option3">Repair Renovation</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="option4" id="option4">
+                                        <label class="form-check-label" for="option4">Others</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="row g-3">
+                                <label for="form-check" class="form-label">Project Justification</label>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="justification1" id="justification1">
+                                        <label class="form-check-label" for="justification1">Single Attached/Semi-Attached/Duplex</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="justification2" id="justification2">
+                                        <label class="form-check-label" for="justification2">Single/Detached</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="justification3" id="justification3">
+                                        <label class="form-check-label" for="justification3">Row House/Multi-family Dwelling</label>
+                                    </div>
+                                </div>
+                             
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Block number">
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Lot number">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="No. of Units">
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Floor Area Per Unit">
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Total Floor Area">
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Total Estimated Cost">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               
+                <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
                
             </div>
         </div>
     </div>
+</div>
+              </div>
+                <!-- End of Bootstrap Table -->
+            </div>
+        </div>
+    </div>
 
-    <!-- Application Modal -->
-    <div class="modal fade" id="buildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
-            <div class="modal-content buldingPermitApplication">
+    
+
+  
+  <!--Building Permit Upload Modal -->
+  <div class="modal fade" id="buildingPermitUpload" tabindex="-1" aria-labelledby="buildingPermitUploadLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Building Permit Application</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Step Progress Bar -->
+          <div class="step-progress mb-4">
+            <div class="step completed">
+                <div class="circle"></div>
+                <div class="label">Form</div>
+            </div>
+            <div class="step completed">
+                <div class="circle"></div>
+                <div class="label">Upload Requirements</div>
+            </div>
+            <div class="step">
+                <div class="circle"></div>
+                <div class="label">Appointment</div>
+            </div>
+        </div>
+        <!--Content-->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Requirements</th>
+                    <th>File</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Building Plan</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Proof of Ownership</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Photocopy of tax declaration & current tax receipt</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Brgy. Clearance of Building Permit</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Bill of Materials & Specification</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Photocopy of PRC IC/PTR of all signing engineers</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Certification of Exemption Location Clearance from CPDO</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Structural Analysis(2-Storey and up)</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Fire Clearance</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Boring Test</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Occupancy Permit(Home improvement/Extension)</td>
+                    <td class="file-column"></td>
+                    <td>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-upload">Upload</button>
+                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <div class="modal-footer">
+        
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="previousStepButton">Previous</button>
+                <button id="nextStepButton2" class="btn btn-primary" type="button">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+ <!-- Appointment Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5" id="exampleModalLabel">Appointment Schedule</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Step Progress Bar -->
+                <div class="step-progress mb-4">
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Form</div>
+                    </div>
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Upload Requirements</div>
+                    </div>
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Appointment</div>
+                    </div>
+                </div>
+                <!-- Content -->
+                <div class="container">
+                    <h5 class="text-center mt-5 mb-4">Appointment Schedule</h5>
+                    <div class="row">
+                        <div class="col-md-3"></div> <!-- Empty column for spacing -->
+                        <div class="col-md-6">
+                           <img class="img-fluid" src="/resources/pictures/calendar.png">
+                        </div>
+                        <div class="col-md-3"></div> <!-- Empty column for spacing -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="previousStepButton2">Previous</button>
+                <button type="button" class="btn btn-primary" id="submitProfile">Finish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment Modal 2 -->
+<div class="modal fade" id="appointmentModal2" tabindex="-1" role="dialog" aria-labelledby="appointmentModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="appointmentModalLabel">Book Appointment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="selectedDateTime"></p>
+                <button type="button" class="btn btn-primary" id="bookAppointmentBtn">Book Appointment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Remarks Modal -->
+    <div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="BuildingPermitModalLabel"><i class="fa-solid fa-user"></i> Application</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Remarks</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Application Modal Content -->
-                    <div class="container">
-                        <div class="step-progress mb-4">
-                            <div class="step completed">
-                                <div class="circle"></div>
-                                <div class="label">Form</div>
-                            </div>
-                            <div class="step">
-                                <div class="circle"></div>
-                                <div class="label">Order of Payment</div>
-                            </div>
-                            <div class="step">
-                                <div class="circle"></div>
-                                <div class="label">Certificate</div>
-                            </div>
-                        </div>
-                       
-                    </div>
+                    <p>Hello, please wait for the approval of your application, thank you!</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
                 </div>
             </div>
         </div>
     </div>
 
-   <!-- Remarks Modal -->
-<div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="remarksModalLabel" aria-hidden="true">
+
+<!-- Application Applied Modal -->
+<div class="modal fade" id="applicationAppliedModal" tabindex="-1" aria-labelledby="ApplicationAppliedModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="remarksModalLabel">Remarks</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="ApplicationAppliedModalLabel"><i class="fa-solid fa-check-circle"></i> Success</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <h2>Application Applied</h2>
+                <i class="fa-solid fa-check-circle fa-3x text-success"></i>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-body" id="remarks-content">
-            
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
 
 
@@ -231,6 +689,146 @@
 
 
     </script>
+
+    <!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@5.6.0/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@5.6.0/main.min.js"></script>
+
+<!-- Custom JavaScript -->
+<script>
+    $(document).ready(function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            selectable: true,
+            locale: 'en',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth'
+            },
+            dateClick: function (info) {
+                $('#selectedDateTime').text(`Appointment on ${info.dateStr}`);
+                $('#appointmentModal2').modal('show');
+            }
+        });
+
+        calendar.render();
+
+        $('#bookAppointmentBtn').click(function () {
+            alert('Appointment booked!');
+            $('#appointmentModal2').modal('hide');
+            // Example: Send data to server or update UI
+        });
+
+        $('#previousStepButton2').click(function () {
+            // Example: Go to previous step/modal
+            alert('Previous button clicked');
+        });
+
+        $('#submitProfile').click(function () {
+            // Example: Finish profile submission
+            alert('Finish button clicked');
+        });
+    });
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let currentStep = 1; // Start from the first step
+
+        function goToNextStep() {
+            if (currentStep === 1) {
+                // Transition from step 1 to step 2
+                bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).hide();
+                new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
+                currentStep = 2; // Update current step to 2
+            } else if (currentStep === 2) {
+                // Transition from step 2 to step 3
+                bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
+                new bootstrap.Modal(document.getElementById('appointmentModal')).show();
+                currentStep = 3; // Update current step to 3
+            }
+        }
+
+        function goToPreviousStep() {
+            if (currentStep === 2) {
+                // Transition from step 2 back to step 1
+                bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).show();
+                bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
+                currentStep = 1; // Update current step to 1
+            } else if (currentStep === 3) {
+                // Transition from step 3 back to step 2
+                bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
+                new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
+                currentStep = 2; // Update current step to 2
+            }
+        }
+
+        function finishApplication() {
+            // Final step: hide appointmentModal and show applicationAppliedModal
+            bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
+            new bootstrap.Modal(document.getElementById('applicationAppliedModal')).show();
+        }
+
+        // Event listeners for next and previous buttons
+        document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
+        document.getElementById('nextStepButton2').addEventListener('click', goToNextStep);
+        document.getElementById('previousStepButton').addEventListener('click', goToPreviousStep); // Add this line
+        document.getElementById('previousStepButton2').addEventListener('click', goToPreviousStep);
+
+        // Event listener for finishing the application
+        document.getElementById('submitProfile').addEventListener('click', finishApplication);
+    });
+</script>
+
+    
+    <script>
+        function uploadFile(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const fileName = file.name;
+                    const fileSize = formatBytes(file.size);
+                    const fileItem = `<div class="file-item"><span class="file-name">${fileName} (${fileSize})</span><span class="btn-delete" onclick="deleteFile(this)">Delete</span></div>`;
+                    input.closest('tr').querySelector('.file-column').innerHTML = fileItem;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function deleteFile(deleteBtn) {
+            deleteBtn.closest('.file-item').remove();
+        }
+        
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+        </script>
+
+<script>
+    // Function to format the date as YYYY-MM-DD
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Get today's date and set it as the default value
+    const today = new Date();
+    const dateInput = document.getElementById('basic-url');
+    dateInput.value = formatDate(today);
+</script>
+
+
 
     
     
