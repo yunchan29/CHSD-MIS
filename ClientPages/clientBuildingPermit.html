@@ -25,6 +25,9 @@
         .wide-modal {
             max-width: 80%;
         }
+        .wider-modal{
+            max-width:90%;
+        }
 
         .form-control {
             margin-bottom: 1rem; /* Add margin between form controls */
@@ -107,7 +110,7 @@
     }
 
     .btn-upload {
-        border: 2px solid #007bff;
+        border: 2px solid #01b813;
         color: white;
         background-color: #007bff;
         padding: 5px 10px;
@@ -124,6 +127,14 @@
         opacity: 0;
     }
 </style>
+<style>
+    .main-container {
+      display: none; /* Hide content initially */
+    }
+  </style>
+  
+ 
+  
 </head>
 <body>
    
@@ -266,10 +277,12 @@
 </div>
 
 
-                        <div class="mb-3">
-                            <label for="phoneNumber" class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" id="phoneNumber" placeholder="+63XXXXXXXXXX" required>
-                          </div>
+<div class="mb-3">
+    <label for="phoneNumber" class="form-label">Phone Number</label>
+    <input type="text" class="form-control" id="phoneNumber" value="+63" required>
+</div>
+
+
 
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -408,6 +421,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -418,6 +434,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -428,6 +447,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -438,6 +460,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -448,6 +473,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -458,6 +486,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -468,6 +499,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -478,6 +512,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -488,6 +525,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -498,6 +538,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -508,6 +551,9 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
+                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file here</p>
+                              </div>
                             <button class="btn btn-upload">Upload</button>
                             <input type="file" class="file-input" onchange="uploadFile(this)">
                         </div>
@@ -629,6 +675,35 @@
     </div>
 </div>
 
+<!-- Privacy Policy Modal -->
+<div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered wider-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="privacyPolicyModalLabel">Privacy Policy</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p><h5>Lorem ipsum dolor sit amet</h5>
+            Consectetur adipiscing elit. Pellentesque blandit diam est, vel lacinia dolor fringilla eget. Fusce ut ullamcorper risus. Quisque a aliquet augue. Donec dignissim lobortis velit, sit amet viverra elit varius in. Fusce aliquet egestas nibh elementum volutpat. Sed at malesuada justo, at vestibulum augue. Vestibulum ut neque nisl. In eu vehicula ipsum, a convallis justo. Donec nec eros velit. Sed et vehicula sapien, eu imperdiet sem. Quisque lobortis elit at diam finibus egestas. Cras auctor in ipsum a efficitur. Pellentesque blandit augue lacus, vel posuere nisi luctus ac. Mauris maximus a quam in pellentesque.
+
+            Donec arcu lacus, fringilla id laoreet at, commodo nec nulla. Quisque rutrum non lacus non scelerisque. Phasellus tempor, ex vitae mollis scelerisque, est metus venenatis sapien, id volutpat dolor nunc a diam. Sed ultrices nunc non viverra iaculis. Donec vitae erat blandit, interdum risus sed, varius magna. Quisque laoreet nibh urna, sed cursus eros ultrices et. Mauris fringilla leo eget accumsan eleifend. Nullam non risus at purus cursus luctus. Fusce dapibus venenatis dui eget semper. Donec vitae scelerisque dui. Aenean ac lacinia erat, id tempus quam. Pellentesque a pretium metus. Vivamus posuere, ligula eget eleifend imperdiet, libero dui porttitor magna, non sagittis ligula sapien at dui.
+            <br>
+            <h5>Nam et nisi convallis</h5>
+            rutrum nunc non, pellentesque justo. Praesent bibendum magna vel enim sollicitudin imperdiet. Mauris eget diam suscipit, pretium lectus sed, dapibus nunc. Praesent dictum, lorem vitae tempor sodales, nulla metus lacinia ipsum, quis molestie quam dolor eu dolor. Phasellus sed ultrices ex. Vestibulum a erat vitae est varius blandit ut vestibulum urna. Integer venenatis nunc sapien, eget commodo nisi malesuada eu.
+            
+            Cras quis ex felis. Sed volutpat posuere bibendum. Pellentesque lacinia vel nunc id vestibulum. Proin ligula dui, condimentum sit amet sem vel, auctor aliquet augue. Sed vel arcu aliquet, aliquet nisi ut, tincidunt lacus. Mauris tristique dolor et venenatis maximus. Quisque eu lectus neque. Donec orci turpis, fermentum ac leo id, maximus lacinia sapien. Vestibulum nec cursus risus. Etiam posuere mi lectus, at hendrerit sem feugiat placerat. Maecenas dui dui, dignissim sit amet convallis sed, consectetur porta metus. Pellentesque eget urna elit. Proin dignissim enim quis ligula rhoncus, non lobortis turpis finibus.</p>
+     
+        </div>
+        <div class="modal-footer">
+          <a type="button" class="btn btn-secondary text-white" href="clientApplication.html">Back</a>
+          <button type="button" class="btn btn-primary" id="acceptPolicyButton">Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
 
 
     <!-- Firebase and custom scripts -->
@@ -654,6 +729,18 @@
             document.getElementById('side_nav').classList.remove('active');
         });
     </script>
+
+<script>
+    document.getElementById('phoneNumber').addEventListener('input', function(e) {
+        let value = e.target.value;
+
+        // Ensure that the phone number starts with +63
+        if (!value.startsWith('+63')) {
+            e.target.value = '+63';
+        }
+    });
+</script>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -689,6 +776,14 @@
 
 
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (localStorage.getItem('privacyPolicyAccepted')) {
+        document.querySelector('.main-container').style.display = 'flex'; // Show content
+      }
+    });
+  </script>
 
     <!-- FullCalendar JS -->
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@5.6.0/main.min.js"></script>
@@ -785,32 +880,62 @@
 
     
     <script>
-        function uploadFile(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function() {
-                    const fileName = file.name;
-                    const fileSize = formatBytes(file.size);
-                    const fileItem = `<div class="file-item"><span class="file-name">${fileName} (${fileSize})</span><span class="btn-delete" onclick="deleteFile(this)">Delete</span></div>`;
-                    input.closest('tr').querySelector('.file-column').innerHTML = fileItem;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        function deleteFile(deleteBtn) {
-            deleteBtn.closest('.file-item').remove();
-        }
-        
-        function formatBytes(bytes, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-        }
+       function uploadFile(input) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const fileName = file.name;
+            const fileSize = formatBytes(file.size);
+            const fileItem = `
+                <div class="file-item">
+                    <span class="file-name">${fileName} (${fileSize})</span>
+                    <span class="btn-delete" onclick="deleteFile(this, '${input.id}')">Delete</span>
+                </div>`;
+            const fileColumn = input.closest('tr').querySelector('.file-column');
+            fileColumn.innerHTML = fileItem;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function deleteFile(deleteBtn, inputId) {
+    const fileItem = deleteBtn.closest('.file-item');
+    if (fileItem) {
+        fileItem.remove();
+        // Clear the associated file input value to allow re-uploading if needed
+        document.getElementById(inputId).value = '';
+    }
+}
+
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = 'copy';
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const files = event.dataTransfer.files;
+    const inputFileElement = event.target.querySelector('.file-input');
+
+    if (inputFileElement && files.length > 0) {
+        inputFileElement.files = files;
+        uploadFile(inputFileElement);  // Call your existing file upload function
+    }
+}
+
         </script>
 
 <script>
@@ -827,6 +952,29 @@
     const dateInput = document.getElementById('basic-url');
     dateInput.value = formatDate(today);
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Check if user has already accepted the privacy policy
+      if (!localStorage.getItem('privacyPolicyAccepted')) {
+        // Show the privacy policy modal if not accepted
+        var myModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
+        myModal.show();
+      }
+  
+      // Handle the "Proceed" button click
+      document.getElementById('acceptPolicyButton').addEventListener('click', function () {
+        // Store the acceptance in localStorage
+        localStorage.setItem('privacyPolicyAccepted', 'true');
+        
+        // Hide the privacy policy modal
+        var myModalEl = document.getElementById('privacyPolicyModal');
+        var modal = bootstrap.Modal.getInstance(myModalEl);
+        modal.hide();
+      });
+    });
+  </script>
+  
 
 
 
