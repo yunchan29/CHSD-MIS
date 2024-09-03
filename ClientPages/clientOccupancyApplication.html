@@ -115,17 +115,23 @@
 </nav>
 
             <div class="contentContainer">
-               
+                <div class="card text-center">
+                    <div class="card-body">
+                      <h5 class="card-title">Start Your Application</h5>
+                      <p class="card-text">Click the button below to apply for a Occupancy Permit.</p>
+                      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#occupancyPermitModal">Apply</button>
+                    </div>
+                  </div>
             </div>
         </div>
     </div>
 
     <!-- Application Modal -->
-    <div class="modal fade" id="buildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
+    <div class="modal fade" id="occupancyPermitModal" tabindex="-1" aria-labelledby="occupancyPermitModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
             <div class="modal-content buldingPermitApplication">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="BuildingPermitModalLabel"><i class="fa-solid fa-user"></i> Application</h1>
+                    <h1 class="modal-title fs-5" id="occupancyPermitModalLabel"><i class="fa-solid fa-user"></i> Occupancy Permit Application</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -145,6 +151,24 @@
                                 <div class="label">Certificate</div>
                             </div>
                         </div>
+                        <form>
+                            <div class="mb-3">
+                                <label for="CONO" class="form-label">CO BP 220 Number:</label>
+                                <input type="text" class="form-control" id="CONO">
+                            </div>
+                
+                            <div class="mb-3">
+                                <label for="NOUnits" class="form-label">Number of Units:</label>
+                                <input type="number" class="form-control" id="NOUnits" min="1" oninput="updateLotBlockFields()">
+                            </div>
+                
+                            <div id="lotBlockContainer"></div>
+                
+                            <div class="mb-3">
+                                <label for="totalFloorArea" class="form-label">Total Floor Area (SQ/M):</label>
+                                <input type="number" class="form-control" id="totalFloorArea" readonly>
+                            </div>
+                        </form>
                        
                     </div>
                 </div>
@@ -222,7 +246,67 @@
     
         </script>
 
-    
+<script>
+    function updateLotBlockFields() {
+        const noUnits = document.getElementById('NOUnits').value;
+        const container = document.getElementById('lotBlockContainer');
+        container.innerHTML = ''; // Clear existing fields
+
+        for (let i = 1; i <= noUnits; i++) {
+            const row = document.createElement('div');
+            row.className = 'row mb-3';
+
+            const col1 = document.createElement('div');
+            col1.className = 'col-md-6';
+
+            const label1 = document.createElement('label');
+            label1.for = `LBNum${i}`;
+            label1.className = 'form-label';
+            label1.textContent = `Lot and Block Number ${i}:`;
+
+            const input1 = document.createElement('input');
+            input1.type = 'text';
+            input1.className = 'form-control';
+            input1.id = `LBNum${i}`;
+
+            col1.appendChild(label1);
+            col1.appendChild(input1);
+
+            const col2 = document.createElement('div');
+            col2.className = 'col-md-6';
+
+            const label2 = document.createElement('label');
+            label2.for = `SQM${i}`;
+            label2.className = 'form-label';
+            label2.textContent = `SQ/M ${i}:`;
+
+            const input2 = document.createElement('input');
+            input2.type = 'number';
+            input2.className = 'form-control';
+            input2.id = `SQM${i}`;
+            input2.oninput = calculateTotalFloorArea;
+
+            col2.appendChild(label2);
+            col2.appendChild(input2);
+
+            row.appendChild(col1);
+            row.appendChild(col2);
+            container.appendChild(row);
+        }
+    }
+
+    function calculateTotalFloorArea() {
+        const noUnits = document.getElementById('NOUnits').value;
+        let totalFloorArea = 0;
+
+        for (let i = 1; i <= noUnits; i++) {
+            const sqmValue = parseFloat(document.getElementById(`SQM${i}`).value) || 0;
+            totalFloorArea += sqmValue;
+        }
+
+        document.getElementById('totalFloorArea').value = totalFloorArea;
+    }
+</script>
     
     
     </body>
