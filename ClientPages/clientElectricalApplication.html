@@ -131,7 +131,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
             <div class="modal-content buldingPermitApplication">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="electricalPermitModalLabel"><i class="fa-solid fa-user"></i> Electrical Inspection Permit Application</h1>
+                    <h1 class="modal-title fs-5" id="electricalPermitModalLabel"><i class="fa-solid fa-user"></i> Certificate of Final Electrical Inspection</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -152,8 +152,56 @@
                             </div>
                         </div>
                        <!--Content goes here-->
-                       
+                       <div class="row">
+                        <div class="col-md-3">
+                            <label for="EINumber">No.</label>
+                            <input type="number" class="form-control" id="EINumber">
+                        </div>
+                    
+                        <div class="col-md-3">
+                            <label for="dateToday">Date</label>
+                            <input type="date" class="form-control" id="dateToday">
+                        </div>
                     </div>
+                    
+                    <p>
+                        This certifies that the electrical wiring systems and electrical equipment enumerated here under located at:
+                        <input type="text" class="form-control d-inline-block w-auto" id="InspectionLocation" placeholder="Block No, Lot No, Barangay">,
+                        Calamba City, Laguna were inspected and/or tested on:
+                        <input type="date" class="form-control d-inline-block w-auto" id="testingDate"> 
+                        and were found to be installed in compliance with the existing laws/ordinances and rules and regulations set forth in the Philippine Electric Code.
+                    </p>
+                    
+                         <h4 class="text-center">L O A D</h4>
+                        
+                        <div class="row">
+                        <div class="col-md-4">
+                         <label for="EILights">Lights</label>
+                         <input type="number" class="form-control" id="EILights">
+                        </div>
+                         <div class="col-md-4">
+                         <label for="EISwitch">Switch</label>
+                         <input type="number" class="form-control" id="EISwitch">
+                        </div>
+                         <div class="col-md-4">
+                         <label for="EIElectricalMotor">Electrical Motor</label>
+                         <input type="number" class="form-control" id="EIElectricalMotor">
+                         </div>
+
+                         <div class="row">
+                            <div class="col-md-6">
+                                <label for="EIConvOutlet">Conv.Outlet</label>
+                                <input type="number" class="form-control" id="EIConvOutlet">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="EIOtherApparatus">Other Apparatus</label>
+                                <input type="number" class="form-control" id="EIOtherApparatus">
+                            </div>
+                         </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
