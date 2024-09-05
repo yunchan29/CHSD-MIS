@@ -184,23 +184,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row g-3">
-                            <label for="ownerName">Owner/Applicant Name:</label>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name">
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name">
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
-                            </div>
-
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
-                            </div>
-
-                        </div>
+                        
 
                         <div class="mb-3">
                             <label for="phoneNumber" class="form-label">Phone Number</label>
@@ -286,7 +270,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" id="nextStepButton" class="btn btn-primary">Next</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderOfPaymentModal">
+                    Next
+                  </button>
             </div>
         </div>
     </div>
@@ -325,78 +311,49 @@
                 </div>
                 <!-- Order of Payment Form -->
                 <div class="container">
-                    <div class="contentContainer">
-                    <button type="button" class="btn btn-secondary" onclick="window.print();"><i class="fa-solid fa-print"></i> Print</button>
+                    <h4 class="text-center">ORDER OF PAYMENT</h4>
+                    <p class="text-center"><i>Payee: Treasurer/Cashier-City Treasury Office, City of Calamba</i></p>
                     <div class="row">
-                        <div class="col">
-                            <label for="orderHSDFormNo" class="form-label">HSD Form No:</label>
-                        <div id="orderHSDFormNo" class="form-control"></div>
-                        </div>
-                        <div class="col">
-                            <label for="orderBuildingPermitNo" class="form-label">Building Permit No:</label>
-                            <div id="orderBuildingPermitNo" class="form-control"></div>
-                        </div>
-                        <div class="col">
-                            <label for="orderIssuedOn" class="form-label">Issued on:</label>
-                            <div id="orderIssuedOn" class="form-control"></div>
-                        </div>
+                        <label for="OPOwner/Applicant">Owner/Applicant:</label>
+                    <input type="text" class="form-control" id="OPOwner/Applicant">
                     </div>
+
                     <div class="row">
-                        <div class="col">
-                            <label for="orderOwnerName" class="form-label">Owner/Applicant:</label>
-                        <div id="orderOwnerName" class="form-control"></div>
-                        </div>
-                        <div class="col">
-                            <label for="orderAddressTelNo" class="form-label">Address and Tel No:</label>
-                            <div id="orderAddressTelNo" class="form-control"></div>
-                        </div>
-                        <div class="col">
-                            <label for="orderProjectLocation" class="form-label">Project Location:</label>
-                        <div id="orderProjectLocation" class="form-control"></div>
+                        <label for="OPLocation">
+                        Location
+                        </label>
+                        <input type="text" class="form-control" id="OPLocation">
+                    </div>
+                    <label for="bp220">Building Permit-BP220</label>
+                    <div class="row">
+                        
+                        <div class="col-md-2">
+                           
+                        <label for="bpArea">Area</label>
+                        <input type="number" class="form-control" id="bpArea">
                         </div>
 
+                        <div class="col-md-2">
+                        <label for="bpLM">LM</label>
+                        <input type="number" class="form-control" id="bpLM">
+                        </div>
+
+                        <div class="col-md-2">
+                        <label for="bpSAN">SAN</label>
+                        <input type="number" class="form-control" id="bpSAN">
+                        </div>
+                        <div class="col-md-2">
+                        <label for="bpELEC">ELEC</label>
+                        <input type="number" class="form-control"  id="bpELEC">
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="orderScopeOfWork" class="form-label">Scope of Work:</label>
-                            <div id="orderScopeOfWork" class="form-control"></div>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="orderProjectJustification" class="form-label">Project Justification:</label>
-                            <div id="orderProjectJustification" class="form-control"></div>
-                        </div>
+
+
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <label for="orderProjectJustification" class="form-label">Block number and Lot Number</label>
-                            <div id="orderProjectJustification" class="form-control"></div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <label for="orderProjectJustification" class="form-label">No. of Units</label>
-                            <div id="orderProjectJustification" class="form-control"></div>
-                        </div>
-                        <div class="col">
-                            <label for="orderProjectJustification" class="form-label">Floor Area Per Unit</label>
-                            <div id="orderProjectJustification" class="form-control"></div>
-                        </div>
-                        <div class="col">
-                            <label for="orderProjectJustification" class="form-label">Total Floor Area</label>
-                            <div id="orderProjectJustification" class="form-control"></div>
-                        </div>
-                        <div class="col">
-                            <label for="orderProjectJustification" class="form-label">Total Estimated Cost</label>
-                            <div id="orderProjectJustification" class="form-control"></div>
-                        </div>
-                    </div>
-                  
-                   
-                    </div>
-                </div>
-            </div>
+
+                    
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="previousStepButton">Previous</button>
                 <button type="button" id="nextStepButton2" class="btn btn-primary">Next</button>
                
                 
@@ -556,88 +513,54 @@
     <script type="module" src="/Database/firebase.js"></script>
    
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        let currentStep = 1; // Start from the first step
-
-        function goToNextStep() {
-            if (currentStep < 3) {
-                document.querySelectorAll('.step')[currentStep].classList.add('completed');
-                currentStep++;
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentStep = 1; // Start from the first step
+    
+            function goToNextStep() {
+                if (currentStep === 1) {
+                    // Transition from step 1 to step 2
+                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).hide();
+                    new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
+                    currentStep = 2; // Update current step to 2
+                } else if (currentStep === 2) {
+                    // Transition from step 2 to step 3
+                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
+                    new bootstrap.Modal(document.getElementById('appointmentModal')).show();
+                    currentStep = 3; // Update current step to 3
+                }
             }
-
-            // Capture data from the first modal
-            if (currentStep === 2) {
-                const buildingPermitNo = document.getElementById('buildingPermitNo').value;
-                const issuedOn = document.getElementById('basic-url').value;
-                const ownerLastName = document.getElementById('ownerLastName').value;
-                const ownerFirstName = document.getElementById('ownerFirstName').value;
-                const ownerMiddleName = document.getElementById('ownerMiddleName').value;
-                const ownerMaidenName = document.getElementById('ownerMaidenName').value;
-
-                const addressTelNo = document.getElementById('addressTelNo').value;
-                const projectLocation = document.getElementById('projectLocation').value;
-                const hsdFormNo = document.getElementById('hsdFormNo').value;
-            
-                
-                
-
-                // Populate the Order of Payment modal
-                document.getElementById('orderBuildingPermitNo').textContent = buildingPermitNo;
-                document.getElementById('orderIssuedOn').textContent = issuedOn;
-                document.getElementById('orderOwnerName').textContent =ownerFirstName +" "+ ownerMiddleName+" " +ownerLastName +" "+ ownerMaidenName;
-                document.getElementById('orderAddressTelNo').textContent = addressTelNo;
-                document.getElementById('orderProjectLocation').textContent = projectLocation;
-                document.getElementById('orderHSDFormNo').textContent = hsdFormNo;
-                
-
-                // Populate Scope of Work
-                const scopeOfWork = [];
-                if (document.getElementById('option1').checked) {
-                    scopeOfWork.push(document.getElementById('option1').nextElementSibling.textContent);
+    
+            function goToPreviousStep() {
+                if (currentStep === 2) {
+                    // Transition from step 2 back to step 1
+                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).show();
+                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
+                    currentStep = 1; // Update current step to 1
+                } else if (currentStep === 3) {
+                    // Transition from step 3 back to step 2
+                    bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
+                    new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
+                    currentStep = 2; // Update current step to 2
                 }
-                if (document.getElementById('option2').checked) {
-                    scopeOfWork.push(document.getElementById('option2').nextElementSibling.textContent);
-                }
-                if (document.getElementById('option3').checked) {
-                    scopeOfWork.push(document.getElementById('option3').nextElementSibling.textContent);
-                }
-                if (document.getElementById('option4').checked) {
-                    scopeOfWork.push(document.getElementById('option4').nextElementSibling.textContent);
-                }
-                document.getElementById('orderScopeOfWork').textContent = scopeOfWork.join(', ');
-
-                // Populate Project Justification
-                const projectJustification = [];
-                if (document.getElementById('justification1').checked) {
-                    projectJustification.push(document.getElementById('justification1').nextElementSibling.textContent);
-                }
-                if (document.getElementById('justification2').checked) {
-                    projectJustification.push(document.getElementById('justification2').nextElementSibling.textContent);
-                }
-                if (document.getElementById('justification3').checked) {
-                    projectJustification.push(document.getElementById('justification3').nextElementSibling.textContent);
-                }
-                document.getElementById('orderProjectJustification').textContent = projectJustification.join(', ');
-
-                new bootstrap.Modal(document.getElementById('orderOfPaymentModal')).show();
-                bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).hide();
-            } else if (currentStep === 3) {
-                new bootstrap.Modal(document.getElementById('certificateModal')).show();
-                bootstrap.Modal.getInstance(document.getElementById('orderOfPaymentModal')).hide();
             }
-        }
-
-        function finishApplication() {
-            new bootstrap.Modal(document.getElementById('applicationAppliedModal')).show();
-            bootstrap.Modal.getInstance(document.getElementById('certificateModal')).hide();
-        }
-
-        document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
-        document.getElementById('nextStepButton2').addEventListener('click', goToNextStep);
-        document.getElementById('submitProfile').addEventListener('click', finishApplication);
-    });
-</script>
+    
+            function finishApplication() {
+                // Final step: hide appointmentModal and show applicationAppliedModal
+                bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
+                new bootstrap.Modal(document.getElementById('applicationAppliedModal')).show();
+            }
+    
+            // Event listeners for next and previous buttons
+            document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
+            document.getElementById('nextStepButton2').addEventListener('click', goToNextStep);
+            document.getElementById('previousStepButton').addEventListener('click', goToPreviousStep); // Add this line
+            document.getElementById('previousStepButton2').addEventListener('click', goToPreviousStep);
+    
+            // Event listener for finishing the application
+            document.getElementById('submitProfile').addEventListener('click', finishApplication);
+        });
+    </script>
 
 <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 
