@@ -334,17 +334,24 @@
                         </div>
 
                         <div class="col-md-2">
-                        <label for="bpLM">LM</label>
+                        <label for="bpLM">Line Meter(LM)</label>
                         <input type="number" class="form-control" id="bpLM">
                         </div>
 
                         <div class="col-md-2">
-                        <label for="bpSAN">SAN</label>
+                        <label for="bpSAN">Sanitary(SAN)</label>
                         <input type="number" class="form-control" id="bpSAN">
                         </div>
                         <div class="col-md-2">
-                        <label for="bpELEC">ELEC</label>
+                        <label for="bpELEC">Electrical Fee(ELEC)</label>
                         <input type="number" class="form-control"  id="bpELEC">
+                    </div>
+
+                    <div class="col-md-3 justify-content-end" >
+                        <label for="bpTotal">
+                            Total
+                        </label>
+                        <input type="number" class="form-control" id="bpTotal">
                     </div>
 
 
@@ -353,7 +360,9 @@
                     
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-secondary" id="previousStepButton">Previous</button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#orderOfPaymentModal">
+                    Previous
+                  </button>
                 <button type="button" id="nextStepButton2" class="btn btn-primary">Next</button>
                
                 
