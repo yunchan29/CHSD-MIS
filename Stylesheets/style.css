@@ -362,10 +362,12 @@ min-width:400px;
 .signUpField{
     background:white;
 
-padding:5%;
+padding:10%;
 width:100%;
 border-radius:12px ;
 min-width:400px;
+max-height:80vh;
+overflow:scroll;
 }
 
 @media(max-width:770px)
@@ -785,11 +787,12 @@ border-radius: 12px;
     background-size: cover;
     background-repeat: no-repeat;
     height:100vh;
-    background-attachment: scroll;
+    background-attachment: fixed;
     width:100%;
     justify-content: center;
     display: flex;
     align-items: center;
+    overflow:auto;
 }
 
 
