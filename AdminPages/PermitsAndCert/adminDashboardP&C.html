@@ -37,6 +37,12 @@
     </style>
 </head>
 <body>
+    <div id="fetching-loading-screen" class="fetching-loading-screen">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Fetching from database...</span>
+        </div>
+        <p class="loading-text">Fetching from database...</p>
+    </div>
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center px-2 pt-3 pb-4">
@@ -85,34 +91,34 @@
                <h4 class="text-center">Permit and Certificates</h4>
                <div class="row justify-content-center text-center">
                     
-                 <div class="col-md-4">
+                <div class="col-md-4">
                     <a href="adminBuildingPermit.html">
                         <div class="Pcard card">
                             <div class="card-body">
                                 <h5 class="card-title">Building Permit</h5>
-                                <p class="card-text">2</p>
+                                <p id="buildingPermitCount" class="card-text">0</p>
                             </div>
-                        </div></a>
-                    </div>
-                    <div class="col-md-4">
-                        <a href="adminCertofOcc.html">
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="adminCertofOcc.html">
                         <div class="Pcard card">
                             <div class="card-body">
                                 <h5 class="card-title">Certificate of Occupancy</h5>
-                                <p class="card-text">2</p>
+                                <p id="occupancyPermitCount" class="card-text">0</p>
                             </div>
-                        </div></a>
-                    </div>
-                    <div class="col-md-4">
-                        <a href="adminCertofElec.html">
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="adminCertofElec.html">
                         <div class="Pcard card">
                             <div class="card-body">
                                 <h5 class="card-title">Certificate of Electrical Inspection</h5>
-                                <p class="card-text">3</p>
-                            </div>
-                        </div>
-                    </div></a>
-                </div>
+                                <p id="electricalCertCount" class="card-text">0</p>
+                            </
+                
             </div>
         </div>
     </div>

@@ -260,7 +260,7 @@ if (googleSignInBtn) {
     googleSignInBtn.addEventListener('click', handleGoogleSignIn);
 }
 
-// Function to add a building permit and update user's document
+// Function to add a building permit
 async function addBuildingPermit(event) {
     event.preventDefault();
 
@@ -269,6 +269,7 @@ async function addBuildingPermit(event) {
     const addressTelNo = document.getElementById('addressTelNo').value;
     const projectLocation = document.getElementById('projectLocation').value;
     const hsdFormNo = document.getElementById('hsdFormNo').value;
+    const phoneNumber=document.getElementById('phoneNumber').value;
     const ownerLastName = document.getElementById('ownerLastName').value;
     const ownerFirstName = document.getElementById('ownerFirstName').value;
     const ownerMiddleName = document.getElementById('ownerMiddleName').value;
@@ -312,6 +313,7 @@ async function addBuildingPermit(event) {
             buildingPermitNo,
             issuedOn,
             ownerName,
+            phoneNumber,
             addressTelNo,
             projectLocation,
             hsdFormNo,
@@ -343,6 +345,104 @@ async function addBuildingPermit(event) {
         }
     }
 }
+
+
+// Function to edit an existing building permit
+async function editBuildingPermit(event) {
+    event.preventDefault();
+
+    const permitId = document.getElementById('permitId').value; // ID of the permit to edit
+    const buildingPermitNo = document.getElementById('buildingPermitNo').value;
+    const issuedOn = document.getElementById('basic-url').value;
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    const addressTelNo = document.getElementById('addressTelNo').value;
+    const projectLocation = document.getElementById('projectLocation').value;
+    const hsdFormNo = document.getElementById('hsdFormNo').value;
+    const ownerLastName = document.getElementById('ownerLastName').value;
+    const ownerFirstName = document.getElementById('ownerFirstName').value;
+    const ownerMiddleName = document.getElementById('ownerMiddleName').value;
+    const ownerMaidenName = document.getElementById('ownerMaidenName').value;
+    const ownerEmail = document.getElementById('ownerEmail') ? document.getElementById('ownerEmail').value : null;
+
+    const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
+
+    const scopeOfWork = [];
+    document.querySelectorAll('input[name="scopeOfWork"]:checked').forEach(option => {
+        scopeOfWork.push(option.nextElementSibling.textContent);
+    });
+
+    const projectJustification = [];
+    document.querySelectorAll('input[name="projectJustification"]:checked').forEach(option => {
+        projectJustification.push(option.nextElementSibling.textContent);
+    });
+
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("No user logged in.");
+            return;
+        }
+
+        const { isAdminPC, isAdminIS } = await checkUserRole(user.uid);
+        const isAdmin = isAdminPC || isAdminIS;
+
+        let ownerUid;
+
+        if (isAdmin && ownerEmail) {
+            const defaultPassword = 'sample'; 
+            const userCredential = await createUserWithEmailAndPassword(auth, ownerEmail, defaultPassword);
+            const newUser = userCredential.user;
+            ownerUid = newUser.uid;
+        } else {
+            ownerUid = user.uid;
+        }
+
+        // Update existing permit
+        await updateDoc(doc(db, "buildingPermits", permitId), {
+            buildingPermitNo,
+            issuedOn,
+            ownerName,
+            phoneNumber,
+            addressTelNo,
+            projectLocation,
+            hsdFormNo,
+            scopeOfWork,
+            projectJustification,
+            ownerUid,
+            status: 'Pending'
+        });
+
+        // Update user's document
+        await updateDoc(doc(db, 'users', ownerUid), {
+            buildingPermits: arrayUnion({
+                permitId,
+                buildingPermitNo,
+                issuedOn,
+                status: 'Pending',
+                projectLocation
+            })
+        });
+
+        alert("Building permit updated successfully!");
+        window.location.reload();
+    } catch (error) {
+        console.error("Error updating building permit:", error);
+
+        if (error.code === "auth/missing-email") {
+            alert("User creation is not allowed for non-admin users. Please contact an administrator.");
+        } else {
+            alert("Failed to update permit. Please try again later.");
+        }
+    }
+}
+
+
+
+
+
+
+
+
 
 async function loadUserPermitStatus() {
     try {
@@ -452,14 +552,16 @@ async function loadProfiles() {
                     <option value="Processing" ${data.status === "Processing" ? 'selected' : ''}>Processing</option>
                     <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''}>To Pay</option>
                     <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''}>For Approval</option>
-                    <option value="For Release" ${data.status === "Release" ? 'selected' : ''}>For Release</option>
+                    <option value="For Release" ${data.status === "For Release" ? 'selected' : ''}>For Release</option>
                     <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''}>Claimed</option>
                 </select>
             </td>
             <td>
                 <a class="mt-2 btn btn-success text-white save-btn" data-id="${doc.id}">Save</a>
-                <a class="mt-2 btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1">Remarks</a>
-                <a class="mt-2 btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">Edit</a>
+               <a class="mt-2 btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${doc.id}">Remarks</a>
+
+                <!-- Button to trigger the edit modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buildingPermitModal" data-permit-id="${doc.id}">Edit</button>
                 <button class="mt-2 btn btn-danger text-white archive-btn" data-id="${doc.id}">Archive</button>
             </td>
         `;
@@ -468,7 +570,114 @@ async function loadProfiles() {
 
     attachSaveButtonListeners();
     attachArchiveButtonListeners();
+    attachEditButtonListeners();
+    attachRemarksButtonListeners(); // Add this line to attach remarks button listeners
 }
+
+// Function to attach event listeners to edit buttons
+function attachEditButtonListeners() {
+    const editButtons = document.querySelectorAll('button[data-bs-target="#buildingPermitModal"]');
+    
+    editButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const permitId = button.getAttribute('data-permit-id');
+            populateEditForm(permitId); // Ensure this function populates the form in the modal
+        });
+    });
+}
+
+
+// Function to populate the edit form with data
+function populateEditForm(permitId) {
+    // Fetch the permit data from Firestore
+    const permitDoc = doc(db, "buildingPermits", permitId);
+    
+    getDoc(permitDoc).then((docSnapshot) => {
+        if (docSnapshot.exists()) {
+            const data = docSnapshot.data();
+
+            // Populate the form fields with permit data
+            document.getElementById('hsdFormNo').value = data.hsdFormNo || '';
+            document.getElementById('ownerEmail').value = data.ownerEmail || '';
+            document.getElementById('buildingPermitNo').value = data.buildingPermitNo || '';
+            document.getElementById('basic-url').value = data.issuedOn || '';
+            document.getElementById('phoneNumber').value = data.phoneNumber || '';
+            document.getElementById('addressTelNo').value = data.addressTelNo || '';
+            document.getElementById('projectLocation').value = data.projectLocation || '';
+            
+            // Update checkbox values based on data
+            document.getElementById('option1').checked = data.scopeOfWork.includes('New Construction');
+            document.getElementById('option2').checked = data.scopeOfWork.includes('Addition');
+            document.getElementById('option3').checked = data.scopeOfWork.includes('Repair Renovation');
+            document.getElementById('option4').checked = data.scopeOfWork.includes('Others');
+            
+            document.getElementById('justification1').checked = data.projectJustification.includes('Single Attached/Semi-Attached/Duplex');
+            document.getElementById('justification2').checked = data.projectJustification.includes('Single/Detached');
+            document.getElementById('justification3').checked = data.projectJustification.includes('Row House/Multi-family Dwelling');
+            
+            // Populate the dynamic fields if they exist
+            const lotBlockField = document.getElementById('lotBlockField');
+            const sqMField = document.getElementById('sqMField');
+            const totalFloorArea = document.getElementById('totalFloorArea');
+            const estimatedCost = document.getElementById('estimatedCost');
+            
+            if (lotBlockField && sqMField && totalFloorArea && estimatedCost) {
+                lotBlockField.value = data.lotBlock || '';
+                sqMField.value = data.sqM || '';
+                totalFloorArea.value = data.totalFloorArea || '';
+                estimatedCost.value = data.estimatedCost || '';
+            }
+
+            // Assuming `editPermitForm` is the form in the modal
+            const editPermitForm = document.getElementById('editPermitForm');
+            if (editPermitForm) {
+                editPermitForm.dataset.permitId = permitId; // Store permitId in form's dataset for later use
+            }
+        } else {
+            console.error('No such document!');
+        }
+    }).catch((error) => {
+        console.error('Error getting document:', error);
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Function to populate the edit form
+    function populateEditForm(permitId) {
+        // Example code for fetching and populating data
+        console.log('populateEditForm called with permitId:', permitId);
+        // Fetch and populate form fields here
+    }
+
+    // Attach event listeners to buttons
+    function attachEventListeners() {
+        const editPermitButtons = document.querySelectorAll('button[data-permit-id]');
+
+        editPermitButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const permitId = button.getAttribute('data-permit-id');
+                populateEditForm(permitId);
+            });
+        });
+    }
+
+    attachEventListeners();
+});
+
+
+// Function to attach event listeners to remarks buttons
+function attachRemarksButtonListeners() {
+    const remarksButtons = document.querySelectorAll('a[data-permit-id]');
+    
+    remarksButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const permitId = button.getAttribute('data-permit-id');
+            showRemarks(permitId); // Or showRemarks(permitId) depending on your requirement
+        });
+    });
+}
+
 
 // Function to attach event listeners
 function attachEventListeners() {
@@ -479,6 +688,7 @@ function attachEventListeners() {
     const addBuildingPermitButton = document.getElementById('submitProfile');
     const sendMessageForm = document.getElementById('send-message-form');
     const signUpForm = document.getElementById('client-signup-form');
+    const editPermitForm = document.getElementById('editPermitForm');  
 
     if (adminLoginForm) {
         adminLoginForm.addEventListener('submit', handleAdminLogin);
@@ -507,7 +717,15 @@ function attachEventListeners() {
     if (signUpForm) {
         signUpForm.addEventListener('submit', handleSignUp);
     }
+
+    if (editPermitForm) {  
+        editPermitForm.addEventListener('submit', editBuildingPermit);
+    }
 }
+
+// Call the function to attach event listeners
+attachEventListeners();
+
 
 // Function to attach save button listeners
 function attachSaveButtonListeners() {
@@ -614,94 +832,76 @@ async function fetchAndSetClientInfo() {
 
 
 
-async function showRemarks(permitId) {
-    try {
-        console.log("Fetching remarks for permit ID:", permitId);
 
-        const currentUser = auth.currentUser;
-        if (!currentUser) {
-            console.log("No user logged in.");
-            document.getElementById('remarks-content').innerText = 'No user logged in';
-            return;
-        }
-
-        const userRef = doc(db, "users", currentUser.uid);
-        const remarksRef = collection(userRef, "remarks");
-        const q = query(remarksRef, where("buildingPermitId", "==", permitId));
-        const remarksSnapshot = await getDocs(q);
-
-        console.log("Remarks snapshot size:", remarksSnapshot.size);
-
-        // Filter remarks for the current user
-        const userRemarks = remarksSnapshot.docs.map(doc => doc.data());
-
-        console.log("Filtered remarks for the user:", userRemarks);
-
-        // Display the filtered remarks
-        const remarksContent = userRemarks.length > 0
-            ? userRemarks.map(remark => `
-                <div>
-                    <p>${remark.text}</p>
-                    <small>Posted on ${new Date(remark.timestamp.seconds * 1000).toLocaleString()}</small>
-                </div>
-            `).join('')
-            : 'No remarks available';
-
-        document.getElementById('remarks-content').innerHTML = remarksContent;
-    } catch (error) {
-        console.error("Error fetching permit remarks:", error);
-        document.getElementById('remarks-content').innerText = 'Error fetching remarks';
+// Admin: Save Remark
+async function saveRemark(buildingPermitId) {
+    const newRemark = document.getElementById('new-remark').value.trim();
+    if (newRemark === '') {
+        alert("Remark cannot be empty.");
+        return;
     }
-}
-
-
-
-async function loadRemarks(buildingPermitId) {
     try {
-        console.log("Loading remarks for building permit ID:", buildingPermitId);
-
         const currentUser = auth.currentUser;
         if (!currentUser) {
             alert("No user logged in.");
-            console.log("No user logged in.");
             return;
         }
+        const userRef = doc(db, "users", currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (!userDoc.exists()) {
+            alert("User document does not exist.");
+            return;
+        }
+        const userName = userDoc.data().name || 'Unknown';
+        const remarkData = {
+            text: newRemark,
+            timestamp: serverTimestamp(), // Use serverTimestamp for consistency
+            buildingPermitId: buildingPermitId,
+            userId: currentUser.uid,
+            userName: userName
+        };
+        const remarksCollectionRef = collection(userRef, "remarks");
+        await addDoc(remarksCollectionRef, remarkData);
+        alert("Remark saved successfully");
+        document.getElementById('new-remark').value = '';
+        loadRemarks(buildingPermitId); // Reload remarks
+    } catch (error) {
+        console.error("Error saving remark:", error);
+        alert("Failed to save remark. Please try again later.");
+    }
+}
 
+// Admin: Load Remarks
+async function loadRemarks(buildingPermitId) {
+    try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            alert("No user logged in.");
+            return;
+        }
         const remarksCollectionRef = collection(db, "users", currentUser.uid, "remarks");
         const q = query(remarksCollectionRef, where("buildingPermitId", "==", buildingPermitId));
         const remarksSnapshot = await getDocs(q);
-
-        console.log("Remarks snapshot size:", remarksSnapshot.size);
-
         const existingRemarksContainer = document.getElementById('existing-remarks');
         if (!existingRemarksContainer) {
-            console.warn("No element with id 'existing-remarks' found in the HTML.");
+            console.warn("No element with id 'existing-remarks' found.");
             return;
         }
-
         if (remarksSnapshot.empty) {
             existingRemarksContainer.innerHTML = '<p>No remarks found.</p>';
-            console.log("No remarks found for the given building permit ID.");
             return;
         }
-
         existingRemarksContainer.innerHTML = '';
-
         remarksSnapshot.forEach(doc => {
             const remarkData = doc.data();
-            console.log("Fetched remark data:", remarkData);
-
             const remarkDiv = document.createElement('div');
             remarkDiv.className = 'remark mb-2';
-
             const remarkText = remarkData.text || 'No text';
             const remarkTimestamp = remarkData.timestamp ? new Date(remarkData.timestamp.seconds * 1000).toLocaleString() : 'No timestamp';
-            const remarkUserId = remarkData.userId || 'Unknown user';
-
             remarkDiv.innerHTML = `
                 <div style="border:1px solid black; border-radius:12px; margin:1%; padding:10px;">
-                     <p>${remarkText}</p>
-                <small>Posted by: Admin on ${remarkTimestamp}</small>
+                    <p>${remarkText}</p>
+                    <small>Posted by: Admin on ${remarkTimestamp}</small>
                 </div>
             `;
             existingRemarksContainer.appendChild(remarkDiv);
@@ -712,59 +912,31 @@ async function loadRemarks(buildingPermitId) {
     }
 }
 
-
-
-
-async function saveRemark(buildingPermitId) {
-    const newRemark = document.getElementById('new-remark').value.trim();
-
-    if (newRemark === '') {
-        alert("Remark cannot be empty.");
-        return;
-    }
-
+// Client: Show Remarks
+async function showRemarks(permitId) {
     try {
-        console.log("Saving remark for building permit ID:", buildingPermitId);
-
         const currentUser = auth.currentUser;
         if (!currentUser) {
-            alert("No user logged in.");
-            console.log("No user logged in.");
+            document.getElementById('remarks-content').innerText = 'No user logged in';
             return;
         }
-
         const userRef = doc(db, "users", currentUser.uid);
-        const userDoc = await getDoc(userRef);
-
-        if (!userDoc.exists()) {
-            alert("User document does not exist.");
-            console.log("User document does not exist for user ID:", currentUser.uid);
-            return;
-        }
-
-        const userName = userDoc.data().name || 'Unknown';
-
-        const remarkData = {
-            text: newRemark,
-            timestamp: new Date(),
-            buildingPermitId: buildingPermitId, // Ensure buildingPermitId is included
-            userId: currentUser.uid,
-            userName: userName
-        };
-
-        // Add remark to the user's remarks subcollection
-        const remarksCollectionRef = collection(userRef, "remarks");
-        await addDoc(remarksCollectionRef, remarkData);
-        
-        console.log("Remark saved successfully:", remarkData);
-        alert("Remarks saved successfully");
-
-        document.getElementById('new-remark').value = '';
-
-        loadRemarks(buildingPermitId);
+        const remarksRef = collection(userRef, "remarks");
+        const q = query(remarksRef, where("buildingPermitId", "==", permitId));
+        const remarksSnapshot = await getDocs(q);
+        const userRemarks = remarksSnapshot.docs.map(doc => doc.data());
+        const remarksContent = userRemarks.length > 0
+            ? userRemarks.map(remark => `
+                <div>
+                    <p>${remark.text}</p>
+                    <small>Posted on ${new Date(remark.timestamp.seconds * 1000).toLocaleString()}</small>
+                </div>
+            `).join('')
+            : 'No remarks available';
+        document.getElementById('remarks-content').innerHTML = remarksContent;
     } catch (error) {
-        console.error("Error saving remark:", error);
-        alert("Failed to save remark. Please try again later.");
+        console.error("Error fetching permit remarks:", error);
+        document.getElementById('remarks-content').innerText = 'Error fetching remarks';
     }
 }
 
@@ -855,5 +1027,36 @@ async function loadUsers() {
     });
 }
 
-// Call the function to load users when the page loads
+
 window.addEventListener('DOMContentLoaded', loadUsers);
+
+
+async function fetchPermitCounts() {
+    // Show the loading screen
+    document.getElementById('fetching-loading-screen').style.display = 'flex';
+
+    // Collection references
+    const buildingPermitRef = collection(db, "buildingPermits");
+    const occupancyPermitRef = collection(db, "OccupancyPermit");
+    const electricalCertRef = collection(db, "ElectricalCert");
+
+    try {
+        // Get the total count of documents in each collection
+        const buildingPermitsSnapshot = await getDocs(buildingPermitRef);
+        const occupancyPermitsSnapshot = await getDocs(occupancyPermitRef);
+        const electricalCertsSnapshot = await getDocs(electricalCertRef);
+
+        // Update the UI with the counts
+        document.getElementById('buildingPermitCount').textContent = buildingPermitsSnapshot.size;
+        document.getElementById('occupancyPermitCount').textContent = occupancyPermitsSnapshot.size;
+        document.getElementById('electricalCertCount').textContent = electricalCertsSnapshot.size;
+    } catch (error) {
+        console.error("Error fetching permit counts: ", error);
+    } finally {
+        // Hide the loading screen
+        document.getElementById('fetching-loading-screen').style.display = 'none';
+    }
+}
+
+// Call the function to fetch and display permit counts
+fetchPermitCounts();
