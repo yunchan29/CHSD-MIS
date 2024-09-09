@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // Firebase configuration
@@ -269,7 +269,7 @@ async function addBuildingPermit(event) {
     const addressTelNo = document.getElementById('addressTelNo').value;
     const projectLocation = document.getElementById('projectLocation').value;
     const hsdFormNo = document.getElementById('hsdFormNo').value;
-    const phoneNumber=document.getElementById('phoneNumber').value;
+    const phoneNumber = document.getElementById('phoneNumber').value;
     const ownerLastName = document.getElementById('ownerLastName').value;
     const ownerFirstName = document.getElementById('ownerFirstName').value;
     const ownerMiddleName = document.getElementById('ownerMiddleName').value;
@@ -309,6 +309,7 @@ async function addBuildingPermit(event) {
             ownerUid = user.uid;
         }
 
+        // Add the building permit document with timestamp
         const permitDocRef = await addDoc(collection(db, "buildingPermits"), {
             buildingPermitNo,
             issuedOn,
@@ -320,7 +321,8 @@ async function addBuildingPermit(event) {
             scopeOfWork,
             projectJustification,
             ownerUid: ownerUid,
-            status: 'Pending'
+            status: 'Pending',
+            createdAt: Timestamp.now() // Add timestamp field here
         });
 
         await updateDoc(doc(db, 'users', ownerUid), {
@@ -523,8 +525,6 @@ document.addEventListener('DOMContentLoaded', () => {
     addTableRowListeners();
 });
 
-
-// Function to load building permits (for admin view)
 async function loadProfiles() {
     const querySnapshot = await getDocs(collection(db, "buildingPermits"));
     const buildingPermitDiv = document.getElementById("buildingPermitDiv");
@@ -537,15 +537,19 @@ async function loadProfiles() {
         console.error("Table body not found in buildingPermitDiv.");
         return;
     }
-    tableBody.innerHTML = ""; 
+    tableBody.innerHTML = "";
 
     querySnapshot.forEach((doc) => {
         const data = doc.data();
         const row = document.createElement("tr");
 
+        // Format timestamp
+        const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : '';
+
         row.innerHTML = `
             <td>${data.ownerName}</td>
-            <td>${data.issuedOn}</td>
+         
+            <td>${createdAt}</td> <!-- Display the formatted timestamp -->
             <td>
                 <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${doc.id}">
                     <option value="Pending" ${data.status === "Pending" ? 'selected' : ''}>Pending</option>
@@ -557,12 +561,17 @@ async function loadProfiles() {
                 </select>
             </td>
             <td>
-                <a class="mt-2 btn btn-success text-white save-btn" data-id="${doc.id}">Save</a>
-               <a class="mt-2 btn btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${doc.id}">Remarks</a>
-
-                <!-- Button to trigger the edit modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buildingPermitModal" data-permit-id="${doc.id}">Edit</button>
-                <button class="mt-2 btn btn-danger text-white archive-btn" data-id="${doc.id}">Archive</button>
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Actions
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item save-btn" href="#" data-id="${doc.id}"><i class="fas fa-save"></i> Save</a></li>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${doc.id}"><i class="fas fa-comment"></i> Remarks</a></li>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#buildingPermitModal" data-permit-id="${doc.id}"><i class="fas fa-edit"></i> Edit</a></li>
+                        <li><a class="dropdown-item archive-btn" href="#" data-id="${doc.id}"><i class="fas fa-archive"></i> Archive</a></li>
+                    </ul>
+                </div>
             </td>
         `;
         tableBody.appendChild(row);
@@ -571,32 +580,38 @@ async function loadProfiles() {
     attachSaveButtonListeners();
     attachArchiveButtonListeners();
     attachEditButtonListeners();
-    attachRemarksButtonListeners(); // Add this line to attach remarks button listeners
+    attachRemarksButtonListeners();
 }
 
-// Function to attach event listeners to edit buttons
+
+
 function attachEditButtonListeners() {
-    const editButtons = document.querySelectorAll('button[data-bs-target="#buildingPermitModal"]');
-    
+    const editButtons = document.querySelectorAll('a[data-permit-id]'); // Ensure targeting 'a' tag with permit-id attribute
+
     editButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
             const permitId = button.getAttribute('data-permit-id');
-            populateEditForm(permitId); // Ensure this function populates the form in the modal
+            populateEditForm(permitId); // Call populateEditForm with the correct permitId
         });
     });
 }
 
 
-// Function to populate the edit form with data
+
+
 function populateEditForm(permitId) {
-    // Fetch the permit data from Firestore
+    console.log('populateEditForm called with permitId:', permitId); // Debugging log
+
     const permitDoc = doc(db, "buildingPermits", permitId);
-    
+
+    // Fetch the document from Firestore
     getDoc(permitDoc).then((docSnapshot) => {
         if (docSnapshot.exists()) {
             const data = docSnapshot.data();
+            console.log("Permit data:", data); // Log permit data for debugging
 
-            // Populate the form fields with permit data
+            // Populate form fields with the permit data
             document.getElementById('hsdFormNo').value = data.hsdFormNo || '';
             document.getElementById('ownerEmail').value = data.ownerEmail || '';
             document.getElementById('buildingPermitNo').value = data.buildingPermitNo || '';
@@ -604,52 +619,35 @@ function populateEditForm(permitId) {
             document.getElementById('phoneNumber').value = data.phoneNumber || '';
             document.getElementById('addressTelNo').value = data.addressTelNo || '';
             document.getElementById('projectLocation').value = data.projectLocation || '';
-            
-            // Update checkbox values based on data
-            document.getElementById('option1').checked = data.scopeOfWork.includes('New Construction');
-            document.getElementById('option2').checked = data.scopeOfWork.includes('Addition');
-            document.getElementById('option3').checked = data.scopeOfWork.includes('Repair Renovation');
-            document.getElementById('option4').checked = data.scopeOfWork.includes('Others');
-            
-            document.getElementById('justification1').checked = data.projectJustification.includes('Single Attached/Semi-Attached/Duplex');
-            document.getElementById('justification2').checked = data.projectJustification.includes('Single/Detached');
-            document.getElementById('justification3').checked = data.projectJustification.includes('Row House/Multi-family Dwelling');
-            
-            // Populate the dynamic fields if they exist
-            const lotBlockField = document.getElementById('lotBlockField');
-            const sqMField = document.getElementById('sqMField');
-            const totalFloorArea = document.getElementById('totalFloorArea');
-            const estimatedCost = document.getElementById('estimatedCost');
-            
-            if (lotBlockField && sqMField && totalFloorArea && estimatedCost) {
-                lotBlockField.value = data.lotBlock || '';
-                sqMField.value = data.sqM || '';
-                totalFloorArea.value = data.totalFloorArea || '';
-                estimatedCost.value = data.estimatedCost || '';
-            }
 
-            // Assuming `editPermitForm` is the form in the modal
-            const editPermitForm = document.getElementById('editPermitForm');
-            if (editPermitForm) {
-                editPermitForm.dataset.permitId = permitId; // Store permitId in form's dataset for later use
-            }
+            // Checkbox logic
+            document.getElementById('option1').checked = data.scopeOfWork?.includes('New Construction') || false;
+            document.getElementById('option2').checked = data.scopeOfWork?.includes('Addition') || false;
+            document.getElementById('option3').checked = data.scopeOfWork?.includes('Repair Renovation') || false;
+            document.getElementById('option4').checked = data.scopeOfWork?.includes('Others') || false;
+
+            // Project justification logic
+            document.getElementById('justification1').checked = data.projectJustification?.includes('Single Attached/Semi-Attached/Duplex') || false;
+            document.getElementById('justification2').checked = data.projectJustification?.includes('Single/Detached') || false;
+            document.getElementById('justification3').checked = data.projectJustification?.includes('Row House/Multi-family Dwelling') || false;
+
+            // Dynamic fields
+            document.getElementById('lotBlockField').value = data.lotBlock || '';
+            document.getElementById('sqMField').value = data.sqM || '';
+            document.getElementById('totalFloorArea').value = data.totalFloorArea || '';
+            document.getElementById('estimatedCost').value = data.estimatedCost || '';
+
+            // Store permitId in form's dataset (for further usage)
+            document.getElementById('editPermitForm').dataset.permitId = permitId;
         } else {
             console.error('No such document!');
         }
     }).catch((error) => {
-        console.error('Error getting document:', error);
+        console.error('Error getting document:', error); // Catching any potential errors
     });
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Function to populate the edit form
-    function populateEditForm(permitId) {
-        // Example code for fetching and populating data
-        console.log('populateEditForm called with permitId:', permitId);
-        // Fetch and populate form fields here
-    }
-
     // Attach event listeners to buttons
     function attachEventListeners() {
         const editPermitButtons = document.querySelectorAll('button[data-permit-id]');
