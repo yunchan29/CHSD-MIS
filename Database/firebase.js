@@ -572,7 +572,9 @@ async function loadProfiles() {
                         <li><a class="dropdown-item archive-btn" href="#" data-id="${doc.id}"><i class="fas fa-archive"></i> Archive</a></li>
                     </ul>
                 </div>
+              
             </td>
+            <td><button class="btn btn-primary btn-sm">View Details</button></td>
         `;
         tableBody.appendChild(row);
     });
@@ -664,14 +666,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// Function to attach event listeners to remarks buttons
 function attachRemarksButtonListeners() {
-    const remarksButtons = document.querySelectorAll('a[data-permit-id]');
-    
+    const remarksButtons = document.querySelectorAll('.dropdown-item[data-bs-target="#remarksModal1"]');
     remarksButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
             const permitId = button.getAttribute('data-permit-id');
-            showRemarks(permitId); // Or showRemarks(permitId) depending on your requirement
+            if (permitId) {
+                openRemarksModal(permitId); // Function that opens modal and loads remarks
+            }
         });
     });
 }
