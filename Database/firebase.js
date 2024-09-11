@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
@@ -106,6 +106,30 @@ async function handleUserLogin(event) {
         document.getElementById('loading-screen').style.display = 'none';
     }
 }
+
+//forgot password
+document.addEventListener('DOMContentLoaded', function() {
+    const auth = getAuth(); // Initialize Firebase Auth
+
+    document.getElementById('forgot-password-link').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default link behavior
+        const email = document.getElementById('user-email').value; // Get email input
+
+        if (email) {
+            // Call Firebase function to send password reset email
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    alert('Password reset email sent!');
+                })
+                .catch((error) => {
+                    console.error('Error sending password reset email:', error);
+                    alert('Failed to send reset email. Please check the email address and try again.');
+                });
+        } else {
+            alert('Please enter your email address.');
+        }
+    });
+});
 
 // Function to handle user signup
 async function handleSignUp(event) {
