@@ -44,6 +44,7 @@
             margin-right: 1rem; /* Add margin to the right of the input */
         }
     </style>
+    
 </head>
 <body>
     <div id="fetching-loading-screen" class="fetching-loading-screen">
@@ -274,9 +275,24 @@
     </div>
   </div>
 
+  <!--Download PDF and Excel Libraries-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log(typeof ExcelJS); // Should print 'object'
+    });
+</script>
+
+
+<script>
+    const { jsPDF } = window.jspdf;
+
+</script>
 
 
     <!-- Firebase and custom scripts -->
+    <script defer src="https://cdn.jsdelivr.net/npm/exceljs@4.2.1/dist/exceljs.min.js"></script>
     <script type="module" src="/Database/firebase.js"></script>
 
   

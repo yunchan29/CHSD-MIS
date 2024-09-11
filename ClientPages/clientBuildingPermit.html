@@ -314,47 +314,50 @@
                                 <label for="form-check" class="form-label">Scope of Work</label>
                                 <div class="col-md-6">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="option1" id="option1">
+                                        <input class="form-check-input" type="radio" name="scopeOfWork" value="option1" id="option1" required>
                                         <label class="form-check-label" for="option1">New Construction</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="option2" id="option2">
+                                        <input class="form-check-input" type="radio" name="scopeOfWork" value="option2" id="option2" required>
                                         <label class="form-check-label" for="option2">Addition</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="option3" id="option3">
+                                        <input class="form-check-input" type="radio" name="scopeOfWork" value="option3" id="option3" required>
                                         <label class="form-check-label" for="option3">Repair Renovation</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="option4" id="option4">
+                                        <input class="form-check-input" type="radio" name="scopeOfWork" value="option4" id="option4" required onclick="toggleOtherScopeInput()">
                                         <label class="form-check-label" for="option4">Others</label>
+                                        <input type="text" class="form-control mt-2" id="otherScopeInput" placeholder="Specify" disabled>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="mb-3">
                             <div class="row g-3">
                                 <label for="form-check" class="form-label">Project Justification</label>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="justification1" id="justification1">
+                                        <input class="form-check-input" type="radio" name="projectJustification" value="justification1" id="justification1" required>
                                         <label class="form-check-label" for="justification1">Single Attached/Semi-Attached/Duplex</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="justification2" id="justification2">
+                                        <input class="form-check-input" type="radio" name="projectJustification" value="justification2" id="justification2" required>
                                         <label class="form-check-label" for="justification2">Single/Detached</label>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="justification3" id="justification3">
+                                        <input class="form-check-input" type="radio" name="projectJustification" value="justification3" id="justification3" required>
                                         <label class="form-check-label" for="justification3">Row House/Multi-family Dwelling</label>
                                     </div>
                                 </div>
-                             
                             </div>
+                        
+                        
                             <div class="row mb-3">
                                 <div class="col">
                                     <input type="text" class="form-control" placeholder="Block number" required>
@@ -747,6 +750,9 @@
       </div>
     </div>
   </div>
+<!--Download PDF and Excel Libraries-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 
 <script>
 // Disable the "Proceed" button until the user scrolls to the bottom and checks the checkbox
@@ -1037,6 +1043,29 @@ function handleDrop(event) {
         });
     });
 </script>
+
+<!--Toggle Others-->
+<script>
+    function toggleOtherScopeInput() {
+    const otherInput = document.getElementById("otherScopeInput");
+    const otherRadio = document.getElementById("option4");
+
+    if (otherRadio.checked) {
+        otherInput.disabled = false;
+    } else {
+        otherInput.disabled = true;
+        otherInput.value = '';  // Clear the input if disabled
+    }
+}
+
+// Call the function on page load to ensure the state is correct
+window.onload = toggleOtherScopeInput;
+
+
+
+</script>
+
+
 
 
   

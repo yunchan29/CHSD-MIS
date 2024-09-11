@@ -260,7 +260,6 @@ if (googleSignInBtn) {
     googleSignInBtn.addEventListener('click', handleGoogleSignIn);
 }
 
-// Function to add a building permit
 async function addBuildingPermit(event) {
     event.preventDefault();
 
@@ -278,15 +277,11 @@ async function addBuildingPermit(event) {
 
     const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
 
-    const scopeOfWork = [];
-    document.querySelectorAll('input[name="scopeOfWork"]:checked').forEach(option => {
-        scopeOfWork.push(option.nextElementSibling.textContent);
-    });
-
-    const projectJustification = [];
-    document.querySelectorAll('input[name="projectJustification"]:checked').forEach(option => {
-        projectJustification.push(option.nextElementSibling.textContent);
-    });
+    const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked').nextElementSibling.textContent;
+    const projectJustification = document.querySelector('input[name="projectJustification"]:checked').nextElementSibling.textContent;
+    
+    const otherScopeInput = document.getElementById("otherScopeInput").value;
+    const finalScopeOfWork = (scopeOfWork === 'Others' && otherScopeInput) ? otherScopeInput : scopeOfWork;
 
     try {
         const user = auth.currentUser;
@@ -309,7 +304,6 @@ async function addBuildingPermit(event) {
             ownerUid = user.uid;
         }
 
-        // Add the building permit document with timestamp
         const permitDocRef = await addDoc(collection(db, "buildingPermits"), {
             buildingPermitNo,
             issuedOn,
@@ -318,11 +312,11 @@ async function addBuildingPermit(event) {
             addressTelNo,
             projectLocation,
             hsdFormNo,
-            scopeOfWork,
+            scopeOfWork: finalScopeOfWork,
             projectJustification,
             ownerUid: ownerUid,
             status: 'Pending',
-            createdAt: Timestamp.now() // Add timestamp field here
+            createdAt: Timestamp.now()
         });
 
         await updateDoc(doc(db, 'users', ownerUid), {
@@ -349,7 +343,6 @@ async function addBuildingPermit(event) {
 }
 
 
-// Function to edit an existing building permit
 async function editBuildingPermit(event) {
     event.preventDefault();
 
@@ -368,15 +361,10 @@ async function editBuildingPermit(event) {
 
     const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
 
-    const scopeOfWork = [];
-    document.querySelectorAll('input[name="scopeOfWork"]:checked').forEach(option => {
-        scopeOfWork.push(option.nextElementSibling.textContent);
-    });
+    const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked')?.value || '';
+    const scopeOthersDetail = document.getElementById('scopeOthersDetail').value;
 
-    const projectJustification = [];
-    document.querySelectorAll('input[name="projectJustification"]:checked').forEach(option => {
-        projectJustification.push(option.nextElementSibling.textContent);
-    });
+    const projectJustification = document.querySelector('input[name="projectJustification"]:checked')?.value || '';
 
     try {
         const user = auth.currentUser;
@@ -408,7 +396,7 @@ async function editBuildingPermit(event) {
             addressTelNo,
             projectLocation,
             hsdFormNo,
-            scopeOfWork,
+            scopeOfWork: scopeOfWork === 'Others' ? [scopeOthersDetail] : [scopeOfWork],
             projectJustification,
             ownerUid,
             status: 'Pending'
@@ -443,59 +431,6 @@ async function editBuildingPermit(event) {
 
 
 
-
-
-
-async function loadUserPermitStatus() {
-    try {
-        const user = auth.currentUser;
-        if (!user) {
-            console.error("No user is signed in.");
-            return;
-        }
-
-        document.getElementById('fetching-loading-screen').style.display = 'flex';
-        console.log("Fetching permit status for user:", user.uid);
-
-        const permitsRef = collection(db, "buildingPermits");
-        const q = query(permitsRef, where("ownerUid", "==", user.uid));
-        const permitsSnapshot = await getDocs(q);
-
-        console.log("Query result: ", permitsSnapshot.empty ? "No documents found." : `Found ${permitsSnapshot.size} documents`);
-
-        const tableBody = document.getElementById('permit-status-table');
-        tableBody.innerHTML = '';
-
-        if (!permitsSnapshot.empty) {
-            permitsSnapshot.forEach((permitDoc) => {
-                const permit = permitDoc.data();
-                console.log("Permit data:", permit);
-
-                // Create a button for viewing remarks
-                const viewRemarksButton = `
-                    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" onclick="showRemarks('${permitDoc.id}')">
-                        <i class="fa-solid fa-comment"></i> View Remarks
-                    </a>
-                `;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>Building Permit</td>
-                    <td>${permit.issuedOn}</td>
-                    <td>${permit.status}</td>
-                    <td>${viewRemarksButton}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        } else {
-            tableBody.innerHTML = '<tr><td colspan="4">No permits found.</td></tr>';
-        }
-    } catch (error) {
-        console.error("Error fetching permit status:", error);
-    } finally {
-        document.getElementById('fetching-loading-screen').style.display = 'none';
-    }
-}
 
 
 
@@ -914,45 +849,14 @@ async function loadRemarks(buildingPermitId) {
     }
 }
 
-// Client: Show Remarks
-async function showRemarks(permitId) {
-    try {
-        const currentUser = auth.currentUser;
-        if (!currentUser) {
-            document.getElementById('remarks-content').innerText = 'No user logged in';
-            return;
-        }
-        const userRef = doc(db, "users", currentUser.uid);
-        const remarksRef = collection(userRef, "remarks");
-        const q = query(remarksRef, where("buildingPermitId", "==", permitId));
-        const remarksSnapshot = await getDocs(q);
-        const userRemarks = remarksSnapshot.docs.map(doc => doc.data());
-        const remarksContent = userRemarks.length > 0
-            ? userRemarks.map(remark => `
-                <div>
-                    <p>${remark.text}</p>
-                    <small>Posted on ${new Date(remark.timestamp.seconds * 1000).toLocaleString()}</small>
-                </div>
-            `).join('')
-            : 'No remarks available';
-        document.getElementById('remarks-content').innerHTML = remarksContent;
-    } catch (error) {
-        console.error("Error fetching permit remarks:", error);
-        document.getElementById('remarks-content').innerText = 'Error fetching remarks';
-    }
-}
-
-
 document.addEventListener('DOMContentLoaded', () => {
     attachEventListeners();
     monitorAuthState();
 
-    // Debug log to check if buildingPermitId is being found
     const buildingPermitBtn = document.querySelector('.save-btn');
     if (buildingPermitBtn) {
         const buildingPermitId = buildingPermitBtn.getAttribute('data-id');
         console.log("Building Permit ID found on page load:", buildingPermitId);
-        
         if (buildingPermitId) {
             loadRemarks(buildingPermitId);
         } else {
@@ -962,7 +866,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('No element with class "save-btn" found');
     }
 
-    // Additional initialization
     const buildingPermitDiv = document.getElementById("buildingPermitDiv");
     if (buildingPermitDiv) {
         loadProfiles();
@@ -975,7 +878,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchAndSetClientInfo();
 
-    // Handle Save Remark Button
     const saveRemarkButton = document.getElementById('save-remark-btn');
     if (saveRemarkButton) {
         saveRemarkButton.addEventListener('click', () => {
@@ -990,18 +892,259 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Save Remark button not found');
     }
 
-    // Handle Load Remarks Button
     document.querySelectorAll('.save-btn').forEach(button => {
         button.addEventListener('click', (event) => {
             const buildingPermitId = event.target.getAttribute('data-id');
             if (buildingPermitId) {
                 loadRemarks(buildingPermitId);
+                showRemarks(buildingPermitId);
             } else {
                 console.error('Save button has no data-id attribute');
             }
         });
     });
+
+    document.getElementById('permit-status-table').addEventListener('click', async function(event) {
+        const target = event.target;
+
+        if (target && target.classList.contains('download-excel-btn')) {
+            const permitId = target.getAttribute('data-permit-id');
+            await downloadApplicationAsExcel(permitId);
+        }
+
+        if (target && target.classList.contains('download-pdf-btn')) {
+            const permitId = target.getAttribute('data-permit-id');
+            await downloadApplicationAsPDF(permitId);
+        }
+    });
 });
+
+
+
+
+const logoPath = '/resources/pictures/chsd.png';  // Adjust path if necessary
+
+async function downloadApplicationAsExcel(permitId) {
+    try {
+        const permitRef = doc(db, "buildingPermits", permitId);
+        const permitSnap = await getDoc(permitRef);
+
+        if (permitSnap.exists()) {
+            const permitData = permitSnap.data();
+            const data = [
+                ['Field', 'Value'],
+                ['Building Permit No', permitData.buildingPermitNo],
+                ['Issued On', permitData.issuedOn],
+                ['Owner Name', permitData.ownerName],
+                ['Phone Number', permitData.phoneNumber],
+                ['Address/Tel No.', permitData.addressTelNo],
+                ['Project Location', permitData.projectLocation],
+                ['Scope of Work', permitData.scopeOfWork],
+                ['Project Justification', permitData.projectJustification],
+            ];
+
+            const wb = new ExcelJS.Workbook();
+            const ws = wb.addWorksheet('Building Permit Application');
+
+            // Add HSD Logo to the top-left corner
+            const logoBuffer = await fetch(logoPath).then(res => res.arrayBuffer());
+            const logoId = wb.addImage({
+                buffer: logoBuffer,
+                extension: 'png',
+            });
+            ws.addImage(logoId, {
+                tl: { col: 0, row: 0 },  // Top-left corner
+                ext: { width: 75, height: 75 }  // Adjust size as needed
+            });
+
+            // Add table data starting from row 10 to leave space for the logo
+            ws.addTable({
+                name: 'PermitTable',
+                ref: 'A10',
+                columns: [
+                    { name: 'Field' },
+                    { name: 'Value' }
+                ],
+                rows: data
+            });
+
+            // Format the worksheet for A4 and short bond paper
+            ws.pageSetup = {
+                paperSize: 9, // A4 paper size
+                orientation: 'portrait', // or 'landscape'
+                fitToPage: true,
+                fitToWidth: 1,
+                fitToHeight: 0,
+                margins: {
+                    left: 1,
+                    right: 1,
+                    top: 1.25,
+                    bottom: 1.25,
+                    header: 0.5,
+                    footer: 0.5
+                }
+            };
+
+            // Set column widths for readability
+            ws.getColumn(1).width = 20;
+            ws.getColumn(2).width = 40;
+
+            // Center the table headers
+            ws.getCell('A10').alignment = { horizontal: 'center', vertical: 'middle' };
+            ws.getCell('B10').alignment = { horizontal: 'center', vertical: 'middle' };
+
+            const buffer = await wb.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Building_Permit_Application_${permitId}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            console.error("No such permit document!");
+        }
+    } catch (error) {
+        console.error("Error fetching application data:", error);
+    }
+}
+
+
+// PDF download function
+async function downloadApplicationAsPDF(permitId) {
+    try {
+        const permitRef = doc(db, "buildingPermits", permitId);
+        const permitSnap = await getDoc(permitRef);
+
+        if (permitSnap.exists()) {
+            const permitData = permitSnap.data();
+
+            const doc = new jsPDF();
+            doc.setFontSize(12);
+            doc.text('Building Permit Application Form', 10, 10);
+
+            let yPosition = 20;
+            doc.text(`Building Permit No: ${permitData.buildingPermitNo}`, 10, yPosition);
+            yPosition += 10;
+            doc.text(`Issued On: ${permitData.issuedOn}`, 10, yPosition);
+            yPosition += 10;
+            doc.text(`Owner Name: ${permitData.ownerName}`, 10, yPosition);
+            yPosition += 10;
+            doc.text(`Phone Number: ${permitData.phoneNumber}`, 10, yPosition);
+            yPosition += 10;
+            doc.text(`Address/Tel No.: ${permitData.addressTelNo}`, 10, yPosition);
+            yPosition += 10;
+            doc.text(`Project Location: ${permitData.projectLocation}`, 10, yPosition);
+            yPosition += 10;
+            doc.text(`HSD Form No: ${permitData.hsdFormNo}`, 10, yPosition);
+            yPosition += 10;
+            doc.text(`Scope of Work: ${permitData.scopeOfWork}`, 10, yPosition);
+            yPosition += 10;
+            doc.text(`Project Justification: ${permitData.projectJustification}`, 10, yPosition);
+            yPosition += 10;
+            doc.text(`Status: ${permitData.status}`, 10, yPosition);
+
+            doc.save(`Building_Permit_Application_${permitId}.pdf`);
+        } else {
+            console.error("No such permit document!");
+        }
+    } catch (error) {
+        console.error("Error fetching application data:", error);
+    }
+}
+
+// Client: Show Remarks
+async function showRemarks(permitId) {
+    try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            document.getElementById('remarks-content').innerText = 'No user logged in';
+            return;
+        }
+
+        const userRef = doc(db, "users", currentUser.uid);
+        const remarksRef = collection(userRef, "remarks");
+        const q = query(remarksRef, where("buildingPermitId", "==", permitId));
+        const remarksSnapshot = await getDocs(q);
+
+        const userRemarks = remarksSnapshot.docs.map(doc => doc.data());
+        const remarksContent = userRemarks.length > 0
+            ? userRemarks.map(remark => `
+                <div>
+                    <p>${remark.text}</p>
+                    <small>Posted on ${new Date(remark.timestamp.seconds * 1000).toLocaleString()}</small>
+                </div>
+            `).join('')
+            : 'No remarks available';
+
+        document.getElementById('remarks-content').innerHTML = remarksContent;
+    } catch (error) {
+        console.error("Error fetching permit remarks:", error);
+        document.getElementById('remarks-content').innerText = 'Error fetching remarks';
+    }
+}
+
+// Load user permit status
+async function loadUserPermitStatus() {
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("No user is signed in.");
+            return;
+        }
+
+        document.getElementById('fetching-loading-screen').style.display = 'flex';
+        console.log("Fetching permit status for user:", user.uid);
+
+        const permitsRef = collection(db, "buildingPermits");
+        const q = query(permitsRef, where("ownerUid", "==", user.uid));
+        const permitsSnapshot = await getDocs(q);
+
+        console.log("Query result: ", permitsSnapshot.empty ? "No documents found." : `Found ${permitsSnapshot.size} documents`);
+
+        const tableBody = document.getElementById('permit-status-table');
+        tableBody.innerHTML = '';
+
+        if (!permitsSnapshot.empty) {
+            permitsSnapshot.forEach((permitDoc) => {
+                const permit = permitDoc.data();
+
+                const viewRemarksButton = `
+                    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" data-id="${permitDoc.id}">
+                        <i class="fa-solid fa-comment"></i> View Remarks
+                    </a>
+                `;
+                const downloadExcelButton = `
+                    <a class="btn btn-success text-white download-excel-btn" data-permit-id="${permitDoc.id}">
+                        <i class="fa-solid fa-download"></i> Download Excel
+                    </a>
+                `;
+                const downloadPdfButton = `
+                    <a class="btn btn-danger text-white download-pdf-btn" data-permit-id="${permitDoc.id}">
+                        <i class="fa-solid fa-file-pdf"></i> Download PDF
+                    </a>
+                `;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>Building Permit</td>
+                    <td>${permit.issuedOn}</td>
+                    <td>${permit.status}</td>
+                    <td>${viewRemarksButton} ${downloadExcelButton} ${downloadPdfButton}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="4">No permits found.</td></tr>';
+        }
+    } catch (error) {
+        console.error("Error fetching permit status:", error);
+    } finally {
+        document.getElementById('fetching-loading-screen').style.display = 'none';
+    }
+}
 
 
 //user manager

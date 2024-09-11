@@ -412,7 +412,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
-                <h2>Application Applied</h2>
+                <h2>Application Submitted</h2>
                 <i class="fa-solid fa-check-circle fa-3x text-success"></i>
             </div>
             <div class="modal-footer">
@@ -646,5 +646,26 @@
             document.getElementById('side_nav').classList.remove('active');
         });
     </script>
+
+<!--Toggle Others-->
+<script>
+    function toggleOtherScopeInput() {
+    const otherInput = document.getElementById("otherScopeInput");
+    const otherRadio = document.getElementById("option4");
+
+    if (otherRadio.checked) {
+        otherInput.disabled = false;
+    } else {
+        otherInput.disabled = true;
+        otherInput.value = '';  // Clear the input if disabled
+    }
+}
+
+// Call the function on page load to ensure the state is correct
+window.onload = toggleOtherScopeInput;
+
+
+
+</script>
 </body>
 </html>
