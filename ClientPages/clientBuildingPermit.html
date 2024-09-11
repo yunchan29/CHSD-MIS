@@ -126,6 +126,10 @@
         top: 0;
         opacity: 0;
     }
+
+    .modal-content{
+            padding:1.2rem !important;
+        }
 </style>
 <style>
     .main-container {
@@ -623,24 +627,7 @@
                         </div>
 
                     -->
-                        <div class="row justify-content-center">
-                            <div class="col-md-6 mt-2 mb-2">
-                                <label for="appointmentPurpose">
-                                 Purpose
-                                </label>
-
-                                <select class="form-select" id="appointmentPurpose">
-                                    <option selected>-Select Purpose-</option>
-                                    <option>Payment</option>
-                                    <option>Payment</option>
-                                    <option>Payment</option>
-
-                                </select>
-                               
-                            </div>
-
-
-                        </div>
+                     
 
                         <div class="row justify-content-center">
                           <div class="col-md-6">
@@ -721,32 +708,66 @@
 
 <!-- Privacy Policy Modal -->
 <div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered wider-modal">
+    <div class="modal-dialog modal-dialog-centered wide-modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="privacyPolicyModalLabel">Privacy Policy</h5>
+          <h5 class="modal-title" id="privacyPolicyModalLabel">Privacy Policy and Terms of Service</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <p><h5>Lorem ipsum dolor sit amet</h5>
-            Consectetur adipiscing elit. Pellentesque blandit diam est, vel lacinia dolor fringilla eget. Fusce ut ullamcorper risus. Quisque a aliquet augue. Donec dignissim lobortis velit, sit amet viverra elit varius in. Fusce aliquet egestas nibh elementum volutpat. Sed at malesuada justo, at vestibulum augue. Vestibulum ut neque nisl. In eu vehicula ipsum, a convallis justo. Donec nec eros velit. Sed et vehicula sapien, eu imperdiet sem. Quisque lobortis elit at diam finibus egestas. Cras auctor in ipsum a efficitur. Pellentesque blandit augue lacus, vel posuere nisi luctus ac. Mauris maximus a quam in pellentesque.
+        <div class="modal-body" id="privacyPolicyContent" style="max-height: 400px; overflow-y: auto;">
+          <h5>Privacy Policy</h5>
+          <p>We are committed to protecting your privacy. This privacy policy explains how we collect, use, and share your personal information when you apply for building permits through our system. By submitting your application, you consent to our privacy policy and the collection, use, and sharing of your information as described here.</p>
 
-            Donec arcu lacus, fringilla id laoreet at, commodo nec nulla. Quisque rutrum non lacus non scelerisque. Phasellus tempor, ex vitae mollis scelerisque, est metus venenatis sapien, id volutpat dolor nunc a diam. Sed ultrices nunc non viverra iaculis. Donec vitae erat blandit, interdum risus sed, varius magna. Quisque laoreet nibh urna, sed cursus eros ultrices et. Mauris fringilla leo eget accumsan eleifend. Nullam non risus at purus cursus luctus. Fusce dapibus venenatis dui eget semper. Donec vitae scelerisque dui. Aenean ac lacinia erat, id tempus quam. Pellentesque a pretium metus. Vivamus posuere, ligula eget eleifend imperdiet, libero dui porttitor magna, non sagittis ligula sapien at dui.
-            <br>
-            <h5>Nam et nisi convallis</h5>
-            rutrum nunc non, pellentesque justo. Praesent bibendum magna vel enim sollicitudin imperdiet. Mauris eget diam suscipit, pretium lectus sed, dapibus nunc. Praesent dictum, lorem vitae tempor sodales, nulla metus lacinia ipsum, quis molestie quam dolor eu dolor. Phasellus sed ultrices ex. Vestibulum a erat vitae est varius blandit ut vestibulum urna. Integer venenatis nunc sapien, eget commodo nisi malesuada eu.
-            
-            Cras quis ex felis. Sed volutpat posuere bibendum. Pellentesque lacinia vel nunc id vestibulum. Proin ligula dui, condimentum sit amet sem vel, auctor aliquet augue. Sed vel arcu aliquet, aliquet nisi ut, tincidunt lacus. Mauris tristique dolor et venenatis maximus. Quisque eu lectus neque. Donec orci turpis, fermentum ac leo id, maximus lacinia sapien. Vestibulum nec cursus risus. Etiam posuere mi lectus, at hendrerit sem feugiat placerat. Maecenas dui dui, dignissim sit amet convallis sed, consectetur porta metus. Pellentesque eget urna elit. Proin dignissim enim quis ligula rhoncus, non lobortis turpis finibus.</p>
-     
+          <ul>
+            <li><b>Information Collection:</b> We collect personal data such as name, address, phone number, email, and project details for the sole purpose of processing your building permit application.</li>
+            <li><b>Use of Data:</b> The collected data is used to process your permit, communicate with you, and keep you updated on your application's status.</li>
+            <li><b>Data Sharing:</b> Your data will not be shared with third parties except where required by law or necessary for completing the application process.</li>
+            <li><b>Data Retention:</b> Your personal data will be retained only for as long as necessary to fulfill the purpose of the application process or as required by legal obligations.</li>
+          </ul>
+
+          <h5>Terms and Conditions</h5>
+          <p>By using this service, you agree to the following terms and conditions:</p>
+          <ul>
+            <li>You will provide accurate and truthful information in your application.</li>
+            <li>You understand that the processing of your permit may take several days depending on the complexity of the application.</li>
+            <li>You are responsible for any fees or charges associated with your application.</li>
+            <li>Any attempt to provide fraudulent information may result in legal consequences.</li>
+          </ul>
         </div>
         <div class="modal-footer">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="termsCheckbox">
+            <label class="form-check-label" for="termsCheckbox">
+              I have read and agree to the Privacy Policy and Terms and Conditions
+            </label>
+          </div>
           <a type="button" class="btn btn-secondary text-white" href="clientApplication.html">Back</a>
-          <button type="button" class="btn btn-primary" id="acceptPolicyButton">Proceed</button>
+          <button type="button" class="btn btn-primary" id="acceptPolicyButton" disabled>Proceed</button>
         </div>
       </div>
     </div>
   </div>
-  
+
+<script>
+// Disable the "Proceed" button until the user scrolls to the bottom and checks the checkbox
+const modalContent = document.getElementById('privacyPolicyContent');
+const acceptPolicyButton = document.getElementById('acceptPolicyButton');
+const termsCheckbox = document.getElementById('termsCheckbox');
+
+function updateProceedButton() {
+  // Enable the button if the user has scrolled to the bottom and checked the box
+  const isScrolledToBottom = modalContent.scrollHeight - modalContent.scrollTop === modalContent.clientHeight;
+  const isCheckboxChecked = termsCheckbox.checked;
+  acceptPolicyButton.disabled = !(isScrolledToBottom && isCheckboxChecked);
+}
+
+// Add scroll event listener to check if the user has scrolled to the bottom
+modalContent.addEventListener('scroll', updateProceedButton);
+
+// Add change event listener for checkbox
+termsCheckbox.addEventListener('change', updateProceedButton);
+</script>
+
 
 
 

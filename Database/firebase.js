@@ -550,16 +550,17 @@ async function loadProfiles() {
             <td>${data.ownerName}</td>
          
             <td>${createdAt}</td> <!-- Display the formatted timestamp -->
-            <td>
-                <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${doc.id}">
-                    <option value="Pending" ${data.status === "Pending" ? 'selected' : ''}>Pending</option>
-                    <option value="Processing" ${data.status === "Processing" ? 'selected' : ''}>Processing</option>
-                    <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''}>To Pay</option>
-                    <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''}>For Approval</option>
-                    <option value="For Release" ${data.status === "For Release" ? 'selected' : ''}>For Release</option>
-                    <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''}>Claimed</option>
-                </select>
-            </td>
+          <td>
+    <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${doc.id}">
+        <option value="Pending" ${data.status === "Pending" ? 'selected' : ''} ${data.status !== "Pending" ? 'disabled' : ''}>Pending</option>
+        <option value="Processing" ${data.status === "Processing" ? 'selected' : ''} ${(data.status !== "Pending" && data.status !== "Processing") ? 'disabled' : ''}>Processing</option>
+        <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''} ${(data.status !== "Processing" && data.status !== "To Pay") ? 'disabled' : ''}>To Pay</option>
+        <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''} ${(data.status !== "To Pay" && data.status !== "For Approval") ? 'disabled' : ''}>For Approval</option>
+        <option value="For Release" ${data.status === "For Release" ? 'selected' : ''} ${(data.status !== "For Approval" && data.status !== "For Release") ? 'disabled' : ''}>For Release</option>
+        <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''} ${(data.status !== "For Release" && data.status !== "Claimed") ? 'disabled' : ''}>Claimed</option>
+    </select>
+</td>
+
             <td>
                 <div class="dropdown">
                     <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
