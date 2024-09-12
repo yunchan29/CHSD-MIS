@@ -353,8 +353,10 @@ async function addBuildingPermit(event) {
             })
         });
 
-        alert("Building permit application submitted successfully!");
-        window.location.reload();
+        // Open the modal
+        const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
+        applicationModal.show();
+
     } catch (error) {
         console.error("Error adding profile or creating user:", error);
 
@@ -1110,7 +1112,6 @@ async function showRemarks(permitId) {
     }
 }
 
-// Load user permit status
 async function loadUserPermitStatus() {
     try {
         const user = auth.currentUser;
@@ -1134,34 +1135,39 @@ async function loadUserPermitStatus() {
         if (!permitsSnapshot.empty) {
             permitsSnapshot.forEach((permitDoc) => {
                 const permit = permitDoc.data();
+                console.log(permit); // Log the permit object to see its structure
+
+                // Check if the fields exist, or handle a default value
+                const ownerName = permit.ownerName || 'Unknown Owner'; // Assuming `ownerName` is a combined field in the document
 
                 const viewRemarksButton = `
                     <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" data-id="${permitDoc.id}">
-                        <i class="fa-solid fa-comment"></i> View Remarks
+                        <i class="fa-solid fa-comment"></i> Remarks
                     </a>
                 `;
                 const downloadExcelButton = `
                     <a class="btn btn-success text-white download-excel-btn" data-permit-id="${permitDoc.id}">
-                        <i class="fa-solid fa-download"></i> Download Excel
+                        <i class="fa-solid fa-download"></i> Excel
                     </a>
                 `;
                 const downloadPdfButton = `
                     <a class="btn btn-danger text-white download-pdf-btn" data-permit-id="${permitDoc.id}">
-                        <i class="fa-solid fa-file-pdf"></i> Download PDF
+                        <i class="fa-solid fa-file-pdf"></i> PDF
                     </a>
                 `;
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
+                    <td>${ownerName}</td> <!-- Added column for owner name -->
                     <td>Building Permit</td>
-                    <td>${permit.issuedOn}</td>
-                    <td>${permit.status}</td>
+                    <td>${permit.issuedOn || 'N/A'}</td>
+                    <td>${permit.status || 'N/A'}</td>
                     <td>${viewRemarksButton} ${downloadExcelButton} ${downloadPdfButton}</td>
                 `;
                 tableBody.appendChild(row);
             });
         } else {
-            tableBody.innerHTML = '<tr><td colspan="4">No permits found.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="5">No permits found.</td></tr>'; // Update colspan due to extra column
         }
     } catch (error) {
         console.error("Error fetching permit status:", error);
@@ -1169,7 +1175,6 @@ async function loadUserPermitStatus() {
         document.getElementById('fetching-loading-screen').style.display = 'none';
     }
 }
-
 
 //user manager
 // Reference to the 'users' collection

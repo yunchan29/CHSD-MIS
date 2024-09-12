@@ -858,3 +858,9 @@ border-radius: 12px;
 .dropdown.open .submenu {
     max-height: 200px; /* Adjust as needed */
 }
+
+.form-label .required-asterisk {
+    color: red; 
+    font-weight: bold; 
+    font-size: 1.2em; 
+  }

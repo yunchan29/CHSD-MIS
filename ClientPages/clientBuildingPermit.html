@@ -127,9 +127,7 @@
         opacity: 0;
     }
 
-    .modal-content{
-            padding:1.2rem !important;
-        }
+  
 </style>
 <style>
     .main-container {
@@ -228,7 +226,7 @@
         <div class="modal-content buldingPermitApplication">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="BuildingPermitModalLabel">Building Permit Application</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             
             </div>
             <div class="modal-body">
                 <!-- Application Modal Content -->
@@ -249,6 +247,8 @@
                     </div>
                 </div>
                     <form>
+                        <p>Note: Fill up all the fields to proceed to the next step.</p>
+                        <p><i>Required fields are marked with *</i></p>
                         <div class="mb-3">
                             <div class="d-flex col-md-6">
                                 <input type="text" class="form-control me-2" id="hsdFormNo" placeholder="HSD Form No.1" disabled>
@@ -275,10 +275,10 @@
         <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name" required>
     </div>
     <div class="col-md-3">
-        <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name" required>
+        <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name*" required>
     </div>
     <div class="col-md-3">
-        <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name" required>
+        <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name*" required>
     </div>
     <div class="col-md-3">
         <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
@@ -287,7 +287,7 @@
 
 
 <div class="mb-3">
-    <label for="phoneNumber" class="form-label">Phone Number</label>
+    <label for="phoneNumber" class="form-label">Phone Number*</label>
     <input type="text" class="form-control" id="phoneNumber" value="+63" required>
 </div>
 
@@ -295,23 +295,23 @@
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <input type="text" class="form-control" id="addressTelNo" placeholder="Address" required>
+                                <input type="text" class="form-control" id="addressTelNo" placeholder="Address*" required>
                             </div>
 
 
                             <div class="col-md-6">
-                                <input type="text" class="form-control" id="projectLocation" placeholder="Project Location" required>
+                                <input type="text" class="form-control" id="projectLocation" placeholder="Project Location*" required>
                             </div>
                         </div>
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <input type="text" class="form-control" id="TelNo" placeholder="Telephone No." required>
+                                <input type="text" class="form-control" id="TelNo" placeholder="Telephone No.">
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="row g-3">
-                                <label for="form-check" class="form-label">Scope of Work</label>
+                                <label for="form-check" class="form-label">Scope of Work*</label>
                                 <div class="col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="scopeOfWork" value="option1" id="option1" required>
@@ -338,7 +338,7 @@
                         
                         <div class="mb-3">
                             <div class="row g-3">
-                                <label for="form-check" class="form-label">Project Justification</label>
+                                <label for="form-check" class="form-label">Project Justification*</label>
                                 <div class="col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="projectJustification" value="justification1" id="justification1" required>
@@ -360,24 +360,24 @@
                         
                             <div class="row mb-3">
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Block number" required>
+                                    <input type="text" class="form-control" placeholder="Block number*" required>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Lot number" required>
+                                    <input type="text" class="form-control" placeholder="Lot number*" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="No. of Units" required>
+                                    <input type="text" class="form-control" placeholder="No. of Units*" required>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Floor Area Per Unit" required>
+                                    <input type="text" class="form-control" placeholder="Floor Area Per Unit*" required>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Total Floor Area" required>
+                                    <input type="text" class="form-control" placeholder="Total Floor Area*" required>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Total Estimated Cost" required>
+                                    <input type="text" class="form-control" placeholder="Total Estimated Cost*" required>
                                 </div>
                             </div>
                         </div>
@@ -699,7 +699,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
-                <h2>Application Applied</h2>
+                <h2>Application Submitted</h2>
                 <i class="fa-solid fa-check-circle fa-3x text-success"></i>
             </div>
             <div class="modal-footer">
@@ -753,7 +753,36 @@
 <!--Download PDF and Excel Libraries-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script>
+    // Disable the nextStepButton until all required fields are occupied
+    document.addEventListener("DOMContentLoaded", function () {
+    const nextStepButton = document.getElementById("nextStepButton");
 
+    // Function to check if all required fields are filled
+    function checkRequiredFields() {
+        const requiredFields = document.querySelectorAll("#buildingPermitModal [required]");
+        let allFilled = true;
+
+        requiredFields.forEach((field) => {
+            if (!field.value.trim()) {
+                allFilled = false;
+            }
+        });
+
+        nextStepButton.disabled = !allFilled; // Disable button if not all fields are filled
+    }
+
+    // Attach event listeners to all required fields
+    const requiredFields = document.querySelectorAll("#buildingPermitModal [required]");
+    requiredFields.forEach((field) => {
+        field.addEventListener("input", checkRequiredFields);
+    });
+
+    // Initially disable the button
+    nextStepButton.disabled = true;
+});
+
+</script>
 <script>
 // Disable the "Proceed" button until the user scrolls to the bottom and checks the checkbox
 const modalContent = document.getElementById('privacyPolicyContent');
