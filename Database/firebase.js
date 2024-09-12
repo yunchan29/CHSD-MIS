@@ -287,6 +287,9 @@ if (googleSignInBtn) {
 async function addBuildingPermit(event) {
     event.preventDefault();
 
+    // Show the loading screen
+    document.getElementById('loading-screen').style.display = 'flex';
+
     const buildingPermitNo = document.getElementById('buildingPermitNo').value;
     const issuedOn = document.getElementById('basic-url').value;
     const addressTelNo = document.getElementById('addressTelNo').value;
@@ -365,8 +368,12 @@ async function addBuildingPermit(event) {
         } else {
             alert("Failed to submit application. Please try again later.");
         }
+    } finally {
+        // Hide the loading screen
+        document.getElementById('loading-screen').style.display = 'none';
     }
 }
+
 
 
 async function editBuildingPermit(event) {

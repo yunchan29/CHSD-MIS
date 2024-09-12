@@ -139,7 +139,12 @@
   
 </head>
 <body>
-   
+    <div id="loading-screen" class="loading-screen" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
     
     <div class="main-container d-flex">
 
@@ -278,7 +283,7 @@
         <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name*" required>
     </div>
     <div class="col-md-3">
-        <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name*" required>
+        <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
     </div>
     <div class="col-md-3">
         <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
