@@ -88,26 +88,18 @@
     </style>
      <style>
         #imagePreview {
-<<<<<<< HEAD
         #cropper-container {
             display: none;
             width: 100%;
             margin-top: 20px;
         }
         #imagePreview {
-=======
-            max-width: 100%;
->>>>>>> e9cebb3be39d76ed6801902c61b8a12e7b3c0c6a
             display: none;
         }
         #scanningStatus {
             display: none;
         }
-<<<<<<< HEAD
         #ocrOutput {
-=======
-        #cropButton {
->>>>>>> e9cebb3be39d76ed6801902c61b8a12e7b3c0c6a
             display: none;
         }
     </style>
@@ -218,7 +210,6 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-<<<<<<< HEAD
                                                 <!-- Upload File Section -->
                                                 <label class="form-label">Upload your ID file with address:</label>
                                                 <input type="file" id="fileInput" accept="image/*" class="form-control">
@@ -235,25 +226,6 @@
                                                 <img id="imagePreview" class="img-fluid mb-3" alt="Image Preview" style="display: none;">
                                                 <button type="button" id="cropButton" class="btn btn-primary" style="display: none;">Crop Image</button>
                                                 <pre id="ocrOutput" class="text-start border p-3 bg-light" style="display: none;"></pre>
-=======
-                                                <!-- Inside your modal-body -->
-<div id="cropper-container" style="display: none;">
-    <img id="cropper-image" src="" alt="Cropper Image">
-</div>
-
-                                                <!-- Upload File Section -->
-                                                <label class="form-label">Upload your ID file with address:</label>
-                                                <input type="file" id="fileInput" accept="image/*" class="form-control">
-                                                
-                                                <!-- Take Photo Button -->
-                                                <button type="button" class="btn btn-primary mt-3" id="photoCaptureButton">Take a Photo</button>
-                                                <input type="file" id="photoInput" accept="image/*" capture="environment" class="form-control" style="display: none;">
-                                                
-                                                <div class="scanning-status-container" id="scanningStatus">Scanning document...</div>
-                                                <img id="imagePreview" class="img-fluid mb-3" alt="Image Preview">
-                                                <button type="button" id="cropButton" class="btn btn-primary">Crop Image</button>
-                                                <pre id="ocrOutput" class="text-start border p-3 bg-light"></pre>
->>>>>>> e9cebb3be39d76ed6801902c61b8a12e7b3c0c6a
                                             </div>
                                             <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
                                             <div class="modal-footer">
@@ -262,10 +234,7 @@
                                         </div>
                                     </div>
                                 </div>
-<<<<<<< HEAD
                                 
-=======
->>>>>>> e9cebb3be39d76ed6801902c61b8a12e7b3c0c6a
                             </form>
                         </div>
                     </div>
@@ -274,11 +243,7 @@
         </div>
         
     </div>
-<<<<<<< HEAD
     
-=======
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.6/cropper.min.js"></script>
->>>>>>> e9cebb3be39d76ed6801902c61b8a12e7b3c0c6a
     <script type="module" src="/Database/firebase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
@@ -309,15 +274,6 @@
         }
     }
 
-    let cropper;
-
-    document.getElementById('fileInput').addEventListener('change', handleFileUpload);
-    document.getElementById('photoCaptureButton').addEventListener('click', () => {
-        document.getElementById('photoInput').click();
-    });
-    document.getElementById('photoInput').addEventListener('change', handleFileUpload);
-    document.getElementById('cropButton').addEventListener('click', cropImage);
-
     async function handleFileUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -331,13 +287,8 @@
         reader.onload = function (e) {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
-            initializeCropper(e.target.result); // Initialize Cropper.js with the image
         };
         reader.readAsDataURL(file);
-
-        // Reset and hide cropper-related elements
-        document.getElementById('cropper-container').style.display = 'block';
-        document.getElementById('cropButton').style.display = 'block';
 
         try {
             const ocrResult = await performOCR(file);
@@ -347,39 +298,6 @@
             alert('Failed to perform OCR. Please try again.');
         } finally {
             scanningStatus.style.display = 'none'; // Hide scanning status
-        }
-    }
-
-    function initializeCropper(imageSrc) {
-        const image = document.getElementById('cropper-image');
-        image.src = imageSrc;
-
-        // Destroy any existing cropper instance
-        if (cropper) {
-            cropper.destroy();
-        }
-
-        cropper = new Cropper(image, {
-            aspectRatio: 1, // Set aspect ratio to 1:1 for square cropping
-            viewMode: 1,
-            autoCropArea: 1,
-            crop: function (event) {
-                // Optional: handle crop event if needed
-            }
-        });
-    }
-
-    function cropImage() {
-        if (cropper) {
-            const canvas = cropper.getCroppedCanvas();
-            canvas.toBlob(function (blob) {
-                const url = URL.createObjectURL(blob);
-                const imagePreview = document.getElementById('imagePreview');
-                imagePreview.src = url; // Update image preview with cropped image
-                imagePreview.style.display = 'block';
-
-                // Optional: Handle the cropped image blob (e.g., upload it or display it)
-            });
         }
     }
     function populateFormFields(text) {
