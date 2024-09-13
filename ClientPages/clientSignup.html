@@ -248,104 +248,60 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     
-    <script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
-    <script>
-        let cropper;
+<!-- Commented out the OCR functionality temporarily -->
+<script>
+    async function performOCR(imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        formData.append("apikey", "K84363057988957"); // Your OCR.space API key
 
-        async function performOCR(imageFile) {
-            const formData = new FormData();
-            formData.append("file", imageFile);
-            formData.append("apikey", "K84363057988957"); // Your OCR.space API key
-
-            try {
-                const response = await fetch("https://api.ocr.space/parse/image", {
-                    method: "POST",
-                    body: formData,
-                });
-
-                const result = await response.json();
-                if (result.IsErroredOnProcessing) {
-                    throw new Error(result.ErrorMessage.join("\n"));
-                }
-
-                const text = result.ParsedResults[0].ParsedText;
-                return text;
-            } catch (error) {
-                console.error('Error performing OCR:', error);
-                throw error;
-            }
-        }
-
-        function initializeCropper(imageSrc) {
-            const image = document.getElementById('cropper-image');
-            image.src = imageSrc;
-
-            // Destroy any existing cropper instance
-            if (cropper) {
-                cropper.destroy();
-            }
-
-            cropper = new Cropper(image, {
-                aspectRatio: 1, // Set aspect ratio to 1:1 for square cropping
-                viewMode: 1,
-                autoCropArea: 1,
-                crop: function (event) {
-                    // Optional: handle crop event if needed
-                }
+        try {
+            const response = await fetch("https://api.ocr.space/parse/image", {
+                method: "POST",
+                body: formData,
             });
-        }
 
-        function cropImage() {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas();
-                canvas.toBlob(function (blob) {
-                    const url = URL.createObjectURL(blob);
-                    const imagePreview = document.getElementById('imagePreview');
-                    imagePreview.src = url; // Update image preview with cropped image
-                    imagePreview.style.display = 'block'; // Show preview
-
-                    // Optional: Handle the cropped image blob (e.g., upload it or display it)
-                });
+            const result = await response.json();
+            if (result.IsErroredOnProcessing) {
+                throw new Error(result.ErrorMessage.join("\n"));
             }
+
+            const text = result.ParsedResults[0].ParsedText;
+            return text;
+        } catch (error) {
+            console.error('Error performing OCR:', error);
+            throw error;
         }
+    }
 
-        function handleFileUpload(file) {
-            if (!file) return;
+    async function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-            const scanningStatus = document.getElementById('scanningStatus');
-            const imagePreview = document.getElementById('imagePreview');
-            const cropperContainer = document.getElementById('cropper-container');
-            const cropButton = document.getElementById('cropButton');
+        const scanningStatus = document.getElementById('scanningStatus');
+        scanningStatus.style.display = 'block'; // Show scanning status
 
-            scanningStatus.style.display = 'block'; // Show scanning status
+        // Display image preview
+        const imagePreview = document.getElementById('imagePreview');
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
 
-            // Display image preview
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                imagePreview.src = e.target.result;
-                imagePreview.style.display = 'block'; // Show preview
-
-                cropperContainer.style.display = 'block'; // Show cropper container
-                cropButton.style.display = 'block'; // Show crop button
-                initializeCropper(e.target.result); // Initialize Cropper.js with the image
-
-                performOCR(file)
-                    .then(ocrResult => {
-                        populateFormFields(ocrResult); // Populate form fields
-                        checkApprovalStatus(ocrResult); // Check approval status
-                    })
-                    .catch(error => {
-                        alert('Failed to perform OCR. Please try again.');
-                    })
-                    .finally(() => {
-                        scanningStatus.style.display = 'none'; // Hide scanning status
-                    });
-            };
-            reader.readAsDataURL(file);
+        try {
+            const ocrResult = await performOCR(file);
+            populateFormFields(ocrResult); // Populate form fields
+            checkApprovalStatus(ocrResult); // Check approval status
+        } catch (error) {
+            alert('Failed to perform OCR. Please try again.');
+        } finally {
+            scanningStatus.style.display = 'none'; // Hide scanning status
         }
-
-        function populateFormFields(text) {
-            console.log("OCR Result:", text); // Log the full OCR result for debugging
+    }
+    function populateFormFields(text) {
+    console.log("OCR Result:", text); // Log the full OCR result for debugging
 
             const firstNameInput = document.getElementById('client-first-name');
             const lastNameInput = document.getElementById('client-last-name');
@@ -418,20 +374,70 @@
             return {}; // Return an empty object if extraction fails
         }
 
-        function checkApprovalStatus(text) {
-            const approvalStatus = document.getElementById('approvalStatus');
-            // Perform approval check logic here
-            approvalStatus.textContent = "Approval Status: Pending"; // Example status
-            approvalStatus.style.display = 'block'; // Show approval status
+    function checkApprovalStatus(text) {
+        const approvalStatus = document.getElementById('approvalStatus');
+        const signupButton = document.getElementById('signupButton');
+
+        const lowerCaseText = text.toLowerCase();
+        const barangays = [
+            'pansol', 'calamba', 'barangay1', 'barangay2', 'barangay3',
+            'barangay4', 'barangay5', 'barangay6', 'bagong kalsada',
+            'banadero', 'banlic', 'barandal', 'batino', 'bubuyan', 'bucal', 'bunggo', 'burol', 'camaligan', 'canlubang', 'halang', 'hornalan'
+            , 'kay-anlog', 'la mesa', 'laguerta', 'lawa', 'lecheria', 'lingga', 'looc', 'mabato', 'majada labas', 'makiling', 'mapagong', 'masili', 'maunong',
+            'mayapa', 'milagrosa', 'paciano', 'paciano rizal', 'palingon', 'palo-alto', 'palo alto', 'parian', 'prinza', 'punta', 'puting lupa', 'real', 'saimsim'
+            , 'sampiruhan', 'san cristobal', 'san jose', 'san juan', 'sirang lupa', 'sucol', 'turbina', 'ulango', 'uwisan',
+        ];
+
+        const containsCalamba = lowerCaseText.includes('calamba');
+        const containsBarangay = barangays.some(barangay => lowerCaseText.includes(barangay));
+
+        if (containsCalamba && containsBarangay) {
+            approvalStatus.textContent = 'Approved';
+            approvalStatus.className = 'alert alert-success';
+            signupButton.disabled = false; // Enable the sign-up button
+            document.getElementById('proceedToStep2').disabled = false;
+        } else {
+            approvalStatus.textContent = 'Disapproved';
+            approvalStatus.className = 'alert alert-danger';
+            signupButton.disabled = true; // Disable the sign-up button
         }
+        approvalStatus.style.display = 'block';
+        document.getElementById('ocrOutput').style.display = 'none'; // Hide OCR output
+    }
 
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            handleFileUpload(event.target.files[0]);
-        });
+    // Ensure script executes after DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        const fileInput = document.getElementById('fileInput');
+        fileInput.addEventListener('change', handleFileUpload);
+    });
 
-        document.getElementById('photoCaptureButton').addEventListener('click', function() {
-            document.getElementById('photoInput').click();
-        });
+
+document.getElementById('proceedToStep2').addEventListener('click', function() {
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+});
+</script>
+
+<script>
+    // Handle file upload
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            // Display the image preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-fluid mb-3';
+                img.style.maxWidth = '100%';
+                const imagePreview = document.getElementById('imagePreview');
+                imagePreview.innerHTML = ''; // Clear previous previews
+                imagePreview.appendChild(img);
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
         document.getElementById('photoInput').addEventListener('change', function(event) {
             handleFileUpload(event.target.files[0]);
