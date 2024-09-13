@@ -215,7 +215,7 @@
                                                 <input type="file" id="fileInput" accept="image/*" class="form-control">
                             
                                                 <!-- Take Photo Button -->
-                                                <button type="button" class="btn btn-primary mt-3" id="photoCaptureButton" disabled>Take a Photo</button>
+                                                <button type="button" class="btn btn-primary mt-3 mb-3" id="photoCaptureButton" disabled>Take a Photo</button>
                                                 <input type="file" id="photoInput" accept="image/*" capture="environment" class="form-control" style="display: none;">
                             
                                                 <!-- Cropping and Preview -->
@@ -251,7 +251,7 @@
     async function performOCR(imageFile) {
         const formData = new FormData();
         formData.append("file", imageFile);
-        formData.append("apikey", "K84363057988957"); // Your OCR.space API key
+        formData.append("apikey", "K81701592188957"); // Your OCR.space API key
 
         try {
             const response = await fetch("https://api.ocr.space/parse/image", {
