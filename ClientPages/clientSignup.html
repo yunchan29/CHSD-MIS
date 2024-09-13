@@ -120,90 +120,97 @@
         </div>
     </nav>
     <div class="clientSignUpWrapper">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10 col-sm-12">
-                <div class="loginWrapper">
-                    <div class="signUpField text-center">
-                        <img class="img-fluid hsdLogo" src="/resources/pictures/chsd.png" alt="Logo">
-                        <hr>
-                        <h4>Sign Up</h4><br><br>
-                        <form id="client-signup-form">
-                            <div class="row mb-3">
-                                <div class="col-md-4 col-sm-6 col-12 text-start">
-                                    <label for="client-first-name" class="form-label">First Name</label>
-                                    <input type="text" class="form-control" id="client-first-name" placeholder="Enter your first name" required>
-                                </div>
-                                <div class="col-md-4 col-sm-6 col-12 text-start">
-                                    <label for="client-middle-name" class="form-label">Middle Name</label>
-                                    <input type="text" class="form-control" id="client-middle-name" placeholder="Enter your middle name">
-                                </div>
-                                <div class="col-md-4 col-sm-12 col-12 text-start">
-                                    <label for="client-last-name" class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" id="client-last-name" placeholder="Enter your last name" required>
-                                </div>
-                            </div>
-                            <div class="mb-3 text-start">
-                                <label for="client-signup-email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="client-signup-email" placeholder="Enter your email" required>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6 col-sm-12 text-start">
-                                    <label for="client-signup-password" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="client-signup-password" placeholder="Enter your password" required>
-                                </div>
-                                <div class="col-md-6 col-sm-12 text-start">
-                                    <label for="client-confirm-password" class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-control" id="client-confirm-password" placeholder="Confirm your password" required>
-                                </div>
-                            </div>
-
-                           <!-- Commented out the OCR functionality temporarily -->
-                            
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                                Upload ID with Address
-                            </button><br><br>
-
-                            <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="uploadModalLabel">Upload ID with Address</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="container"> 
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10 col-sm-12">
+                    <div class="loginWrapper">
+                        <div class="signUpField text-center">
+                            <img class="img-fluid hsdLogo" src="/resources/pictures/chsd.png" alt="Logo">
+                            <hr>
+                            <h4 class="mb-3">Sign Up</h4>
+                            <form id="client-signup-form">
+                                <!-- Step 1: Upload ID -->
+                                <div id="step1" class="step">
+                                    <div class="row justify-content-center mt-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label for="uploadModal" class="form-label">Identity Verification</label>
+                                            <p>Please upload a valid ID that includes your address to confirm your residency in Calamba City.</p>
+                                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                                                Upload ID with Address
+                                            </button>
                                         </div>
-                                        <div class="modal-body">
-                                            <label class="form-label">Upload any ID with Address (make sure the address is readable):</label>
-                                            <input type="file" id="fileInput" accept="image/*" class="form-control">
-                                            <div class="scanning-status-container" id="scanningStatus">Scanning document...</div>
-                                            <img id="imagePreview" class="img-fluid mb-3" style="display: none;" alt="Image Preview">
-                                            <pre id="ocrOutput" class="text-start border p-3 bg-light"></pre>
+                                    </div>
+                                    <div class="mb-3 text-center">
+                                        <button type="button" id="proceedToStep2" class="btn btn-primary" disabled>Proceed to Step 2</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 2: Personal Information -->
+                                <div id="step2" class="step" style="display: none;">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 col-sm-6 col-12 text-start">
+                                            <label for="client-first-name" class="form-label">First Name</label>
+                                            <input type="text" class="form-control" id="client-first-name" placeholder="Enter your first name" required>
                                         </div>
-                                        <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
-                           
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <div class="col-md-4 col-sm-6 col-12 text-start">
+                                            <label for="client-middle-name" class="form-label">Middle Name</label>
+                                            <input type="text" class="form-control" id="client-middle-name" placeholder="Enter your middle name">
+                                        </div>
+                                        <div class="col-md-4 col-sm-12 col-12 text-start">
+                                            <label for="client-last-name" class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" id="client-last-name" placeholder="Enter your last name" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 text-start">
+                                        <label for="client-signup-email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="client-signup-email" placeholder="Enter your email" required>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6 col-sm-12 text-start">
+                                            <label for="client-signup-password" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="client-signup-password" placeholder="Enter your password" required>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 text-start">
+                                            <label for="client-confirm-password" class="form-label">Confirm Password</label>
+                                            <input type="password" class="form-control" id="client-confirm-password" placeholder="Confirm your password" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 text-start">
+                                        <label for="client-upload-image" class="form-label">Upload Your Profile Picture</label>
+                                        <input type="file" class="form-control" id="client-upload-image" accept="image/*">
+                                    </div>
+                                    <button type="submit" id="signupButton" class="btn btn-primary text-white">Sign Up</button>
+                                </div>
+        
+                                <!-- Upload ID Modal -->
+                                <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="uploadModalLabel">Upload ID with Address</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <label class="form-label">Upload any ID with Address (make sure the address is readable):</label>
+                                                <input type="file" id="fileInput" accept="image/*" class="form-control">
+                                                <div class="scanning-status-container" id="scanningStatus">Scanning document...</div>
+                                                <img id="imagePreview" class="img-fluid mb-3" style="display: none;" alt="Image Preview">
+                                                <pre id="ocrOutput" class="text-start border p-3 bg-light"></pre>
+                                            </div>
+                                            <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
-                           
-							
-
-                            <div class="mb-3 text-start">
-                                <label for="client-upload-image" class="form-label">Upload Your Profile Picture</label>
-                                <input type="file" class="form-control" id="client-upload-image" accept="image/*">
-                            </div>
-                        
-                            <button type="submit" id="signupButton" class="btn btn-primary text-white" disabled>Sign Up</button><br>
-
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        
     </div>
 
     <script type="module" src="/Database/firebase.js"></script>
@@ -370,6 +377,7 @@
             approvalStatus.textContent = 'Approved';
             approvalStatus.className = 'alert alert-success';
             signupButton.disabled = false; // Enable the sign-up button
+            document.getElementById('proceedToStep2').disabled = false;
         } else {
             approvalStatus.textContent = 'Disapproved';
             approvalStatus.className = 'alert alert-danger';
@@ -384,6 +392,12 @@
         const fileInput = document.getElementById('fileInput');
         fileInput.addEventListener('change', handleFileUpload);
     });
+
+
+document.getElementById('proceedToStep2').addEventListener('click', function() {
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+});
 </script>
 
 
