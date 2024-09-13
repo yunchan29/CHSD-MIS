@@ -184,28 +184,35 @@
                                     <button type="submit" id="signupButton" class="btn btn-primary text-white">Sign Up</button>
                                 </div>
         
-                                <!-- Upload ID Modal -->
-                                <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="uploadModalLabel">Upload ID with Address</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <label class="form-label">Upload any ID with Address (make sure the address is readable):</label>
-                                                <input type="file" id="fileInput" accept="image/*" class="form-control">
-                                                <div class="scanning-status-container" id="scanningStatus">Scanning document...</div>
-                                                <img id="imagePreview" class="img-fluid mb-3" style="display: none;" alt="Image Preview">
-                                                <pre id="ocrOutput" class="text-start border p-3 bg-light"></pre>
-                                            </div>
-                                            <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                               <!-- Upload ID Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Upload ID with Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Upload File Section -->
+                <label class="form-label">Upload your ID file with address:</label>
+                <input type="file" id="fileInput" accept="image/*" class="form-control">
+                
+                <!-- Take Photo Button -->
+                <button type="button" class="btn btn-primary mt-3" onclick="document.getElementById('photoInput').click();">Take a Photo</button>
+                <input type="file" id="photoInput" accept="image/*" capture="environment" class="form-control" style="display: none;">
+                
+                <div class="scanning-status-container" id="scanningStatus" style="display: none;">Scanning document...</div>
+                <img id="imagePreview" class="img-fluid mb-3" style="display: none;" alt="Image Preview">
+                <pre id="ocrOutput" class="text-start border p-3 bg-light"></pre>
+            </div>
+            <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
                             </form>
                         </div>
                     </div>
@@ -400,6 +407,48 @@ document.getElementById('proceedToStep2').addEventListener('click', function() {
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
 });
+</script>
+
+<script>
+    // Handle file upload
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            // Display the image preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-fluid mb-3';
+                img.style.maxWidth = '100%';
+                const imagePreview = document.getElementById('imagePreview');
+                imagePreview.innerHTML = ''; // Clear previous previews
+                imagePreview.appendChild(img);
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle photo capture
+    document.getElementById('photoInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            // Display the image preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-fluid mb-3';
+                img.style.maxWidth = '100%';
+                const imagePreview = document.getElementById('imagePreview');
+                imagePreview.innerHTML = ''; // Clear previous previews
+                imagePreview.appendChild(img);
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 </script>
 
 
