@@ -228,56 +228,66 @@
     
 <!-- Commented out the OCR functionality temporarily -->
 <script>
-    async function performOCR(imageFile) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        formData.append("apikey", "K84363057988957"); // Your OCR.space API key
+   async function performOCR(imageFile) {
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("apikey", "K84363057988957"); // Your OCR.space API key
 
-        try {
-            const response = await fetch("https://api.ocr.space/parse/image", {
-                method: "POST",
-                body: formData,
-            });
+    try {
+        const response = await fetch("https://api.ocr.space/parse/image", {
+            method: "POST",
+            body: formData,
+        });
 
-            const result = await response.json();
-            if (result.IsErroredOnProcessing) {
-                throw new Error(result.ErrorMessage.join("\n"));
-            }
-
-            const text = result.ParsedResults[0].ParsedText;
-            return text;
-        } catch (error) {
-            console.error('Error performing OCR:', error);
-            throw error;
+        const result = await response.json();
+        if (result.IsErroredOnProcessing) {
+            throw new Error(result.ErrorMessage.join("\n"));
         }
+
+        const text = result.ParsedResults[0].ParsedText;
+        return text;
+    } catch (error) {
+        console.error('Error performing OCR:', error);
+        throw error;
     }
+}
 
-    async function handleFileUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+async function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-        const scanningStatus = document.getElementById('scanningStatus');
-        scanningStatus.style.display = 'block'; // Show scanning status
+    const scanningStatus = document.getElementById('scanningStatus');
+    scanningStatus.style.display = 'block'; // Show scanning status
 
-        // Display image preview
-        const imagePreview = document.getElementById('imagePreview');
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
+    // Display image preview
+    const imagePreview = document.getElementById('imagePreview');
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
 
-        try {
-            const ocrResult = await performOCR(file);
-            populateFormFields(ocrResult); // Populate form fields
-            checkApprovalStatus(ocrResult); // Check approval status
-        } catch (error) {
-            alert('Failed to perform OCR. Please try again.');
-        } finally {
-            scanningStatus.style.display = 'none'; // Hide scanning status
-        }
+    try {
+        const ocrResult = await performOCR(file);
+        populateFormFields(ocrResult); // Populate form fields
+        checkApprovalStatus(ocrResult); // Check approval status
+    } catch (error) {
+        alert('Failed to perform OCR. Please try again.');
+    } finally {
+        scanningStatus.style.display = 'none'; // Hide scanning status
     }
+}
+
+// Ensure script executes after DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', handleFileUpload);
+
+    const photoInput = document.getElementById('photoInput');
+    photoInput.addEventListener('change', handleFileUpload);
+});
+
     function populateFormFields(text) {
     console.log("OCR Result:", text); // Log the full OCR result for debugging
 
@@ -396,12 +406,7 @@
         document.getElementById('ocrOutput').style.display = 'none'; // Hide OCR output
     }
 
-    // Ensure script executes after DOM is fully loaded
-    document.addEventListener('DOMContentLoaded', () => {
-        const fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', handleFileUpload);
-    });
-
+    
 
 document.getElementById('proceedToStep2').addEventListener('click', function() {
     document.getElementById('step1').style.display = 'none';
