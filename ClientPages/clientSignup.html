@@ -87,7 +87,7 @@
         }
     </style>
      <style>
-        #imagePreview {
+       
         #cropper-container {
             display: none;
             width: 100%;
@@ -215,7 +215,7 @@
                                                 <input type="file" id="fileInput" accept="image/*" class="form-control">
                             
                                                 <!-- Take Photo Button -->
-                                                <button type="button" class="btn btn-primary mt-3" id="photoCaptureButton">Take a Photo</button>
+                                                <button type="button" class="btn btn-primary mt-3" id="photoCaptureButton" disabled>Take a Photo</button>
                                                 <input type="file" id="photoInput" accept="image/*" capture="environment" class="form-control" style="display: none;">
                             
                                                 <!-- Cropping and Preview -->
@@ -444,6 +444,7 @@ document.getElementById('proceedToStep2').addEventListener('click', function() {
         document.getElementById('cropButton').addEventListener('click', function() {
             cropImage();
         });
+    
     </script>
     
 
