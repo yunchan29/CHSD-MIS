@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="/Stylesheets/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
+    <link href="https://unpkg.com/cropperjs/dist/cropper.min.css" rel="stylesheet">
     <style>
+        
         /* Custom CSS for enhanced visibility */
         .scanning-status-container {
             display: none; /* Hide OCR scanning status */
@@ -83,6 +84,23 @@
             .hsdLogo {
                 width: 80px;
             }
+        }
+    </style>
+     <style>
+        #imagePreview {
+        #cropper-container {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+        }
+        #imagePreview {
+            display: none;
+        }
+        #scanningStatus {
+            display: none;
+        }
+        #ocrOutput {
+            display: none;
         }
     </style>
 </head>
@@ -184,35 +202,39 @@
                                     <button type="submit" id="signupButton" class="btn btn-primary text-white">Sign Up</button>
                                 </div>
         
-                               <!-- Upload ID Modal -->
-<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Upload ID with Address</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Upload File Section -->
-                <label class="form-label">Upload your ID file with address(make sure everything is readable):</label>
-                <input type="file" id="fileInput" accept="image/*" class="form-control">
-                
-                <!-- Take Photo Button -->
-                <button type="button" class="btn btn-primary mt-3 mb-3" onclick="document.getElementById('photoInput').click();">Take a Photo</button>
-                <input type="file" id="photoInput" accept="image/*" capture="environment" class="form-control" style="display: none;">
-                
-                <div class="scanning-status-container" id="scanningStatus" style="display: none;">Scanning document...</div>
-                <img id="imagePreview" class="img-fluid mb-3" style="display: none;" alt="Image Preview">
-                <pre id="ocrOutput" class="text-start border p-3 bg-light"></pre>
-            </div>
-            <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+                                <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="uploadModalLabel">Upload ID with Address</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Upload File Section -->
+                                                <label class="form-label">Upload your ID file with address:</label>
+                                                <input type="file" id="fileInput" accept="image/*" class="form-control">
+                            
+                                                <!-- Take Photo Button -->
+                                                <button type="button" class="btn btn-primary mt-3" id="photoCaptureButton">Take a Photo</button>
+                                                <input type="file" id="photoInput" accept="image/*" capture="environment" class="form-control" style="display: none;">
+                            
+                                                <!-- Cropping and Preview -->
+                                                <div id="cropper-container">
+                                                    <img id="cropper-image" src="" alt="Cropper Image">
+                                                </div>
+                                                <div id="scanningStatus" style="display: none;">Scanning document...</div>
+                                                <img id="imagePreview" class="img-fluid mb-3" alt="Image Preview" style="display: none;">
+                                                <button type="button" id="cropButton" class="btn btn-primary" style="display: none;">Crop Image</button>
+                                                <pre id="ocrOutput" class="text-start border p-3 bg-light" style="display: none;"></pre>
+                                            </div>
+                                            <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                             </form>
                         </div>
                     </div>
@@ -221,238 +243,205 @@
         </div>
         
     </div>
-
+    
     <script type="module" src="/Database/firebase.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     
-<!-- Commented out the OCR functionality temporarily -->
-<script>
-    async function performOCR(imageFile) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        formData.append("apikey", "K84363057988957"); // Your OCR.space API key
+    <script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
+    <script>
+        let cropper;
 
-        try {
-            const response = await fetch("https://api.ocr.space/parse/image", {
-                method: "POST",
-                body: formData,
+        async function performOCR(imageFile) {
+            const formData = new FormData();
+            formData.append("file", imageFile);
+            formData.append("apikey", "K84363057988957"); // Your OCR.space API key
+
+            try {
+                const response = await fetch("https://api.ocr.space/parse/image", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+                if (result.IsErroredOnProcessing) {
+                    throw new Error(result.ErrorMessage.join("\n"));
+                }
+
+                const text = result.ParsedResults[0].ParsedText;
+                return text;
+            } catch (error) {
+                console.error('Error performing OCR:', error);
+                throw error;
+            }
+        }
+
+        function initializeCropper(imageSrc) {
+            const image = document.getElementById('cropper-image');
+            image.src = imageSrc;
+
+            // Destroy any existing cropper instance
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(image, {
+                aspectRatio: 1, // Set aspect ratio to 1:1 for square cropping
+                viewMode: 1,
+                autoCropArea: 1,
+                crop: function (event) {
+                    // Optional: handle crop event if needed
+                }
             });
-
-            const result = await response.json();
-            if (result.IsErroredOnProcessing) {
-                throw new Error(result.ErrorMessage.join("\n"));
-            }
-
-            const text = result.ParsedResults[0].ParsedText;
-            return text;
-        } catch (error) {
-            console.error('Error performing OCR:', error);
-            throw error;
         }
-    }
 
-    async function handleFileUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+        function cropImage() {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas();
+                canvas.toBlob(function (blob) {
+                    const url = URL.createObjectURL(blob);
+                    const imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = url; // Update image preview with cropped image
+                    imagePreview.style.display = 'block'; // Show preview
 
-        const scanningStatus = document.getElementById('scanningStatus');
-        scanningStatus.style.display = 'block'; // Show scanning status
-
-        // Display image preview
-        const imagePreview = document.getElementById('imagePreview');
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-
-        try {
-            const ocrResult = await performOCR(file);
-            populateFormFields(ocrResult); // Populate form fields
-            checkApprovalStatus(ocrResult); // Check approval status
-        } catch (error) {
-            alert('Failed to perform OCR. Please try again.');
-        } finally {
-            scanningStatus.style.display = 'none'; // Hide scanning status
-        }
-    }
-    function populateFormFields(text) {
-    console.log("OCR Result:", text); // Log the full OCR result for debugging
-
-    const firstNameInput = document.getElementById('client-first-name');
-    const lastNameInput = document.getElementById('client-last-name');
-    const middleNameInput = document.getElementById('client-middle-name');
-
-    // Reset the fields before populating
-    firstNameInput.value = '';
-    lastNameInput.value = '';
-    middleNameInput.value = '';
-
-    // Split the text into lines and clean them
-    const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-    console.log("Parsed Lines:", lines);
-
-    // Attempt to extract names from the OCR result
-    const nameData = extractNamesFromOcrResult(lines);
-
-    if (nameData && nameData.firstName && nameData.lastName) {
-        // Show confirmation dialog with the extracted name
-        const isConfirmed = confirm(`Is this your name?\n\nLast Name: ${nameData.lastName}\nFirst Name: ${nameData.firstName}\nMiddle Name: ${nameData.middleName || '(none)'}`);
-
-        if (isConfirmed) {
-            // If the user confirms, populate the fields
-            console.log("User confirmed the name data:", nameData);
-            lastNameInput.value = nameData.lastName || '';  // Populate fields with extracted name
-            firstNameInput.value = nameData.firstName || '';
-            middleNameInput.value = nameData.middleName || '';
-        } else {
-            // If the user declines, do not populate the fields
-            console.warn("User declined the extracted name. Skipping population.");
-            alert("Name was not populated. Please enter your name manually.");
-        }
-    } else {
-        // If the name structure is invalid, do not populate fields and show a warning
-        console.warn("Name extraction failed or structure is invalid. Skipping population.");
-        alert("OCR could not extract valid name information from the document.");
-    }
-}
-
-    function extractNamesFromOcrResult(lines) {
-        let fullNameLine = '';
-
-        // Find the line that contains "Last Name, First Name, Middle Name"
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i].toLowerCase().includes('last name, first name, middle name')) {
-                fullNameLine = lines[i + 1]; // The next line contains the full name
-                break;
+                    // Optional: Handle the cropped image blob (e.g., upload it or display it)
+                });
             }
         }
 
-        if (fullNameLine) {
-            console.log("Full Name Line Detected:", fullNameLine);
+        function handleFileUpload(file) {
+            if (!file) return;
 
-            // Split the full name by commas
-            const nameParts = fullNameLine.split(',');
+            const scanningStatus = document.getElementById('scanningStatus');
+            const imagePreview = document.getElementById('imagePreview');
+            const cropperContainer = document.getElementById('cropper-container');
+            const cropButton = document.getElementById('cropButton');
 
-            if (nameParts.length >= 2) {
-                // Extract and trim the last name
-                const lastName = nameParts[0].trim();
+            scanningStatus.style.display = 'block'; // Show scanning status
 
-                // Extract and trim the first and middle names
-                const remainingParts = nameParts[1].trim().split(' ');
-                const firstName = remainingParts.length > 1 ? remainingParts.slice(0, 2).join(' ').trim() : remainingParts[0].trim(); // First two parts are the first name
-                const middleName = remainingParts.slice(2).join(' ').trim(); // The rest is the middle name
-
-                return {
-                    lastName: lastName,
-                    firstName: firstName,
-                    middleName: middleName,
-                };
-            }
-        }
-        return null; // Return null if no valid name line is found
-    }
-
-    // Fallback method if name extraction from OCR fails
-    function fallbackPopulate(lines, firstNameInput, lastNameInput, middleNameInput) {
-        // If name extraction fails, temporarily populate with first few lines for manual check
-        if (lines.length >= 3) {
-            lastNameInput.value = lines[0];   // Use the first line as fallback for last name
-            firstNameInput.value = lines[1];  // Use the second line as fallback for first name
-            middleNameInput.value = lines[2]; // Use the third line as fallback for middle name
-        }
-    }
-
-    function checkApprovalStatus(text) {
-        const approvalStatus = document.getElementById('approvalStatus');
-        const signupButton = document.getElementById('signupButton');
-
-        const lowerCaseText = text.toLowerCase();
-        const barangays = [
-            'pansol', 'calamba', 'barangay1', 'barangay2', 'barangay3',
-            'barangay4', 'barangay5', 'barangay6', 'bagong kalsada',
-            'banadero', 'banlic', 'barandal', 'batino', 'bubuyan', 'bucal', 'bunggo', 'burol', 'camaligan', 'canlubang', 'halang', 'hornalan'
-            , 'kay-anlog', 'la mesa', 'laguerta', 'lawa', 'lecheria', 'lingga', 'looc', 'mabato', 'majada labas', 'makiling', 'mapagong', 'masili', 'maunong',
-            'mayapa', 'milagrosa', 'paciano', 'paciano rizal', 'palingon', 'palo-alto', 'palo alto', 'parian', 'prinza', 'punta', 'puting lupa', 'real', 'saimsim'
-            , 'sampiruhan', 'san cristobal', 'san jose', 'san juan', 'sirang lupa', 'sucol', 'turbina', 'ulango', 'uwisan',
-        ];
-
-        const containsCalamba = lowerCaseText.includes('calamba');
-        const containsBarangay = barangays.some(barangay => lowerCaseText.includes(barangay));
-
-        if (containsCalamba && containsBarangay) {
-            approvalStatus.textContent = 'Approved';
-            approvalStatus.className = 'alert alert-success';
-            signupButton.disabled = false; // Enable the sign-up button
-            document.getElementById('proceedToStep2').disabled = false;
-        } else {
-            approvalStatus.textContent = 'Disapproved';
-            approvalStatus.className = 'alert alert-danger';
-            signupButton.disabled = true; // Disable the sign-up button
-        }
-        approvalStatus.style.display = 'block';
-        document.getElementById('ocrOutput').style.display = 'none'; // Hide OCR output
-    }
-
-    // Ensure script executes after DOM is fully loaded
-    document.addEventListener('DOMContentLoaded', () => {
-        const fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', handleFileUpload);
-    });
-
-
-document.getElementById('proceedToStep2').addEventListener('click', function() {
-    document.getElementById('step1').style.display = 'none';
-    document.getElementById('step2').style.display = 'block';
-});
-</script>
-
-<script>
-    // Handle file upload
-    document.getElementById('fileInput').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            // Display the image preview
+            // Display image preview
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'img-fluid mb-3';
-                img.style.maxWidth = '100%';
-                const imagePreview = document.getElementById('imagePreview');
-                imagePreview.innerHTML = ''; // Clear previous previews
-                imagePreview.appendChild(img);
-                imagePreview.style.display = 'block';
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block'; // Show preview
+
+                cropperContainer.style.display = 'block'; // Show cropper container
+                cropButton.style.display = 'block'; // Show crop button
+                initializeCropper(e.target.result); // Initialize Cropper.js with the image
+
+                performOCR(file)
+                    .then(ocrResult => {
+                        populateFormFields(ocrResult); // Populate form fields
+                        checkApprovalStatus(ocrResult); // Check approval status
+                    })
+                    .catch(error => {
+                        alert('Failed to perform OCR. Please try again.');
+                    })
+                    .finally(() => {
+                        scanningStatus.style.display = 'none'; // Hide scanning status
+                    });
             };
             reader.readAsDataURL(file);
         }
-    });
 
-    // Handle photo capture
-    document.getElementById('photoInput').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            // Display the image preview
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'img-fluid mb-3';
-                img.style.maxWidth = '100%';
-                const imagePreview = document.getElementById('imagePreview');
-                imagePreview.innerHTML = ''; // Clear previous previews
-                imagePreview.appendChild(img);
-                imagePreview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+        function populateFormFields(text) {
+            console.log("OCR Result:", text); // Log the full OCR result for debugging
+
+            const firstNameInput = document.getElementById('client-first-name');
+            const lastNameInput = document.getElementById('client-last-name');
+            const middleNameInput = document.getElementById('client-middle-name');
+
+            // Reset the fields before populating
+            firstNameInput.value = '';
+            lastNameInput.value = '';
+            middleNameInput.value = '';
+
+            // Split the text into lines and clean them
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+            console.log("Parsed Lines:", lines);
+
+            // Attempt to extract names from the OCR result
+            const nameData = extractNamesFromOcrResult(lines);
+
+            if (nameData && nameData.firstName && nameData.lastName) {
+                // Show confirmation dialog with the extracted name
+                const isConfirmed = confirm(`Is this your name?\n\nLast Name: ${nameData.lastName}\nFirst Name: ${nameData.firstName}\nMiddle Name: ${nameData.middleName || '(none)'}`);
+
+                if (isConfirmed) {
+                    // If the user confirms, populate the fields
+                    console.log("User confirmed the name data:", nameData);
+                    lastNameInput.value = nameData.lastName || '';  // Populate fields with extracted name
+                    firstNameInput.value = nameData.firstName || '';
+                    middleNameInput.value = nameData.middleName || '';
+                } else {
+                    // If the user declines, do not populate the fields
+                    console.warn("User declined the extracted name. Skipping population.");
+                    alert("Name was not populated. Please enter your name manually.");
+                }
+            } else {
+                // If the name structure is invalid, do not populate fields and show a warning
+                console.warn("Name extraction failed or structure is invalid. Skipping population.");
+                alert("OCR could not extract valid name information from the document.");
+            }
         }
-    });
-</script>
 
+        function extractNamesFromOcrResult(lines) {
+            let fullNameLine = '';
 
+            // Find the line that contains "Last Name, First Name, Middle Name"
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].toLowerCase().includes('last name, first name, middle name')) {
+                    fullNameLine = lines[i + 1]; // The next line contains the full name
+                    break;
+                }
+            }
 
+            if (fullNameLine) {
+                console.log("Full Name Line Detected:", fullNameLine);
+
+                // Split the full name by commas
+                const nameParts = fullNameLine.split(',');
+
+                if (nameParts.length >= 2) {
+                    // Extract and trim the last name
+                    const lastName = nameParts[0].trim();
+
+                    // Extract and trim the first and middle names
+                    const remainingParts = nameParts[1].trim().split(' ');
+                    const firstName = remainingParts.length > 1 ? remainingParts.slice(0, 2).join(' ').trim() : remainingParts[0].trim(); // First two parts are the first name
+                    const middleName = remainingParts.slice(2).join(' ').trim(); // The rest is the middle name
+
+                    return { lastName, firstName, middleName };
+                }
+            }
+
+            return {}; // Return an empty object if extraction fails
+        }
+
+        function checkApprovalStatus(text) {
+            const approvalStatus = document.getElementById('approvalStatus');
+            // Perform approval check logic here
+            approvalStatus.textContent = "Approval Status: Pending"; // Example status
+            approvalStatus.style.display = 'block'; // Show approval status
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            handleFileUpload(event.target.files[0]);
+        });
+
+        document.getElementById('photoCaptureButton').addEventListener('click', function() {
+            document.getElementById('photoInput').click();
+        });
+
+        document.getElementById('photoInput').addEventListener('change', function(event) {
+            handleFileUpload(event.target.files[0]);
+        });
+
+        document.getElementById('cropButton').addEventListener('click', function() {
+            cropImage();
+        });
+    </script>
+    
 
   
 </body>
