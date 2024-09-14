@@ -182,31 +182,6 @@ border-bottom: 3px solid#139bff;
     }
 }
 
-.header {
-    position: relative;
-    display:block;
- 
-    justify-content: center;
-    display: flex;
-    align-items: center;
-    min-height: 400px !important; /* Ensures it takes up enough vertical space */
-    height: auto;
-    width: 100vw; /* Ensures it spans the full width of the screen */
-    overflow: hidden;
-}
-
-.header img {
-    width: 100%; /* Ensures the image scales down on mobile */
-    height: auto; /* Maintains the aspect ratio */
-    object-fit: cover;
-}
-
-@media (max-width: 768px) { /* Adjustments for mobile */
-    .header {
-        margin-top: 2% !important; /* Reduce top margin for mobile */
-        padding: 10px; /* Add some padding to ensure it looks good */
-    }
-}
 
 
 .navigationBar2{
