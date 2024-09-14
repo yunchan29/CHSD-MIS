@@ -493,66 +493,136 @@ document.addEventListener('DOMContentLoaded', () => {
     addTableRowListeners();
 });
 
-async function loadProfiles() {
-    const querySnapshot = await getDocs(collection(db, "buildingPermits"));
-    const buildingPermitDiv = document.getElementById("buildingPermitDiv");
-    if (!buildingPermitDiv) {
-        console.error("buildingPermitDiv not found in the DOM.");
-        return;
+// Function to show notification
+function showNotification(message, type) {
+    console.log(`Showing notification: ${message}`); // Debugging line
+    const notificationContainer = document.getElementById('notification-container');
+    if (notificationContainer) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        notificationContainer.appendChild(notification);
+
+     
+    } else {
+        console.error('Notification container not found.');
     }
-    const tableBody = buildingPermitDiv.querySelector("tbody");
-    if (!tableBody) {
-        console.error("Table body not found in buildingPermitDiv.");
-        return;
-    }
-    tableBody.innerHTML = "";
-
-    querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const row = document.createElement("tr");
-
-        // Format timestamp
-        const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : '';
-
-        row.innerHTML = `
-            <td>${data.ownerName}</td>
-         
-            <td>${createdAt}</td> <!-- Display the formatted timestamp -->
-          <td>
-    <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${doc.id}">
-        <option value="Pending" ${data.status === "Pending" ? 'selected' : ''} ${data.status !== "Pending" ? 'disabled' : ''}>Pending</option>
-        <option value="Processing" ${data.status === "Processing" ? 'selected' : ''} ${(data.status !== "Pending" && data.status !== "Processing") ? 'disabled' : ''}>Processing</option>
-        <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''} ${(data.status !== "Processing" && data.status !== "To Pay") ? 'disabled' : ''}>To Pay</option>
-        <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''} ${(data.status !== "To Pay" && data.status !== "For Approval") ? 'disabled' : ''}>For Approval</option>
-        <option value="For Release" ${data.status === "For Release" ? 'selected' : ''} ${(data.status !== "For Approval" && data.status !== "For Release") ? 'disabled' : ''}>For Release</option>
-        <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''} ${(data.status !== "For Release" && data.status !== "Claimed") ? 'disabled' : ''}>Claimed</option>
-    </select>
-</td>
-
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Actions
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item save-btn" href="#" data-id="${doc.id}"><i class="fas fa-save"></i> Save</a></li>
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${doc.id}"><i class="fas fa-comment"></i> Remarks</a></li>
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#buildingPermitModal" data-permit-id="${doc.id}"><i class="fas fa-edit"></i> Edit</a></li>
-                        <li><a class="dropdown-item archive-btn" href="#" data-id="${doc.id}"><i class="fas fa-archive"></i> Archive</a></li>
-                    </ul>
-                </div>
-              
-            </td>
-            <td><button class="btn btn-primary btn-sm">View Details</button></td>
-        `;
-        tableBody.appendChild(row);
-    });
-
-    attachSaveButtonListeners();
-    attachArchiveButtonListeners();
-    attachEditButtonListeners();
-    attachRemarksButtonListeners();
 }
+
+async function loadProfiles() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "buildingPermits"));
+        const buildingPermitDiv = document.getElementById("buildingPermitDiv");
+        if (!buildingPermitDiv) {
+            console.error("buildingPermitDiv not found in the DOM.");
+            return;
+        }
+        const tableBody = buildingPermitDiv.querySelector("tbody");
+        if (!tableBody) {
+            console.error("Table body not found in buildingPermitDiv.");
+            return;
+        }
+        tableBody.innerHTML = "";
+
+        for (const docSnapshot of querySnapshot.docs) {
+            const data = docSnapshot.data();
+            const row = document.createElement("tr");
+
+            // Fetch representative user data
+            let representativeName = '';
+            if (data.ownerUid) {
+                try {
+                    const userRef = doc(db, 'users', data.ownerUid); 
+                    const userDoc = await getDoc(userRef);
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        representativeName = `${userData.firstName} ${userData.lastName}`;
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            }
+
+            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : '';
+
+            row.innerHTML = `
+                <td>${data.ownerName}</td>
+                <td>${representativeName}</td> 
+                <td>${createdAt}</td>
+                <td>
+                    <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${docSnapshot.id}">
+                        <option value="Pending" ${data.status === "Pending" ? 'selected' : ''} ${data.status !== "Pending" ? 'disabled' : ''}>Pending</option>
+                        <option value="Processing" ${data.status === "Processing" ? 'selected' : ''} ${(data.status !== "Pending" && data.status !== "Processing") ? 'disabled' : ''}>Processing</option>
+                        <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''} ${(data.status !== "Processing" && data.status !== "To Pay") ? 'disabled' : ''}>To Pay</option>
+                        <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''} ${(data.status !== "To Pay" && data.status !== "For Approval") ? 'disabled' : ''}>For Approval</option>
+                        <option value="For Release" ${data.status === "For Release" ? 'selected' : ''} ${(data.status !== "For Approval" && data.status !== "For Release") ? 'disabled' : ''}>For Release</option>
+                        <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''} ${(data.status !== "For Release" && data.status !== "Claimed") ? 'disabled' : ''}>Claimed</option>
+                    </select>
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Actions
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item save-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-save"></i> Save</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${docSnapshot.id}"><i class="fas fa-comment"></i> Remarks</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#buildingPermitModal" data-permit-id="${docSnapshot.id}"><i class="fas fa-edit"></i> Edit</a></li>
+                            <li><a class="dropdown-item archive-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-archive"></i> Archive</a></li>
+                        </ul>
+                    </div>
+                </td>
+                <td><button class="btn btn-primary btn-sm">View Details</button></td>
+            `;
+            tableBody.appendChild(row);
+
+            // Add event listener for status change
+            const statusSelect = row.querySelector(".status-select");
+            if (statusSelect) {
+                statusSelect.addEventListener("change", async (event) => {
+                    const newStatus = event.target.value;
+                    if (data.status !== newStatus) {
+                        console.log(`Status changed to: ${newStatus}`); // Debugging line
+                        // Trigger notification
+                        showNotification(`Permit ${docSnapshot.id} status changed to ${newStatus}`, 'info');
+
+                        // Store the notification in Firestore
+                        try {
+                            await addDoc(collection(db, "notifications"), {
+                                userId: data.ownerUid, // Associate the notification with the user
+                                message: `Permit status changed to ${newStatus}`,
+                                permitId: docSnapshot.id,
+                                timestamp: serverTimestamp(),
+                                read: false // Mark the notification as unread initially
+                            });
+                        } catch (error) {
+                            console.error("Error storing notification:", error);
+                        }
+
+                        // Update status in Firestore
+                        try {
+                            await updateDoc(doc(db, 'buildingPermits', docSnapshot.id), { status: newStatus });
+
+                          
+                            
+                        } catch (error) {
+                            console.error("Error updating permit status:", error);
+                        }
+                    }
+                });
+            }
+        }
+
+        attachSaveButtonListeners();
+        attachArchiveButtonListeners();
+        attachEditButtonListeners();
+        attachRemarksButtonListeners();
+    } catch (error) {
+        console.error("Error loading profiles:", error);
+    }
+}
+
+
 
 
 
