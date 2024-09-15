@@ -163,7 +163,7 @@ border-bottom: 3px solid#139bff;
 }
 
 .navigationBar{
-    background-image: url(/resources/pictures/navBarBG2.png);
+    background-image: url(/resources/pictures/navbar_bg.png);
   background-size:contain;
   background-position:inherit;
   background-repeat: no-repeat;
@@ -171,6 +171,7 @@ border-bottom: 3px solid#139bff;
   color:black !important;
   width:100%;
   height:20%;
+  border-bottom:10px solid rgb(255, 225, 0);
 
 
   z-index: 1;
