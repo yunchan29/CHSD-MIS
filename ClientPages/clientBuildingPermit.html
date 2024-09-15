@@ -718,7 +718,7 @@
 <!-- Privacy Policy Modal -->
 <div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered wide-modal">
-      <div class="modal-content">
+      <div class="modal-content johnowen">
         <div class="modal-header">
           <h5 class="modal-title" id="privacyPolicyModalLabel">Privacy Policy and Terms of Service</h5>
        
@@ -743,16 +743,19 @@
             <li>Any attempt to provide fraudulent information may result in legal consequences.</li>
           </ul>
         </div>
-        <div class="modal-footer">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="termsCheckbox">
-            <label class="form-check-label" for="termsCheckbox">
-              I have read and agree to the Privacy Policy and Terms and Conditions
-            </label>
+        <div class="modal-footer d-flex justify-content-between align-items-center">
+            <div class="form-check testingPrivacy me-3">
+              <input class="form-check-input" type="checkbox" id="termsCheckbox">
+              <label class="form-check-label" for="termsCheckbox">
+                I have read and agree to the Privacy Policy and Terms and Conditions
+              </label>
+            </div>
+            <div>
+              <a type="button" class="btn btn-secondary text-white me-2" href="clientApplication.html">Back</a>
+              <button type="button" class="btn btn-primary" id="acceptPolicyButton" disabled>Proceed</button>
+            </div>
           </div>
-          <a type="button" class="btn btn-secondary text-white" href="clientApplication.html">Back</a>
-          <button type="button" class="btn btn-primary" id="acceptPolicyButton" disabled>Proceed</button>
-        </div>
+          
       </div>
     </div>
   </div>
