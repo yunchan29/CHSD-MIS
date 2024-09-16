@@ -7,103 +7,75 @@
     <link rel="stylesheet" href="/Stylesheets/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-   
+
     <style>
         /* CSS for the content container */
         .content {
-            flex: 1; /* Take remaining space */
-            overflow: hidden; /* Hide overflow content */
-            display: flex; /* Use flexbox */
-            flex-direction: column; /* Column layout */
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .content-container {
-            overflow-y: auto; /* Enable vertical scrolling */
-            padding: 20px; /* Add some padding */
-        }
-
-        .wide-modal {
-            max-width: 80%;
-        }
-
-        .form-control {
-            margin-bottom: 1rem; /* Add margin between form controls */
-        }
-
-        .form-check {
-            margin-bottom: 0.5rem; /* Add margin between checkboxes */
-        }
-
-        .row.g-3 .col-md-6,
-        .row.g-3 .col-md-4,
-        .row.g-3 .col-md-12 {
-            margin-bottom: 1rem; /* Add margin to columns */
-        }
-
-        .d-flex .me-2 {
-            margin-right: 1rem; /* Add margin to the right of the input */
+            overflow-y: auto;
+            padding: 20px;
         }
 
         .notifications-container {
-    margin-top: 20px;
-    padding: 10px;
-}
+            margin-top: 20px;
+            padding: 10px;
+        }
 
-.notification {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    position: relative;
-}
+        .notification {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            position: relative;
+        }
 
-.notification.info {
-    background-color: #d1ecf1;
-    color: #0c5460;
-}
+        .notification.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
 
-.notification.success {
-    background-color: #d4edda;
-    color: #155724;
-}
+        .notification.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
 
-.notification.warning {
-    background-color: #fff3cd;
-    color: #856404;
-}
+        .notification.warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
 
-.notification .close-btn {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 16px;
-    color: inherit;
-}
-
+        .notification .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: inherit;
+        }
     </style>
 </head>
 <body>
-   
-    
-    <div class="main-container d-flex">
 
-        <!--Sidebar-->
+    <div class="main-container d-flex">
+        <!-- Sidebar -->
         <div class="sideNav" id="side_nav">
             <div class="container">
-                <div class="header-box text-center px-2 pt-3 pb-4 ">
+                <div class="header-box text-center px-2 pt-3 pb-4">
                     <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"><i class="fa-solid fa-bars-staggered"></i></button>
                     <div class="avatar-placeholder">
                         <img id="client-avatar" src="" alt="loading..." width="100" height="100">
-
                     </div>
                     <div class="avatar-text">
-                        <!-- Client ID and Name -->
                         <div id="user-name">loading...</div>
                     </div>
-                    
                 </div>
             </div>
             <ul class="sideBarList list-unstyled px-2">
@@ -114,126 +86,67 @@
                 <li class="sideNav" id="user-logout-btn"><a href="#" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
             </ul>
         </div>
-       
 
         <div class="content">
-           
+            <!-- Navigation Bar -->
+            <nav class="navigationBar navbar navbar-expand-lg bg-light">
+                <div class="container-fluid">
+                    <!-- Mobile View -->
+                    <div class="d-flex justify-content-between d-md-none d-block">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
+                            <h5 class="mb-0 fs-5">CHSD</h5>
+                        </a>
+                        <button class="btn px-1 py-0 open-btn">
+                            <i class="fa-solid fa-bars-staggered"></i>
+                        </button>
+                    </div>
 
-            <!--Navigation Bar-->
-<nav class="navigationBar navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-        <!-- Mobile View -->
-        <div class="d-flex justify-content-between d-md-none d-block">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
-                <h5 class="mb-0 fs-5">CHSD</h5>
-            </a>
-            <button class="btn px-1 py-0 open-btn">
-                <i class="fa-solid fa-bars-staggered"></i>
-            </button>
-        </div>
-
-        <!-- Desktop View -->
-        <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
-                <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
-            </a>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!-- Additional nav items go here -->
-            </ul>
-        </div>
-    </div>
-</nav>
+                    <!-- Desktop View -->
+                    <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
+                            <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+                        </a>
+                    </div>
+                </div>
+            </nav>
 
             <div class="contentContainer">
-              
-               <h4>Notifications</h4>
-               <div class="notification-container" id="notification-container">
-                <!-- Notifications will be dynamically added here -->
-            </div>
+                <h4>Notifications</h4>
+                <div class="notifications-container" id="notification-container">
+                    <!-- Notifications will be dynamically added here -->
+                </div>
             </div>
         </div>
     </div>
 
-    
-
-
-    <!-- Firebase and custom scripts -->
     <script type="module" src="/Database/firebase.js"></script>
-
-  
    
-   
-    
+    <!-- Firebase and custom scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    <!-- Bootstrap and other scripts -->
-  
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
-    <script src="/ClientPages/navBarScript.js"></script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+            authDomain: "chsd-mis.firebaseapp.com",
+            projectId: "chsd-mis",
+            storageBucket: "chsd-mis.appspot.com",
+            messagingSenderId: "694967679357",
+            appId: "1:694967679357:web:65cffd50f13739f934f414",
+            measurementId: "G-XBQTQFRLJ5"
+        };
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-        var sideNav = document.getElementById('side_nav');
-        var openBtn = document.querySelector('.open-btn');
-        var closeBtn = document.querySelector('.close-btn');
-        var dropdownItems = document.querySelectorAll('.sideNav.dropdown');
-    
-        // Toggle the sidebar for mobile view
-        openBtn.addEventListener('click', function() {
-            sideNav.classList.add('active');
-        });
-    
-        closeBtn.addEventListener('click', function() {
-            sideNav.classList.remove('active');
-        });
-    
-        // Handle dropdown in sidebar
-        dropdownItems.forEach(function(item) {
-            item.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevents clicks from closing the sidebar
-                this.classList.toggle('open');
-            });
-        });
-    
-        // Close the sidebar when clicking outside of it (optional)
-        document.addEventListener('click', function(e) {
-            if (!sideNav.contains(e.target) && !openBtn.contains(e.target)) {
-                sideNav.classList.remove('active');
-            }
-        });
-    });
-    
-    
-        </script>
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-<script type="module">
-    // Firebase imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-        authDomain: "chsd-mis.firebaseapp.com",
-        projectId: "chsd-mis",
-        storageBucket: "chsd-mis.appspot.com",
-        messagingSenderId: "694967679357",
-        appId: "1:694967679357:web:65cffd50f13739f934f414",
-        measurementId: "G-XBQTQFRLJ5"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // Load notifications
-    async function loadNotifications() {
-        const user = auth.currentUser;
-        if (user) {
+        // Load notifications
+        async function loadNotifications(user) {
             const notificationsRef = collection(db, 'notifications');
             const q = query(notificationsRef, where('userId', '==', user.uid));
 
@@ -243,13 +156,11 @@
                 notificationContainer.innerHTML = ""; // Clear previous notifications
 
                 if (snapshot.empty) {
-                    // Show "No notifications" if there are no documents
                     const noNotif = document.createElement("div");
                     noNotif.classList.add('notification');
                     noNotif.textContent = "No notifications available.";
                     notificationContainer.appendChild(noNotif);
                 } else {
-                    // Iterate through notifications if they exist
                     snapshot.forEach((doc) => {
                         const data = doc.data();
                         const notification = document.createElement("div");
@@ -263,17 +174,19 @@
                 }
             });
         }
-    }
 
-    // Ensure notifications load after auth state is checked
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            loadNotifications();
-        }
-    });
-</script>
+        // Ensure notifications load after auth state is checked
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadNotifications(user);
+            } else {
+                console.error('No user authenticated');
+            }
+        });
+    </script>
 
-    
-    
-    </body>
-    </html>
+    <!-- Bootstrap and other scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+</body>
+</html>

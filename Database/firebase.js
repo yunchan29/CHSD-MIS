@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // Firebase configuration
@@ -14,11 +14,26 @@ const firebaseConfig = {
     measurementId: "G-XBQTQFRLJ5"
 };
 
+
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
+
+
+export const firebaseReady = new Promise((resolve) => {
+    document.addEventListener('DOMContentLoaded', () => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                resolve(user);
+            } else {
+                resolve(null);
+            }
+        });
+    });
+});
 
 // Function to check user roles
 async function checkUserRole(userUid) {
@@ -502,8 +517,6 @@ function showNotification(message, type) {
         notification.className = `notification ${type}`;
         notification.textContent = message;
         notificationContainer.appendChild(notification);
-
-     
     } else {
         console.error('Notification container not found.');
     }
@@ -582,19 +595,21 @@ async function loadProfiles() {
                 statusSelect.addEventListener("change", async (event) => {
                     const newStatus = event.target.value;
                     if (data.status !== newStatus) {
-                        console.log(`Status changed to: ${newStatus}`); // Debugging line
+                        const message = `${data.ownerName}'s building permit is now ${newStatus.toLowerCase()}`;
+                        
                         // Trigger notification
-                        showNotification(`Permit ${docSnapshot.id} status changed to ${newStatus}`, 'info');
+                        showNotification(message, 'info');
 
                         // Store the notification in Firestore
                         try {
                             await addDoc(collection(db, "notifications"), {
                                 userId: data.ownerUid, // Associate the notification with the user
-                                message: `Permit status changed to ${newStatus}`,
+                                message: message,
                                 permitId: docSnapshot.id,
-                                timestamp: serverTimestamp(),
+                                timestamp: serverTimestamp(), // Use server timestamp here
                                 read: false // Mark the notification as unread initially
                             });
+                            
                         } catch (error) {
                             console.error("Error storing notification:", error);
                         }
@@ -602,9 +617,6 @@ async function loadProfiles() {
                         // Update status in Firestore
                         try {
                             await updateDoc(doc(db, 'buildingPermits', docSnapshot.id), { status: newStatus });
-
-                          
-                            
                         } catch (error) {
                             console.error("Error updating permit status:", error);
                         }
