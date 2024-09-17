@@ -90,65 +90,16 @@
                 <table class="table">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Date Filed</th>
+                      <th>Owner</th>
+                      <th>Representative</th>
+                      <th>Submitted at</th>
                       <th>Status</th>
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>Kim Perez</td>
-                      <td>2024-05-01</td>
-                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                        <option selected>Pending</option>
-                        <option value="1">Processing</option>
-                        <option value="3">To pay</option>
-                        <option value="2">For Approval</option>
-                        <option value="3">For Release</option>
-                        <option value="3">Released</option>
-                 
-
-
-                        </select></td>
-                        <td>
-                          <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                      <a class="btn btn-primary text-white" href="/AdminPages/PermitsAndCert/applicationFormPCEdit.html">Edit</a></td>
-                    </tr>
-                    <tr>
-                      <td>Alyssa Natividad</td>
-                      <td>2024-04-15</td>
-                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                        <option selected>Pending</option>
-                        <option value="1">Processing</option>
-                        <option value="3">To pay</option>
-                        <option value="2">For Approval</option>
-                        <option value="3">For Release</option>
-                        <option value="3">Released</option>
-
-
-                        </select></td>
-                        <td> <a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                      <a class="btn btn-primary text-white"data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
-                    </tr>
-
-                    <tr>
-                      <td>Joel San Pedro</td>
-                      <td>2024-04-15</td>
-                      <td><select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                        <option selected>Pending</option>
-                        <option value="1">Processing</option>
-                        <option value="3">To pay</option>
-                        <option value="2">For Approval</option>
-                        <option value="3">For Release</option>
-                        <option value="3">Released</option>
-
-
-                        </select></td>
-                        <td><a class="btn btn-success text-white">Save </a> <a class="btn btn-secondary text-white">Remarks</a>
-                      <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a></td>
-                    </tr>
-                  </tbody>
+                  <tbody id="profileTableBody">
+                    <!-- Rows will be populated by Firebase data -->
+                </tbody>
                 </table>
              </div>
              <!-- End of Bootstrap Table -->
@@ -157,7 +108,293 @@
     </div>
 
     <script type="module" src="/Database/firebase.js"></script>
-
+    <script type="module">
+      // Import Firebase SDK
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+        authDomain: "chsd-mis.firebaseapp.com",
+        projectId: "chsd-mis",
+        storageBucket: "chsd-mis.appspot.com",
+        messagingSenderId: "694967679357",
+        appId: "1:694967679357:web:65cffd50f13739f934f414",
+        measurementId: "G-XBQTQFRLJ5"
+      };
+    
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+    
+      // Function to show notification
+      function showNotification(message, type) {
+        console.log(`Showing notification: ${message}`);
+        const notificationContainer = document.getElementById('notification-container');
+        if (notificationContainer) {
+          const notification = document.createElement('div');
+          notification.className = `notification ${type}`;
+          notification.textContent = message;
+          notificationContainer.appendChild(notification);
+        } else {
+          console.error('Notification container not found.');
+        }
+      }
+    
+      // Load Occupancy profiles
+      async function loadOccupancyProfiles() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "OccupancyPermits"));
+          const profileTableBody = document.getElementById("profileTableBody");
+          if (!profileTableBody) {
+            console.error("profileTableBody not found in the DOM.");
+            return;
+          }
+          profileTableBody.innerHTML = "";
+    
+          for (const docSnapshot of querySnapshot.docs) {
+            const data = docSnapshot.data();
+            const row = document.createElement("tr");
+    
+            // Fetch representative user data
+            let representativeName = 'N/A'; // Default value in case ownerUid is missing or user is not found
+            if (data.ownerUid) {
+              try {
+                const userRef = doc(db, 'users', data.ownerUid);
+                const userDoc = await getDoc(userRef);
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  representativeName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                }
+              } catch (error) {
+                console.error("Error fetching user data:", error);
+              }
+            }
+    
+            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : 'Unknown Date';
+    
+            row.innerHTML = `
+              <td>${data.ownerName || 'No Name'}</td>
+              <td>${representativeName}</td> 
+              <td>${createdAt}</td>
+              <td>
+                <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${docSnapshot.id}">
+                  <option value="Pending" ${data.status === "Pending" ? 'selected' : ''}>Pending</option>
+                  <option value="Processing" ${data.status === "Processing" ? 'selected' : ''}>Processing</option>
+                  <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''}>To Pay</option>
+                  <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''}>For Approval</option>
+                  <option value="For Release" ${data.status === "For Release" ? 'selected' : ''}>For Release</option>
+                  <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''}>Claimed</option>
+                </select>
+              </td>
+              <td>
+                <div class="dropdown">
+                  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Actions
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item save-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-save"></i> Save</a></li>
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${docSnapshot.id}"><i class="fas fa-comment"></i> Remarks</a></li>
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#occupancyPermitModal" data-permit-id="${docSnapshot.id}"><i class="fas fa-edit"></i> Edit</a></li>
+                    <li><a class="dropdown-item archive-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-archive"></i> Archive</a></li>
+                  </ul>
+                </div>
+              </td>
+              <td><button class="btn btn-primary btn-sm">View Details</button></td>
+            `;
+            profileTableBody.appendChild(row);
+    
+            // Add event listener for status change
+            const statusSelect = row.querySelector(".status-select");
+            if (statusSelect) {
+              statusSelect.addEventListener("change", async (event) => {
+                const newStatus = event.target.value;
+                if (data.status !== newStatus) {
+                  const message = `${data.ownerName || 'An occupancy permit'} is now ${newStatus.toLowerCase()}`;
+    
+                  // Trigger notification
+                  showNotification(message, 'info');
+    
+                  // Store the notification in Firestore
+                  try {
+                    await addDoc(collection(db, "notifications"), {
+                      userId: data.ownerUid, // Associate the notification with the user
+                      message: message,
+                      permitId: docSnapshot.id,
+                      timestamp: serverTimestamp(), // Use server timestamp here
+                      read: false // Mark the notification as unread initially
+                    });
+                  } catch (error) {
+                    console.error("Error storing notification:", error);
+                  }
+    
+                  // Update status in Firestore
+                  try {
+                    await updateDoc(doc(db, 'OccupancyPermits', docSnapshot.id), { status: newStatus });
+                  } catch (error) {
+                    console.error("Error updating permit status:", error);
+                  }
+                }
+              });
+            }
+          }
+    
+          // Attach button listeners
+          attachSaveButtonListenersOccupancy();
+          attachArchiveButtonListenersOccupancy();
+          attachEditButtonListenersOccupancy();
+          attachRemarksButtonListenersOccupancy();
+        } catch (error) {
+          console.error("Error loading profiles:", error);
+        }
+      }
+    
+      // Function to handle saving an occupancy permit
+      async function handleSaveOccupancyPermit(event) {
+        event.preventDefault();
+    
+        const occupancyPermitId = event.target.getAttribute('data-id');
+        const row = event.target.closest('tr');
+        const statusSelect = row.querySelector('.status-select');
+    
+        const status = statusSelect.value;
+    
+        try {
+          await updateDoc(doc(db, "OccupancyPermits", occupancyPermitId), { status: status });
+          console.log("Document successfully updated!");
+          alert("Status updated successfully!");
+        } catch (error) {
+          console.error("Error updating document: ", error);
+          alert("Failed to update status: " + error.message);
+        }
+    
+        await loadOccupancyProfiles(); // Refresh the profiles after updating
+      }
+    
+      // Function to handle archiving an occupancy permit
+      async function handleArchiveOccupancyPermit(event) {
+        event.preventDefault();
+    
+        const occupancyPermitId = event.target.getAttribute('data-id');
+    
+        const confirmed = confirm("Are you sure you want to archive this document?");
+    
+        if (!confirmed) {
+          return;
+        }
+    
+        try {
+          const occupancyPermitRef = doc(db, "OccupancyPermits", occupancyPermitId);
+          const occupancyPermitSnapshot = await getDoc(occupancyPermitRef);
+    
+          if (occupancyPermitSnapshot.exists()) {
+            const occupancyPermitData = occupancyPermitSnapshot.data();
+    
+            await setDoc(doc(db, "archivedOccupancyPermits", occupancyPermitId), occupancyPermitData);
+            await deleteDoc(occupancyPermitRef);
+    
+            event.target.closest('tr').remove();
+    
+            console.log("Document archived successfully!");
+            alert("Document archived successfully!");
+          } else {
+            alert("Document not found!");
+          }
+        } catch (error) {
+          console.error("Error archiving document: ", error);
+          alert("Failed to archive document: " + error.message);
+        }
+      }
+    
+      // Function to populate the edit form with an occupancy permit's data
+      async function populateEditFormOccupancy(permitId) {
+        console.log('populateEditFormOccupancy called with permitId:', permitId);
+    
+        const permitDoc = doc(db, "OccupancyPermits", permitId);
+    
+        // Fetch the document from Firestore
+        try {
+          const docSnapshot = await getDoc(permitDoc);
+          if (docSnapshot.exists()) {
+            const data = docSnapshot.data();
+            console.log("Permit data:", data);
+    
+            // Populate form fields with the permit data
+            document.getElementById('occupancyPermitNo').value = data.occupancyPermitNo || '';
+            document.getElementById('ownerEmail').value = data.ownerEmail || '';
+            document.getElementById('issuedOn').value = data.issuedOn || '';
+            document.getElementById('projectLocation').value = data.projectLocation || '';
+    
+            // Add additional fields specific to occupancy permits as needed
+            document.getElementById('numberOfUnits').value = data.numberOfUnits || '';
+            document.getElementById('totalFloorArea').value = data.totalFloorArea || '';
+    
+            // Store permitId in form's dataset (for further usage)
+            document.getElementById('editOccupancyForm').dataset.permitId = permitId;
+          } else {
+            console.error('No such document!');
+          }
+        } catch (error) {
+          console.error('Error getting document:', error);
+        }
+      }
+    
+      // Function to attach event listeners for the edit buttons
+      function attachEditButtonListenersOccupancy() {
+        const editButtons = document.querySelectorAll('a[data-permit-id]');
+        editButtons.forEach(button => {
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+            const permitId = button.getAttribute('data-permit-id');
+            populateEditFormOccupancy(permitId);
+          });
+        });
+      }
+    
+      // Function to attach event listeners for the archive buttons
+      function attachArchiveButtonListenersOccupancy() {
+        const archiveButtons = document.querySelectorAll('.archive-btn');
+        archiveButtons.forEach(button => {
+          button.addEventListener('click', handleArchiveOccupancyPermit);
+        });
+      }
+    
+      // Function to attach event listeners for the save buttons
+      function attachSaveButtonListenersOccupancy() {
+        const saveButtons = document.querySelectorAll('.save-btn');
+        saveButtons.forEach(button => {
+          button.addEventListener('click', handleSaveOccupancyPermit);
+        });
+      }
+    
+      // Function to handle showing remarks in a modal
+      async function openRemarksModalOccupancy(permitId) {
+        await showRemarksOccupancy(permitId); // You need to implement showRemarksOccupancy
+        const remarksModal = new bootstrap.Modal(document.getElementById('viewRemarks'));
+        remarksModal.show();
+      }
+    
+      // Function to attach event listeners for remarks buttons
+      function attachRemarksButtonListenersOccupancy() {
+        const remarksButtons = document.querySelectorAll('.dropdown-item[data-bs-target="#remarksModal1"]');
+        remarksButtons.forEach(button => {
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+            const permitId = button.getAttribute('data-permit-id');
+            if (permitId) {
+              openRemarksModalOccupancy(permitId);
+            }
+          });
+        });
+      }
+    
+      // Load profiles on page load
+      document.addEventListener('DOMContentLoaded', loadOccupancyProfiles);
+    </script>
+    
     
    
      <!--Navigation Bar-->
@@ -170,6 +407,8 @@
       document.getElementById('side_nav').classList.remove('active');
   });
 </script>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>

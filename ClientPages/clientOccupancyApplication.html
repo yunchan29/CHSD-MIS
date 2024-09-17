@@ -214,7 +214,135 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
     <script src="/ClientPages/navBarScript.js"></script>
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+            authDomain: "chsd-mis.firebaseapp.com",
+            projectId: "chsd-mis",
+            storageBucket: "chsd-mis.appspot.com",
+            messagingSenderId: "694967679357",
+            appId: "1:694967679357:web:65cffd50f13739f934f414",
+            measurementId: "G-XBQTQFRLJ5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', () => {
+            const nextStepButton = document.getElementById('nextStepButton');
+            const occupancyPermitModal = new bootstrap.Modal(document.getElementById('occupancyPermitModal'));
+
+            nextStepButton.addEventListener('click', async () => {
+                const CO_BP_220_No = document.getElementById('CONO').value;
+                const NOUnits = document.getElementById('NOUnits').value;
+                const totalFloorArea = document.getElementById('totalFloorArea').value;
+
+                let units = [];
+                for (let i = 1; i <= NOUnits; i++) {
+                    const lotBlockNumber = document.getElementById(`LBNum${i}`).value;
+                    const sqm = document.getElementById(`SQM${i}`).value;
+                    units.push({ lotBlockNumber, sqm });
+                }
+
+                try {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        throw new Error("No user logged in");
+                    }
+
+                    const permitData = {
+                        CO_BP_220_No,
+                        NOUnits,
+                        totalFloorArea,
+                        units,
+                        status: "Form Submitted",
+                        createdAt: serverTimestamp(),
+                        userId: user.uid
+                    };
+
+                    const docRef = await addDoc(collection(db, "OccupancyPermits"), permitData);
+
+                    console.log("Certificate of Occupancy Permit created with ID: ", docRef.id);
+
+                    // Show confirmation modal or proceed to the next step
+                    occupancyPermitModal.hide();
+                    alert("Form submitted successfully! Your application ID is: " + docRef.id);
+                } catch (error) {
+                    console.error("Error submitting form: ", error);
+                    alert("Failed to submit the form. Please try again.");
+                }
+            });
+        });
+
+        function updateLotBlockFields() {
+            const noUnits = document.getElementById('NOUnits').value;
+            const container = document.getElementById('lotBlockContainer');
+            container.innerHTML = ''; // Clear existing fields
+
+            for (let i = 1; i <= noUnits; i++) {
+                const row = document.createElement('div');
+                row.className = 'row mb-3';
+
+                const col1 = document.createElement('div');
+                col1.className = 'col-md-6';
+
+                const label1 = document.createElement('label');
+                label1.for = `LBNum${i}`;
+                label1.className = 'form-label';
+                label1.textContent = `Lot and Block Number ${i}:`;
+
+                const input1 = document.createElement('input');
+                input1.type = 'text';
+                input1.className = 'form-control';
+                input1.id = `LBNum${i}`;
+
+                col1.appendChild(label1);
+                col1.appendChild(input1);
+
+                const col2 = document.createElement('div');
+                col2.className = 'col-md-6';
+
+                const label2 = document.createElement('label');
+                label2.for = `SQM${i}`;
+                label2.className = 'form-label';
+                label2.textContent = `SQ/M ${i}:`;
+
+                const input2 = document.createElement('input');
+                input2.type = 'number';
+                input2.className = 'form-control';
+                input2.id = `SQM${i}`;
+                input2.oninput = calculateTotalFloorArea;
+
+                col2.appendChild(label2);
+                col2.appendChild(input2);
+
+                row.appendChild(col1);
+                row.appendChild(col2);
+                container.appendChild(row);
+            }
+        }
+
+        function calculateTotalFloorArea() {
+            const noUnits = document.getElementById('NOUnits').value;
+            let totalFloorArea = 0;
+
+            for (let i = 1; i <= noUnits; i++) {
+                const sqmValue = parseFloat(document.getElementById(`SQM${i}`).value) || 0;
+                totalFloorArea += sqmValue;
+            }
+
+            document.getElementById('totalFloorArea').value = totalFloorArea;
+        }
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
         var sideNav = document.getElementById('side_nav');

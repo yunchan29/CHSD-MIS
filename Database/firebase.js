@@ -1300,7 +1300,7 @@ async function fetchPermitCounts() {
 
     // Collection references
     const buildingPermitRef = collection(db, "buildingPermits");
-    const occupancyPermitRef = collection(db, "OccupancyPermit");
+    const occupancyPermitRef = collection(db, "OccupancyPermits");
     const electricalCertRef = collection(db, "ElectricalCert");
 
     try {
