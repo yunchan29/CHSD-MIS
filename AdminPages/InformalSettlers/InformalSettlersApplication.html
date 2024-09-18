@@ -5,20 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHSD MIS</title>
     <link rel="stylesheet" href="/Stylesheets/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <style>
-        /* CSS for the content container */
         .content {
-            flex: 1; /* Take remaining space */
-            overflow: hidden; /* Hide overflow content */
-            display: flex; /* Use flexbox */
-            flex-direction: column; /* Column layout */
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-
         .content-container {
-            overflow-y: auto; /* Enable vertical scrolling */
-            padding: 20px; /* Add some padding */
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .step {
+            display: inline-block;
+            margin-right: 20px;
+            opacity: 0.5;
+        }
+        .step.completed .circle {
+            background-color: green;
+        }
+        .step.active {
+            opacity: 1;
         }
     </style>
 </head>
@@ -26,12 +41,9 @@
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center">
-                <!-- Empty avatar icon -->
-               
                 <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <!--<li class="sideNav"><a href="/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html" class="text-decoration-none"><i class="fa-solid fa-user"></i> Profile</a></li>-->
                 <li class="sideNav active"><a href="/AdminPages/InformalSettlers/InformalSettlersApplication.html" class="text-decoration-none"><i class="fa-solid fa-folder"></i> Housing Application</a></li>
                 <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersReport.html" class="text-decoration-none"><i class="fa-solid fa-chart-column"></i> Application Report</a></li>
                 <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersUserManager.html" class="text-decoration-none"><i class="fa-solid fa-user-pen"></i> User Manager</a></li>
@@ -40,184 +52,524 @@
         </div>
 
         <div class="content">
-               <!--Navigation Bar-->
-<nav class="navigationBar navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-        <!-- Mobile View -->
-        <div class="d-flex justify-content-between d-md-none d-block">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
-                <h5 class="mb-0 fs-5">CHSD</h5>
-            </a>
-            <button class="btn px-1 py-0 open-btn">
-                <i class="fa-solid fa-bars-staggered"></i>
-            </button>
-        </div>
+            <nav class="navigationBar navbar navbar-expand-lg bg-light">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between d-md-none d-block">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
+                            <h5 class="mb-0 fs-5">CHSD</h5>
+                        </a>
+                        <button class="btn px-1 py-0 open-btn">
+                            <i class="fa-solid fa-bars-staggered"></i>
+                        </button>
+                    </div>
+
+                    <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
+                            <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+          <div class="contentContainer">
+             <!--Application Modal-->
+           <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#housingApplicationModal">
+    Apply for Housing
+  </button>
   
-        <!-- Desktop View -->
-        <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
-                <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
-            </a>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!-- Additional nav items go here -->
-            </ul>
+  <div class="modal fade" id="housingApplicationModal" tabindex="-1" aria-labelledby="housingApplicationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered wide-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="housingApplicationModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-    </div>
-  </nav>
-            
+        <div class="modal-body">
             <div class="contentContainer">
-               <h4>Application</h4>
-                <div class="contentContainer">
-                 <div class="row">
-                    <div class="col">
-                        <label for="surveyNo">Survey No.</label>
-                        <input type="text" title="surveyNo" placeholder="" class="form-control">
-                    </div>
-                    <div class="col">
-                        <label for="date">Date</label>
-                        <input type="date" title="date" placeholder="" class="form-control">
-                    </div>
-                    <div class="col">
-                        <label for="">Application No.</label>
-                        <input type="text" title="appNo" placeholder="" class="form-control">
-                    </div>
-                 </div>
-
-                
-                 <div class="row">
-                    <div class="col">
-                        <label for="">To Purchase</label>
-                        <input type="text" title="appNo" placeholder="" class="form-control">
-                    </div>
-                    <div class="col">
-                        <label for="">Mode of Payment</label>
-                        <input type="text" title="appNo" placeholder="" class="form-control">
-                    </div>
-                 </div>
-
-                 <div class="row">
-                    <div class="col">
-                        <label for="">Lease Terms</label>
-                        <input type="text" title="appNo" placeholder="" class="form-control">
-                    </div>
-                    <div class="col">
-                        <label for="">Years</label>
-                        <input type="text" title="appNo" placeholder="" class="form-control">
-                    </div>
-                 </div>
-                 
-                 <div class="row">
-                    <div class="col">
-                        <label for="">Place and Date of Birth</label>
-                        <input type="text" title="appNo" placeholder="" class="form-control">
-                    </div>
-                    <div class="col">
-                        <label for=""></label>
-                        <input type="date" title="appNo" placeholder="" class="form-control">
-                        </div>
-                    <div class="col">
-                        <label for="">Citizenship</label>
-                        <input type="date" title="appNo" placeholder="" class="form-control">
-                    </div>
-                    
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <label for="">TIN No.</label>
-                            <input type="text" class="form-control" title="appNo" placeholder="">
-                        </div>
-                        <div class="col">
-                            <label for="">GSIS/PAG-IBIG POLICY NO.</label>
-                            <input type="text" class="form-control" title="appNo" placeholder="">
-                        </div>
-    
-                        <div class="row">
-                            <div class="col">
-                                <label for="">Survey No.</label>
-                                <input type="text" class="form-control" title="appNo" placeholder="">
-                            </div>
-                            <div class="col">
-                                <label for="">Source of Water</label>
-                                <input type="text" class="form-control" title="appNo" placeholder="">
-                            </div>
-                         </div>
-
-                         <div class="row">
-                            <div class="col">
-                                <label for="">Contact to Buy any Lot/Dwelling Unit in the Philippines</label>
-                                <input type="text" class="form-control" title="appNo" placeholder="">
-                            </div>
-                            <div class="col">
-                                <label for="">Address</label>
-                                <input type="text" class="form-control" title="appNo" placeholder="">
-                            </div>
-                         </div>
-
-                         <div class="row">
-                            <div class="col">
-                                <label for="">Urban Residential</label>
-                                <input type="text" class="form-control" title="appNo" placeholder="">
-                            </div>
-                            <div class="col">
-                                <label for="">Total Area(SQM)</label>
-                                <input type="text" class="form-control" title="appNo" placeholder="">
-                            </div>
-                         </div>
-
-                         <div class="row">
-                            <div class="col">
-                                <label for="">Commercial Residential</label>
-                                <input type="text" class="form-control" title="appNo" placeholder="">
-                            </div>
-                            <div class="col">
-                                <label for="">Total Value(PHP)<label>
-                                <input type="text" class="form-control" title="appNo" placeholder="">
-                            </div>
-                            <div class="row align-items-end justify-content-end">
-                                <a class="btn btn-primary col-md-2 text-white">Save</a>
-                            </div>
-                            
-                         </div>
-                 </div>
-                 
-                 </div>
+                <h4>Application</h4>
 
                
-
-
+                <div class="step-progress mb-4">
+                    <div class="step completed" id="step-1">
+                        <div class="circle"></div>
+                        <div class="label">Information of Household</div>
+                    </div>
+                    <div class="step" id="step-2">
+                        <div class="circle"></div>
+                        <div class="label">Household Members</div>
+                    </div>
+                    <div class="step" id="step-3">
+                        <div class="circle"></div>
+                        <div class="label">Lot and House Characteristics</div>
+                    </div>
                 </div>
                
-            </div>
-            
-              </div>
-              
-            </div>
+              <!-- Form Steps -->
+<div class="form-step active" id="form-step-1">
+    <h5>Household Head Details</h5>
+    <div class="row">
+        <div class="col">
+            <label for="surveyNo">Survey No.</label>
+            <input type="text" id="surveyNo" class="form-control">
+        </div>
+        <div class="col">
+            <label for="dateApplied">Date</label>
+            <input type="date" id="dateApplied" class="form-control">
+        </div>
+        <div class="col">
+            <label for="barangay">Barangay</label>
+            <select class="form-control" id="barangay">
+              <option>Barangay 1</option>
+              <option>Barangay 2</option>
+              <option>Barangay 3</option>
+            </select>
+        </div>
+        <div class="col">
+            <label for="sitioPurok">Sitio/Purok</label>
+            <select class="form-control" id="sitioPurok">
+                <option>Purok 1</option>
+                <option></option>
+                <option></option>
+                <option></option>
+
+            </select>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-4">
+           <label for="classificationArea">Classification Area</label>
+           <input type="text" class="form-control" id="classificationArea">
+        </div>
+        <div class="col-md-8">
+           <label for="householdRemarks">Remarks</label>
+           <textarea class="form-control" id="householdRemarks" rows="1">
+           </textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+           <label for="householdBirthday">Date of Birth</label>
+           <input type="date" class="form-control" id="householdBirthday">
+        </div>
+        <div class="col-md-3">
+            <label for="householdSex">Sex</label>
+            <select class="form-control" id="householdSex">
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="householdCivilStatus">Civil Status</label>
+            <select class="form-control" id="householdCivilStatus">
+                <option></option>
+                <option></option>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-3">
+            <label for="householdLastName">Last Name</label>
+            <input type="text" class="form-control" id="householdLastName">
+        </div>
+        <div class="col-md-3">
+            <label for="householdFirstName">First Name</label>
+            <input type="text" class="form-control" id="householdFirstName">
+        </div>
+        <div class="col-md-3">
+            <label for="householdMiddleName">Middle Name</label>
+            <input type="text" class="form-control" id="householdMiddleName">
+        </div>
+        <div class="col-md-3">
+            <label for="householdMaidenName">Maiden Name</label>
+            <input type="text" class="form-control" id="householdMaidenName">
+        </div>
+    </div>
+
+    <div class="row">
+       <div class="col-md-6">
+        <label for="householdOccupation">Occupation</label>
+        <input type="text" class="form-control" id="householdOccupation">
+       </div>
+
+       <div class="col-md-6">
+         <label for="householdPlaceOfWork">Place Of Work</label>
+         <input type="text" class="form-control" id="householdPlaceOfWork">
+       </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <label for="householdAddress">Present Address</label>
+            <textarea class="form-control" id="householdAddress" rows="1"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+
+    </div>
+
+    <div class="row">
+        <h5>Name of Spouse</h5>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <label for="spouseLastName">Last Name</label>
+            <input type="text" class="form-control" id="spouseLastName">
+        </div>
+        <div class="col-md-3">
+            <label for="spouseFirstName">First Name</label>
+            <input type="text" class="form-control" id="spouseFirstName">
+        </div>
+        <div class="col-md-3">
+            <label for="spouseMiddleName">Middle Name</label>
+            <input type="text" class="form-control" id="spouseMiddleName">
+        </div>
+        <div class="col-md-3">
+            <label for="spouseMaidenName">Maiden Name</label>
+            <input type="text" class="form-control" id="spouseMaidenName">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <label for="spouseBirthday">Date of Birth</label>
+            <input type="date" class="form-control" id="spouseBirthday">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+           <label for="classificationOfSurveyHousehold">Classification Of Survey Household</label>
+           <select class="form-control" id="classificationOfSurveyHousehold">
+            <option></option>
+           </select>
+        </div>
+        <div class="col-md-2">
+            <label for="householdAmount">Amount</label>
+            <input type="number" class="form-control" id="householdAmount">
+        </div>
+        <div class="col-md-6">
+            <label for="structureOwner">Structure Owner</label>
+            <input type="text" class="form-control" id="structureOwner">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+             <label for="provinceOfOrigin">Province Of Origin</label>
+             <input type="text" class="form-control" id="provinceOfOrigin">
+        </div>
+        <div class="col-md-3">
+            <label for="householdSize">Household Size</label>
+            <input type="number" class="form-control" id="householdSize">
+        </div>
+        <div class="col-md-3">
+            <label for="yearOfResidency">Year of Residency</label>
+            <input type="text" class="form-control" id="yearOfResidency">
+        </div>
+    </div>
+
+    <div class="row">
+
+        <label for="reasonsForEstablishing">Reasons For Establishing Residence In The Area</label>
+        <textarea class="form-control" id="reasonsForEstablishing"></textarea>
+    </div>
+
    
+    
+        
 
-    <script type="module" src="/Database/firebase.js">
+
+   
+  
+
+    <div class="row justify-content-end mt-4">
+        <div class="col">
+            <button class="btn btn-primary" id="nextBtn1">Next</button>
+        </div>
+    </div>
+</div>
+
+
+                <div class="form-step" id="form-step-2">
+                    
+                    
+                    <h5>Household Members Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="memberName">Name</label>
+                            <input type="text" id="memberName" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="relationToHead">Relation To The Household Head</label>
+                            <input type="text" class="form-control" id="relationToHead">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="memberAge">Age</label>
+                            <input type="number" class="form-control" id="memberAge">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="memberGender">Gender</label>
+                            <select class="form-control" id="memberGender">
+                                <option>Male</option>
+                                <option>Female</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="memberCivilStatus">Civil Status</label>
+                            <select class="form-control" id="memberCivilStatus">
+                                <option>Single</option>
+                                <option></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="memberEducationalAttainment">Educational Attainment</label>
+                            <input type="text" class="form-control" id="memberEducationalAttainment">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="memberEmployed">Employed</label>
+                            <select class="form-control" id="memberEmployed">
+                                <option></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="memberOccupation">Occupation</label>
+                            <input type="text" class="form-control" id="memberOccupation">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="memberPlaceOfWork">Place of Work</label>
+                            <input type="text" class="form-control" id="memberPlaceOfWork">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="memberMonthlyIncome">Monthly Income(PHP)</label>
+                            <input type="number" class="form-control" id="memberMonthlyIncome">
+                        </div>
+                        
+                    </div>
+
+                    <div class="row justify-content-end mt-4">
+                        <div class="col">
+                            <button class="btn btn-secondary" id="prevBtn2">Previous</button>
+                            <button class="btn btn-primary" id="nextBtn2">Next</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col text-end">
+                            <button class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add</button>
+                            <button class="btn btn-secondary"><i class="fa-solid fa-delete-left"></i> Clear</button>
+                            <button class="btn btn-secondary"><i class="fa-solid fa-pencil"></i> Edit</button>
+                            <button class="btn btn-secondary"><i class="fa-solid fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
+
+                    <div class="contentContainer">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Relation</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Civil Status</th>
+                                    <th>Educational Attainment</th>
+                                    <th>Employed</th>
+                                    <th>Occupation</th>
+                                    <th>Place of Work</th>
+                                    <th>Monthly Income</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    
+                </div>
+
+                <div class="form-step" id="form-step-3">
+                    <h5>Lot Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="lotOwner">Owner</label>
+                            <input type="text" class="form-control" id="lotOwner">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="construction">Construction/Building Materials Used</label>
+                            <select class="form-control" i="construction">
+                                <option>Concrete</option>
+                                <option>Wood/Nipa</option>
+                                <option>Plastic Roof Only</option>
+                                <option>Tent</option>
+                                <option>Mixed Materials</option>
+                                <option>Sharer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="NOStoreys">Number Of Storeys</label>
+                            <input type="number" id="NOStoreys" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="estimatedFloorArea">Estimated Floor Area</label>
+                            <input type="number" class="form-control" id="estimatedFloorArea">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="comfortRoom">Comfort Room</label>
+                            <select class="form-control" id="comfortRoom">
+                                <option>With Septic Tank Vault</option>
+                                <option>Without Septic</option>
+                                <option>None</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="utilities">Utilities/Facilities Present Power(Electricity)</label>
+                            <select class="form-control" id="utilities">
+                                <option>Meralco</option>
+                                <option>Connected To Other Subscriber</option>
+                                <option>None</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="sourceOfWater">Source of Water</label>
+                            <select class="form-control" id="sourceOfWater">
+                                <option></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="telephone">Telephone</label>
+                            <select class="form-control" id="telephone">
+                                <option>Landline</option>
+                                <option>Cellphone</option>
+                                <option>Others</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="modeOfHouse">Mode Of House/Structure Acquistion</label>
+                            <select class="form-control" id="modeOfHouse">
+                                <option>Sold Rights</option>
+                                <option>Transfer Rights</option>
+                                <option>Constructed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="infoAboutLot">Information About The Surveyed Lot</label>
+                            <select class="form-control" id="infoAboutLot">
+                                <option>Caretaker</option>
+                                <option>Co-Owner</option>
+                                <option>Renter</option>
+                                <option>RFO</option>
+                                <option>Sharer</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="amountToPay">Amount To Pay</label>
+                            <input type="number" id="amountToPay" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="relationshipWithOwner">Relationship With The Owner</label>
+                            <select class="form-control" id="relationshipWithOwner">
+                                <option>Lot Owner</option>
+                                <option>Child</option>
+                                <option>Parent</option>
+                                <option>Relative</option>
+                                <option>Others</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="typeOfStructure">Type Of Structure</label>
+                            <select class="form-control" id="typeOfStructure">
+                                <option>Residential</option>
+                                <option>Commercial</option>
+                                <option>Apartment</option>
+                                <option>Institution</option>
+                                <option>Others</option>
+                            </select>
+                        </div>
+                    </div>
+                   
+                    <div class="row justify-content-between mt-4">
+                       <div class="col">
+                        <button class="btn btn-secondary" id="prevBtn3">Previous</button>
+                        <button class="btn btn-primary">Submit</button>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+          </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+    <script type="module" src="/Database/firebase.js"></script>
+    <script>
+        // Function to show the next form step
+        function showNextStep(currentStep, nextStep) {
+            document.getElementById(`form-step-${currentStep}`).classList.remove('active');
+            document.getElementById(`form-step-${nextStep}`).classList.add('active');
+            document.getElementById(`step-${currentStep}`).classList.add('completed');
+            document.getElementById(`step-${nextStep}`).classList.add('active');
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+        }
+
+        // Function to show the previous form step
+        function showPreviousStep(currentStep, prevStep) {
+            document.getElementById(`form-step-${currentStep}`).classList.remove('active');
+            document.getElementById(`form-step-${prevStep}`).classList.add('active');
+            document.getElementById(`step-${currentStep}`).classList.remove('completed');
+            document.getElementById(`step-${prevStep}`).classList.add('active');
+        }
+
+        // Event Listeners for Next Buttons
+        document.getElementById('nextBtn1').addEventListener('click', function() {
+            showNextStep(1, 2);
+        });
+        document.getElementById('nextBtn2').addEventListener('click', function() {
+            showNextStep(2, 3);
+        });
+
+        // Event Listeners for Previous Buttons
+        document.getElementById('prevBtn2').addEventListener('click', function() {
+            showPreviousStep(2, 1);
+        });
+        document.getElementById('prevBtn3').addEventListener('click', function() {
+            showPreviousStep(3, 2);
+        });
     </script>
-
-</script>
-<!--Navigation Bar-->
-<script>
-document.querySelector('.open-btn').addEventListener('click', function() {
-    document.getElementById('side_nav').classList.add('active');
-});
-
-document.querySelector('.close-btn').addEventListener('click', function() {
-    document.getElementById('side_nav').classList.remove('active');
-});
-</script>
-
-
-
- 
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </body>
 </html>

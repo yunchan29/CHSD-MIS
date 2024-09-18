@@ -47,9 +47,7 @@
 </head>
 <body>
    
-    
     <div class="main-container d-flex">
-
         <!--Sidebar-->
         <div class="sideNav" id="side_nav">
             <div class="container">
@@ -57,75 +55,66 @@
                     <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"><i class="fa-solid fa-bars-staggered"></i></button>
                     <div class="avatar-placeholder">
                         <img id="client-avatar" src="" alt="loading..." width="100" height="100">
-
                     </div>
                     <div class="avatar-text">
                         <!-- Client ID and Name -->
                         <div id="user-name">loading...</div>
                     </div>
-                    
                 </div>
             </div>
             <ul class="sideBarList list-unstyled px-2">
                 <li class="sideNav"><a href="clientDashboard.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                 <li class="sideNav"><a href="clientRequirements.html" class="text-decoration-none"><i class="fa-solid fa-list"></i> Requirements List</a></li>
-                
                 <li class="sideNav dropdown open">
                     <a href="#" class="text-decoration-none"><i class="fa-solid fa-newspaper"></i> Application <i class="fas fa-caret-down"></i></a>
                     <ul class="submenu list-unstyled">
                         <li class="text-center mt-2"><a href="clientBuildingPermit.html" class="text-decoration-none">Building Permit</a></li>
                         <li class="text-center mt-2 active"><a href="clientOccupancyApplication.html" class="text-decoration-none">Occupancy</a></li>
                         <li class="text-center mt-2"><a href="clientElectricalApplication.html" class="text-decoration-none">Electrical Inspection</a></li>
-                        
                         <li class="text-center mt-2"><a href="clientHousingApplication.html" class="text-decoration-none">Housing</a></li>
-                    
                     </ul>
-
                 </li>
                 <li class="sideNav"><a href="clientNotif.html" class="text-decoration-none"><i class="fa-solid fa-bell"></i> Notifications</a></li>
                 <li class="sideNav" id="user-logout-btn"><a href="#" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
             </ul>
         </div>
-       
 
         <div class="content">
-           
-
             <!--Navigation Bar-->
-<nav class="navigationBar navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-        <!-- Mobile View -->
-        <div class="d-flex justify-content-between d-md-none d-block">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
-                <h5 class="mb-0 fs-5">CHSD</h5>
-            </a>
-            <button class="btn px-1 py-0 open-btn">
-                <i class="fa-solid fa-bars-staggered"></i>
-            </button>
-        </div>
+            <nav class="navigationBar navbar navbar-expand-lg bg-light">
+                <div class="container-fluid">
+                    <!-- Mobile View -->
+                    <div class="d-flex justify-content-between d-md-none d-block">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
+                            <h5 class="mb-0 fs-5">CHSD</h5>
+                        </a>
+                        <button class="btn px-1 py-0 open-btn">
+                            <i class="fa-solid fa-bars-staggered"></i>
+                        </button>
+                    </div>
 
-        <!-- Desktop View -->
-        <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
-                <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
-            </a>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!-- Additional nav items go here -->
-            </ul>
-        </div>
-    </div>
-</nav>
+                    <!-- Desktop View -->
+                    <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
+                            <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+                        </a>
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <!-- Additional nav items go here -->
+                        </ul>
+                    </div>
+                </div>
+            </nav>
 
             <div class="contentContainer">
                 <div class="card text-center">
                     <div class="card-body">
-                      <h5 class="card-title">Start Your Application</h5>
-                      <p class="card-text">Click the button below to apply for a Occupancy Permit.</p>
-                      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#occupancyPermitModal">Apply</button>
+                        <h5 class="card-title">Start Your Application</h5>
+                        <p class="card-text">Click the button below to apply for a Occupancy Permit.</p>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#occupancyPermitModal">Apply</button>
                     </div>
-                  </div>
+                </div>
             </div>
         </div>
     </div>
@@ -173,7 +162,6 @@
                                 <input type="number" class="form-control" id="totalFloorArea" readonly>
                             </div>
                         </form>
-                       
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -184,33 +172,25 @@
         </div>
     </div>
 
-   <!-- Remarks Modal -->
-<div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="remarksModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="remarksModalLabel">Remarks</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Remarks Modal -->
+    <div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="remarksModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="remarksModalLabel">Remarks</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="remarks-content">
+                    <!-- Remarks content goes here -->
+                </div>
+            </div>
         </div>
-        <div class="modal-body" id="remarks-content">
-            
-        </div>
-      </div>
     </div>
-  </div>
-
-
 
     <!-- Firebase and custom scripts -->
     <script type="module" src="/Database/firebase.js"></script>
 
-  
-   
-   
-    
-
     <!-- Bootstrap and other scripts -->
-  
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
     <script src="/ClientPages/navBarScript.js"></script>
@@ -266,7 +246,8 @@
                         units,
                         status: "Form Submitted",
                         createdAt: serverTimestamp(),
-                        userId: user.uid
+                        ownerUid: user.uid,  // Ensure the user's UID is stored
+                        representativeName: user.displayName || 'N/A',  // Assuming you want to store the full name
                     };
 
                     const docRef = await addDoc(collection(db, "OccupancyPermits"), permitData);
@@ -345,101 +326,97 @@
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-        var sideNav = document.getElementById('side_nav');
-        var openBtn = document.querySelector('.open-btn');
-        var closeBtn = document.querySelector('.close-btn');
-        var dropdownItems = document.querySelectorAll('.sideNav.dropdown');
-    
-        // Toggle the sidebar for mobile view
-        openBtn.addEventListener('click', function() {
-            sideNav.classList.add('active');
-        });
-    
-        closeBtn.addEventListener('click', function() {
-            sideNav.classList.remove('active');
-        });
-    
-        // Handle dropdown in sidebar
-        dropdownItems.forEach(function(item) {
-            item.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevents clicks from closing the sidebar
-                this.classList.toggle('open');
+            var sideNav = document.getElementById('side_nav');
+            var openBtn = document.querySelector('.open-btn');
+            var closeBtn = document.querySelector('.close-btn');
+            var dropdownItems = document.querySelectorAll('.sideNav.dropdown');
+
+            // Toggle the sidebar for mobile view
+            openBtn.addEventListener('click', function() {
+                sideNav.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', function() {
+                sideNav.classList.remove('active');
+            });
+
+            // Handle dropdown in sidebar
+            dropdownItems.forEach(function(item) {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevents clicks from closing the sidebar
+                    this.classList.toggle('open');
+                });
+            });
+
+            // Close the sidebar when clicking outside of it (optional)
+            document.addEventListener('click', function(e) {
+                if (!sideNav.contains(e.target) && !openBtn.contains(e.target)) {
+                    sideNav.classList.remove('active');
+                }
             });
         });
-    
-        // Close the sidebar when clicking outside of it (optional)
-        document.addEventListener('click', function(e) {
-            if (!sideNav.contains(e.target) && !openBtn.contains(e.target)) {
-                sideNav.classList.remove('active');
+    </script>
+
+    <script>
+        function updateLotBlockFields() {
+            const noUnits = document.getElementById('NOUnits').value;
+            const container = document.getElementById('lotBlockContainer');
+            container.innerHTML = ''; // Clear existing fields
+
+            for (let i = 1; i <= noUnits; i++) {
+                const row = document.createElement('div');
+                row.className = 'row mb-3';
+
+                const col1 = document.createElement('div');
+                col1.className = 'col-md-6';
+
+                const label1 = document.createElement('label');
+                label1.for = `LBNum${i}`;
+                label1.className = 'form-label';
+                label1.textContent = `Lot and Block Number ${i}:`;
+
+                const input1 = document.createElement('input');
+                input1.type = 'text';
+                input1.className = 'form-control';
+                input1.id = `LBNum${i}`;
+
+                col1.appendChild(label1);
+                col1.appendChild(input1);
+
+                const col2 = document.createElement('div');
+                col2.className = 'col-md-6';
+
+                const label2 = document.createElement('label');
+                label2.for = `SQM${i}`;
+                label2.className = 'form-label';
+                label2.textContent = `SQ/M ${i}:`;
+
+                const input2 = document.createElement('input');
+                input2.type = 'number';
+                input2.className = 'form-control';
+                input2.id = `SQM${i}`;
+                input2.oninput = calculateTotalFloorArea;
+
+                col2.appendChild(label2);
+                col2.appendChild(input2);
+
+                row.appendChild(col1);
+                row.appendChild(col2);
+                container.appendChild(row);
             }
-        });
-    });
-    
-    
-        </script>
-
-<script>
-    function updateLotBlockFields() {
-        const noUnits = document.getElementById('NOUnits').value;
-        const container = document.getElementById('lotBlockContainer');
-        container.innerHTML = ''; // Clear existing fields
-
-        for (let i = 1; i <= noUnits; i++) {
-            const row = document.createElement('div');
-            row.className = 'row mb-3';
-
-            const col1 = document.createElement('div');
-            col1.className = 'col-md-6';
-
-            const label1 = document.createElement('label');
-            label1.for = `LBNum${i}`;
-            label1.className = 'form-label';
-            label1.textContent = `Lot and Block Number ${i}:`;
-
-            const input1 = document.createElement('input');
-            input1.type = 'text';
-            input1.className = 'form-control';
-            input1.id = `LBNum${i}`;
-
-            col1.appendChild(label1);
-            col1.appendChild(input1);
-
-            const col2 = document.createElement('div');
-            col2.className = 'col-md-6';
-
-            const label2 = document.createElement('label');
-            label2.for = `SQM${i}`;
-            label2.className = 'form-label';
-            label2.textContent = `SQ/M ${i}:`;
-
-            const input2 = document.createElement('input');
-            input2.type = 'number';
-            input2.className = 'form-control';
-            input2.id = `SQM${i}`;
-            input2.oninput = calculateTotalFloorArea;
-
-            col2.appendChild(label2);
-            col2.appendChild(input2);
-
-            row.appendChild(col1);
-            row.appendChild(col2);
-            container.appendChild(row);
-        }
-    }
-
-    function calculateTotalFloorArea() {
-        const noUnits = document.getElementById('NOUnits').value;
-        let totalFloorArea = 0;
-
-        for (let i = 1; i <= noUnits; i++) {
-            const sqmValue = parseFloat(document.getElementById(`SQM${i}`).value) || 0;
-            totalFloorArea += sqmValue;
         }
 
-        document.getElementById('totalFloorArea').value = totalFloorArea;
-    }
-</script>
-    
-    
-    </body>
-    </html>
+        function calculateTotalFloorArea() {
+            const noUnits = document.getElementById('NOUnits').value;
+            let totalFloorArea = 0;
+
+            for (let i = 1; i <= noUnits; i++) {
+                const sqmValue = parseFloat(document.getElementById(`SQM${i}`).value) || 0;
+                totalFloorArea += sqmValue;
+            }
+
+            document.getElementById('totalFloorArea').value = totalFloorArea;
+        }
+    </script>
+</body>
+</html>

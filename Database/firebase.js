@@ -1212,58 +1212,84 @@ async function loadUserPermitStatus() {
         document.getElementById('fetching-loading-screen').style.display = 'flex';
         console.log("Fetching permit status for user:", user.uid);
 
-        const permitsRef = collection(db, "buildingPermits");
-        const q = query(permitsRef, where("ownerUid", "==", user.uid));
-        const permitsSnapshot = await getDocs(q);
-
-        console.log("Query result: ", permitsSnapshot.empty ? "No documents found." : `Found ${permitsSnapshot.size} documents`);
-
         const tableBody = document.getElementById('permit-status-table');
+        if (!tableBody) {
+            console.error("Table body element with ID 'permit-status-table' not found.");
+            return;
+        }
         tableBody.innerHTML = '';
 
-        if (!permitsSnapshot.empty) {
-            permitsSnapshot.forEach((permitDoc) => {
+        // Fetch Building Permits
+        const buildingPermitsRef = collection(db, "buildingPermits");
+        const buildingPermitsQuery = query(buildingPermitsRef, where("ownerUid", "==", user.uid));
+        const buildingPermitsSnapshot = await getDocs(buildingPermitsQuery);
+
+        // Fetch Occupancy Permits
+        const occupancyPermitsRef = collection(db, "OccupancyPermits");
+        const occupancyPermitsQuery = query(occupancyPermitsRef, where("ownerUid", "==", user.uid));
+        const occupancyPermitsSnapshot = await getDocs(occupancyPermitsQuery);
+
+        console.log("Building Permits Query Result:", buildingPermitsSnapshot.empty ? "No documents found." : `Found ${buildingPermitsSnapshot.size} documents`);
+        console.log("Occupancy Permits Query Result:", occupancyPermitsSnapshot.empty ? "No documents found." : `Found ${occupancyPermitsSnapshot.size} documents`);
+
+        // Helper function to create table rows
+        const createTableRow = (permit, permitType, permitId) => {
+            console.log("Creating table row for permit:", permit);
+            const ownerName = permit.ownerName || 'Unknown Owner';
+            const viewRemarksButton = `
+                <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" data-id="${permitId}">
+                    <i class="fa-solid fa-comment"></i> Remarks
+                </a>
+            `;
+            const downloadExcelButton = `
+                <a class="btn btn-success text-white download-excel-btn" data-permit-id="${permitId}">
+                    <i class="fa-solid fa-download"></i> Excel
+                </a>
+            `;
+            const downloadPdfButton = `
+                <a class="btn btn-danger text-white download-pdf-btn" data-permit-id="${permitId}">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </a>
+            `;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${ownerName}</td>
+                <td>${permitType}</td>
+                <td>${permit.issuedOn || 'N/A'}</td>
+                <td>${permit.status || 'N/A'}</td>
+                <td>${viewRemarksButton} ${downloadExcelButton} ${downloadPdfButton}</td>
+            `;
+            tableBody.appendChild(row);
+        };
+
+        // Populate Building Permits
+        if (!buildingPermitsSnapshot.empty) {
+            buildingPermitsSnapshot.forEach((permitDoc) => {
                 const permit = permitDoc.data();
-                console.log(permit); // Log the permit object to see its structure
-
-                // Check if the fields exist, or handle a default value
-                const ownerName = permit.ownerName || 'Unknown Owner'; // Assuming `ownerName` is a combined field in the document
-
-                const viewRemarksButton = `
-                    <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" data-id="${permitDoc.id}">
-                        <i class="fa-solid fa-comment"></i> Remarks
-                    </a>
-                `;
-                const downloadExcelButton = `
-                    <a class="btn btn-success text-white download-excel-btn" data-permit-id="${permitDoc.id}">
-                        <i class="fa-solid fa-download"></i> Excel
-                    </a>
-                `;
-                const downloadPdfButton = `
-                    <a class="btn btn-danger text-white download-pdf-btn" data-permit-id="${permitDoc.id}">
-                        <i class="fa-solid fa-file-pdf"></i> PDF
-                    </a>
-                `;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${ownerName}</td> <!-- Added column for owner name -->
-                    <td>Building Permit</td>
-                    <td>${permit.issuedOn || 'N/A'}</td>
-                    <td>${permit.status || 'N/A'}</td>
-                    <td>${viewRemarksButton} ${downloadExcelButton} ${downloadPdfButton}</td>
-                `;
-                tableBody.appendChild(row);
+                createTableRow(permit, "Building Permit", permitDoc.id);
             });
-        } else {
-            tableBody.innerHTML = '<tr><td colspan="5">No permits found.</td></tr>'; // Update colspan due to extra column
         }
+
+        // Populate Occupancy Permits
+        if (!occupancyPermitsSnapshot.empty) {
+            occupancyPermitsSnapshot.forEach((permitDoc) => {
+                const permit = permitDoc.data();
+                createTableRow(permit, "Certificate of Occupancy", permitDoc.id);
+            });
+        }
+
+        // If no permits found in both collections
+        if (buildingPermitsSnapshot.empty && occupancyPermitsSnapshot.empty) {
+            tableBody.innerHTML = '<tr><td colspan="5">No permits found.</td></tr>';
+        }
+
     } catch (error) {
         console.error("Error fetching permit status:", error);
     } finally {
         document.getElementById('fetching-loading-screen').style.display = 'none';
     }
 }
+
 
 //user manager
 // Reference to the 'users' collection

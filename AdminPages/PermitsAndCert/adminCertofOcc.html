@@ -144,38 +144,37 @@
         }
       }
     
-      // Load Occupancy profiles
       async function loadOccupancyProfiles() {
-        try {
-          const querySnapshot = await getDocs(collection(db, "OccupancyPermits"));
-          const profileTableBody = document.getElementById("profileTableBody");
-          if (!profileTableBody) {
+    try {
+        const querySnapshot = await getDocs(collection(db, "OccupancyPermits"));
+        const profileTableBody = document.getElementById("profileTableBody");
+        if (!profileTableBody) {
             console.error("profileTableBody not found in the DOM.");
             return;
-          }
-          profileTableBody.innerHTML = "";
-    
-          for (const docSnapshot of querySnapshot.docs) {
+        }
+        profileTableBody.innerHTML = "";
+
+        for (const docSnapshot of querySnapshot.docs) {
             const data = docSnapshot.data();
             const row = document.createElement("tr");
-    
+
             // Fetch representative user data
-            let representativeName = 'N/A'; // Default value in case ownerUid is missing or user is not found
-            if (data.ownerUid) {
-              try {
-                const userRef = doc(db, 'users', data.ownerUid);
-                const userDoc = await getDoc(userRef);
-                if (userDoc.exists()) {
-                  const userData = userDoc.data();
-                  representativeName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+            let representativeName = 'N/A';  // Default value if ownerUid is missing or user not found
+            if (data.userId) {  // Make sure to use the correct key (userId or ownerUid)
+                try {
+                    const userRef = doc(db, 'users', data.userId);  // Use userId to find user details
+                    const userDoc = await getDoc(userRef);
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        representativeName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
                 }
-              } catch (error) {
-                console.error("Error fetching user data:", error);
-              }
             }
-    
+
             const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : 'Unknown Date';
-    
+
             row.innerHTML = `
               <td>${data.ownerName || 'No Name'}</td>
               <td>${representativeName}</td> 
@@ -206,52 +205,52 @@
               <td><button class="btn btn-primary btn-sm">View Details</button></td>
             `;
             profileTableBody.appendChild(row);
-    
+
             // Add event listener for status change
             const statusSelect = row.querySelector(".status-select");
             if (statusSelect) {
-              statusSelect.addEventListener("change", async (event) => {
-                const newStatus = event.target.value;
-                if (data.status !== newStatus) {
-                  const message = `${data.ownerName || 'An occupancy permit'} is now ${newStatus.toLowerCase()}`;
-    
-                  // Trigger notification
-                  showNotification(message, 'info');
-    
-                  // Store the notification in Firestore
-                  try {
-                    await addDoc(collection(db, "notifications"), {
-                      userId: data.ownerUid, // Associate the notification with the user
-                      message: message,
-                      permitId: docSnapshot.id,
-                      timestamp: serverTimestamp(), // Use server timestamp here
-                      read: false // Mark the notification as unread initially
-                    });
-                  } catch (error) {
-                    console.error("Error storing notification:", error);
-                  }
-    
-                  // Update status in Firestore
-                  try {
-                    await updateDoc(doc(db, 'OccupancyPermits', docSnapshot.id), { status: newStatus });
-                  } catch (error) {
-                    console.error("Error updating permit status:", error);
-                  }
-                }
-              });
+                statusSelect.addEventListener("change", async (event) => {
+                    const newStatus = event.target.value;
+                    if (data.status !== newStatus) {
+                        const message = `${data.ownerName || 'An occupancy permit'} is now ${newStatus.toLowerCase()}`;
+
+                        // Trigger notification
+                        showNotification(message, 'info');
+
+                        // Store the notification in Firestore
+                        try {
+                            await addDoc(collection(db, "notifications"), {
+                                userId: data.userId,  // Use the correct key
+                                message: message,
+                                permitId: docSnapshot.id,
+                                timestamp: serverTimestamp(),
+                                read: false
+                            });
+                        } catch (error) {
+                            console.error("Error storing notification:", error);
+                        }
+
+                        // Update status in Firestore
+                        try {
+                            await updateDoc(doc(db, 'OccupancyPermits', docSnapshot.id), { status: newStatus });
+                        } catch (error) {
+                            console.error("Error updating permit status:", error);
+                        }
+                    }
+                });
             }
-          }
-    
-          // Attach button listeners
-          attachSaveButtonListenersOccupancy();
-          attachArchiveButtonListenersOccupancy();
-          attachEditButtonListenersOccupancy();
-          attachRemarksButtonListenersOccupancy();
-        } catch (error) {
-          console.error("Error loading profiles:", error);
         }
-      }
-    
+
+        // Attach button listeners
+        attachSaveButtonListenersOccupancy();
+        attachArchiveButtonListenersOccupancy();
+        attachEditButtonListenersOccupancy();
+        attachRemarksButtonListenersOccupancy();
+    } catch (error) {
+        console.error("Error loading profiles:", error);
+    }
+}
+
       // Function to handle saving an occupancy permit
       async function handleSaveOccupancyPermit(event) {
         event.preventDefault();
