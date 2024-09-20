@@ -46,6 +46,11 @@
         .d-flex .me-2 {
             margin-right: 1rem; /* Add margin to the right of the input */
         }
+        .required-asterisk {
+    color: red;
+    font-weight: bold;
+}
+
     </style>
 
 <style>
@@ -254,7 +259,7 @@
                 </div>
                     <form>
                         <p>Note: Fill up all the fields to proceed to the next step.</p>
-                        <p><i>Required fields are marked with *</i></p>
+                        <p><i>Required fields are marked with <span class="required-asterisk">*</span></i></p>
                         <div class="mb-3">
                             <div class="d-flex col-md-6">
                                 <input type="text" class="form-control me-2" id="hsdFormNo" placeholder="HSD Form No.1" disabled>
@@ -278,46 +283,53 @@
                       <div class="row g-3">
     <label for="ownerName">Owner/Applicant Name:</label>
     <div class="col-md-3">
+        <label for="ownerLastName">Last Name<span class="required-asterisk">*</span></label>
         <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name" required>
     </div>
     <div class="col-md-3">
+        <label for="ownerFirstName">First Name<span class="required-asterisk">*</span></label>
         <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name*" required>
     </div>
     <div class="col-md-3">
+        <label for="ownerMiddleName">Middle Name</label>
         <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
     </div>
     <div class="col-md-3">
+        <label for="ownerMaidenName">Maiden Name</label>
         <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
     </div>
 </div>
 
 
 <div class="mb-3">
-    <label for="phoneNumber" class="form-label">Phone Number*</label>
-    <input type="text" class="form-control" id="phoneNumber" value="+63" required>
+    <label for="phoneNumber" class="form-label">Phone Number<span class="required-asterisk">*</span></label>
+    <input type="text" class="form-control" id="phoneNumber" value="+63" placeholder="XXXXXXXXX" required>
 </div>
 
 
 
                         <div class="row g-3">
                             <div class="col-md-6">
+                                <label for="addressTelNo">Address<span class="required-asterisk">*</span></label>
                                 <input type="text" class="form-control" id="addressTelNo" placeholder="Address*" required>
                             </div>
 
 
                             <div class="col-md-6">
+                                <label for="projectLocation">Project Location<span class="required-asterisk">*</span></label>
                                 <input type="text" class="form-control" id="projectLocation" placeholder="Project Location*" required>
                             </div>
                         </div>
 
                         <div class="row g-3">
                             <div class="col-md-6">
+                                <label for="TelNo">Telephone</label>
                                 <input type="text" class="form-control" id="TelNo" placeholder="Telephone No.">
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="row g-3">
-                                <label for="form-check" class="form-label">Scope of Work*</label>
+                                <label for="form-check" class="form-label">Scope of Work<span class="required-asterisk">*</span></label>
                                 <div class="col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="scopeOfWork" value="option1" id="option1" required>
@@ -344,7 +356,7 @@
                         
                         <div class="mb-3">
                             <div class="row g-3">
-                                <label for="form-check" class="form-label">Project Justification*</label>
+                                <label for="form-check" class="form-label">Project Justification<span class="required-asterisk">*</span></label>
                                 <div class="col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="projectJustification" value="justification1" id="justification1" required>
@@ -366,24 +378,30 @@
                         
                             <div class="row mb-3">
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Block number*" required>
+                                    <label for="blockNumber">Block Number<span class="required-asterisk">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Block number" id="blockNumber" required>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Lot number*" required>
+                                    <label for="lotNumber">Lot Number<span class="required-asterisk">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Lot number"  id="lotNumber" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="No. of Units*" required>
+                                    <label for="NOUnits">Number of Units<span class="required-asterisk">*</span></label>
+                                    <input type="text" class="form-control" placeholder="No. of Units" id="NOUnits" required>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Floor Area Per Unit*" required>
+                                    <label for="FloorArea">Floor Area Per Unit<span class="required-asterisk">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Floor Area Per Unit" id="FloorArea" required>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Total Floor Area*" required>
+                                    <label for="TotalFloorArea">Total Floor Area<span class="required-asterisk">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Total Floor Area" id="TotalFloorArea" required>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Total Estimated Cost*" required>
+                                    <label for="TotalEstimatedCost">Total Estimated Cost<span class="required-asterisk">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Total Estimated Cost" id="TotalEstimatedCost" required>
                                 </div>
                             </div>
                         </div>
@@ -629,14 +647,6 @@
                     <h5 class="text-center mt-5 mb-4">Appointment Schedule</h5>
                     <div class="row">
                         <div class="col-md-3"></div> <!-- Empty column for spacing -->
-                        <!--<div class="col-md-6">
-                           <img class="img-fluid" src="/resources/pictures/calendar.png">
-
-                            
-                        </div>
-
-                    -->
-                     
 
                         <div class="row justify-content-center">
                           <div class="col-md-6">
@@ -1103,6 +1113,59 @@ window.onload = toggleOtherScopeInput;
 
 </script>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+    authDomain: "chsd-mis.firebaseapp.com",
+    projectId: "chsd-mis",
+    storageBucket: "chsd-mis.appspot.com",
+    messagingSenderId: "694967679357",
+    appId: "1:694967679357:web:65cffd50f13739f934f414",
+    measurementId: "G-XBQTQFRLJ5"
+};
+
+
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+
+document.getElementById('submitProfile').addEventListener('click', async () => {
+    const appointmentDate = document.getElementById('appointmentDate').value;
+
+    if (!appointmentDate) {
+        alert('Please select a date for your appointment.');
+        return;
+    }
+
+    // Assuming the current user is logged in and we have their UID
+    const userId = auth.currentUser.uid;
+
+    try {
+        // Store the appointment date in the "buildingPermits" or other relevant collection
+        const permitRef = doc(db, "buildingPermits", userId); // Assuming userId is used to identify the permit
+        await updateDoc(permitRef, {
+            appointmentDate: new Date(appointmentDate) // Store as a Date object
+        });
+
+        alert("Appointment successfully set.");
+    } catch (error) {
+        console.error("Error saving appointment:", error);
+        alert("Failed to save appointment.");
+    }
+});
+
+
+</script>
 
 
 

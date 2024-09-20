@@ -522,7 +522,8 @@ function showNotification(message, type) {
     }
 }
 
-async function loadProfiles() {
+// Function to load building permits and display in the table
+async function loadProfiles() { 
     try {
         const querySnapshot = await getDocs(collection(db, "buildingPermits"));
         const buildingPermitDiv = document.getElementById("buildingPermitDiv");
@@ -537,8 +538,12 @@ async function loadProfiles() {
         }
         tableBody.innerHTML = "";
 
-        for (const docSnapshot of querySnapshot.docs) {
-            const data = docSnapshot.data();
+        // Convert querySnapshot to array and sort by createdAt field
+        const permitsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        permitsData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0)); // Sorting by timestamp (oldest to newest)
+
+        // Loop through sorted permits
+        for (const data of permitsData) {
             const row = document.createElement("tr");
 
             // Fetch representative user data
@@ -563,7 +568,7 @@ async function loadProfiles() {
                 <td>${representativeName}</td> 
                 <td>${createdAt}</td>
                 <td>
-                    <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${docSnapshot.id}">
+                    <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${data.id}">
                         <option value="Pending" ${data.status === "Pending" ? 'selected' : ''} ${data.status !== "Pending" ? 'disabled' : ''}>Pending</option>
                         <option value="Processing" ${data.status === "Processing" ? 'selected' : ''} ${(data.status !== "Pending" && data.status !== "Processing") ? 'disabled' : ''}>Processing</option>
                         <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''} ${(data.status !== "Processing" && data.status !== "To Pay") ? 'disabled' : ''}>To Pay</option>
@@ -578,10 +583,10 @@ async function loadProfiles() {
                             Actions
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item save-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-save"></i> Save</a></li>
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${docSnapshot.id}"><i class="fas fa-comment"></i> Remarks</a></li>
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#buildingPermitModal" data-permit-id="${docSnapshot.id}"><i class="fas fa-edit"></i> Edit</a></li>
-                            <li><a class="dropdown-item archive-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-archive"></i> Archive</a></li>
+                            <li><a class="dropdown-item save-btn" href="#" data-id="${data.id}"><i class="fas fa-save"></i> Save</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${data.id}"><i class="fas fa-comment"></i> Remarks</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#buildingPermitModal" data-permit-id="${data.id}"><i class="fas fa-edit"></i> Edit</a></li>
+                            <li><a class="dropdown-item archive-btn" href="#" data-id="${data.id}"><i class="fas fa-archive"></i> Archive</a></li>
                         </ul>
                     </div>
                 </td>
@@ -596,27 +601,26 @@ async function loadProfiles() {
                     const newStatus = event.target.value;
                     if (data.status !== newStatus) {
                         const message = `${data.ownerName}'s building permit is now ${newStatus.toLowerCase()}`;
-                        
+
                         // Trigger notification
                         showNotification(message, 'info');
 
                         // Store the notification in Firestore
                         try {
                             await addDoc(collection(db, "notifications"), {
-                                userId: data.ownerUid, // Associate the notification with the user
+                                userId: data.ownerUid,
                                 message: message,
-                                permitId: docSnapshot.id,
-                                timestamp: serverTimestamp(), // Use server timestamp here
-                                read: false // Mark the notification as unread initially
+                                permitId: data.id,
+                                timestamp: serverTimestamp(),
+                                read: false
                             });
-                            
                         } catch (error) {
                             console.error("Error storing notification:", error);
                         }
 
                         // Update status in Firestore
                         try {
-                            await updateDoc(doc(db, 'buildingPermits', docSnapshot.id), { status: newStatus });
+                            await updateDoc(doc(db, 'buildingPermits', data.id), { status: newStatus });
                         } catch (error) {
                             console.error("Error updating permit status:", error);
                         }
@@ -633,6 +637,7 @@ async function loadProfiles() {
         console.error("Error loading profiles:", error);
     }
 }
+
 
 
 
