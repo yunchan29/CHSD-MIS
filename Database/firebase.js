@@ -1206,7 +1206,7 @@ async function showRemarks(permitId) {
     }
 }
 
-async function loadUserPermitStatus() {
+async function loadUserPermitStatus() { 
     try {
         const user = auth.currentUser;
         if (!user) {
@@ -1234,13 +1234,25 @@ async function loadUserPermitStatus() {
         const occupancyPermitsQuery = query(occupancyPermitsRef, where("ownerUid", "==", user.uid));
         const occupancyPermitsSnapshot = await getDocs(occupancyPermitsQuery);
 
+        // Fetch Housing Applications
+        const housingApplicationsRef = collection(db, "Housing");
+        const housingApplicationsQuery = query(housingApplicationsRef, where("ownerUid", "==", user.uid));
+        const housingApplicationsSnapshot = await getDocs(housingApplicationsQuery);
+
         console.log("Building Permits Query Result:", buildingPermitsSnapshot.empty ? "No documents found." : `Found ${buildingPermitsSnapshot.size} documents`);
         console.log("Occupancy Permits Query Result:", occupancyPermitsSnapshot.empty ? "No documents found." : `Found ${occupancyPermitsSnapshot.size} documents`);
+        console.log("Housing Applications Query Result:", housingApplicationsSnapshot.empty ? "No documents found." : `Found ${housingApplicationsSnapshot.size} documents`);
 
-        // Helper function to create table rows
         const createTableRow = (permit, permitType, permitId) => {
             console.log("Creating table row for permit:", permit);
-            const ownerName = permit.ownerName || 'Unknown Owner';
+            
+            // Owner name logic
+            const ownerName = permit.ownerName || permit.householdHeadName || 'Unknown Owner';
+        
+            // Date logic: fallback to createdAt if issuedOn is not available
+            const issuedOnDate = permit.issuedOn || (permit.createdAt ? new Date(permit.createdAt.seconds * 1000).toLocaleDateString() : 'N/A');
+        
+            // Actions (View Remarks, Download Excel, Download PDF)
             const viewRemarksButton = `
                 <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" data-id="${permitId}">
                     <i class="fa-solid fa-comment"></i> Remarks
@@ -1256,16 +1268,21 @@ async function loadUserPermitStatus() {
                     <i class="fa-solid fa-file-pdf"></i> PDF
                 </a>
             `;
+        
+            // Create a new table row
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${ownerName}</td>
                 <td>${permitType}</td>
-                <td>${permit.issuedOn || 'N/A'}</td>
+                <td>${issuedOnDate}</td>
                 <td>${permit.status || 'N/A'}</td>
                 <td>${viewRemarksButton} ${downloadExcelButton} ${downloadPdfButton}</td>
             `;
+            
+            // Append the row to the table body
             tableBody.appendChild(row);
         };
+        
 
         // Populate Building Permits
         if (!buildingPermitsSnapshot.empty) {
@@ -1283,9 +1300,17 @@ async function loadUserPermitStatus() {
             });
         }
 
+        // Populate Housing Applications
+        if (!housingApplicationsSnapshot.empty) {
+            housingApplicationsSnapshot.forEach((applicationDoc) => {
+                const application = applicationDoc.data();
+                createTableRow(application, "Housing Application", applicationDoc.id);
+            });
+        }
+
         // If no permits found in both collections
-        if (buildingPermitsSnapshot.empty && occupancyPermitsSnapshot.empty) {
-            tableBody.innerHTML = '<tr><td colspan="5">No permits found.</td></tr>';
+        if (buildingPermitsSnapshot.empty && occupancyPermitsSnapshot.empty && housingApplicationsSnapshot.empty) {
+            tableBody.innerHTML = '<tr><td colspan="5">No permits or applications found.</td></tr>';
         }
 
     } catch (error) {

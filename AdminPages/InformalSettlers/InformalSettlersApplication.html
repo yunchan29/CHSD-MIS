@@ -84,12 +84,12 @@
     <div class="modal-dialog modal-dialog-centered wide-modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="housingApplicationModalLabel">Modal title</h1>
+          <h1 class="modal-title fs-5" id="housingApplicationModalLabel">Housing Application</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <div class="contentContainer">
-                <h4>Application</h4>
+            
+                
 
                
                 <div class="step-progress mb-4">
@@ -292,7 +292,7 @@
 
     <div class="row justify-content-end mt-4">
         <div class="col">
-            <button class="btn btn-primary" id="nextBtn1">Next</button>
+           
         </div>
     </div>
 </div>
@@ -361,8 +361,7 @@
 
                     <div class="row justify-content-end mt-4">
                         <div class="col">
-                            <button class="btn btn-secondary" id="prevBtn2">Previous</button>
-                            <button class="btn btn-primary" id="nextBtn2">Next</button>
+                           
                         </div>
                     </div>
 
@@ -514,17 +513,22 @@
                    
                     <div class="row justify-content-between mt-4">
                        <div class="col">
-                        <button class="btn btn-secondary" id="prevBtn3">Previous</button>
-                        <button class="btn btn-primary">Submit</button>
+                        
+                       
                        </div>
                     </div>
-                </div>
+                
             </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="modal-footer"> 
+            <button type="button" class="btn btn-primary" id="nextBtn1">Next</button>
+            <button type="button" class="btn btn-secondary" id="prevBtn2" style="display:none;">Previous</button>
+            <button type="button" class="btn btn-primary" id="nextBtn2" style="display:none;">Next</button>
+            <button type="button" class="btn btn-secondary" id="prevBtn3" style="display:none;">Previous</button>
+            <button type="button" class="btn btn-primary" id="submitBtn" style="display:none;">Submit</button>
         </div>
+        
+          
       </div>
     </div>
   </div>
@@ -538,38 +542,67 @@
 
     <script type="module" src="/Database/firebase.js"></script>
     <script>
-        // Function to show the next form step
-        function showNextStep(currentStep, nextStep) {
-            document.getElementById(`form-step-${currentStep}`).classList.remove('active');
-            document.getElementById(`form-step-${nextStep}`).classList.add('active');
-            document.getElementById(`step-${currentStep}`).classList.add('completed');
-            document.getElementById(`step-${nextStep}`).classList.add('active');
-            document.getElementById(`step-${currentStep}`).classList.remove('active');
-        }
+       // Function to show the next form step and control button visibility
+function showNextStep(currentStep, nextStep) {
+    document.getElementById(`form-step-${currentStep}`).classList.remove('active');
+    document.getElementById(`form-step-${nextStep}`).classList.add('active');
+    document.getElementById(`step-${currentStep}`).classList.add('completed');
+    document.getElementById(`step-${nextStep}`).classList.add('active');
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
 
-        // Function to show the previous form step
-        function showPreviousStep(currentStep, prevStep) {
-            document.getElementById(`form-step-${currentStep}`).classList.remove('active');
-            document.getElementById(`form-step-${prevStep}`).classList.add('active');
-            document.getElementById(`step-${currentStep}`).classList.remove('completed');
-            document.getElementById(`step-${prevStep}`).classList.add('active');
-        }
+    // Handle button visibility
+    handleButtonVisibility(nextStep);
+}
 
-        // Event Listeners for Next Buttons
-        document.getElementById('nextBtn1').addEventListener('click', function() {
-            showNextStep(1, 2);
-        });
-        document.getElementById('nextBtn2').addEventListener('click', function() {
-            showNextStep(2, 3);
-        });
+// Function to show the previous form step and control button visibility
+function showPreviousStep(currentStep, prevStep) {
+    document.getElementById(`form-step-${currentStep}`).classList.remove('active');
+    document.getElementById(`form-step-${prevStep}`).classList.add('active');
+    document.getElementById(`step-${currentStep}`).classList.remove('completed');
+    document.getElementById(`step-${prevStep}`).classList.add('active');
 
-        // Event Listeners for Previous Buttons
-        document.getElementById('prevBtn2').addEventListener('click', function() {
-            showPreviousStep(2, 1);
-        });
-        document.getElementById('prevBtn3').addEventListener('click', function() {
-            showPreviousStep(3, 2);
-        });
+    // Handle button visibility
+    handleButtonVisibility(prevStep);
+}
+
+// Function to handle button visibility based on the step
+function handleButtonVisibility(step) {
+    // Initially hide all buttons
+    document.getElementById('nextBtn1').style.display = 'none';
+    document.getElementById('prevBtn2').style.display = 'none';
+    document.getElementById('nextBtn2').style.display = 'none';
+    document.getElementById('prevBtn3').style.display = 'none';
+    document.getElementById('submitBtn').style.display = 'none';
+
+    // Show buttons based on the step
+    if (step === 1) {
+        document.getElementById('nextBtn1').style.display = 'inline-block';
+    } else if (step === 2) {
+        document.getElementById('prevBtn2').style.display = 'inline-block';
+        document.getElementById('nextBtn2').style.display = 'inline-block';
+    } else if (step === 3) {
+        document.getElementById('prevBtn3').style.display = 'inline-block';
+        document.getElementById('submitBtn').style.display = 'inline-block';
+    }
+}
+
+// Event Listeners for Next and Previous Buttons
+document.getElementById('nextBtn1').addEventListener('click', function() {
+    showNextStep(1, 2); // Move from step 1 to step 2
+});
+
+document.getElementById('nextBtn2').addEventListener('click', function() {
+    showNextStep(2, 3); // Move from step 2 to step 3
+});
+
+document.getElementById('prevBtn2').addEventListener('click', function() {
+    showPreviousStep(2, 1); // Move from step 2 to step 1
+});
+
+document.getElementById('prevBtn3').addEventListener('click', function() {
+    showPreviousStep(3, 2); // Move from step 3 to step 2
+});
+
     </script>
 </body>
 </html>
