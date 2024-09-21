@@ -51,6 +51,12 @@
     display: block; /* Show the active step */
 }
 
+.required-asterisk {
+    color: red !important; 
+    font-weight: bold !important; 
+    font-size: 1.2em !important; 
+  }
+
     </style>
 </head>
 <body>
@@ -173,7 +179,10 @@
                    
                   <!-- Form Steps -->
                    <form id="housingApplicationForm">
+
     <div class="form-step active" id="form-step-1">
+        <p>Note: Fill up all the fields to proceed to the next step.</p>
+                        <p><i>Required fields are marked with <span class="required-asterisk">*</span></i></p>
         <h5>Household Head Details</h5>
         <div class="row">
             <div class="col">
@@ -181,12 +190,12 @@
                 <input type="text" id="surveyNo" class="form-control">
             </div>
             <div class="col">
-                <label for="dateApplied">Date</label>
-                <input type="date" id="dateApplied" class="form-control">
+                <label for="dateApplied">Date<span class="required-asterisk">*</span></label>
+                <input type="date" id="dateApplied" class="form-control" required>
             </div>
             <div class="col">
-                <label for="barangay">Barangay</label>
-                <select class="form-control" id="barangay">
+                <label for="barangay">Barangay<span class="required-asterisk">*</span></label>
+                <select class="form-control" id="barangay" required>
                     <option value="">Select Barangay</option>
                     <option>Bagong Kalsada</option>
                     <option>Banadero</option>
@@ -232,8 +241,8 @@
                 
             </div>
             <div class="col">
-                <label for="sitioPurok">Sitio/Purok</label>
-                <select class="form-control" id="sitioPurok">
+                <label for="sitioPurok">Sitio/Purok<span class="required-asterisk">*</span></label>
+                <select class="form-control" id="sitioPurok" required>
                     <option value="">Select Purok/Sitio</option>
                     <option>Purok 1</option>
                     <option>Purok 2</option>
@@ -265,8 +274,8 @@
     
         <div class="row">
             <div class="col-md-4">
-               <label for="classificationArea">Classification Area</label>
-               <select class="form-control" id="classificationArea">
+               <label for="classificationArea">Classification Area<span class="required-asterisk">*</span></label>
+               <select class="form-control" id="classificationArea" required>
                 <option>Danger Zone</option>
                 <option>Not Danger Zone</option>
                </select>
@@ -281,19 +290,19 @@
     
         <div class="row">
             <div class="col-md-3">
-               <label for="householdBirthday">Date of Birth</label>
-               <input type="date" class="form-control" id="householdBirthday">
+               <label for="householdBirthday">Date of Birth<span class="required-asterisk">*</span></label>
+               <input type="date" class="form-control" id="householdBirthday" required>
             </div>
             <div class="col-md-3">
-                <label for="householdSex">Sex</label>
-                <select class="form-control" id="householdSex">
+                <label for="householdSex">Sex<span class="required-asterisk">*</span></label>
+                <select class="form-control" id="householdSex" required>
                     <option>Male</option>
                     <option>Female</option>
                 </select>
             </div>
             <div class="col-md-3">
-                <label for="householdCivilStatus">Civil Status</label>
-                <select class="form-control" id="householdCivilStatus">
+                <label for="householdCivilStatus">Civil Status<span class="required-asterisk">*</span></label>
+                <select class="form-control" id="householdCivilStatus" required>
                     <option>Single</option>
                     <option>Married</option>
                     <option>Live in</option>
@@ -308,12 +317,12 @@
     
         <div class="row">
             <div class="col-md-3">
-                <label for="householdLastName">Last Name</label>
-                <input type="text" class="form-control" id="householdLastName">
+                <label for="householdLastName">Last Name<span class="required-asterisk">*</span></label>
+                <input type="text" class="form-control" id="householdLastName" required>
             </div>
             <div class="col-md-3">
-                <label for="householdFirstName">First Name</label>
-                <input type="text" class="form-control" id="householdFirstName">
+                <label for="householdFirstName">First Name<span class="required-asterisk">*</span></label>
+                <input type="text" class="form-control" id="householdFirstName" required>
             </div>
             <div class="col-md-3">
                 <label for="householdMiddleName">Middle Name</label>
@@ -327,92 +336,111 @@
     
         <div class="row">
            <div class="col-md-6">
-            <label for="householdOccupation">Occupation</label>
-            <input type="text" class="form-control" id="householdOccupation">
+            <label for="householdOccupation">Occupation<span class="required-asterisk">*</span></label>
+            <input type="text" class="form-control" id="householdOccupation" required>
            </div>
     
            <div class="col-md-6">
-             <label for="householdPlaceOfWork">Place Of Work</label>
-             <input type="text" class="form-control" id="householdPlaceOfWork">
+             <label for="householdPlaceOfWork">Place Of Work<span class="required-asterisk">*</span></label>
+             <input type="text" class="form-control" id="householdPlaceOfWork" required>
            </div>
         </div>
     
         <div class="row">
             <div class="col">
-                <label for="householdAddress">Present Address</label>
-                <textarea class="form-control" id="householdAddress" rows="1"></textarea>
+                <label for="householdAddress">Present Address<span class="required-asterisk">*</span></label>
+                <textarea class="form-control" id="householdAddress" rows="1" required></textarea>
             </div>
         </div>
     
         <div class="row">
     
         </div>
-    
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Checkbox to toggle spouse fields -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="hasSpouse">
+                    <label class="form-check-label" for="hasSpouse">
+                        Check if you have a spouse
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        
+        <!-- Spouse fields -->
         <div class="row">
             <h5>Name of Spouse</h5>
         </div>
         <div class="row">
             <div class="col-md-3">
                 <label for="spouseLastName">Last Name</label>
-                <input type="text" class="form-control" id="spouseLastName">
+                <input type="text" class="form-control" id="spouseLastName" disabled>
             </div>
             <div class="col-md-3">
                 <label for="spouseFirstName">First Name</label>
-                <input type="text" class="form-control" id="spouseFirstName">
+                <input type="text" class="form-control" id="spouseFirstName" disabled>
             </div>
             <div class="col-md-3">
                 <label for="spouseMiddleName">Middle Name</label>
-                <input type="text" class="form-control" id="spouseMiddleName">
+                <input type="text" class="form-control" id="spouseMiddleName" disabled>
             </div>
             <div class="col-md-3">
                 <label for="spouseMaidenName">Maiden Name</label>
-                <input type="text" class="form-control" id="spouseMaidenName">
+                <input type="text" class="form-control" id="spouseMaidenName" disabled>
             </div>
         </div>
-    
+        
         <div class="row">
             <div class="col-md-3">
                 <label for="spouseBirthday">Date of Birth</label>
-                <input type="date" class="form-control" id="spouseBirthday">
+                <input type="date" class="form-control" id="spouseBirthday" disabled>
             </div>
         </div>
+        
     
         <div class="row">
             <div class="col-md-4">
-               <label for="classificationOfSurveyHousehold">Classification Of Survey Household</label>
-               <select class="form-control" id="classificationOfSurveyHousehold">
-                <option></option>
+               <label for="classificationOfSurveyHousehold">Classification Of Survey Household<span class="required-asterisk">*</span></label>
+               <select class="form-control" id="classificationOfSurveyHousehold" required>
+                <option>Caretaker</option>
+                <option>Co-Owner</option>
+                <option>Owner</option>
+                <option>Renter</option>
+                <option>RFO</option>
+                <option>Sharer</option>
                </select>
             </div>
             <div class="col-md-2">
-                <label for="householdAmount">Amount</label>
-                <input type="number" class="form-control" id="householdAmount">
+                <label for="householdAmount">Amount<span class="required-asterisk">*</span></label>
+                <input type="number" class="form-control" id="householdAmount" required>
             </div>
             <div class="col-md-6">
-                <label for="structureOwner">Structure Owner</label>
-                <input type="text" class="form-control" id="structureOwner">
+                <label for="structureOwner">Structure Owner<span class="required-asterisk">*</span></label>
+                <input type="text" class="form-control" id="structureOwner" required>
             </div>
         </div>
     
         <div class="row">
             <div class="col-md-6">
-                 <label for="provinceOfOrigin">Province Of Origin</label>
-                 <input type="text" class="form-control" id="provinceOfOrigin">
+                 <label for="provinceOfOrigin">Province Of Origin<span class="required-asterisk">*</span></label>
+                 <input type="text" class="form-control" id="provinceOfOrigin" required>
             </div>
             <div class="col-md-3">
-                <label for="householdSize">Household Size</label>
-                <input type="number" class="form-control" id="householdSize">
+                <label for="householdSize">Household Size<span class="required-asterisk">*</span></label>
+                <input type="number" class="form-control" id="householdSize" required>
             </div>
             <div class="col-md-3">
-                <label for="yearOfResidency">Year of Residency</label>
-                <input type="text" class="form-control" id="yearOfResidency">
+                <label for="yearOfResidency">Year of Residency<span class="required-asterisk">*</span></label>
+                <input type="text" class="form-control" id="yearOfResidency" required>
             </div>
         </div>
     
         <div class="row">
     
-            <label for="reasonsForEstablishing">Reasons For Establishing Residence In The Area</label>
-            <textarea class="form-control" id="reasonsForEstablishing"></textarea>
+            <label for="reasonsForEstablishing">Reasons For Establishing Residence In The Area<span class="required-asterisk">*</span></label>
+            <textarea class="form-control" id="reasonsForEstablishing" required></textarea>
         </div>
     
        
@@ -759,147 +787,183 @@
     <script src="/ClientPages/navBarScript.js"></script>
 
     <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Sidebar functionality
-    var sideNav = document.getElementById('side_nav');
-    var openBtn = document.querySelector('.open-btn');
-    var closeBtn = document.querySelector('.close-btn');
-    var dropdownItems = document.querySelectorAll('.sideNav.dropdown');
-    
-    // Toggle the sidebar for mobile view
-    openBtn?.addEventListener('click', function() {
-        sideNav.classList.add('active');
-    });
-    
-    closeBtn?.addEventListener('click', function() {
-        sideNav.classList.remove('active');
-    });
-    
-    // Handle dropdown in sidebar
-    dropdownItems.forEach(function(item) {
-        item.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevents clicks from closing the sidebar
-            this.classList.toggle('open');
+        document.addEventListener("DOMContentLoaded", function() {
+            // Sidebar functionality
+            var sideNav = document.getElementById('side_nav');
+            var openBtn = document.querySelector('.open-btn');
+            var closeBtn = document.querySelector('.close-btn');
+            var dropdownItems = document.querySelectorAll('.sideNav.dropdown');
+            
+            // Toggle the sidebar for mobile view
+            openBtn?.addEventListener('click', function() {
+                sideNav.classList.add('active');
+            });
+            
+            closeBtn?.addEventListener('click', function() {
+                sideNav.classList.remove('active');
+            });
+            
+            // Handle dropdown in sidebar
+            dropdownItems.forEach(function(item) {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevents clicks from closing the sidebar
+                    this.classList.toggle('open');
+                });
+            });
+            
+            // Close the sidebar when clicking outside of it (optional)
+            document.addEventListener('click', function(e) {
+                if (!sideNav.contains(e.target) && !openBtn.contains(e.target)) {
+                    sideNav.classList.remove('active');
+                }
+            });
+        
+            // Function to clear the active state from all steps
+            function clearActiveStates() {
+                var allSteps = document.querySelectorAll('.step');
+                allSteps.forEach(function(step) {
+                    step.classList.remove('active');  // Remove the active class from all steps
+                });
+            }
+        
+            // Function to show the next form step and update the progress bar
+            function showNextStep(currentStep, nextStep) {
+                var currentFormStep = document.getElementById(`form-step-${currentStep}`);
+                var nextFormStep = document.getElementById(`form-step-${nextStep}`);
+                var currentStepIndicator = document.getElementById(`step-${currentStep}`);
+                var nextStepIndicator = document.getElementById(`step-${nextStep}`);
+        
+                if (currentFormStep && nextFormStep) {
+                    // Hide the current form step
+                    currentFormStep.classList.remove('active');
+                    // Show the next form step
+                    nextFormStep.classList.add('active');
+        
+                    // Mark the current step as completed and not active anymore
+                    if (currentStepIndicator) {
+                        currentStepIndicator.classList.add('completed');
+                        currentStepIndicator.classList.remove('active');
+                    }
+        
+                    // Clear the active state of all steps
+                    clearActiveStates();
+        
+                    // Mark the next step as active
+                    if (nextStepIndicator) {
+                        nextStepIndicator.classList.add('active');
+                    }
+                }
+        
+                // Handle button visibility
+                handleButtonVisibility(nextStep);
+            }
+        
+            // Function to show the previous form step and update the progress bar
+            function showPreviousStep(currentStep, prevStep) {
+                var currentFormStep = document.getElementById(`form-step-${currentStep}`);
+                var prevFormStep = document.getElementById(`form-step-${prevStep}`);
+                var currentStepIndicator = document.getElementById(`step-${currentStep}`);
+                var prevStepIndicator = document.getElementById(`step-${prevStep}`);
+        
+                if (currentFormStep && prevFormStep) {
+                    // Hide the current form step
+                    currentFormStep.classList.remove('active');
+                    // Show the previous form step
+                    prevFormStep.classList.add('active');
+        
+                    // Clear the active state of all steps
+                    clearActiveStates();
+        
+                    // Mark the previous step as active
+                    if (prevStepIndicator) {
+                        prevStepIndicator.classList.add('active');
+                    }
+        
+                    // Do not remove the completed class, only remove active class from the current step
+                    if (currentStepIndicator) {
+                        currentStepIndicator.classList.remove('active');
+                    }
+                }
+        
+                // Handle button visibility
+                handleButtonVisibility(prevStep);
+            }
+        
+            // Function to control the visibility of the buttons based on the current step
+            function handleButtonVisibility(step) {
+                document.getElementById('nextBtn1').style.display = 'none';
+                document.getElementById('prevBtn2').style.display = 'none';
+                document.getElementById('nextBtn2').style.display = 'none';
+                document.getElementById('prevBtn3').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'none';
+        
+                if (step === 1) {
+                    document.getElementById('nextBtn1').style.display = 'inline-block';
+                } else if (step === 2) {
+                    document.getElementById('prevBtn2').style.display = 'inline-block';
+                    document.getElementById('nextBtn2').style.display = 'inline-block';
+                } else if (step === 3) {
+                    document.getElementById('prevBtn3').style.display = 'inline-block';
+                    document.getElementById('submitBtn').style.display = 'inline-block';
+                }
+            }
+        
+            // Form validation logic
+            const requiredFields = [
+                document.getElementById('dateApplied'),
+                document.getElementById('barangay'),
+                document.getElementById('sitioPurok'),
+                document.getElementById('classificationArea'),
+                document.getElementById('householdBirthday'),
+                document.getElementById('householdCivilStatus'),
+                document.getElementById('householdLastName'),
+                document.getElementById('householdFirstName'),
+                document.getElementById('householdOccupation'),
+                document.getElementById('householdPlaceOfWork'),
+                document.getElementById('householdAddress'),
+                document.getElementById('householdSex'),
+                document.getElementById('classificationOfSurveyHousehold'),
+                document.getElementById('householdAmount'),
+                document.getElementById('structureOwner'),
+                document.getElementById('provinceOfOrigin'),
+                document.getElementById('householdSize'),
+                document.getElementById('yearOfResidency'),
+                document.getElementById('reasonsForEstablishing')
+            ];
+        
+            const nextBtn1 = document.getElementById('nextBtn1');
+            nextBtn1.disabled = true; // Disable button initially
+        
+            // Function to check if all required fields are filled
+            function checkFormValidity() {
+                const allFilled = requiredFields.every(input => input.value.trim() !== '');
+                nextBtn1.disabled = !allFilled; // Enable button only if all fields are filled
+            }
+        
+            // Attach event listeners to all required fields
+            requiredFields.forEach(field => {
+                field.addEventListener('input', checkFormValidity); // Check on every input change
+            });
+        
+            // Event Listeners for the buttons
+            document.getElementById('nextBtn1').addEventListener('click', function() {
+                showNextStep(1, 2); // Move from step 1 to step 2
+            });
+        
+            document.getElementById('nextBtn2').addEventListener('click', function() {
+                showNextStep(2, 3); // Move from step 2 to step 3
+            });
+        
+            document.getElementById('prevBtn2').addEventListener('click', function() {
+                showPreviousStep(2, 1); // Move from step 2 back to step 1
+            });
+        
+            document.getElementById('prevBtn3').addEventListener('click', function() {
+                showPreviousStep(3, 2); // Move from step 3 back to step 2
+            });
         });
-    });
-    
-    // Close the sidebar when clicking outside of it (optional)
-    document.addEventListener('click', function(e) {
-        if (!sideNav.contains(e.target) && !openBtn.contains(e.target)) {
-            sideNav.classList.remove('active');
-        }
-    });
-
-    // Function to clear the active state from all steps
-    function clearActiveStates() {
-        var allSteps = document.querySelectorAll('.step');
-        allSteps.forEach(function(step) {
-            step.classList.remove('active');  // Remove the active class from all steps
-        });
-    }
-
-    // Function to show the next form step and update the progress bar
-    function showNextStep(currentStep, nextStep) {
-        var currentFormStep = document.getElementById(`form-step-${currentStep}`);
-        var nextFormStep = document.getElementById(`form-step-${nextStep}`);
-        var currentStepIndicator = document.getElementById(`step-${currentStep}`);
-        var nextStepIndicator = document.getElementById(`step-${nextStep}`);
-
-        if (currentFormStep && nextFormStep) {
-            // Hide the current form step
-            currentFormStep.classList.remove('active');
-            // Show the next form step
-            nextFormStep.classList.add('active');
-
-            // Mark the current step as completed and not active anymore
-            if (currentStepIndicator) {
-                currentStepIndicator.classList.add('completed');
-                currentStepIndicator.classList.remove('active');
-            }
-
-            // Clear the active state of all steps
-            clearActiveStates();
-
-            // Mark the next step as active
-            if (nextStepIndicator) {
-                nextStepIndicator.classList.add('active');
-            }
-        }
-
-        // Handle button visibility
-        handleButtonVisibility(nextStep);
-    }
-
-    // Function to show the previous form step and update the progress bar
-    function showPreviousStep(currentStep, prevStep) {
-        var currentFormStep = document.getElementById(`form-step-${currentStep}`);
-        var prevFormStep = document.getElementById(`form-step-${prevStep}`);
-        var currentStepIndicator = document.getElementById(`step-${currentStep}`);
-        var prevStepIndicator = document.getElementById(`step-${prevStep}`);
-
-        if (currentFormStep && prevFormStep) {
-            // Hide the current form step
-            currentFormStep.classList.remove('active');
-            // Show the previous form step
-            prevFormStep.classList.add('active');
-
-            // Clear the active state of all steps
-            clearActiveStates();
-
-            // Mark the previous step as active
-            if (prevStepIndicator) {
-                prevStepIndicator.classList.add('active');
-            }
-
-            // Do not remove the completed class, only remove active class from the current step
-            if (currentStepIndicator) {
-                currentStepIndicator.classList.remove('active');
-            }
-        }
-
-        // Handle button visibility
-        handleButtonVisibility(prevStep);
-    }
-
-    // Function to control the visibility of the buttons based on the current step
-    function handleButtonVisibility(step) {
-        document.getElementById('nextBtn1').style.display = 'none';
-        document.getElementById('prevBtn2').style.display = 'none';
-        document.getElementById('nextBtn2').style.display = 'none';
-        document.getElementById('prevBtn3').style.display = 'none';
-        document.getElementById('submitBtn').style.display = 'none';
-
-        if (step === 1) {
-            document.getElementById('nextBtn1').style.display = 'inline-block';
-        } else if (step === 2) {
-            document.getElementById('prevBtn2').style.display = 'inline-block';
-            document.getElementById('nextBtn2').style.display = 'inline-block';
-        } else if (step === 3) {
-            document.getElementById('prevBtn3').style.display = 'inline-block';
-            document.getElementById('submitBtn').style.display = 'inline-block';
-        }
-    }
-
-    // Event Listeners for the buttons
-    document.getElementById('nextBtn1').addEventListener('click', function() {
-        showNextStep(1, 2); // Move from step 1 to step 2
-    });
-
-    document.getElementById('nextBtn2').addEventListener('click', function() {
-        showNextStep(2, 3); // Move from step 2 to step 3
-    });
-
-    document.getElementById('prevBtn2').addEventListener('click', function() {
-        showPreviousStep(2, 1); // Move from step 2 back to step 1
-    });
-
-    document.getElementById('prevBtn3').addEventListener('click', function() {
-        showPreviousStep(3, 2); // Move from step 3 back to step 2
-    });
-});
-
-
         </script>
+        
 
 
 
@@ -1065,6 +1129,34 @@ housingModal.hide();
 }
 </script>
 
+<!--Spouse Checkbox Script-->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Spouse-related input fields
+    const spouseFields = [
+        document.getElementById("spouseLastName"),
+        document.getElementById("spouseFirstName"),
+        document.getElementById("spouseMiddleName"),
+        document.getElementById("spouseMaidenName"),
+        document.getElementById("spouseBirthday")
+    ];
+
+    // Checkbox to toggle spouse fields
+    const hasSpouseCheckbox = document.getElementById("hasSpouse");
+
+    // Function to enable/disable spouse fields
+    function toggleSpouseFields() {
+        const isChecked = hasSpouseCheckbox.checked;
+        spouseFields.forEach(field => {
+            field.disabled = !isChecked;
+        });
+    }
+
+    // Add event listener to the checkbox
+    hasSpouseCheckbox.addEventListener("change", toggleSpouseFields);
+});
+
+</script>
 
 
     
