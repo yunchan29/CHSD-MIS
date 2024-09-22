@@ -8,6 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        .modal-backdrop {
+    z-index: 1040 !important; /* Make sure the z-index is set correctly */
+}
+
         /* CSS for the content container */
         .content {
             flex: 1; /* Take remaining space */
@@ -127,27 +131,31 @@
                             
                         </div>
                     </div>
-             <div id="buildingPermitDiv">
-              
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Owner</th>
-                                <th>Representative</th>
-                                <th>Submitted at</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                        </tbody>
-                       
-                    </table>
-                   <!-- Button trigger modal -->
-
-                   
+                    <div id="buildingPermitDiv">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Owner</th>
+                                    <th>Representative</th>
+                                    <th>Submitted at</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Profile rows will be loaded here -->
+                            </tbody>
+                        </table>
                     </div>
+                    
+                    <!-- Pagination Controls -->
+                    <div class="pagination-controls text-center">
+                        <button id="prevPageBtn" class="btn btn-primary" disabled>Previous</button>
+                        <span id="pageInfo"></span>
+                        <button id="nextPageBtn" class="btn btn-primary">Next</button>
+                    </div>
+                    
+                    
 
             
   <!-- Application Modal -->
@@ -433,26 +441,26 @@
 <!--Remarks Checker-->
 
   
-  <!-- Modal -->
+  <!-- Remarks Modal -->
   <div class="modal fade" id="remarksChecker" tabindex="-1" aria-labelledby="remarksCheckerLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="remarksCheckerLabel">All Remarks</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="remarksCheckerLabel">All Remarks</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="existing-remarks">
+                    <!-- Load existing remarks here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
         </div>
-        <div class="modal-body">
-           <div id="existing-remarks">
-
-           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
 
 
@@ -480,7 +488,10 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
+
+
+
   
 
   <!--QR Code Scanner-->
@@ -773,6 +784,86 @@ document.querySelectorAll(".view-details-btn").forEach((button) => {
     });
 });
 
+async function loadRemarks(permitId) {
+    try {
+        const remarksContent = document.getElementById('remarks-content');
+        remarksContent.innerHTML = ''; // Clear previous remarks
+
+        const remarksRef = collection(db, "remarks");
+        const q = query(remarksRef, where("buildingPermitId", "==", permitId));
+        const remarksSnapshot = await getDocs(q);
+
+        if (remarksSnapshot.empty) {
+            remarksContent.innerHTML = '<p>No remarks available.</p>';
+        } else {
+            remarksSnapshot.forEach(doc => {
+                const remark = doc.data();
+                const remarkDiv = document.createElement('div');
+                remarkDiv.className = 'remark mb-2';
+                const remarkText = remark.text || 'No text';
+                const remarkTimestamp = remark.timestamp ? new Date(remark.timestamp.seconds * 1000).toLocaleString() : 'No timestamp';
+                remarkDiv.innerHTML = `
+                    <div style="border:1px solid black; border-radius:12px; margin:1%; padding:10px;">
+                        <p>${remarkText}</p>
+                        <small>Posted by: ${remark.userName || 'Unknown'} on ${remarkTimestamp}</small>
+                    </div>
+                `;
+                remarksContent.appendChild(remarkDiv);
+            });
+        }
+
+        // Only show the modal after the remarks are loaded
+        const remarksModal = new bootstrap.Modal(document.getElementById('remarksModal1'));
+        remarksModal.show();
+
+    } catch (error) {
+        console.error("Error loading remarks:", error);
+        document.getElementById('remarks-content').innerText = 'Error loading remarks';
+    }
+}
+
+async function openRemarksModal(permitId) {
+    await loadRemarks(permitId); // Ensure remarks are loaded first
+    const remarksModal = new bootstrap.Modal(document.getElementById('remarksModal1'));
+    remarksModal.show(); // Then show the modal
+}
+
+// Function to attach event listeners for remarks buttons
+function attachRemarksListeners() {
+    const remarksButtons = document.querySelectorAll('.remarks-btn');
+    remarksButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            const permitId = button.getAttribute('data-permit-id');
+            if (permitId) {
+                openRemarksModal(permitId); // Unified modal opening function
+            }
+        });
+    });
+}
+
+
+// Attach event listeners on page load
+document.addEventListener('DOMContentLoaded', () => {
+    attachRemarksListeners();
+});
+
+
+
+
+</script>
+
+<script>
+document.getElementById('remarksModal1').addEventListener('hidden.bs.modal', function () {
+    const modalBackdrop = document.querySelector('.modal-backdrop');
+    if (modalBackdrop) {
+        modalBackdrop.remove();
+    }
+    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('remarksModal1'));
+    if (modalInstance) {
+        modalInstance.dispose(); // Dispose of the modal instance to prevent buildup
+    }
+});
 
 </script>
 </body>

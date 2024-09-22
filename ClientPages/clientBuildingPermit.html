@@ -465,11 +465,11 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                            <div class="drag-drop-area" ondrop="handleDrop(event, 'buildingPlanFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file here</p>
-                              </div>
+                            </div>
                             <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                            <input type="file" class="file-input" id="buildingPlanFile" onchange="uploadFile(this)">
                         </div>
                     </td>
                 </tr>
@@ -478,14 +478,15 @@
                     <td class="file-column"></td>
                     <td>
                         <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                            <div class="drag-drop-area" ondrop="handleDrop(event, 'proofOwnershipFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file here</p>
-                              </div>
+                            </div>
                             <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                            <input type="file" class="file-input" id="proofOwnershipFile" onchange="uploadFile(this)">
                         </div>
                     </td>
                 </tr>
+                
                 <tr>
                     <td>Photocopy of tax declaration & current tax receipt</td>
                     <td class="file-column"></td>
@@ -999,7 +1000,7 @@ termsCheckbox.addEventListener('change', updateProceedButton);
 
     
     <script>
-       function uploadFile(input) {
+     function uploadFile(input) {
     const file = input.files[0];
     if (file) {
         const reader = new FileReader();
@@ -1014,7 +1015,7 @@ termsCheckbox.addEventListener('change', updateProceedButton);
             const fileColumn = input.closest('tr').querySelector('.file-column');
             fileColumn.innerHTML = fileItem;
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file);  // Read the file for preview (if needed)
     }
 }
 
@@ -1022,7 +1023,7 @@ function deleteFile(deleteBtn, inputId) {
     const fileItem = deleteBtn.closest('.file-item');
     if (fileItem) {
         fileItem.remove();
-        // Clear the associated file input value to allow re-uploading if needed
+        // Clear the associated file input to allow re-uploading
         document.getElementById(inputId).value = '';
     }
 }
@@ -1039,19 +1040,19 @@ function formatBytes(bytes, decimals = 2) {
 function handleDragOver(event) {
     event.preventDefault();
     event.stopPropagation();
-    event.dataTransfer.dropEffect = 'copy';
+    event.dataTransfer.dropEffect = 'copy';  // Ensure the file is accepted
 }
 
 function handleDrop(event) {
     event.preventDefault();
     event.stopPropagation();
 
-    const files = event.dataTransfer.files;
+    const files = event.dataTransfer.files;  // Get dropped files
     const inputFileElement = event.target.querySelector('.file-input');
 
     if (inputFileElement && files.length > 0) {
-        inputFileElement.files = files;
-        uploadFile(inputFileElement);  // Call your existing file upload function
+        inputFileElement.files = files;  // Assign dropped files to input element
+        uploadFile(inputFileElement);  // Trigger file upload function
     }
 }
 
@@ -1115,12 +1116,13 @@ window.onload = toggleOtherScopeInput;
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, arrayUnion, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
     // Firebase configuration
-    const firebaseConfig = {
+ // Firebase configuration
+const firebaseConfig = {
     apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
     authDomain: "chsd-mis.firebaseapp.com",
     projectId: "chsd-mis",
@@ -1130,35 +1132,69 @@ window.onload = toggleOtherScopeInput;
     measurementId: "G-XBQTQFRLJ5"
 };
 
+
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    // Handle both file upload and appointment date submission when 'Finish' button is clicked
-    document.getElementById('submitProfile').addEventListener('click', async () => {
-        const appointmentDate = document.getElementById('appointmentDate').value;
-        const buildingPlanFile = document.getElementById('buildingPlanFile').files[0];  
-        const proofOwnershipFile = document.getElementById('proofOwnershipFile').files[0];
+    // Main function to handle permit and file upload
+    document.getElementById('submitProfile').addEventListener('click', async (event) => {
+        event.preventDefault();
+        console.log("Submit button clicked.");
+
+        // Fetch values from form
+        const buildingPermitNo = document.getElementById('buildingPermitNo').value;
+        const issuedOn = document.getElementById('basic-url').value;
+        const addressTelNo = document.getElementById('addressTelNo').value;
+        const projectLocation = document.getElementById('projectLocation').value;
+        const hsdFormNo = document.getElementById('hsdFormNo').value;
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const ownerLastName = document.getElementById('ownerLastName').value;
+        const ownerFirstName = document.getElementById('ownerFirstName').value;
+        const ownerMiddleName = document.getElementById('ownerMiddleName').value;
+        const ownerMaidenName = document.getElementById('ownerMaidenName').value;
+        const ownerEmail = document.getElementById('ownerEmail') ? document.getElementById('ownerEmail').value : null;
+
+        const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
+        const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked').nextElementSibling.textContent;
+        const projectJustification = document.querySelector('input[name="projectJustification"]:checked').nextElementSibling.textContent;
+        const otherScopeInput = document.getElementById("otherScopeInput").value;
+        const finalScopeOfWork = (scopeOfWork === 'Others' && otherScopeInput) ? otherScopeInput : scopeOfWork;
+
+        // File upload input elements
+        const buildingPlanFileInput = document.getElementById('buildingPlanFile');
+        const proofOwnershipFileInput = document.getElementById('proofOwnershipFile');
 
         // Validate required fields
-        if (!buildingPlanFile || !proofOwnershipFile) {
+        if (!buildingPlanFileInput.files[0] || !proofOwnershipFileInput.files[0]) {
             alert('Please upload all required files.');
+            console.log("File validation failed. Missing files.");
             return;
         }
-        
+
+        const appointmentDate = document.getElementById('appointmentDate').value;
         if (!appointmentDate) {
             alert('Please select a date for your appointment.');
+            console.log("Date validation failed. Missing appointment date.");
             return;
         }
+
+        // Show loading screen
+        document.getElementById('loading-screen').style.display = 'flex';
 
         try {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
+                    console.log("User authenticated. UserID: ", user.uid);
                     const userId = user.uid;
 
                     // Upload files to Firebase Storage
+                    console.log("Uploading files to Firebase Storage...");
+                    const buildingPlanFile = buildingPlanFileInput.files[0];
+                    const proofOwnershipFile = proofOwnershipFileInput.files[0];
+
                     const buildingPlanRef = ref(storage, `buildingPermits/${userId}/buildingPlan_${buildingPlanFile.name}`);
                     const proofOwnershipRef = ref(storage, `buildingPermits/${userId}/proofOwnership_${proofOwnershipFile.name}`);
 
@@ -1172,25 +1208,47 @@ window.onload = toggleOtherScopeInput;
                     const proofOwnershipURL = await getDownloadURL(proofOwnershipSnapshot.ref);
 
                     // Save metadata and appointment date to Firestore
-                    const permitDocRef = doc(db, "buildingPermits", userId);
-                    await setDoc(permitDocRef, {
-                        buildingPlanURL: buildingPlanURL,
-                        proofOwnershipURL: proofOwnershipURL,
-                        appointmentDate: new Date(appointmentDate),  // Store appointment date
+                    console.log("Saving metadata and appointment date to Firestore...");
+                    const permitDocRef = await addDoc(collection(db, "buildingPermits"), {
+                        buildingPermitNo,
+                        issuedOn,
+                        ownerName,
+                        phoneNumber,
+                        addressTelNo,
+                        projectLocation,
+                        hsdFormNo,
+                        scopeOfWork: finalScopeOfWork,
+                        projectJustification,
+                        buildingPlanURL,
+                        proofOwnershipURL,
+                        appointmentDate: new Date(appointmentDate),
                         status: 'Pending',
-                        createdAt: serverTimestamp()
+                        createdAt: Timestamp.now(),
+                        ownerUid: userId
                     });
 
-                    alert("Application successfully submitted with files and appointment date.");
+                    // Update user record with permit information
+                    await updateDoc(doc(db, 'users', userId), {
+                        buildingPermits: arrayUnion({
+                            permitId: permitDocRef.id,
+                            buildingPermitNo,
+                            issuedOn,
+                            status: 'Pending',
+                            projectLocation
+                        })
+                    });
 
-                    // Optionally, clear file inputs after submission
-                    document.getElementById('buildingPlanFile').value = '';
-                    document.getElementById('proofOwnershipFile').value = '';
+                    console.log("Data successfully saved to Firestore.");
+
+                    // Clear file inputs and form fields
+                    buildingPlanFileInput.value = '';
+                    proofOwnershipFileInput.value = '';
                     document.getElementById('appointmentDate').value = '';
 
-                    // Open success modal
+                    // Show success modal
                     const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
                     applicationModal.show();
+
                 } else {
                     console.error("No user is authenticated.");
                     alert("You must be logged in to submit this form.");
@@ -1199,6 +1257,9 @@ window.onload = toggleOtherScopeInput;
         } catch (error) {
             console.error("Error submitting application:", error);
             alert("Failed to submit application. Please try again.");
+        } finally {
+            // Hide loading screen
+            document.getElementById('loading-screen').style.display = 'none';
         }
     });
 </script>
@@ -1206,9 +1267,19 @@ window.onload = toggleOtherScopeInput;
 
 
 
+
   
 
+<script>
+    document.getElementById('applicationAppliedModal').addEventListener('hidden.bs.modal', function () {
+    // Remove the modal backdrop manually if it remains
+    const modalBackdrop = document.querySelector('.modal-backdrop');
+    if (modalBackdrop) {
+        modalBackdrop.remove();
+    }
+});
 
+</script>
 
     
     
