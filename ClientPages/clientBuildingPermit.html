@@ -948,7 +948,7 @@ termsCheckbox.addEventListener('change', updateProceedButton);
 </script>
 
 
-<<script>
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         let currentStep = 1; // Start from the first step
 
@@ -1114,13 +1114,13 @@ window.onload = toggleOtherScopeInput;
 </script>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-// Firebase configuration
-const firebaseConfig = {
+    // Firebase configuration
+    const firebaseConfig = {
     apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
     authDomain: "chsd-mis.firebaseapp.com",
     projectId: "chsd-mis",
@@ -1130,42 +1130,79 @@ const firebaseConfig = {
     measurementId: "G-XBQTQFRLJ5"
 };
 
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
+    // Handle both file upload and appointment date submission when 'Finish' button is clicked
+    document.getElementById('submitProfile').addEventListener('click', async () => {
+        const appointmentDate = document.getElementById('appointmentDate').value;
+        const buildingPlanFile = document.getElementById('buildingPlanFile').files[0];  
+        const proofOwnershipFile = document.getElementById('proofOwnershipFile').files[0];
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+        // Validate required fields
+        if (!buildingPlanFile || !proofOwnershipFile) {
+            alert('Please upload all required files.');
+            return;
+        }
+        
+        if (!appointmentDate) {
+            alert('Please select a date for your appointment.');
+            return;
+        }
 
+        try {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const userId = user.uid;
 
-document.getElementById('submitProfile').addEventListener('click', async () => {
-    const appointmentDate = document.getElementById('appointmentDate').value;
+                    // Upload files to Firebase Storage
+                    const buildingPlanRef = ref(storage, `buildingPermits/${userId}/buildingPlan_${buildingPlanFile.name}`);
+                    const proofOwnershipRef = ref(storage, `buildingPermits/${userId}/proofOwnership_${proofOwnershipFile.name}`);
 
-    if (!appointmentDate) {
-        alert('Please select a date for your appointment.');
-        return;
-    }
+                    const [buildingPlanSnapshot, proofOwnershipSnapshot] = await Promise.all([
+                        uploadBytes(buildingPlanRef, buildingPlanFile),
+                        uploadBytes(proofOwnershipRef, proofOwnershipFile)
+                    ]);
 
-    // Assuming the current user is logged in and we have their UID
-    const userId = auth.currentUser.uid;
+                    // Get download URLs
+                    const buildingPlanURL = await getDownloadURL(buildingPlanSnapshot.ref);
+                    const proofOwnershipURL = await getDownloadURL(proofOwnershipSnapshot.ref);
 
-    try {
-        // Store the appointment date in the "buildingPermits" or other relevant collection
-        const permitRef = doc(db, "buildingPermits", userId); // Assuming userId is used to identify the permit
-        await updateDoc(permitRef, {
-            appointmentDate: new Date(appointmentDate) // Store as a Date object
-        });
+                    // Save metadata and appointment date to Firestore
+                    const permitDocRef = doc(db, "buildingPermits", userId);
+                    await setDoc(permitDocRef, {
+                        buildingPlanURL: buildingPlanURL,
+                        proofOwnershipURL: proofOwnershipURL,
+                        appointmentDate: new Date(appointmentDate),  // Store appointment date
+                        status: 'Pending',
+                        createdAt: serverTimestamp()
+                    });
 
-        alert("Appointment successfully set.");
-    } catch (error) {
-        console.error("Error saving appointment:", error);
-        alert("Failed to save appointment.");
-    }
-});
+                    alert("Application successfully submitted with files and appointment date.");
 
+                    // Optionally, clear file inputs after submission
+                    document.getElementById('buildingPlanFile').value = '';
+                    document.getElementById('proofOwnershipFile').value = '';
+                    document.getElementById('appointmentDate').value = '';
 
+                    // Open success modal
+                    const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
+                    applicationModal.show();
+                } else {
+                    console.error("No user is authenticated.");
+                    alert("You must be logged in to submit this form.");
+                }
+            });
+        } catch (error) {
+            console.error("Error submitting application:", error);
+            alert("Failed to submit application. Please try again.");
+        }
+    });
 </script>
+
 
 
 
