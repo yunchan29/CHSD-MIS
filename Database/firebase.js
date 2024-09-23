@@ -568,13 +568,13 @@ async function loadProfiles() {
                 <td>${representativeName}</td>
                 <td>${createdAt}</td>
                 <td>
-                    <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${data.id}">
-                        <option value="Pending" ${data.status === "Pending" ? 'selected' : ''} ${data.status !== "Pending" ? 'disabled' : ''}>Pending</option>
-                        <option value="Processing" ${data.status === "Processing" ? 'selected' : ''} ${(data.status !== "Pending" && data.status !== "Processing") ? 'disabled' : ''}>Processing</option>
-                        <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''} ${(data.status !== "Processing" && data.status !== "To Pay") ? 'disabled' : ''}>To Pay</option>
-                        <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''} ${(data.status !== "To Pay" && data.status !== "For Approval") ? 'disabled' : ''}>For Approval</option>
-                        <option value="For Release" ${data.status === "For Release" ? 'selected' : ''} ${(data.status !== "For Approval" && data.status !== "For Release") ? 'disabled' : ''}>For Release</option>
-                        <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''} ${(data.status !== "For Release" && data.status !== "Claimed") ? 'disabled' : ''}>Claimed</option>
+                    <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${data.id}" data-owneruid="${data.ownerUid}">
+                        <option value="Pending" ${data.status === "Pending" ? 'selected' : ''}>Pending</option>
+                        <option value="Processing" ${data.status === "Processing" ? 'selected' : ''}>Processing</option>
+                        <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''}>To Pay</option>
+                        <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''}>For Approval</option>
+                        <option value="For Release" ${data.status === "For Release" ? 'selected' : ''}>For Release</option>
+                        <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''}>Claimed</option>
                     </select>
                 </td>
                 <td>
@@ -590,10 +590,44 @@ async function loadProfiles() {
                         </ul>
                     </div>
                 </td>
-                <td><button class="btn btn-primary btn-sm">View Details</button></td>
+                <td><button class="btn btn-primary btn-sm view-details-btn">View Details</button></td>
             `;
 
             tableBody.appendChild(row);
+
+            // Add event listener for status change
+            const statusSelect = row.querySelector(".status-select");
+            if (statusSelect) {
+                statusSelect.addEventListener("change", async (event) => {
+                    const newStatus = event.target.value;
+                    if (data.status !== newStatus) {
+                        const message = `${data.ownerName}'s building permit is now ${newStatus.toLowerCase()}`;
+
+                        // Trigger notification
+                        showNotification(message, 'info');
+
+                        // Store the notification in Firestore
+                        try {
+                            await addDoc(collection(db, "notifications"), {
+                                userId: data.ownerUid,
+                                message: message,
+                                permitId: data.id,
+                                timestamp: serverTimestamp(),
+                                read: false
+                            });
+                        } catch (error) {
+                            console.error("Error storing notification:", error);
+                        }
+
+                        // Update status in Firestore
+                        try {
+                            await updateDoc(doc(db, 'buildingPermits', data.id), { status: newStatus });
+                        } catch (error) {
+                            console.error("Error updating permit status:", error);
+                        }
+                    }
+                });
+            }
         });
 
         // Update the page info text
@@ -636,11 +670,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    
+
     // Initial load of profiles
     loadProfiles(); 
 });
-
 
 
 
