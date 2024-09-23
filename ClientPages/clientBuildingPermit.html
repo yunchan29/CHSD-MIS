@@ -456,155 +456,145 @@
                 <tr>
                     <th>Requirements</th>
                     <th>File</th>
-                    <th>Action</th>
+                    
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>Building Plan</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event, 'buildingPlanFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'buildingPlanFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" id="buildingPlanFile" onchange="uploadFile(this)">
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="buildingPlanFile" onchange="uploadFile(this)" >
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Proof of Ownership</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event, 'proofOwnershipFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'proofOwnershipFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" id="proofOwnershipFile" onchange="uploadFile(this)">
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="proofOwnershipFile" onchange="uploadFile(this)" >
                         </div>
                     </td>
                 </tr>
-                
                 <tr>
-                    <td>Photocopy of tax declaration & current tax receipt</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
-                              </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                    <td>Photocopy of Tax Declaration & Current Tax Receipt</td>
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'taxReceiptFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
+                            </div>
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="taxReceiptFile" onchange="uploadFile(this)">
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Brgy. Clearance of Building Permit</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
-                              </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'brgyClearanceFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
+                            </div>
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="brgyClearanceFile" onchange="uploadFile(this)">
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Bill of Materials & Specification</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
-                              </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'billMaterialsFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
+                            </div>
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="billMaterialsFile" onchange="uploadFile(this)">
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Photocopy of PRC IC/PTR of all signing engineers</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
-                              </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'prcFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
+                            </div>
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="prcFile" onchange="uploadFile(this)">
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Certification of Exemption Location Clearance from CPDO</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
-                              </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'certExemptionFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
+                            </div>
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="certExemptionFile" onchange="uploadFile(this)">
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>Structural Analysis(2-Storey and up)</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
-                              </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                    <td>Structural Analysis (2-Storey and up)</td>
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'structuralAnalysisFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
+                            </div>
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="structuralAnalysisFile" onchange="uploadFile(this)">
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Fire Clearance</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
-                              </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'fireClearanceFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
+                            </div>
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="fireClearanceFile" onchange="uploadFile(this)" >
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Boring Test</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
-                              </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'boringTestFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
+                            </div>
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="boringTestFile" onchange="uploadFile(this)">
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>Occupancy Permit(Home improvement/Extension)</td>
-                    <td class="file-column"></td>
-                    <td>
-                        <div class="upload-btn-wrapper">
-                            <div class="drag-drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file here</p>
-                              </div>
-                            <button class="btn btn-upload">Upload</button>
-                            <input type="file" class="file-input" onchange="uploadFile(this)">
+                    <td>Occupancy Permit (Home improvement/Extension)</td>
+                    <td class="file-column">
+                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'occupancyPermitFile')" ondragover="handleDragOver(event)">
+                                <p>Drag & drop file</p>
+                            </div>
+                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
+                            <input type="file" class="file-input" id="occupancyPermitFile" onchange="uploadFile(this)" >
                         </div>
                     </td>
                 </tr>
             </tbody>
+            
+            
         </table>
         </div>
         <div class="modal-footer">
@@ -1141,127 +1131,136 @@ const firebaseConfig = {
 
     // Main function to handle permit and file upload
     document.getElementById('submitProfile').addEventListener('click', async (event) => {
-        event.preventDefault();
-        console.log("Submit button clicked.");
+    event.preventDefault();
 
-        // Fetch values from form
-        const buildingPermitNo = document.getElementById('buildingPermitNo').value;
-        const issuedOn = document.getElementById('basic-url').value;
-        const addressTelNo = document.getElementById('addressTelNo').value;
-        const projectLocation = document.getElementById('projectLocation').value;
-        const hsdFormNo = document.getElementById('hsdFormNo').value;
-        const phoneNumber = document.getElementById('phoneNumber').value;
-        const ownerLastName = document.getElementById('ownerLastName').value;
-        const ownerFirstName = document.getElementById('ownerFirstName').value;
-        const ownerMiddleName = document.getElementById('ownerMiddleName').value;
-        const ownerMaidenName = document.getElementById('ownerMaidenName').value;
-        const ownerEmail = document.getElementById('ownerEmail') ? document.getElementById('ownerEmail').value : null;
+    // Fetch form values
+    const buildingPermitNo = document.getElementById('buildingPermitNo').value;
+    const issuedOn = document.getElementById('basic-url').value;
+    const addressTelNo = document.getElementById('addressTelNo').value;
+    const projectLocation = document.getElementById('projectLocation').value;
+    const hsdFormNo = document.getElementById('hsdFormNo').value;
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    const ownerLastName = document.getElementById('ownerLastName').value;
+    const ownerFirstName = document.getElementById('ownerFirstName').value;
+    const ownerMiddleName = document.getElementById('ownerMiddleName').value;
+    const ownerMaidenName = document.getElementById('ownerMaidenName').value;
+    const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
 
-        const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
-        const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked').nextElementSibling.textContent;
-        const projectJustification = document.querySelector('input[name="projectJustification"]:checked').nextElementSibling.textContent;
-        const otherScopeInput = document.getElementById("otherScopeInput").value;
-        const finalScopeOfWork = (scopeOfWork === 'Others' && otherScopeInput) ? otherScopeInput : scopeOfWork;
+    // File inputs
+    const buildingPlanFileInput = document.getElementById('buildingPlanFile');
+    const proofOwnershipFileInput = document.getElementById('proofOwnershipFile');
+    const taxReceiptFileInput = document.getElementById('taxReceiptFile');
+    const brgyClearanceFileInput = document.getElementById('brgyClearanceFile');
+    const billMaterialsFileInput = document.getElementById('billMaterialsFile');
+    const prcFileInput = document.getElementById('prcFile');
+    const certExemptionFileInput = document.getElementById('certExemptionFile');
+    const structuralAnalysisFileInput = document.getElementById('structuralAnalysisFile');
+    const fireClearanceFileInput = document.getElementById('fireClearanceFile');
+    const boringTestFileInput = document.getElementById('boringTestFile');
+    const occupancyPermitFileInput = document.getElementById('occupancyPermitFile');
 
-        // File upload input elements
-        const buildingPlanFileInput = document.getElementById('buildingPlanFile');
-        const proofOwnershipFileInput = document.getElementById('proofOwnershipFile');
+    const appointmentDate = document.getElementById('appointmentDate').value;
+    if (!appointmentDate) {
+        alert('Please select a date for your appointment.');
+        return;
+    }
 
-        // Validate required fields
-        if (!buildingPlanFileInput.files[0] || !proofOwnershipFileInput.files[0]) {
-            alert('Please upload all required files.');
-            console.log("File validation failed. Missing files.");
-            return;
-        }
+    if (!buildingPlanFileInput.files[0] || !proofOwnershipFileInput.files[0]) {
+        alert('Please upload all required files.');
+        return;
+    }
 
-        const appointmentDate = document.getElementById('appointmentDate').value;
-        if (!appointmentDate) {
-            alert('Please select a date for your appointment.');
-            console.log("Date validation failed. Missing appointment date.");
-            return;
-        }
+    // Show loading screen
+    document.getElementById('loading-screen').style.display = 'flex';
 
-        // Show loading screen
-        document.getElementById('loading-screen').style.display = 'flex';
+    try {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userId = user.uid;
 
-        try {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    console.log("User authenticated. UserID: ", user.uid);
-                    const userId = user.uid;
+                // File upload references
+                const buildingPlanFile = buildingPlanFileInput.files[0];
+                const proofOwnershipFile = proofOwnershipFileInput.files[0];
+                const taxReceiptFile = taxReceiptFileInput.files[0];
+                const brgyClearanceFile = brgyClearanceFileInput.files[0];
+                const billMaterialsFile = billMaterialsFileInput.files[0];
+                const prcFile = prcFileInput.files[0];
+                const certExemptionFile = certExemptionFileInput.files[0];
+                const structuralAnalysisFile = structuralAnalysisFileInput.files[0];
+                const fireClearanceFile = fireClearanceFileInput.files[0];
+                const boringTestFile = boringTestFileInput.files[0];
+                const occupancyPermitFile = occupancyPermitFileInput.files[0];
 
-                    // Upload files to Firebase Storage
-                    console.log("Uploading files to Firebase Storage...");
-                    const buildingPlanFile = buildingPlanFileInput.files[0];
-                    const proofOwnershipFile = proofOwnershipFileInput.files[0];
+                const storageRef = ref(storage, `buildingPermits/${userId}`);
 
-                    const buildingPlanRef = ref(storage, `buildingPermits/${userId}/buildingPlan_${buildingPlanFile.name}`);
-                    const proofOwnershipRef = ref(storage, `buildingPermits/${userId}/proofOwnership_${proofOwnershipFile.name}`);
+                const [buildingPlanSnapshot, proofOwnershipSnapshot, taxReceiptSnapshot, brgyClearanceSnapshot, billMaterialsSnapshot, prcSnapshot, certExemptionSnapshot, structuralAnalysisSnapshot, fireClearanceSnapshot, boringTestSnapshot, occupancyPermitSnapshot] = await Promise.all([
+                    uploadBytes(ref(storageRef, `buildingPlan_${buildingPlanFile.name}`), buildingPlanFile),
+                    uploadBytes(ref(storageRef, `proofOwnership_${proofOwnershipFile.name}`), proofOwnershipFile),
+                    uploadBytes(ref(storageRef, `taxReceipt_${taxReceiptFile.name}`), taxReceiptFile),
+                    uploadBytes(ref(storageRef, `brgyClearance_${brgyClearanceFile.name}`), brgyClearanceFile),
+                    uploadBytes(ref(storageRef, `billMaterials_${billMaterialsFile.name}`), billMaterialsFile),
+                    uploadBytes(ref(storageRef, `prc_${prcFile.name}`), prcFile),
+                    uploadBytes(ref(storageRef, `certExemption_${certExemptionFile.name}`), certExemptionFile),
+                    uploadBytes(ref(storageRef, `structuralAnalysis_${structuralAnalysisFile.name}`), structuralAnalysisFile),
+                    uploadBytes(ref(storageRef, `fireClearance_${fireClearanceFile.name}`), fireClearanceFile),
+                    uploadBytes(ref(storageRef, `boringTest_${boringTestFile.name}`), boringTestFile),
+                    uploadBytes(ref(storageRef, `occupancyPermit_${occupancyPermitFile.name}`), occupancyPermitFile)
+                ]);
 
-                    const [buildingPlanSnapshot, proofOwnershipSnapshot] = await Promise.all([
-                        uploadBytes(buildingPlanRef, buildingPlanFile),
-                        uploadBytes(proofOwnershipRef, proofOwnershipFile)
-                    ]);
+                // Get URLs
+                const buildingPlanURL = await getDownloadURL(buildingPlanSnapshot.ref);
+                const proofOwnershipURL = await getDownloadURL(proofOwnershipSnapshot.ref);
+                const taxReceiptURL = await getDownloadURL(taxReceiptSnapshot.ref);
+                const brgyClearanceURL = await getDownloadURL(brgyClearanceSnapshot.ref);
+                const billMaterialsURL = await getDownloadURL(billMaterialsSnapshot.ref);
+                const prcURL = await getDownloadURL(prcSnapshot.ref);
+                const certExemptionURL = await getDownloadURL(certExemptionSnapshot.ref);
+                const structuralAnalysisURL = await getDownloadURL(structuralAnalysisSnapshot.ref);
+                const fireClearanceURL = await getDownloadURL(fireClearanceSnapshot.ref);
+                const boringTestURL = await getDownloadURL(boringTestSnapshot.ref);
+                const occupancyPermitURL = await getDownloadURL(occupancyPermitSnapshot.ref);
 
-                    // Get download URLs
-                    const buildingPlanURL = await getDownloadURL(buildingPlanSnapshot.ref);
-                    const proofOwnershipURL = await getDownloadURL(proofOwnershipSnapshot.ref);
+                // Save metadata to Firestore
+                await addDoc(collection(db, "buildingPermits"), {
+                    buildingPermitNo,
+                    issuedOn,
+                    ownerName,
+                    phoneNumber,
+                    addressTelNo,
+                    projectLocation,
+                    hsdFormNo,
+                    buildingPlanURL,
+                    proofOwnershipURL,
+                    taxReceiptURL,
+                    brgyClearanceURL,
+                    billMaterialsURL,
+                    prcURL,
+                    certExemptionURL,
+                    structuralAnalysisURL,
+                    fireClearanceURL,
+                    boringTestURL,
+                    occupancyPermitURL,
+                    appointmentDate: new Date(appointmentDate),
+                    status: 'Pending',
+                    createdAt: Timestamp.now(),
+                    ownerUid: userId
+                });
 
-                    // Save metadata and appointment date to Firestore
-                    console.log("Saving metadata and appointment date to Firestore...");
-                    const permitDocRef = await addDoc(collection(db, "buildingPermits"), {
-                        buildingPermitNo,
-                        issuedOn,
-                        ownerName,
-                        phoneNumber,
-                        addressTelNo,
-                        projectLocation,
-                        hsdFormNo,
-                        scopeOfWork: finalScopeOfWork,
-                        projectJustification,
-                        buildingPlanURL,
-                        proofOwnershipURL,
-                        appointmentDate: new Date(appointmentDate),
-                        status: 'Pending',
-                        createdAt: Timestamp.now(),
-                        ownerUid: userId
-                    });
+                // Success handling
+                alert('Application submitted successfully!');
+                // Clear form and file inputs
+                document.getElementById('submitProfile').reset();
+            }
+        });
+    } catch (error) {
+        console.error("Error submitting application:", error);
+        alert("Failed to submit application. Please try again.");
+    } finally {
+        // Hide loading screen
+        document.getElementById('loading-screen').style.display = 'none';
+    }
+});
 
-                    // Update user record with permit information
-                    await updateDoc(doc(db, 'users', userId), {
-                        buildingPermits: arrayUnion({
-                            permitId: permitDocRef.id,
-                            buildingPermitNo,
-                            issuedOn,
-                            status: 'Pending',
-                            projectLocation
-                        })
-                    });
-
-                    console.log("Data successfully saved to Firestore.");
-
-                    // Clear file inputs and form fields
-                    buildingPlanFileInput.value = '';
-                    proofOwnershipFileInput.value = '';
-                    document.getElementById('appointmentDate').value = '';
-
-                    // Show success modal
-                    const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
-                    applicationModal.show();
-
-                } else {
-                    console.error("No user is authenticated.");
-                    alert("You must be logged in to submit this form.");
-                }
-            });
-        } catch (error) {
-            console.error("Error submitting application:", error);
-            alert("Failed to submit application. Please try again.");
-        } finally {
-            // Hide loading screen
-            document.getElementById('loading-screen').style.display = 'none';
-        }
-    });
 </script>
 
 

@@ -465,57 +465,61 @@
                         <h5>Household Members Information</h5>
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="memberName">Name</label>
-                                <input type="text" id="memberName" class="form-control">
+                                <label for="memberName">Name<span class="required-asterisk">*</span></label>
+                                <input type="text" id="memberName" class="form-control" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="relationToHead">Relation To The Household Head</label>
-                                <input type="text" class="form-control" id="relationToHead">
+                                <label for="relationToHead">Relation To The Household Head<span class="required-asterisk">*</span></label>
+                                <input type="text" class="form-control" id="relationToHead" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-2">
-                                <label for="memberAge">Age</label>
-                                <input type="number" class="form-control" id="memberAge">
+                                <label for="memberAge">Age<span class="required-asterisk">*</span></label>
+                                <input type="number" class="form-control" id="memberAge" required>
                             </div>
                             <div class="col-md-2">
-                                <label for="memberGender">Gender</label>
-                                <select class="form-control" id="memberGender">
+                                <label for="memberGender">Gender<span class="required-asterisk">*</span></label>
+                                <select class="form-control" id="memberGender" required>
                                     <option>Male</option>
                                     <option>Female</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label for="memberCivilStatus">Civil Status</label>
-                                <select class="form-control" id="memberCivilStatus">
+                                <label for="memberCivilStatus">Civil Status<span class="required-asterisk">*</span></label>
+                                <select class="form-control" id="memberCivilStatus" required>
                                     <option>Single</option>
-                                    <option></option>
+                                    <option>Married</option>
+                                    <option>Live in</option>
+                                    <option>Widowed</option>
+                                    <option>Single Parent</option>
+                                    <option>Separated</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="memberEducationalAttainment">Educational Attainment</label>
-                                <input type="text" class="form-control" id="memberEducationalAttainment">
+                                <label for="memberEducationalAttainment">Educational Attainment<span class="required-asterisk">*</span></label>
+                                <input type="text" class="form-control" id="memberEducationalAttainment"required>
                             </div>
                         </div>
     
                         <div class="row">
                             <div class="col-md-2">
-                                <label for="memberEmployed">Employed</label>
-                                <select class="form-control" id="memberEmployed">
+                                <label for="memberEmployed">Employed<span class="required-asterisk">*</span></label>
+                                <select class="form-control" id="memberEmployed" required>
                                     <option></option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label for="memberOccupation">Occupation</label>
-                                <input type="text" class="form-control" id="memberOccupation">
+                                <label for="memberOccupation">Occupation<span class="required-asterisk">*</span></label>
+                                <input type="text" class="form-control" id="memberOccupation" required>
                             </div>
                             <div class="col-md-3">
-                                <label for="memberPlaceOfWork">Place of Work</label>
-                                <input type="text" class="form-control" id="memberPlaceOfWork">
+                                <label for="memberPlaceOfWork">Place of Work<span class="required-asterisk">*</span></label>
+                                <input type="text" class="form-control" id="memberPlaceOfWork" required>
                             </div>
                             <div class="col-md-3">
-                                <label for="memberMonthlyIncome">Monthly Income(PHP)</label>
-                                <input type="number" class="form-control" id="memberMonthlyIncome">
+                                <label for="memberMonthlyIncome">Monthly Income(PHP)<span class="required-asterisk">*</span></label>
+                                <input type="number" class="form-control" id="memberMonthlyIncome" required>
                             </div>
                             
                         </div>
@@ -528,10 +532,10 @@
     
                         <div class="row">
                             <div class="col text-end">
-                                <button class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-delete-left"></i> Clear</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-pencil"></i> Edit</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-trash"></i> Delete</button>
+                                <button class="btn btn-secondary"><i class="fa-solid fa-plus" id="addHouseholdBtn"></i> Add</button>
+                                <button class="btn btn-secondary"><i class="fa-solid fa-delete-left" id="clearHouseholdBtn"></i> Clear</button>
+                                <button class="btn btn-secondary"><i class="fa-solid fa-pencil" id="editHouseholdBtn"></i> Edit</button>
+                                <button class="btn btn-secondary"><i class="fa-solid fa-trash" id="deleteHouseholdBtn"></i> Delete</button>
                             </div>
                         </div>
     

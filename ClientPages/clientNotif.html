@@ -16,41 +16,46 @@
             display: flex;
             flex-direction: column;
         }
-
+    
         .content-container {
             overflow-y: auto;
             padding: 20px;
         }
-
+    
         .notifications-container {
             margin-top: 20px;
             padding: 10px;
         }
-
+    
         .notification {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #f8d7da; /* Default background */
+            color: #721c24; /* Default text color */
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 10px;
             position: relative;
+            transition: background-color 0.3s;
         }
-
+    
+        .notification:hover {
+            background-color: #f5c6cb; /* Slightly darker on hover */
+        }
+    
         .notification.info {
             background-color: #d1ecf1;
             color: #0c5460;
         }
-
+    
         .notification.success {
             background-color: #d4edda;
             color: #155724;
         }
-
+    
         .notification.warning {
             background-color: #fff3cd;
             color: #856404;
         }
-
+    
         .notification .close-btn {
             position: absolute;
             top: 5px;
@@ -117,6 +122,12 @@
                 <div class="notifications-container" id="notification-container">
                     <!-- Notifications will be dynamically added here -->
                 </div>
+                <div class="pagination-controls">
+                    <button id="prevPageBtn" class="btn btn-secondary">Previous</button>
+                    <span id="pageInfo">Page 1</span>
+                    <button id="nextPageBtn" class="btn btn-secondary">Next</button>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -125,64 +136,127 @@
    
     <!-- Firebase and custom scripts -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, where, orderBy, limit, onSnapshot, startAfter, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-            authDomain: "chsd-mis.firebaseapp.com",
-            projectId: "chsd-mis",
-            storageBucket: "chsd-mis.appspot.com",
-            messagingSenderId: "694967679357",
-            appId: "1:694967679357:web:65cffd50f13739f934f414",
-            measurementId: "G-XBQTQFRLJ5"
-        };
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+    authDomain: "chsd-mis.firebaseapp.com",
+    projectId: "chsd-mis",
+    storageBucket: "chsd-mis.appspot.com",
+    messagingSenderId: "694967679357",
+    appId: "1:694967679357:web:65cffd50f13739f934f414",
+    measurementId: "G-XBQTQFRLJ5"
+};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let notificationsPerPage = 5; // Number of notifications per page
+let currentPage = 1; // Track the current page
+let totalPages = 1; // Total pages based on the number of notifications
+let lastVisibleDoc = null; // Keep track of the last document for pagination
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+// Function to load client notifications with pagination
+async function loadClientNotifications(userId) {
+    const notificationsRef = collection(db, "notifications");
+    const notificationContainer = document.getElementById("notification-container");
 
-        // Load notifications
-        async function loadNotifications(user) {
-            const notificationsRef = collection(db, 'notifications');
-            const q = query(notificationsRef, where('userId', '==', user.uid));
+    const prevPageBtn = document.getElementById("prevPageBtn");
+    const nextPageBtn = document.getElementById("nextPageBtn");
+    const pageInfo = document.getElementById("pageInfo");
 
-            // Listen for real-time updates
-            onSnapshot(q, (snapshot) => {
-                const notificationContainer = document.getElementById("notification-container");
-                notificationContainer.innerHTML = ""; // Clear previous notifications
+    // Fetch total notifications for user to calculate total pages
+    const allNotificationsSnapshot = await getDocs(query(
+        notificationsRef,
+        where("userId", "==", userId)
+    ));
 
-                if (snapshot.empty) {
-                    const noNotif = document.createElement("div");
-                    noNotif.classList.add('notification');
-                    noNotif.textContent = "No notifications available.";
-                    notificationContainer.appendChild(noNotif);
-                } else {
-                    snapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const notification = document.createElement("div");
-                        notification.classList.add('notification', 'info');
-                        notification.innerHTML = `
-                            <p>${data.message}</p>
-                            <small>${new Date(data.timestamp.seconds * 1000).toLocaleString()}</small>
-                        `;
-                        notificationContainer.appendChild(notification);
-                    });
-                }
-            });
+    const totalNotifications = allNotificationsSnapshot.size;
+    totalPages = Math.ceil(totalNotifications / notificationsPerPage);
+
+    // Query notifications for the current page, ordered by timestamp
+    let notificationsQuery = query(
+        notificationsRef,
+        where("userId", "==", userId),
+        orderBy("timestamp", "desc"),
+        limit(notificationsPerPage)
+    );
+
+    // If it's not the first page, start after the last visible document
+    if (lastVisibleDoc && currentPage > 1) {
+        notificationsQuery = query(notificationsQuery, startAfter(lastVisibleDoc));
+    }
+
+    onSnapshot(notificationsQuery, (snapshot) => {
+        notificationContainer.innerHTML = ''; // Clear previous notifications
+
+        if (snapshot.docs.length === 0) {
+            notificationContainer.innerHTML = '<p>No notifications available.</p>';
         }
 
-        // Ensure notifications load after auth state is checked
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loadNotifications(user);
-            } else {
-                console.error('No user authenticated');
-            }
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const notification = document.createElement('div');
+            notification.className = 'client-notification';
+            notification.textContent = `${data.message} at ${new Date(data.timestamp.seconds * 1000).toLocaleString()}`;
+            notificationContainer.appendChild(notification);
         });
+
+        // Track the last visible document for pagination
+        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+
+        // Update page info
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+        // Disable/enable pagination buttons
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = currentPage === totalPages;
+    });
+}
+
+// Function to handle authentication state
+function handleAuthState() {
+    const prevPageBtn = document.getElementById("prevPageBtn");
+    const nextPageBtn = document.getElementById("nextPageBtn");
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // User is signed in, get user ID and load notifications
+            const userId = user.uid;
+
+            // Load initial notifications
+            loadClientNotifications(userId);
+
+            // Handle "Previous Page" button click
+            prevPageBtn.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    lastVisibleDoc = null; // Reset last visible document when going to the previous page
+                    loadClientNotifications(userId);
+                }
+            });
+
+            // Handle "Next Page" button click
+            nextPageBtn.addEventListener("click", () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadClientNotifications(userId);
+                }
+            });
+        } else {
+            console.error("User is not signed in.");
+        }
+    });
+}
+
+// Start monitoring authentication state when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    handleAuthState();
+});
+
     </script>
 
 <script>
