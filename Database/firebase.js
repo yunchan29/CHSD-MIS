@@ -14,15 +14,20 @@ const firebaseConfig = {
     measurementId: "G-XBQTQFRLJ5"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Initialize Firebase if it hasn't been initialized already
+let app;
+if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+} else {
+    app = getApp();  // Use the already initialized app
+}
 
-// Initialize Firestore with cache settings
+// Initialize Firebase services
+const auth = getAuth(app);
 const db = initializeFirestore(app, {
     cache: {
-        sizeBytes: 40 * 1024 * 1024,  // Customize cache size (optional)
-        synchronizeTabs: true,  // Enable multi-tab persistence
+        sizeBytes: 40 * 1024 * 1024,  // Optional cache size
+        synchronizeTabs: true,  // Multi-tab persistence
     }
 });
 const storage = getStorage(app);
