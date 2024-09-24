@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // Firebase configuration
@@ -476,21 +476,43 @@ async function editBuildingPermit(event) {
 
 
 
+// Function to load and display the number of unread notifications
+function loadUnreadNotificationCount(userId) {
+    const notificationsRef = collection(db, "notifications");
+    const notificationBadge = document.getElementById("notification-badge");
 
+    // Query for unread notifications
+    const unreadNotificationsQuery = query(
+        notificationsRef,
+        where("userId", "==", userId),
+        where("Read", "==", false) // Adjusted to match your Firestore field
+    );
 
+    // Listen for real-time updates on unread notifications
+    onSnapshot(unreadNotificationsQuery, (snapshot) => {
+        const unreadCount = snapshot.size;
+        
+        // Update badge with unread count
+        if (unreadCount > 0) {
+            notificationBadge.textContent = unreadCount;
+            notificationBadge.style.display = "inline-block"; // Show badge
+        } else {
+            notificationBadge.style.display = "none"; // Hide badge if no unread notifications
+        }
+    });
+}
 
-
-
-
-
-
-
-
+// Call the function when the user is authenticated
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loadUnreadNotificationCount(user.uid);
+    }
+});
 
 
 // Function to show notification
 function showNotification(message, type) {
-    console.log(`Showing notification: ${message}`); // Debugging line
+    alert(`Showing notification: ${message}`); // Debugging line
     const notificationContainer = document.getElementById('notification-container');
     if (notificationContainer) {
         const notification = document.createElement('div');
@@ -528,22 +550,26 @@ async function loadProfiles() {
 
         tableBody.innerHTML = ""; // Clear existing rows
 
-        // Convert querySnapshot to array and sort by createdAt field
+        // Convert querySnapshot to array and ensure uniqueness
         const permitsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        permitsData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0)); // Sort by timestamp
+        const uniquePermitsData = Array.from(new Set(permitsData.map(a => a.id)))
+            .map(id => permitsData.find(a => a.id === id));
+
+        // Sort by createdAt field
+        uniquePermitsData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
 
         // Calculate total pages
-        totalPages = Math.ceil(permitsData.length / profilesPerPage);
+        totalPages = Math.ceil(uniquePermitsData.length / profilesPerPage);
 
         // Calculate the start and end indexes for the current page
         const start = (currentPage - 1) * profilesPerPage;
-        const end = currentPage * profilesPerPage;
+        const end = start + profilesPerPage;
 
         // Get the profiles for the current page
-        const currentProfiles = permitsData.slice(start, end);
+        const currentProfiles = uniquePermitsData.slice(start, end);
 
         // Loop through the current page's profiles
-        currentProfiles.forEach(data => {
+        for (const data of currentProfiles) {
             const row = document.createElement("tr");
 
             // Fetch representative user data
@@ -551,7 +577,7 @@ async function loadProfiles() {
             if (data.ownerUid) {
                 try {
                     const userRef = doc(db, "users", data.ownerUid);
-                    const userDoc = getDoc(userRef);
+                    const userDoc = await getDoc(userRef);
                     if (userDoc.exists()) {
                         const userData = userDoc.data();
                         representativeName = `${userData.firstName} ${userData.lastName}`;
@@ -563,18 +589,23 @@ async function loadProfiles() {
 
             const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "";
 
+            // Disable options based on the current status (progressive selection control)
+            const statusOptions = `
+                <option value="Pending" ${data.status === "Pending" ? 'selected' : ''} ${data.status !== "Pending" ? 'disabled' : ''}>Pending</option>
+                <option value="Processing" ${data.status === "Processing" ? 'selected' : ''} ${(data.status !== "Pending" && data.status !== "Processing") ? 'disabled' : ''}>Processing</option>
+                <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''} ${(data.status !== "Processing" && data.status !== "To Pay") ? 'disabled' : ''}>To Pay</option>
+                <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''} ${(data.status !== "To Pay" && data.status !== "For Approval") ? 'disabled' : ''}>For Approval</option>
+                <option value="For Release" ${data.status === "For Release" ? 'selected' : ''} ${(data.status !== "For Approval" && data.status !== "For Release") ? 'disabled' : ''}>For Release</option>
+                <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''} ${(data.status !== "For Release" && data.status !== "Claimed") ? 'disabled' : ''}>Claimed</option>
+            `;
+
             row.innerHTML = `
                 <td>${data.ownerName}</td>
                 <td>${representativeName}</td>
                 <td>${createdAt}</td>
                 <td>
                     <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${data.id}" data-owneruid="${data.ownerUid}">
-                        <option value="Pending" ${data.status === "Pending" ? 'selected' : ''}>Pending</option>
-                        <option value="Processing" ${data.status === "Processing" ? 'selected' : ''}>Processing</option>
-                        <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''}>To Pay</option>
-                        <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''}>For Approval</option>
-                        <option value="For Release" ${data.status === "For Release" ? 'selected' : ''}>For Release</option>
-                        <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''}>Claimed</option>
+                        ${statusOptions}
                     </select>
                 </td>
                 <td>
@@ -625,10 +656,13 @@ async function loadProfiles() {
                         } catch (error) {
                             console.error("Error updating permit status:", error);
                         }
+
+                        // Re-load profiles to reflect changes
+                        loadProfiles();
                     }
                 });
             }
-        });
+        }
 
         // Update the page info text
         pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
@@ -648,33 +682,33 @@ async function loadProfiles() {
     }
 }
 
-// Wrap the pagination controls in DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
     const prevPageBtn = document.getElementById("prevPageBtn");
     const nextPageBtn = document.getElementById("nextPageBtn");
 
-    if (prevPageBtn) {
+    if (prevPageBtn && !prevPageBtn.hasEventListener) { // Avoid multiple listeners
         prevPageBtn.addEventListener("click", () => {
             if (currentPage > 1) {
                 currentPage--; // Decrement the current page
                 loadProfiles(); // Load profiles for the new page
             }
         });
+        prevPageBtn.hasEventListener = true;
     }
 
-    if (nextPageBtn) {
+    if (nextPageBtn && !nextPageBtn.hasEventListener) { // Avoid multiple listeners
         nextPageBtn.addEventListener("click", () => {
             if (currentPage < totalPages) {
                 currentPage++; // Increment the current page
                 loadProfiles(); // Load profiles for the new page
             }
         });
+        nextPageBtn.hasEventListener = true;
     }
 
     // Initial load of profiles
     loadProfiles(); 
 });
-
 
 
 

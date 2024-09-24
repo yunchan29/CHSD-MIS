@@ -874,8 +874,15 @@ border-radius: 12px;
     max-height: 200px; /* Adjust as needed */
 }
 
-.form-label .required-asterisk {
+.required-asterisk {
     color: red; 
     font-weight: bold; 
     font-size: 1.2em; 
   }
+
+  .badge {
+    font-size: 0.8rem;
+    position: relative;
+    top: -10px;
+    left: 10px;
+}
