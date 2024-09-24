@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // Firebase configuration
@@ -14,13 +14,19 @@ const firebaseConfig = {
     measurementId: "G-XBQTQFRLJ5"
 };
 
-
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+
+// Initialize Firestore with cache settings
+const db = initializeFirestore(app, {
+    cache: {
+        sizeBytes: 40 * 1024 * 1024,  // Customize cache size (optional)
+        synchronizeTabs: true,  // Enable multi-tab persistence
+    }
+});
 const storage = getStorage(app);
+
 
 
 export const firebaseReady = new Promise((resolve) => {
@@ -707,7 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Initial load of profiles
-    loadProfiles(); 
+
 });
 
 
@@ -1132,7 +1138,6 @@ async function downloadApplicationAsPDF(permitId) {
     }
 }
 
-
 async function loadUserPermitStatus() { 
     try {
         const user = auth.currentUser;
@@ -1179,20 +1184,10 @@ async function loadUserPermitStatus() {
             // Date logic: fallback to createdAt if issuedOn is not available
             const issuedOnDate = permit.issuedOn || (permit.createdAt ? new Date(permit.createdAt.seconds * 1000).toLocaleDateString() : 'N/A');
         
-            // Actions (View Remarks, Download Excel, Download PDF)
+            // Actions (View Remarks)
             const viewRemarksButton = `
                 <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" data-id="${permitId}">
                     <i class="fa-solid fa-comment"></i> Remarks
-                </a>
-            `;
-            const downloadExcelButton = `
-                <a class="btn btn-success text-white download-excel-btn" data-permit-id="${permitId}">
-                    <i class="fa-solid fa-download"></i> Excel
-                </a>
-            `;
-            const downloadPdfButton = `
-                <a class="btn btn-danger text-white download-pdf-btn" data-permit-id="${permitId}">
-                    <i class="fa-solid fa-file-pdf"></i> PDF
                 </a>
             `;
         
@@ -1203,7 +1198,7 @@ async function loadUserPermitStatus() {
                 <td>${permitType}</td>
                 <td>${issuedOnDate}</td>
                 <td>${permit.status || 'N/A'}</td>
-                <td>${viewRemarksButton} ${downloadExcelButton} ${downloadPdfButton}</td>
+                <td>${viewRemarksButton}</td>
             `;
             
             // Append the row to the table body
@@ -1246,8 +1241,6 @@ async function loadUserPermitStatus() {
         document.getElementById('fetching-loading-screen').style.display = 'none';
     }
 }
-
-
 
 
 //user manager
