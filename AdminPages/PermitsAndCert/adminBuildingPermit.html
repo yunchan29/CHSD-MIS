@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHSD MIS</title>
     <link rel="stylesheet" href="/Stylesheets/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         .modal-backdrop {
-    z-index: 1040 !important; /* Make sure the z-index is set correctly */
-}
+            z-index: 1040 !important; /* Ensure the z-index is set correctly */
+        }
 
         /* CSS for the content container */
         .content {
@@ -46,825 +50,621 @@
         .d-flex .me-2 {
             margin-right: 1rem; /* Add margin to the right of the input */
         }
-        .modal-content{
-            padding:1.2rem !important;
+
+        .modal-content {
+            padding: 1.2rem !important;
         }
-        @media(max-width:991px){
-            .wide-modal{
-                width:100%;
+
+        @media(max-width: 991px) {
+            .wide-modal {
+                width: 100%;
                 margin: auto;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center px-2 pt-3 pb-4">
-                
-                <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"><i class="fa-solid fa-bars-staggered"></i></button>
+                <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"><i
+                        class="fa-solid fa-bars-staggered"></i></button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-                <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none"><i class="fa-solid fa-building-circle-check"></i> Building Permit</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none"><i class="fa-solid fa-person-shelter"></i> Occupancy Permit</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none"><i class="fa-solid fa-bolt"></i> Electrical Inspection</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCNotif.html" class="text-decoration-none"><i class="fa-solid fa-bell"></i> Notifications</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCArchive.html" class="text-decoration-none"><i class="fa-solid fa-box-archive"></i> Archive</a></li>
-                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCUserManager.html" class="text-decoration-none"><i class="fa-solid fa-user-pen"></i> User Manager</a></li>
-                <li class="sideNav"><a id="admin-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
-              </ul>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html"
+                        class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html"
+                        class="text-decoration-none"><i class="fa-solid fa-building-circle-check"></i> Building
+                        Permit</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html"
+                        class="text-decoration-none"><i class="fa-solid fa-person-shelter"></i> Occupancy
+                        Permit</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html"
+                        class="text-decoration-none"><i class="fa-solid fa-bolt"></i> Electrical Inspection</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCNotif.html"
+                        class="text-decoration-none"><i class="fa-solid fa-bell"></i> Notifications</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCArchive.html"
+                        class="text-decoration-none"><i class="fa-solid fa-box-archive"></i> Archive</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCUserManager.html"
+                        class="text-decoration-none"><i class="fa-solid fa-user-pen"></i> User Manager</a></li>
+                <li class="sideNav"><a id="admin-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log
+                        out</a></li>
+            </ul>
         </div>
 
         <div class="content">
-              <!--Navigation Bar-->
-<nav class="navigationBar navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-        <!-- Mobile View -->
-        <div class="d-flex justify-content-between d-md-none d-block">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
-                <h5 class="mb-0 fs-5">CHSD</h5>
-            </a>
-            <button class="btn px-1 py-0 open-btn">
-                <i class="fa-solid fa-bars-staggered"></i>
-            </button>
-        </div>
+            <!-- Navigation Bar -->
+            <nav class="navigationBar navbar navbar-expand-lg bg-light">
+                <div class="container-fluid">
+                    <!-- Mobile View -->
+                    <div class="d-flex justify-content-between d-md-none d-block">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40"
+                                class="me-2">
+                            <h5 class="mb-0 fs-5">CHSD</h5>
+                        </a>
+                        <button class="btn px-1 py-0 open-btn">
+                            <i class="fa-solid fa-bars-staggered"></i>
+                        </button>
+                    </div>
 
-        <!-- Desktop View -->
-        <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
-                <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
-            </a>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!-- Additional nav items go here -->
-            </ul>
-        </div>
-    </div>
-</nav>
+                    <!-- Desktop View -->
+                    <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75"
+                                class="me-2">
+                            <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+                        </a>
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <!-- Additional nav items go here -->
+                        </ul>
+                    </div>
+                </div>
+            </nav>
 
-           
-           
             <div class="contentContainer">
-
                 <h4 class="text-center">Building Permit</h4>
-                <!-- Bootstrap Table -->
-                
                 <div class="container">
-                    
                     <h5>Profile</h5>
                     <div class="row mt-4">
                         <div class="col">
-                         <a class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal"><i class="fa-solid fa-plus"></i> Add Profile</a>
-                         <!--<a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#qrScanner"><i class="fa-solid fa-qrcode"></i> Scanner</a>-->
-                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#remarksChecker">
-                            Check Remarks
-                          </button>
+                            <a class="btn btn-dark text-white" data-bs-toggle="modal"
+                                data-bs-target="#buildingPermitModal"><i class="fa-solid fa-plus"></i> Add
+                                Profile</a>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#viewDetailsModal">
+                                Check Remarks
+                            </button>
                         </div>
-                       
-                        
-                    <div class="d-flex justify-content-end mb-3">
-                        <input type="text" class="form-control search-bar" id="searchInput" placeholder="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
-                            
-                        </div>
-                    </div>
-                    <div id="buildingPermitDiv">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Owner</th>
-                                    <th>Representative</th>
-                                    <th>Submitted at</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Profile rows will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Pagination Controls -->
-                    <div class="pagination-controls text-center">
-                        <button id="prevPageBtn" class="btn btn-primary" disabled>Previous</button>
-                        <span id="pageInfo"></span>
-                        <button id="nextPageBtn" class="btn btn-primary">Next</button>
-                    </div>
-                    
-                    
 
-            
-  <!-- Application Modal -->
-<div class="modal fade" id="buildingPermitModal" tabindex="-1" aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
-        <div class="modal-content buldingPermitApplication">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="BuildingPermitModalLabel"><i class="fa-solid fa-user"></i> Application</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Application Modal Content -->
-                <div class="container">
-                    <div class="step-progress mb-4">
-                        <div class="step completed">
-                            <div class="circle"></div>
-                            <div class="label">Form</div>
-                        </div>
-                        <div class="step">
-                            <div class="circle"></div>
-                            <div class="label">Order of Payment</div>
-                        </div>
-                        <div class="step">
-                            <div class="circle"></div>
-                            <div class="label">Certificate</div>
-                        </div>
-                    </div>
-                    <form id="editPermitForm">
-                        <div class="mb-3">
-                            <div class="d-flex col-md-6">
-                                <input type="text" class="form-control me-2" id="hsdFormNo" placeholder="HSD Form No.">
-                                <input type="email" class="form-control" id="ownerEmail" placeholder="Applicant Email(Autogenerated)" required>
-                                <button type="button" class="btn btn-secondary" onclick="window.print();"><i class="fa-solid fa-print"></i> Print</button>
+                        <div class="d-flex justify-content-end mb-3">
+                            <input type="text" class="form-control search-bar" id="searchInput" placeholder="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button"><i
+                                        class="fas fa-search"></i></button>
                             </div>
                         </div>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" id="buildingPermitNo" placeholder="Building Permit No.">
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <span class="input-group-text" id="basic-addon3">Issued on:</span>
-                                    <input type="date" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
-                                </div>
-                            </div>
+
+                        <div id="buildingPermitDiv">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Owner</th>
+                                        <th>Representative</th>
+                                        <th>Submitted at</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Profile rows will be loaded here -->
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="mb-3">
-                            <label for="phoneNumber" class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" id="phoneNumber" required>
+
+                        <!-- Pagination Controls -->
+                        <div class="pagination-controls text-center">
+                            <button id="prevPageBtn" class="btn btn-primary" disabled>Previous</button>
+                            <span id="pageInfo"></span>
+                            <button id="nextPageBtn" class="btn btn-primary">Next</button>
                         </div>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" id="addressTelNo" placeholder="Address and Tel No.">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" id="projectLocation" placeholder="Project Location">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="row g-3">
-                                <label for="form-check" class="form-label">Scope of Work</label>
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="option1" id="option1">
-                                        <label class="form-check-label" for="option1">New Construction</label>
+
+                        <!-- Application Modal -->
+                        <div class="modal fade" id="buildingPermitModal" tabindex="-1"
+                            aria-labelledby="BuildingPermitModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+                                <div class="modal-content buldingPermitApplication">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="BuildingPermitModalLabel"><i
+                                                class="fa-solid fa-user"></i> Application</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="option2" id="option2">
-                                        <label class="form-check-label" for="option2">Addition</label>
+                                    <div class="modal-body">
+                                        <div class="container">
+                                            <div class="step-progress mb-4">
+                                                <div class="step completed">
+                                                    <div class="circle"></div>
+                                                    <div class="label">Form</div>
+                                                </div>
+                                                <div class="step">
+                                                    <div class="circle"></div>
+                                                    <div class="label">Order of Payment</div>
+                                                </div>
+                                                <div class="step">
+                                                    <div class="circle"></div>
+                                                    <div class="label">Certificate</div>
+                                                </div>
+                                            </div>
+                                            <form id="editPermitForm">
+                                                <div class="mb-3">
+                                                    <div class="d-flex col-md-6">
+                                                        <input type="text" class="form-control me-2" id="hsdFormNo"
+                                                            placeholder="HSD Form No.">
+                                                        <input type="email" class="form-control"
+                                                            id="ownerEmail"
+                                                            placeholder="Applicant Email(Autogenerated)"
+                                                            required>
+                                                        <button type="button" class="btn btn-secondary"
+                                                            onclick="window.print();"><i
+                                                                class="fa-solid fa-print"></i> Print</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control"
+                                                            id="buildingPermitNo" placeholder="Building Permit No.">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="input-group">
+                                                            <span class="input-group-text"
+                                                                id="basic-addon3">Issued on:</span>
+                                                            <input type="date" class="form-control" id="basic-url"
+                                                                aria-describedby="basic-addon3 basic-addon4">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                                    <input type="text" class="form-control" id="phoneNumber"
+                                                        required>
+                                                </div>
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control" id="addressTelNo"
+                                                            placeholder="Address and Tel No.">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control"
+                                                            id="projectLocation" placeholder="Project Location">
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <div class="row g-3">
+                                                        <label for="form-check" class="form-label">Scope of Work</label>
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    value="option1" id="option1">
+                                                                <label class="form-check-label" for="option1">New
+                                                                    Construction</label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    value="option2" id="option2">
+                                                                <label class="form-check-label" for="option2">Addition</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    value="option3" id="option3">
+                                                                <label class="form-check-label" for="option3">Repair
+                                                                    Renovation</label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    value="option4" id="option4">
+                                                                <label class="form-check-label" for="option4">Others</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <div class="row g-3">
+                                                        <label for="form-check" class="form-label">Project Justification</label>
+                                                        <div class="col-md-4">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    value="justification1" id="justification1">
+                                                                <label class="form-check-label"
+                                                                    for="justification1">Single
+                                                                    Attached/Semi-Attached/Duplex</label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    value="justification2" id="justification2">
+                                                                <label class="form-check-label"
+                                                                    for="justification2">Single/Detached</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    value="justification3" id="justification3">
+                                                                <label class="form-check-label"
+                                                                    for="justification3">Row
+                                                                    House/Multi-family Dwelling</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Block number, Lot number">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="No. of Units">
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Floor Area Per Unit">
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Total Floor Area">
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Total Estimated Cost">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="option3" id="option3">
-                                        <label class="form-check-label" for="option3">Repair Renovation</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="option4" id="option4">
-                                        <label class="form-check-label" for="option4">Others</label>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary"
+                                            data-bs-toggle="modal" data-bs-target="#orderOfPaymentModal">
+                                            Next
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <div class="row g-3">
-                                <label for="form-check" class="form-label">Project Justification</label>
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="justification1" id="justification1">
-                                        <label class="form-check-label" for="justification1">Single Attached/Semi-Attached/Duplex</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="justification2" id="justification2">
-                                        <label class="form-check-label" for="justification2">Single/Detached</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="justification3" id="justification3">
-                                        <label class="form-check-label" for="justification3">Row House/Multi-family Dwelling</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <input type="text" class="form-control" placeholder="Block number, Lot number">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <input type="text" class="form-control" placeholder="No. of Units">
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" placeholder="Floor Area Per Unit">
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" placeholder="Total Floor Area">
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" placeholder="Total Estimated Cost">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderOfPaymentModal">
-                    Next
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- End of Application Modal -->
+                        <!-- End of Application Modal -->
 
-
-<!-- Order of Payment Modal -->
-<div class="modal fade" id="orderOfPaymentModal" tabindex="-1" aria-labelledby="OrderOfPaymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="OrderOfPaymentModalLabel"><i class="fa-solid fa-file-invoice"></i> Order of Payment</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Step Progress Bar -->
-                <div class="step-progress mb-4">
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Form</div>
-                    </div>
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Order of Payment</div>
-                    </div>
-                    <div class="step">
-                        <div class="circle"></div>
-                        <div class="label">Certificate</div>
-                    </div>
-                </div>
-                <!-- Order of Payment Form -->
-                <div class="container">
-                    <h4 class="text-center">ORDER OF PAYMENT</h4>
-                    <p class="text-center"><i>Payee: Treasurer/Cashier-City Treasury Office, City of Calamba</i></p>
-                    <div class="row">
-                        <label for="OPOwner/Applicant">Owner/Applicant:</label>
-                    <input type="text" class="form-control" id="OPOwner/Applicant">
-                    </div>
-
-                    <div class="row">
-                        <label for="OPLocation">
-                        Location
-                        </label>
-                        <input type="text" class="form-control" id="OPLocation">
-                    </div>
-                    <label for="bp220">Building Permit-BP220</label>
-                    <div class="row">
-                        
-                        <div class="col-md-2">
-                           
-                        <label for="bpArea">Area</label>
-                        <input type="number" class="form-control" id="bpArea">
-                        </div>
-
-                        <div class="col-md-2">
-                        <label for="bpLM">Line Meter(LM)</label>
-                        <input type="number" class="form-control" id="bpLM">
-                        </div>
-
-                        <div class="col-md-2">
-                        <label for="bpSAN">Sanitary(SAN)</label>
-                        <input type="number" class="form-control" id="bpSAN">
-                        </div>
-                        <div class="col-md-2">
-                        <label for="bpELEC">Electrical Fee(ELEC)</label>
-                        <input type="number" class="form-control"  id="bpELEC">
-                    </div>
-
-                    <div class="col-md-3 justify-content-end" >
-                        <label for="bpTotal">
-                            Total
-                        </label>
-                        <input type="number" class="form-control" id="bpTotal">
-                    </div>
-
-
-                    </div>
-
-                    
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#orderOfPaymentModal">
-                    Previous
-                  </button>
-                <button type="button" id="nextStepButton2" class="btn btn-primary">Next</button>
-               
-                
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- Certificate Modal -->
-<div class="modal fade" id="certificateModal" tabindex="-1" aria-labelledby="CertificateModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="CertificateModalLabel"><i class="fa-solid fa-certificate"></i> Certificate</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Step Progress Bar -->
-                <div class="step-progress mb-4">
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Form</div>
-                    </div>
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Order of Payment</div>
-                    </div>
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Certificate</div>
-                    </div>
-                </div>
-                <!-- Content for Certificate -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-               
-                <button type="button" class="btn btn-primary" id="submitProfile">Finish</button>
-             
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Application Applied Modal -->
-<div class="modal fade" id="applicationAppliedModal" tabindex="-1" aria-labelledby="ApplicationAppliedModalLabel" aria-hidden="true">
+                      <!-- View Details Modal -->
+<div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="ApplicationAppliedModalLabel"><i class="fa-solid fa-check-circle"></i> Success</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <h2>Application Submitted</h2>
-                <i class="fa-solid fa-check-circle fa-3x text-success"></i>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!--Remarks Checker-->
-
-  
-  <!-- Remarks Modal -->
-  <div class="modal fade" id="remarksChecker" tabindex="-1" aria-labelledby="remarksCheckerLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="remarksCheckerLabel">All Remarks</h1>
+                <h5 class="modal-title" id="viewDetailsModalLabel">Permit Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="existing-remarks">
-                    <!-- Load existing remarks here -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-   
-  
-<!-- Remarks Modal -->
-<div class="modal fade" id="remarksModal1" tabindex="-1" aria-labelledby="remarksModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="remarksModalLabel">Remarks</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <ul id="remarks-list" class="list-group mb-3">
-            <!-- Remarks will be dynamically loaded here -->
-            <div id="remarks-content"></div>
-          </ul>
-          <textarea id="new-remark" class="form-control" placeholder="Add a remark"></textarea>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" id="save-remark-btn" class="btn btn-primary">Save Remark</button>
-        </div>
-      </div>
-    </div>
-</div>
-
-
-
-  
-
-  <!--QR Code Scanner-->
-   <!-- Modal -->
-<div class="modal fade" id="qrScanner" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Scanner</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            
-                <div class="row justify-content-center mt-5">
-                  <div class="col-md-6">
-                    <div class="card">
-                      <div class="card-header">
-                        QR Code Scanner
-                      </div>
-                      <div class="card-body text-center">
-                        <video id="preview" class="w-100"></video>
-                        <div class="mt-2">
-                          <button id="toggleCameraBtn" class="btn btn-primary">Switch Camera</button>
-                        </div>
-                      </div>
+                <p><strong>Owner Name:</strong> <span id="permitOwnerName"></span></p>
+                <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
+                <div class="mb-3">
+                 <div class="col-md-6 align-items-center">
+                    <label for="statusSelect" class="form-label">Status</label>
+                    <select id="statusSelect" class="form-select" disabled>
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="To Pay">To Pay</option>
+                        <option value="For Approval">For Approval</option>
+                        <option value="For Release">For Release</option>
+                        <option value="Claimed">Claimed</option>
+                    </select>
+                 </div>
+                 <button class="btn btn-primary mt-2 mb-2">View HSD Form</button><br>
+                 <button class="btn btn-primary mt-2 mb-2">View File Uploads</button>
+                 <p><strong>Appointment Date</strong>:----</p>
+                 <div class="row">
+                    <div class="col">
+                        <label for="officerRemarks">Comments</label>
+                        <textarea class="form-control" id="officerRemarks" rows="2">
+                          
+                        </textarea>
                     </div>
-                  </div>
+                 </div>
                 </div>
-              
-          
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
- 
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Launch demo modal
-  </button>
-  
-  <!-- View Details Modal -->
-  <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="viewDetailsLabel">View Details</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Admin View Details Modal -->
-<div class="modal fade" id="adminDetailsModal" tabindex="-1" aria-labelledby="adminDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fs-5" id="adminDetailsModalLabel">Client Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h6>Appointment Date</h6>
-                <p id="adminAppointmentDate">No appointment set</p>
-                <!-- Placeholder for more details later -->
-                <h6>Other Information</h6>
-                <p id="otherInfo">No data yet</p>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="approveBtn">Approve</button>
+                <button type="button" class="btn btn-danger">Disapprove</button>
+                <button type="button" id="saveStatusBtn" class="btn btn-primary" disabled>Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
+                        <!-- End of View Details Modal -->
 
-    <script type="module" src="/Database/firebase.js"></script>
-   
+                        <script type="module" src="/Database/firebase.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let currentStep = 1; // Start from the first step
-    
-            function goToNextStep() {
-                if (currentStep === 1) {
-                    // Transition from step 1 to step 2
-                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).hide();
-                    new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
-                    currentStep = 2; // Update current step to 2
-                } else if (currentStep === 2) {
-                    // Transition from step 2 to step 3
-                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
-                    new bootstrap.Modal(document.getElementById('appointmentModal')).show();
-                    currentStep = 3; // Update current step to 3
-                }
-            }
-    
-            function goToPreviousStep() {
-                if (currentStep === 2) {
-                    // Transition from step 2 back to step 1
-                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitModal')).show();
-                    bootstrap.Modal.getInstance(document.getElementById('buildingPermitUpload')).hide();
-                    currentStep = 1; // Update current step to 1
-                } else if (currentStep === 3) {
-                    // Transition from step 3 back to step 2
-                    bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
-                    new bootstrap.Modal(document.getElementById('buildingPermitUpload')).show();
-                    currentStep = 2; // Update current step to 2
-                }
-            }
-    
-            function finishApplication() {
-                // Final step: hide appointmentModal and show applicationAppliedModal
-                bootstrap.Modal.getInstance(document.getElementById('appointmentModal')).hide();
-                new bootstrap.Modal(document.getElementById('applicationAppliedModal')).show();
-            }
-    
-            // Event listeners for next and previous buttons
-            document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
-            document.getElementById('nextStepButton2').addEventListener('click', goToNextStep);
-            document.getElementById('previousStepButton').addEventListener('click', goToPreviousStep); // Add this line
-            document.getElementById('previousStepButton2').addEventListener('click', goToPreviousStep);
-    
-            // Event listener for finishing the application
-            document.getElementById('submitProfile').addEventListener('click', finishApplication);
-        });
-    </script>
-
-<script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-
-<!--<script>
-    let scanner;
-    let currentCamera = 0;
-
-    function startScanner(cameraId) {
-      scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-      scanner.addListener('scan', function (content) {
-        if (confirm('Scanned: ' + content + '\nDo you want to navigate to this link?')) {
-          window.location.href = content; // Navigate to the scanned link
-        }
-      });
-
-      Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-          if (cameraId !== null) {
-            currentCamera = cameraId;
-          }
-          scanner.start(cameras[currentCamera]);
-        } else {
-          console.error('No cameras found.');
-        }
-      }).catch(function (e) {
-        console.error(e);
-      });
-    }
-
-    // Start with default camera
-    startScanner(null);
-
-    // Toggle between cameras
-    document.getElementById('toggleCameraBtn').addEventListener('click', function () {
-      scanner.stop();
-      currentCamera = (currentCamera + 1) % 2; // Assuming there are only two cameras, change it according to your setup
-      startScanner(currentCamera);
-    });
-  </script>-->
-
-  
-
-    
-    
-    
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-    <script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
-<!--Navigation Bar-->
-    <script>
-        document.querySelector('.open-btn').addEventListener('click', function() {
-            document.getElementById('side_nav').classList.add('active');
-        });
-    
-        document.querySelector('.close-btn').addEventListener('click', function() {
-            document.getElementById('side_nav').classList.remove('active');
-        });
-    </script>
-
-<!--Toggle Others-->
-<script>
-    function toggleOtherScopeInput() {
-    const otherInput = document.getElementById("otherScopeInput");
-    const otherRadio = document.getElementById("option4");
-
-    if (otherRadio.checked) {
-        otherInput.disabled = false;
-    } else {
-        otherInput.disabled = true;
-        otherInput.value = '';  // Clear the input if disabled
-    }
-}
-
-// Call the function on page load to ensure the state is correct
-window.onload = toggleOtherScopeInput;
-
-
-
-</script>
-
-<script type="module">
-  // Import Firebase SDK
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+                        <script type="module">
+                               import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
       import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    
+  
       // Firebase configuration
       const firebaseConfig = {
-        apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-        authDomain: "chsd-mis.firebaseapp.com",
-        projectId: "chsd-mis",
-        storageBucket: "chsd-mis.appspot.com",
-        messagingSenderId: "694967679357",
-        appId: "1:694967679357:web:65cffd50f13739f934f414",
-        measurementId: "G-XBQTQFRLJ5"
+          apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+          authDomain: "chsd-mis.firebaseapp.com",
+          projectId: "chsd-mis",
+          storageBucket: "chsd-mis.appspot.com",
+          messagingSenderId: "694967679357",
+          appId: "1:694967679357:web:65cffd50f13739f934f414",
+          measurementId: "G-XBQTQFRLJ5"
       };
-    
+  
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
-    // Function to search permits by owner name or representative name
-function searchPermits() {
-    const searchInput = document.getElementById("searchInput").value.toLowerCase();
-    const tableRows = document.querySelectorAll("#buildingPermitDiv tbody tr");
-    
-    tableRows.forEach(row => {
-        const ownerName = row.querySelector("td:nth-child(1)").textContent.toLowerCase();
-        const representativeName = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
-
-        if (ownerName.includes(searchInput) || representativeName.includes(searchInput)) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
-    });
+  
+                            // Function to show notification
+function showNotification(message, type) {
+    alert(`Showing notification: ${message}`); // Debugging line
+    const notificationContainer = document.getElementById('notification-container');
+    if (notificationContainer) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        notificationContainer.appendChild(notification);
+    } else {
+        console.error('Notification container not found.');
+    }
 }
 
-// Event listener for search input
-document.getElementById("searchInput").addEventListener("input", searchPermits);
+let profilesPerPage = 5; // Set how many profiles you want to load per page
+let currentPage = 1; // Start with the first page
+let totalPages = 1; // Total number of pages will be calculated
 
-document.querySelectorAll(".view-details-btn").forEach((button) => {
-    button.addEventListener("click", async (event) => {
-        const permitId = event.target.getAttribute("data-permit-id");
-
-        try {
-            // Fetch the client's permit document from Firestore
-            const permitDoc = await getDoc(doc(db, "buildingPermits", permitId));
-
-            if (permitDoc.exists()) {
-                const permitData = permitDoc.data();
-
-                // Display the appointment date (if it exists)
-                const appointmentDateElement = document.getElementById("adminAppointmentDate");
-                if (permitData.appointmentDate) {
-                    const appointmentDate = new Date(permitData.appointmentDate.seconds * 1000).toLocaleDateString();
-                    appointmentDateElement.textContent = `Appointment Date: ${appointmentDate}`;
-                } else {
-                    appointmentDateElement.textContent = "No appointment set";
-                }
-
-                // Optionally display other information here later (e.g., other fields in permitData)
-
-                // Show the modal
-                const adminDetailsModal = new bootstrap.Modal(document.getElementById("adminDetailsModal"));
-                adminDetailsModal.show();
-            } else {
-                console.error("No permit document found for this ID.");
-            }
-        } catch (error) {
-            console.error("Error fetching permit details:", error);
-        }
-    });
-});
-
-async function loadRemarks(permitId) {
+// Function to load building permits and display them in the table
+async function loadProfiles() {
     try {
-        const remarksContent = document.getElementById('remarks-content');
-        remarksContent.innerHTML = ''; // Clear previous remarks
+        const querySnapshot = await getDocs(collection(db, "buildingPermits"));
+        const buildingPermitDiv = document.getElementById("buildingPermitDiv");
+        const prevPageBtn = document.getElementById("prevPageBtn");
+        const nextPageBtn = document.getElementById("nextPageBtn");
+        const pageInfo = document.getElementById("pageInfo");
 
-        const remarksRef = collection(db, "remarks");
-        const q = query(remarksRef, where("buildingPermitId", "==", permitId));
-        const remarksSnapshot = await getDocs(q);
-
-        if (remarksSnapshot.empty) {
-            remarksContent.innerHTML = '<p>No remarks available.</p>';
-        } else {
-            remarksSnapshot.forEach(doc => {
-                const remark = doc.data();
-                const remarkDiv = document.createElement('div');
-                remarkDiv.className = 'remark mb-2';
-                const remarkText = remark.text || 'No text';
-                const remarkTimestamp = remark.timestamp ? new Date(remark.timestamp.seconds * 1000).toLocaleString() : 'No timestamp';
-                remarkDiv.innerHTML = `
-                    <div style="border:1px solid black; border-radius:12px; margin:1%; padding:10px;">
-                        <p>${remarkText}</p>
-                        <small>Posted by: ${remark.userName || 'Unknown'} on ${remarkTimestamp}</small>
-                    </div>
-                `;
-                remarksContent.appendChild(remarkDiv);
-            });
+        if (!buildingPermitDiv) {
+            console.error("buildingPermitDiv not found in the DOM.");
+            return;
         }
 
-        // Only show the modal after the remarks are loaded
-        const remarksModal = new bootstrap.Modal(document.getElementById('remarksModal1'));
-        remarksModal.show();
+        const tableBody = buildingPermitDiv.querySelector("tbody");
+        if (!tableBody) {
+            console.error("Table body not found in buildingPermitDiv.");
+            return;
+        }
+
+        tableBody.innerHTML = ""; // Clear existing rows
+
+        // Convert querySnapshot to array and ensure uniqueness
+        const permitsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const uniquePermitsData = Array.from(new Set(permitsData.map(a => a.id)))
+            .map(id => permitsData.find(a => a.id === id));
+
+        // Sort by createdAt field
+        uniquePermitsData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+
+        // Calculate total pages
+        totalPages = Math.ceil(uniquePermitsData.length / profilesPerPage);
+
+        // Calculate the start and end indexes for the current page
+        const start = (currentPage - 1) * profilesPerPage;
+        const end = start + profilesPerPage;
+
+        // Get the profiles for the current page
+        const currentProfiles = uniquePermitsData.slice(start, end);
+
+        // Loop through the current page's profiles
+        for (const data of currentProfiles) {
+            const row = document.createElement("tr");
+
+            // Fetch representative user data
+            let representativeName = "";
+            if (data.ownerUid) {
+                try {
+                    const userRef = doc(db, "users", data.ownerUid);
+                    const userDoc = await getDoc(userRef);
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        representativeName = `${userData.firstName} ${userData.lastName}`;
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            }
+
+            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "";
+
+            row.innerHTML = `
+                <td>${data.ownerName}</td>
+                <td>${representativeName}</td>
+                <td>${createdAt}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+
+            // Add event listener for the View Details button
+            const viewDetailsBtn = row.querySelector(".view-details-btn");
+            if (viewDetailsBtn) {
+                viewDetailsBtn.addEventListener("click", () => {
+                    openViewDetailsModal(data);
+                });
+            }
+        }
+
+        // Update the page info text
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+        // Disable "Previous" button on the first page
+        prevPageBtn.disabled = currentPage === 1;
+
+        // Disable "Next" button on the last page
+        nextPageBtn.disabled = currentPage === totalPages;
 
     } catch (error) {
-        console.error("Error loading remarks:", error);
-        document.getElementById('remarks-content').innerText = 'Error loading remarks';
+        console.error("Error loading profiles:", error);
     }
 }
 
-async function openRemarksModal(permitId) {
-    await loadRemarks(permitId); // Ensure remarks are loaded first
-    const remarksModal = new bootstrap.Modal(document.getElementById('remarksModal1'));
-    remarksModal.show(); // Then show the modal
+function openViewDetailsModal(permitData) {
+    // Populate the modal with permit data
+    document.getElementById("permitOwnerName").textContent = permitData.ownerName;
+    document.getElementById("issuedOnDate").textContent = permitData.issuedOn;
+
+    // Set the status select to the current status
+    document.getElementById("statusSelect").value = permitData.status;
+
+    // Disable status select and save button by default
+    document.getElementById("statusSelect").disabled = true;
+    document.getElementById("saveStatusBtn").disabled = true;
+
+    // Show the modal using Bootstrap's Modal instance
+    const viewDetailsModal = new bootstrap.Modal(document.getElementById('viewDetailsModal'));
+    viewDetailsModal.show();
+
+    // Add event listener for the Approve button
+    document.getElementById("approveBtn").onclick = () => {
+        document.getElementById("statusSelect").disabled = false; // Enable status selection
+        document.getElementById("saveStatusBtn").disabled = false; // Enable save button
+    };
+
+    // Add event listener for the Save button
+    document.getElementById("saveStatusBtn").onclick = async () => {
+        const newStatus = document.getElementById("statusSelect").value;
+        try {
+            // Update the status in Firestore
+            await updateDoc(doc(db, 'buildingPermits', permitData.id), { status: newStatus });
+
+            // Trigger notification
+            const message = `${permitData.ownerName}'s building permit is now ${newStatus.toLowerCase()}`;
+            showNotification(message, 'info');
+
+            // Store the notification in Firestore
+            await addDoc(collection(db, "notifications"), {
+                userId: permitData.ownerUid,
+                message: message,
+                permitId: permitData.id,
+                timestamp: serverTimestamp(),
+                read: false
+            });
+
+            loadProfiles(); // Reload profiles to reflect changes
+            viewDetailsModal.hide(); // Hide modal after update
+        } catch (error) {
+            console.error("Error updating permit status:", error);
+            alert("Failed to update permit status.");
+        }
+    };
 }
 
-// Function to attach event listeners for remarks buttons
-function attachRemarksListeners() {
-    const remarksButtons = document.querySelectorAll('.remarks-btn');
-    remarksButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            event.preventDefault();
-            const permitId = button.getAttribute('data-permit-id');
-            if (permitId) {
-                openRemarksModal(permitId); // Unified modal opening function
+document.addEventListener("DOMContentLoaded", () => {
+    const prevPageBtn = document.getElementById("prevPageBtn");
+    const nextPageBtn = document.getElementById("nextPageBtn");
+
+    if (prevPageBtn && !prevPageBtn.hasEventListener) { // Avoid multiple listeners
+        prevPageBtn.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--; // Decrement the current page
+                loadProfiles(); // Load profiles for the new page
             }
         });
-    });
-}
+        prevPageBtn.hasEventListener = true;
+    }
 
+    if (nextPageBtn && !nextPageBtn.hasEventListener) { // Avoid multiple listeners
+        nextPageBtn.addEventListener("click", () => {
+            if (currentPage < totalPages) {
+                currentPage++; // Increment the current page
+                loadProfiles(); // Load profiles for the new page
+            }
+        });
+        nextPageBtn.hasEventListener = true;
+    }
 
-// Attach event listeners on page load
-document.addEventListener('DOMContentLoaded', () => {
-    attachRemarksListeners();
+    loadProfiles(); // Load profiles initially
 });
 
 
+                            // Function to search permits by owner name or representative name
+                            function searchPermits() {
+                                const searchInput = document.getElementById("searchInput").value.toLowerCase();
+                                const tableRows = document.querySelectorAll("#buildingPermitDiv tbody tr");
 
+                                tableRows.forEach(row => {
+                                    const ownerName = row.querySelector("td:nth-child(1)").textContent.toLowerCase();
+                                    const representativeName = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
 
-</script>
+                                    if (ownerName.includes(searchInput) || representativeName.includes(searchInput)) {
+                                        row.style.display = "";
+                                    } else {
+                                        row.style.display = "none";
+                                    }
+                                });
+                            }
 
-<script>
-document.getElementById('remarksModal1').addEventListener('hidden.bs.modal', function () {
-    const modalBackdrop = document.querySelector('.modal-backdrop');
-    if (modalBackdrop) {
-        modalBackdrop.remove();
-    }
-    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('remarksModal1'));
-    if (modalInstance) {
-        modalInstance.dispose(); // Dispose of the modal instance to prevent buildup
-    }
-});
+                            // Event listener for search input
+                            document.getElementById("searchInput").addEventListener("input", searchPermits);
+                        </script>
 
-</script>
+                        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+                            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+                            crossorigin="anonymous"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+                            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+                            crossorigin="anonymous"></script>
+                        <script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
+                        <!--Navigation Bar-->
+                        <script>
+                            document.querySelector('.open-btn').addEventListener('click', function () {
+                                document.getElementById('side_nav').classList.add('active');
+                            });
+
+                            document.querySelector('.close-btn').addEventListener('click', function () {
+                                document.getElementById('side_nav').classList.remove('active');
+                            });
+                        </script>
+
+                        <!-- Toggle Others -->
+                        <script>
+                            function toggleOtherScopeInput() {
+                                const otherInput = document.getElementById("otherScopeInput");
+                                const otherRadio = document.getElementById("option4");
+
+                                if (otherRadio.checked) {
+                                    otherInput.disabled = false;
+                                } else {
+                                    otherInput.disabled = true;
+                                    otherInput.value = '';  // Clear the input if disabled
+                                }
+                            }
+
+                            // Call the function on page load to ensure the state is correct
+                            window.onload = toggleOtherScopeInput;
+                        </script>
+
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>

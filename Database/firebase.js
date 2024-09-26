@@ -535,193 +535,6 @@ function showNotification(message, type) {
     }
 }
 
-let profilesPerPage = 5; // Set how many profiles you want to load per page
-let currentPage = 1; // Start with the first page
-let totalPages = 1; // Total number of pages will be calculated
-
-// Function to load building permits and display them in the table
-async function loadProfiles() {
-    try {
-        const querySnapshot = await getDocs(collection(db, "buildingPermits"));
-        const buildingPermitDiv = document.getElementById("buildingPermitDiv");
-        const prevPageBtn = document.getElementById("prevPageBtn");
-        const nextPageBtn = document.getElementById("nextPageBtn");
-        const pageInfo = document.getElementById("pageInfo");
-
-        if (!buildingPermitDiv) {
-            console.error("buildingPermitDiv not found in the DOM.");
-            return;
-        }
-        
-        const tableBody = buildingPermitDiv.querySelector("tbody");
-        if (!tableBody) {
-            console.error("Table body not found in buildingPermitDiv.");
-            return;
-        }
-
-        tableBody.innerHTML = ""; // Clear existing rows
-
-        // Convert querySnapshot to array and ensure uniqueness
-        const permitsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        const uniquePermitsData = Array.from(new Set(permitsData.map(a => a.id)))
-            .map(id => permitsData.find(a => a.id === id));
-
-        // Sort by createdAt field
-        uniquePermitsData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
-
-        // Calculate total pages
-        totalPages = Math.ceil(uniquePermitsData.length / profilesPerPage);
-
-        // Calculate the start and end indexes for the current page
-        const start = (currentPage - 1) * profilesPerPage;
-        const end = start + profilesPerPage;
-
-        // Get the profiles for the current page
-        const currentProfiles = uniquePermitsData.slice(start, end);
-
-        // Loop through the current page's profiles
-        for (const data of currentProfiles) {
-            const row = document.createElement("tr");
-
-            // Fetch representative user data
-            let representativeName = "";
-            if (data.ownerUid) {
-                try {
-                    const userRef = doc(db, "users", data.ownerUid);
-                    const userDoc = await getDoc(userRef);
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        representativeName = `${userData.firstName} ${userData.lastName}`;
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
-                }
-            }
-
-            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "";
-
-            // Disable options based on the current status (progressive selection control)
-            const statusOptions = `
-                <option value="Pending" ${data.status === "Pending" ? 'selected' : ''} ${data.status !== "Pending" ? 'disabled' : ''}>Pending</option>
-                <option value="Processing" ${data.status === "Processing" ? 'selected' : ''} ${(data.status !== "Pending" && data.status !== "Processing") ? 'disabled' : ''}>Processing</option>
-                <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''} ${(data.status !== "Processing" && data.status !== "To Pay") ? 'disabled' : ''}>To Pay</option>
-                <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''} ${(data.status !== "To Pay" && data.status !== "For Approval") ? 'disabled' : ''}>For Approval</option>
-                <option value="For Release" ${data.status === "For Release" ? 'selected' : ''} ${(data.status !== "For Approval" && data.status !== "For Release") ? 'disabled' : ''}>For Release</option>
-                <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''} ${(data.status !== "For Release" && data.status !== "Claimed") ? 'disabled' : ''}>Claimed</option>
-            `;
-
-            row.innerHTML = `
-                <td>${data.ownerName}</td>
-                <td>${representativeName}</td>
-                <td>${createdAt}</td>
-                <td>
-                    <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${data.id}" data-owneruid="${data.ownerUid}">
-                        ${statusOptions}
-                    </select>
-                </td>
-                <td>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Actions
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item save-btn" href="#" data-id="${data.id}"><i class="fas fa-save"></i> Save</a></li>
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${data.id}"><i class="fas fa-comment"></i> Remarks</a></li>
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#buildingPermitModal" data-permit-id="${data.id}"><i class="fas fa-edit"></i> Edit</a></li>
-                            <li><a class="dropdown-item archive-btn" href="#" data-id="${data.id}"><i class="fas fa-archive"></i> Archive</a></li>
-                        </ul>
-                    </div>
-                </td>
-                <td><button class="btn btn-primary btn-sm view-details-btn">View Details</button></td>
-            `;
-
-            tableBody.appendChild(row);
-
-            // Add event listener for status change
-            const statusSelect = row.querySelector(".status-select");
-            if (statusSelect) {
-                statusSelect.addEventListener("change", async (event) => {
-                    const newStatus = event.target.value;
-                    if (data.status !== newStatus) {
-                        const message = `${data.ownerName}'s building permit is now ${newStatus.toLowerCase()}`;
-
-                        // Trigger notification
-                        showNotification(message, 'info');
-
-                        // Store the notification in Firestore
-                        try {
-                            await addDoc(collection(db, "notifications"), {
-                                userId: data.ownerUid,
-                                message: message,
-                                permitId: data.id,
-                                timestamp: serverTimestamp(),
-                                read: false
-                            });
-                        } catch (error) {
-                            console.error("Error storing notification:", error);
-                        }
-
-                        // Update status in Firestore
-                        try {
-                            await updateDoc(doc(db, 'buildingPermits', data.id), { status: newStatus });
-                        } catch (error) {
-                            console.error("Error updating permit status:", error);
-                        }
-
-                        // Re-load profiles to reflect changes
-                        loadProfiles();
-                    }
-                });
-            }
-        }
-
-        // Update the page info text
-        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-
-        // Disable "Previous" button on the first page
-        prevPageBtn.disabled = currentPage === 1;
-
-        // Disable "Next" button on the last page
-        nextPageBtn.disabled = currentPage === totalPages;
-
-        attachSaveButtonListeners();
-        attachArchiveButtonListeners();
-        attachEditButtonListeners();
-        attachRemarksButtonListeners();
-    } catch (error) {
-        console.error("Error loading profiles:", error);
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    const prevPageBtn = document.getElementById("prevPageBtn");
-    const nextPageBtn = document.getElementById("nextPageBtn");
-
-    if (prevPageBtn && !prevPageBtn.hasEventListener) { // Avoid multiple listeners
-        prevPageBtn.addEventListener("click", () => {
-            if (currentPage > 1) {
-                currentPage--; // Decrement the current page
-                loadProfiles(); // Load profiles for the new page
-            }
-        });
-        prevPageBtn.hasEventListener = true;
-    }
-
-    if (nextPageBtn && !nextPageBtn.hasEventListener) { // Avoid multiple listeners
-        nextPageBtn.addEventListener("click", () => {
-            if (currentPage < totalPages) {
-                currentPage++; // Increment the current page
-                loadProfiles(); // Load profiles for the new page
-            }
-        });
-        nextPageBtn.hasEventListener = true;
-    }
-
-    // Initial load of profiles
-
-});
-
-
 
 function attachEditButtonListeners() {
     const editButtons = document.querySelectorAll('a[data-permit-id]'); // Ensure targeting 'a' tag with permit-id attribute
@@ -960,46 +773,37 @@ async function fetchAndSetClientInfo() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Attach event listeners for buttons and forms
     attachEventListeners();
+    // Monitor authentication state of the user
     monitorAuthState();
 
-    const buildingPermitBtn = document.querySelector('.save-btn');
-    if (buildingPermitBtn) {
-        const buildingPermitId = buildingPermitBtn.getAttribute('data-id');
-        console.log("Building Permit ID found on page load:", buildingPermitId);
-        if (buildingPermitId) {
-            loadRemarks(buildingPermitId);
-        } else {
-            console.error('Building Permit ID is not set on the save button');
-        }
-    } else {
-        console.error('No element with class "save-btn" found');
-    }
-
+    // Load building permits profiles
     const buildingPermitDiv = document.getElementById("buildingPermitDiv");
     if (buildingPermitDiv) {
         loadProfiles();
     }
 
+    // Load user permit status if the status table exists
     const permitStatusTable = document.getElementById('permit-status-table');
     if (permitStatusTable) {
         loadUserPermitStatus();
     }
 
+    // Fetch and display client information
     fetchAndSetClientInfo();
 
-   
-
-
-
+    // Event listener for permit status table actions
     document.getElementById('permit-status-table').addEventListener('click', async function(event) {
         const target = event.target;
 
+        // Check if the download button for Excel is clicked
         if (target && target.classList.contains('download-excel-btn')) {
             const permitId = target.getAttribute('data-permit-id');
             await downloadApplicationAsExcel(permitId);
         }
 
+        // Check if the download button for PDF is clicked
         if (target && target.classList.contains('download-pdf-btn')) {
             const permitId = target.getAttribute('data-permit-id');
             await downloadApplicationAsPDF(permitId);
