@@ -150,7 +150,8 @@
 
    
   
-    <div class="modal fade" id="housingApplicationModal" tabindex="-1" aria-labelledby="housingApplicationModalLabel" aria-hidden="true">
+    <div class="modal fade" id="housingApplicationModal" tabindex="-1" aria-labelledby="housingApplicationModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+
         <div class="modal-dialog modal-dialog-centered wide-modal">
           <div class="modal-content">
             <div class="modal-header">
@@ -513,7 +514,8 @@
                             <div class="col-md-2">
                                 <label for="memberEmployed">Employed<span class="required-asterisk">*</span></label>
                                 <select class="form-control" id="memberEmployed" required>
-                                    <option></option>
+                                    <option>Yes</option>
+                                    <option>No</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -539,10 +541,10 @@
     
                         <div class="row">
                             <div class="col text-end">
-                                <button class="btn btn-secondary"><i class="fa-solid fa-plus" id="addHouseholdBtn"></i> Add</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-delete-left" id="clearHouseholdBtn"></i> Clear</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-pencil" id="editHouseholdBtn"></i> Edit</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-trash" id="deleteHouseholdBtn"></i> Delete</button>
+                                <button class="btn btn-secondary"><i class="fa-solid fa-plus" id="addHouseholdBtn" type="button"></i> Add</button>
+                                <button class="btn btn-secondary"><i class="fa-solid fa-delete-left" id="clearHouseholdBtn" type="button"></i> Clear</button>
+                                <button class="btn btn-secondary"><i class="fa-solid fa-pencil" id="editHouseholdBtn" type="button"></i> Edit</button>
+                                <button class="btn btn-secondary"><i class="fa-solid fa-trash" id="deleteHouseholdBtn" type="button"></i> Delete</button>
                             </div>
                         </div>
     
@@ -562,6 +564,8 @@
                                         <th>Monthly Income</th>
                                     </tr>
                                 </thead>
+                                <tbody id="householdMembersTableBody"> <!-- Added id to tbody -->
+                                </tbody>
                             </table>
                         </div>
                         
@@ -978,172 +982,351 @@
 
 
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-    
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-        authDomain: "chsd-mis.firebaseapp.com",
-        projectId: "chsd-mis",
-        storageBucket: "chsd-mis.appspot.com",
-        messagingSenderId: "694967679357",
-        appId: "1:694967679357:web:65cffd50f13739f934f414",
-        measurementId: "G-XBQTQFRLJ5"
-    };
-    
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-    
-    // Function to check user roles
-    async function checkUserRole(userUid) {
-        try {
-            let isAdminPC = false;
-            let isAdminIS = false;
-
-            const adminPCRef = doc(db, 'AdminPC', userUid);
-            const adminPCSnapshot = await getDoc(adminPCRef);
-            if (adminPCSnapshot.exists()) {
-                isAdminPC = adminPCSnapshot.data().isAdmin === true;
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+            import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+            import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+            import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+        
+            // Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+                authDomain: "chsd-mis.firebaseapp.com",
+                projectId: "chsd-mis",
+                storageBucket: "chsd-mis.appspot.com",
+                messagingSenderId: "694967679357",
+                appId: "1:694967679357:web:65cffd50f13739f934f414",
+                measurementId: "G-XBQTQFRLJ5"
+            };
+        
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            const storage = getStorage(app);
+        
+            // Function to check user roles
+            async function checkUserRole(userUid) {
+                try {
+                    let isAdminPC = false;
+                    let isAdminIS = false;
+        
+                    const adminPCRef = doc(db, 'AdminPC', userUid);
+                    const adminPCSnapshot = await getDoc(adminPCRef);
+                    if (adminPCSnapshot.exists()) {
+                        isAdminPC = adminPCSnapshot.data().isAdmin === true;
+                    }
+        
+                    const adminISRef = doc(db, 'AdminIS', userUid);
+                    const adminISSnapshot = await getDoc(adminISRef);
+                    if (adminISSnapshot.exists()) {
+                        isAdminIS = adminISSnapshot.data().isAdmin === true;
+                    }
+        
+                    return { isAdminPC, isAdminIS };
+                } catch (error) {
+                    console.error("Error fetching user roles:", error);
+                    throw error;
+                }
             }
-
-            const adminISRef = doc(db, 'AdminIS', userUid);
-            const adminISSnapshot = await getDoc(adminISRef);
-            if (adminISSnapshot.exists()) {
-                isAdminIS = adminISSnapshot.data().isAdmin === true;
+        
+            // Add event listener to the submit button to trigger the form submission
+            document.getElementById('submitBtn').addEventListener('click', addHousingApplication);
+        
+            async function addHousingApplication(event) {
+                event.preventDefault();
+        
+                // Show the loading screen
+                document.getElementById('loading-screen').style.display = 'flex';
+        
+                setTimeout(async () => {
+                    const surveyNo = document.getElementById('surveyNo').value;
+                    const dateApplied = document.getElementById('dateApplied').value;
+                    const barangay = document.getElementById('barangay').value;
+                    const sitioPurok = document.getElementById('sitioPurok').value;
+                    const classificationArea = document.getElementById('classificationArea').value;
+                    const householdRemarks = document.getElementById('householdRemarks').value;
+                    const householdBirthday = document.getElementById('householdBirthday').value;
+                    const householdSex = document.getElementById('householdSex').value;
+                    const householdCivilStatus = document.getElementById('householdCivilStatus').value;
+                    const householdLastName = document.getElementById('householdLastName').value;
+                    const householdFirstName = document.getElementById('householdFirstName').value;
+                    const householdMiddleName = document.getElementById('householdMiddleName').value;
+                    const householdMaidenName = document.getElementById('householdMaidenName').value;
+                    const householdOccupation = document.getElementById('householdOccupation').value;
+                    const householdPlaceOfWork = document.getElementById('householdPlaceOfWork').value;
+                    const householdAddress = document.getElementById('householdAddress').value;
+        
+                    const spouseLastName = document.getElementById('spouseLastName').value;
+                    const spouseFirstName = document.getElementById('spouseFirstName').value;
+                    const spouseMiddleName = document.getElementById('spouseMiddleName').value;
+                    const spouseMaidenName = document.getElementById('spouseMaidenName').value;
+                    const spouseBirthday = document.getElementById('spouseBirthday').value;
+        
+                    const classificationOfSurveyHousehold = document.getElementById('classificationOfSurveyHousehold').value;
+                    const householdAmount = document.getElementById('householdAmount').value;
+                    const structureOwner = document.getElementById('structureOwner').value;
+                    const provinceOfOrigin = document.getElementById('provinceOfOrigin').value;
+                    const householdSize = document.getElementById('householdSize').value;
+                    const yearOfResidency = document.getElementById('yearOfResidency').value;
+                    const reasonsForEstablishing = document.getElementById('reasonsForEstablishing').value;
+        
+                    const householdHeadName = `${householdLastName} ${householdFirstName} ${householdMiddleName} ${householdMaidenName}`;
+        
+                    try {
+                        const user = auth.currentUser;
+                        if (!user) {
+                            console.error("No user logged in.");
+                            return;
+                        }
+        
+                        const { isAdminPC, isAdminIS } = await checkUserRole(user.uid);
+                        const isAdmin = isAdminPC || isAdminIS;
+                        let ownerUid = user.uid;
+        
+                        const housingDocRef = await addDoc(collection(db, "Housing"), {
+                            surveyNo,
+                            dateApplied,
+                            barangay,
+                            sitioPurok,
+                            classificationArea,
+                            householdRemarks,
+                            householdBirthday,
+                            householdSex,
+                            householdCivilStatus,
+                            householdHeadName,
+                            householdOccupation,
+                            householdPlaceOfWork,
+                            householdAddress,
+                            spouseName: `${spouseLastName} ${spouseFirstName} ${spouseMiddleName} ${spouseMaidenName}`,
+                            spouseBirthday,
+                            classificationOfSurveyHousehold,
+                            householdAmount,
+                            structureOwner,
+                            provinceOfOrigin,
+                            householdSize,
+                            yearOfResidency,
+                            reasonsForEstablishing,
+                            ownerUid: ownerUid,
+                            status: 'Pending',
+                            createdAt: Timestamp.now()
+                        });
+        
+                        await updateDoc(doc(db, 'users', ownerUid), {
+                            housingApplications: arrayUnion({
+                                applicationId: housingDocRef.id,
+                                surveyNo,
+                                status: 'Pending'
+                            })
+                        });
+        
+                        const housingModal = bootstrap.Modal.getInstance(document.getElementById('housingApplicationModal'));
+                        housingModal.hide();
+        
+                        const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
+                        applicationModal.show();
+        
+                    } catch (error) {
+                        console.error("Error submitting housing application:", error);
+                        alert("Failed to submit application. Please try again later.");
+                    } finally {
+                        document.getElementById('loading-screen').style.display = 'none';
+                    }
+                }, 100);
             }
+        </script>
+        
+        <!--Spouse Checkbox Script-->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const spouseFields = [
+                    document.getElementById("spouseLastName"),
+                    document.getElementById("spouseFirstName"),
+                    document.getElementById("spouseMiddleName"),
+                    document.getElementById("spouseMaidenName"),
+                    document.getElementById("spouseBirthday")
+                ];
+        
+                const hasSpouseCheckbox = document.getElementById("hasSpouse");
+        
+                function toggleSpouseFields() {
+                    const isChecked = hasSpouseCheckbox.checked;
+                    spouseFields.forEach(field => {
+                        field.disabled = !isChecked;
+                    });
+                }
+        
+                hasSpouseCheckbox.addEventListener("change", toggleSpouseFields);
+            });
+        </script>
+        
+<!-- Household Members Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const householdMembers = [];
 
-            return { isAdminPC, isAdminIS };
-        } catch (error) {
-            console.error("Error fetching user roles:", error);
-            throw error;
-        }
-    }
+        const memberNameInput = document.getElementById('memberName');
+        const relationToHeadInput = document.getElementById('relationToHead');
+        const memberAgeInput = document.getElementById('memberAge');
+        const memberGenderInput = document.getElementById('memberGender');
+        const memberCivilStatusInput = document.getElementById('memberCivilStatus');
+        const memberEducationalAttainmentInput = document.getElementById('memberEducationalAttainment');
+        const memberEmployedInput = document.getElementById('memberEmployed');
+        const memberOccupationInput = document.getElementById('memberOccupation');
+        const memberPlaceOfWorkInput = document.getElementById('memberPlaceOfWork');
+        const memberMonthlyIncomeInput = document.getElementById('memberMonthlyIncome');
 
-    // Add event listener to the submit button to trigger the form submission
-    document.getElementById('submitBtn').addEventListener('click', addHousingApplication);
-    
-    async function addHousingApplication(event) {
-    event.preventDefault();
-    
-    // Show the loading screen
-    document.getElementById('loading-screen').style.display = 'flex';
-    
-    // Give the browser time to render the loading screen
-    setTimeout(async () => {
-        // Get form data
-        const surveyNo = document.getElementById('surveyNo').value;
-        const dateApplied = document.getElementById('dateApplied').value;
-        const barangay = document.getElementById('barangay').value;
-        const sitioPurok = document.getElementById('sitioPurok').value;
-        const classificationArea = document.getElementById('classificationArea').value;
-        const householdRemarks = document.getElementById('householdRemarks').value;
-        const householdBirthday = document.getElementById('householdBirthday').value;
-        const householdSex = document.getElementById('householdSex').value;
-        const householdCivilStatus = document.getElementById('householdCivilStatus').value;
-        const householdLastName = document.getElementById('householdLastName').value;
-        const householdFirstName = document.getElementById('householdFirstName').value;
-        const householdMiddleName = document.getElementById('householdMiddleName').value;
-        const householdMaidenName = document.getElementById('householdMaidenName').value;
-        const householdOccupation = document.getElementById('householdOccupation').value;
-        const householdPlaceOfWork = document.getElementById('householdPlaceOfWork').value;
-        const householdAddress = document.getElementById('householdAddress').value;
+        const tableBody = document.getElementById('householdMembersTableBody');  // Ensure this targets the correct tbody by its id
+        const modalElement = document.getElementById('housingApplicationModal');
+        const modalInstance = new bootstrap.Modal(modalElement, {
+            backdrop: 'static',  // Prevent closing when clicking outside
+            keyboard: false      // Disable closing with the escape key
+        });
 
-        const spouseLastName = document.getElementById('spouseLastName').value;
-        const spouseFirstName = document.getElementById('spouseFirstName').value;
-        const spouseMiddleName = document.getElementById('spouseMiddleName').value;
-        const spouseMaidenName = document.getElementById('spouseMaidenName').value;
-        const spouseBirthday = document.getElementById('spouseBirthday').value;
+        // Function to add household member
+        function addHouseholdMember() {
+            const member = {
+                name: memberNameInput.value,
+                relation: relationToHeadInput.value,
+                age: memberAgeInput.value,
+                gender: memberGenderInput.value,
+                civilStatus: memberCivilStatusInput.value,
+                education: memberEducationalAttainmentInput.value,
+                employed: memberEmployedInput.value,
+                occupation: memberOccupationInput.value,
+                placeOfWork: memberPlaceOfWorkInput.value,
+                income: memberMonthlyIncomeInput.value
+            };
 
-        const classificationOfSurveyHousehold = document.getElementById('classificationOfSurveyHousehold').value;
-        const householdAmount = document.getElementById('householdAmount').value;
-        const structureOwner = document.getElementById('structureOwner').value;
-        const provinceOfOrigin = document.getElementById('provinceOfOrigin').value;
-        const householdSize = document.getElementById('householdSize').value;
-        const yearOfResidency = document.getElementById('yearOfResidency').value;
-        const reasonsForEstablishing = document.getElementById('reasonsForEstablishing').value;
+            // Debug: Log member object to check if values are captured correctly
+            console.log("New member added:", member);
 
-        // Combine the household head's name
-        const householdHeadName = `${householdLastName} ${householdFirstName} ${householdMiddleName} ${householdMaidenName}`;
-
-        try {
-            const user = auth.currentUser;
-            if (!user) {
-                console.error("No user logged in.");
+            // Validate fields before adding
+            if (!member.name || !member.relation || !member.age || !member.gender) {
+                alert('Please fill in all required fields.');
                 return;
             }
 
-            const { isAdminPC, isAdminIS } = await checkUserRole(user.uid);
-            const isAdmin = isAdminPC || isAdminIS;
+            // Add the household member to the array
+            householdMembers.push(member);
 
-            let ownerUid = user.uid; // Assign ownerUid regardless of user role
+            // Debug: Log householdMembers array to ensure members are being added
+            console.log("Household members array:", householdMembers);
 
-            // Add to "Housing" collection
-            const housingDocRef = await addDoc(collection(db, "Housing"), {
-                surveyNo,
-                dateApplied,
-                barangay,
-                sitioPurok,
-                classificationArea,
-                householdRemarks,
-                householdBirthday,
-                householdSex,
-                householdCivilStatus,
-                householdHeadName,
-                householdOccupation,
-                householdPlaceOfWork,
-                householdAddress,
-                spouseName: `${spouseLastName} ${spouseFirstName} ${spouseMiddleName} ${spouseMaidenName}`,
-                spouseBirthday,
-                classificationOfSurveyHousehold,
-                householdAmount,
-                structureOwner,
-                provinceOfOrigin,
-                householdSize,
-                yearOfResidency,
-                reasonsForEstablishing,
-                ownerUid: ownerUid,
-                status: 'Pending',
-                createdAt: Timestamp.now()
-            });
+            // Re-render the table
+            renderHouseholdMembersTable();
 
-            // Update the user's document with the housing application
-            await updateDoc(doc(db, 'users', ownerUid), {
-                housingApplications: arrayUnion({
-                    applicationId: housingDocRef.id,
-                    surveyNo,
-                    status: 'Pending'
-                })
-            });
-            
-            const housingModal = bootstrap.Modal.getInstance(document.getElementById('housingApplicationModal'));
-housingModal.hide();
-
-            // Open the modal for successful submission
-            const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
-            applicationModal.show();
-
-        } catch (error) {
-            console.error("Error submitting housing application:", error);
-            alert("Failed to submit application. Please try again later.");
-        } finally {
-            // Hide the loading screen
-            document.getElementById('loading-screen').style.display = 'none';
+            // Clear input fields after adding
+            clearHouseholdMemberInputs();
         }
-    }, 100); // SetTimeout gives the browser 100ms to render the loading screen
-}
+
+        // Function to render the household members table
+        function renderHouseholdMembersTable() {
+            // Clear the table body
+            tableBody.innerHTML = '';
+
+            // Debug: Log to check if render function is called
+            console.log("Rendering table with members...");
+
+            // Iterate through each household member and add a row to the table
+            householdMembers.forEach((member) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${member.relation}</td>
+                    <td>${member.age}</td>
+                    <td>${member.gender}</td>
+                    <td>${member.civilStatus}</td>
+                    <td>${member.education}</td>
+                    <td>${member.employed}</td>
+                    <td>${member.occupation}</td>
+                    <td>${member.placeOfWork}</td>
+                    <td>${member.income}</td>
+                `;
+                tableBody.appendChild(row);  // Append the row to the table body
+
+                // Debug: Log each row added to the table
+                console.log("Row added to table:", row);
+            });
+
+            // Debug: Log table body content to check if it's populated
+            console.log("Table body content:", tableBody.innerHTML);
+        }
+
+        // Function to clear input fields
+        function clearHouseholdMemberInputs() {
+            memberNameInput.value = '';
+            relationToHeadInput.value = '';
+            memberAgeInput.value = '';
+            memberGenderInput.value = '';
+            memberCivilStatusInput.value = '';
+            memberEducationalAttainmentInput.value = '';
+            memberEmployedInput.value = '';
+            memberOccupationInput.value = '';
+            memberPlaceOfWorkInput.value = '';
+            memberMonthlyIncomeInput.value = '';
+        }
+
+        // Event listener for Add button
+        document.getElementById('addHouseholdBtn').addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Prevent event bubbling
+            addHouseholdMember();
+
+            // Keep the modal open
+            setTimeout(() => {
+                modalInstance.show();
+            }, 100);
+        });
+
+        document.getElementById('clearHouseholdBtn').addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent form submission
+            clearHouseholdMemberInputs();
+        });
+
+        document.getElementById('editHouseholdBtn').addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent form submission
+            // Logic to edit a household member
+        });
+
+        document.getElementById('deleteHouseholdBtn').addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent form submission
+            // Logic to delete a household member
+        });
+
+        // Debugging form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Form submitted, modal should not close');
+        });
+    });
 </script>
 
-<!--Spouse Checkbox Script-->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-    // Spouse-related input fields
+    
+    document.addEventListener("DOMContentLoaded", function () {
+    // Set the default value for "Date Applied" to today's date
+    const dateAppliedInput = document.getElementById("dateApplied");
+    const today = new Date().toISOString().split('T')[0];
+    dateAppliedInput.value = today;
+
+    // Disable future dates and the current date for the household birthday and spouse birthday
+    const householdBirthdayInput = document.getElementById("householdBirthday");
+    const spouseBirthdayInput = document.getElementById("spouseBirthday");
+    const minAgeDate = new Date();
+    minAgeDate.setFullYear(minAgeDate.getFullYear() - 18); // At least 18 years old
+    
+    // Setting the max date for birthdates to ensure 18+ age
+    const maxDate = minAgeDate.toISOString().split('T')[0];
+    householdBirthdayInput.max = maxDate;
+    spouseBirthdayInput.max = maxDate;
+    
+    // Disable today and future dates for the household and spouse birthday
+    householdBirthdayInput.setAttribute('max', maxDate);
+    spouseBirthdayInput.setAttribute('max', maxDate);
+
+    // Enable or disable spouse fields based on the "hasSpouse" checkbox
+    const hasSpouseCheckbox = document.getElementById("hasSpouse");
     const spouseFields = [
         document.getElementById("spouseLastName"),
         document.getElementById("spouseFirstName"),
@@ -1152,27 +1335,14 @@ housingModal.hide();
         document.getElementById("spouseBirthday")
     ];
 
-    // Checkbox to toggle spouse fields
-    const hasSpouseCheckbox = document.getElementById("hasSpouse");
-
-    // Function to enable/disable spouse fields
-    function toggleSpouseFields() {
-        const isChecked = hasSpouseCheckbox.checked;
+    hasSpouseCheckbox.addEventListener("change", function () {
         spouseFields.forEach(field => {
-            field.disabled = !isChecked;
+            field.disabled = !hasSpouseCheckbox.checked;
         });
-    }
-
-    // Add event listener to the checkbox
-    hasSpouseCheckbox.addEventListener("change", toggleSpouseFields);
+    });
 });
 
-</script>
-
-
-    
-        
-    
+    </script>
     
     
     </body>
