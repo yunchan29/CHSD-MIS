@@ -188,7 +188,7 @@
         <div class="row">
             <div class="col">
                 <label for="surveyNo">Survey No.</label>
-                <input type="text" id="surveyNo" class="form-control">
+                <input type="text" id="surveyNo" class="form-control" disabled>
             </div>
             <div class="col">
                 <label for="dateApplied">Date<span class="required-asterisk">*</span></label>
@@ -284,7 +284,7 @@
             </div>
             <div class="col-md-8">
                <label for="householdRemarks">Remarks</label>
-               <textarea class="form-control" id="householdRemarks" rows="1">
+               <textarea class="form-control" id="householdRemarks" rows="1" disabled>
                </textarea>
             </div>
         </div>
@@ -587,7 +587,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="construction">Construction/Building Materials Used</label>
-                                <select class="form-control" i="construction">
+                                <select class="form-control" id="construction">
                                     <option>Concrete</option>
                                     <option>Wood/Nipa</option>
                                     <option>Plastic Roof Only</option>
@@ -629,9 +629,18 @@
                             <div class="col-md-6">
                                 <label for="sourceOfWater">Source of Water</label>
                                 <select class="form-control" id="sourceOfWater">
-                                    <option></option>
+                                    <option value="">Select Source of Water</option>
+                                    <option value="piped_water_maynilad">Piped Water (Maynilad)</option>
+                                    <option value="piped_water_manila_water">Piped Water (Manila Water)</option>
+                                    <option value="local_water_district">Local Water District</option>
+                                    <option value="deep_well">Deep Well</option>
+                                    <option value="shallow_well">Shallow Well</option>
+                                    <option value="water_delivery">Water Delivery (Private Supplier)</option>
+                                    <option value="communal_faucet">Communal Faucet System (Barangay/Community)</option>
+                                    <option value="rainwater">Rainwater Collection</option>
                                 </select>
                             </div>
+                            
                             <div class="col-md-6">
                                 <label for="telephone">Telephone</label>
                                 <select class="form-control" id="telephone">
@@ -1108,6 +1117,45 @@
                 addHouseholdMember(e); // Call the function to add the member and stop form submission
             });
         
+            // Function to handle Step 3 (Lot and House Characteristics)
+            async function addLotAndHouseDetails() {
+                const lotOwner = document.getElementById('lotOwner').value;
+                const construction = document.getElementById('construction').value;
+                const NOStoreys = document.getElementById('NOStoreys').value;
+                const estimatedFloorArea = document.getElementById('estimatedFloorArea').value;
+                const comfortRoom = document.getElementById('comfortRoom').value;
+                const utilities = document.getElementById('utilities').value;
+                const sourceOfWater = document.getElementById('sourceOfWater').value;
+                const telephone = document.getElementById('telephone').value;
+                const modeOfHouse = document.getElementById('modeOfHouse').value;
+                const infoAboutLot = document.getElementById('infoAboutLot').value;
+                const amountToPay = document.getElementById('amountToPay').value;
+                const relationshipWithOwner = document.getElementById('relationshipWithOwner').value;
+                const typeOfStructure = document.getElementById('typeOfStructure').value;
+        
+                // Validate required fields
+                if (!lotOwner || !NOStoreys || !estimatedFloorArea) {
+                    alert('Please fill in all required fields in the Lot and House Characteristics section.');
+                    return;
+                }
+        
+                return {
+                    lotOwner,
+                    construction,
+                    NOStoreys,
+                    estimatedFloorArea,
+                    comfortRoom,
+                    utilities,
+                    sourceOfWater,
+                    telephone,
+                    modeOfHouse,
+                    infoAboutLot,
+                    amountToPay,
+                    relationshipWithOwner,
+                    typeOfStructure
+                };
+            }
+        
             // Add event listener to the submit button to trigger the form submission
             document.getElementById('submitBtn').addEventListener('click', addHousingApplication);
         
@@ -1154,6 +1202,9 @@
         
                     const householdHeadName = `${householdLastName} ${householdFirstName} ${householdMiddleName} ${householdMaidenName}`;
         
+                    // Step 3: Lot and House Details
+                    const lotHouseDetails = await addLotAndHouseDetails();
+        
                     try {
                         const user = auth.currentUser;
                         if (!user) {
@@ -1190,8 +1241,9 @@
                             householdSize,
                             yearOfResidency,
                             reasonsForEstablishing,
-                            ownerUid: user.uid,
                             householdMembers, // Added the household members array here
+                            ...lotHouseDetails, // Added the lot and house details here
+                            ownerUid: user.uid,
                             status: 'Pending',
                             createdAt: Timestamp.now(),
                         });
