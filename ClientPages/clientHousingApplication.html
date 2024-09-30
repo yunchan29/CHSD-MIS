@@ -538,13 +538,18 @@
                                
                             </div>
                         </div>
-    
+                        
+
+                        <div id="addHouseholdLoading" class="spinner-border text-primary" role="status" style="display: none;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        
                         <div class="row">
                             <div class="col text-end">
-                                <button class="btn btn-secondary"><i class="fa-solid fa-plus" id="addHouseholdBtn" type="button"></i> Add</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-delete-left" id="clearHouseholdBtn" type="button"></i> Clear</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-pencil" id="editHouseholdBtn" type="button"></i> Edit</button>
-                                <button class="btn btn-secondary"><i class="fa-solid fa-trash" id="deleteHouseholdBtn" type="button"></i> Delete</button>
+                                <button class="btn btn-secondary" type="button" id="addHouseholdBtn"><i class="fa-solid fa-plus"></i> Add</button>
+                                <button class="btn btn-secondary" type="button" id="clearHouseholdBtn"><i class="fa-solid fa-delete-left"></i> Clear</button>
+                                <button class="btn btn-secondary" type="button" id="editHouseholdBtn"><i class="fa-solid fa-pencil"></i> Edit</button>
+                                <button class="btn btn-secondary" type="button" id="deleteHouseholdBtn"><i class="fa-solid fa-trash"></i> Delete</button>
                             </div>
                         </div>
     
@@ -984,9 +989,8 @@
 
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-            import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-            import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-            import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+            import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+            import { getFirestore, collection, addDoc, updateDoc, doc, arrayUnion, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         
             // Firebase configuration
             const firebaseConfig = {
@@ -1003,32 +1007,106 @@
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
             const db = getFirestore(app);
-            const storage = getStorage(app);
         
-            // Function to check user roles
-            async function checkUserRole(userUid) {
-                try {
-                    let isAdminPC = false;
-                    let isAdminIS = false;
+            // Declare the householdMembers array to store all household members from step 2
+            let householdMembers = [];
         
-                    const adminPCRef = doc(db, 'AdminPC', userUid);
-                    const adminPCSnapshot = await getDoc(adminPCRef);
-                    if (adminPCSnapshot.exists()) {
-                        isAdminPC = adminPCSnapshot.data().isAdmin === true;
-                    }
+            // Input fields for household members
+            const memberNameInput = document.getElementById('memberName');
+            const relationToHeadInput = document.getElementById('relationToHead');
+            const memberAgeInput = document.getElementById('memberAge');
+            const memberGenderInput = document.getElementById('memberGender');
+            const memberCivilStatusInput = document.getElementById('memberCivilStatus');
+            const memberEducationalAttainmentInput = document.getElementById('memberEducationalAttainment');
+            const memberEmployedInput = document.getElementById('memberEmployed');
+            const memberOccupationInput = document.getElementById('memberOccupation');
+            const memberPlaceOfWorkInput = document.getElementById('memberPlaceOfWork');
+            const memberMonthlyIncomeInput = document.getElementById('memberMonthlyIncome');
+            const tableBody = document.getElementById('householdMembersTableBody');
         
-                    const adminISRef = doc(db, 'AdminIS', userUid);
-                    const adminISSnapshot = await getDoc(adminISRef);
-                    if (adminISSnapshot.exists()) {
-                        isAdminIS = adminISSnapshot.data().isAdmin === true;
-                    }
+            // Loading spinner for household member addition
+            const addMemberLoadingSpinner = document.getElementById('addHouseholdLoading');
         
-                    return { isAdminPC, isAdminIS };
-                } catch (error) {
-                    console.error("Error fetching user roles:", error);
-                    throw error;
+            // Function to add household member
+            function addHouseholdMember(e) {
+                // Prevent form submission behavior
+                e.preventDefault();
+                e.stopPropagation();
+        
+                // Show loading spinner
+                addMemberLoadingSpinner.style.display = 'inline-block';
+        
+                const member = {
+                    name: memberNameInput.value,
+                    relation: relationToHeadInput.value,
+                    age: memberAgeInput.value,
+                    gender: memberGenderInput.value,
+                    civilStatus: memberCivilStatusInput.value,
+                    education: memberEducationalAttainmentInput.value,
+                    employed: memberEmployedInput.value,
+                    occupation: memberOccupationInput.value,
+                    placeOfWork: memberPlaceOfWorkInput.value,
+                    income: memberMonthlyIncomeInput.value,
+                };
+        
+                // Validate required fields
+                if (!member.name || !member.relation || !member.age || !member.gender) {
+                    alert('Please fill in all required fields.');
+                    addMemberLoadingSpinner.style.display = 'none';
+                    return;
                 }
+        
+                // Add the new member to the householdMembers array
+                householdMembers.push(member);
+        
+                // Append the new household member to the table
+                appendHouseholdMemberRow(member);
+        
+                // Clear input fields after adding
+                clearHouseholdMemberInputs();
+        
+                // Hide the loading spinner
+                setTimeout(() => {
+                    addMemberLoadingSpinner.style.display = 'none';
+                }, 500);
             }
+        
+            // Function to append the new household member to the table without reloading
+            function appendHouseholdMemberRow(member) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${member.relation}</td>
+                    <td>${member.age}</td>
+                    <td>${member.gender}</td>
+                    <td>${member.civilStatus}</td>
+                    <td>${member.education}</td>
+                    <td>${member.employed}</td>
+                    <td>${member.occupation}</td>
+                    <td>${member.placeOfWork}</td>
+                    <td>${member.income}</td>
+                `;
+                tableBody.appendChild(row);
+            }
+        
+            // Function to clear input fields
+            function clearHouseholdMemberInputs() {
+                memberNameInput.value = '';
+                relationToHeadInput.value = '';
+                memberAgeInput.value = '';
+                memberGenderInput.value = '';
+                memberCivilStatusInput.value = '';
+                memberEducationalAttainmentInput.value = '';
+                memberEmployedInput.value = '';
+                memberOccupationInput.value = '';
+                memberPlaceOfWorkInput.value = '';
+                memberMonthlyIncomeInput.value = '';
+            }
+        
+            // Add event listener to the "Add" button to trigger the add household member function
+            document.getElementById('addHouseholdBtn').addEventListener('click', function (e) {
+                addHouseholdMember(e); // Call the function to add the member and stop form submission
+            });
         
             // Add event listener to the submit button to trigger the form submission
             document.getElementById('submitBtn').addEventListener('click', addHousingApplication);
@@ -1040,6 +1118,7 @@
                 document.getElementById('loading-screen').style.display = 'flex';
         
                 setTimeout(async () => {
+                    // Gather Step 1 data (Household Head Details)
                     const surveyNo = document.getElementById('surveyNo').value;
                     const dateApplied = document.getElementById('dateApplied').value;
                     const barangay = document.getElementById('barangay').value;
@@ -1057,12 +1136,14 @@
                     const householdPlaceOfWork = document.getElementById('householdPlaceOfWork').value;
                     const householdAddress = document.getElementById('householdAddress').value;
         
+                    // Spouse information (optional)
                     const spouseLastName = document.getElementById('spouseLastName').value;
                     const spouseFirstName = document.getElementById('spouseFirstName').value;
                     const spouseMiddleName = document.getElementById('spouseMiddleName').value;
                     const spouseMaidenName = document.getElementById('spouseMaidenName').value;
                     const spouseBirthday = document.getElementById('spouseBirthday').value;
         
+                    // Additional Step 1 details
                     const classificationOfSurveyHousehold = document.getElementById('classificationOfSurveyHousehold').value;
                     const householdAmount = document.getElementById('householdAmount').value;
                     const structureOwner = document.getElementById('structureOwner').value;
@@ -1080,9 +1161,11 @@
                             return;
                         }
         
-                        const { isAdminPC, isAdminIS } = await checkUserRole(user.uid);
-                        const isAdmin = isAdminPC || isAdminIS;
-                        let ownerUid = user.uid;
+                        // Include household members from Step 2
+                        if (householdMembers.length === 0) {
+                            alert("Please add at least one household member.");
+                            return;
+                        }
         
                         const housingDocRef = await addDoc(collection(db, "Housing"), {
                             surveyNo,
@@ -1107,19 +1190,22 @@
                             householdSize,
                             yearOfResidency,
                             reasonsForEstablishing,
-                            ownerUid: ownerUid,
+                            ownerUid: user.uid,
+                            householdMembers, // Added the household members array here
                             status: 'Pending',
-                            createdAt: Timestamp.now()
+                            createdAt: Timestamp.now(),
                         });
         
-                        await updateDoc(doc(db, 'users', ownerUid), {
+                        // Update user's housing applications with reference to this new housing application
+                        await updateDoc(doc(db, 'users', user.uid), {
                             housingApplications: arrayUnion({
                                 applicationId: housingDocRef.id,
                                 surveyNo,
-                                status: 'Pending'
-                            })
+                                status: 'Pending',
+                            }),
                         });
         
+                        // Hide the modal and show success
                         const housingModal = bootstrap.Modal.getInstance(document.getElementById('housingApplicationModal'));
                         housingModal.hide();
         
@@ -1135,6 +1221,7 @@
                 }, 100);
             }
         </script>
+        
         
         <!--Spouse Checkbox Script-->
         <script>
@@ -1160,148 +1247,7 @@
             });
         </script>
         
-<!-- Household Members Script -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const householdMembers = [];
-
-        const memberNameInput = document.getElementById('memberName');
-        const relationToHeadInput = document.getElementById('relationToHead');
-        const memberAgeInput = document.getElementById('memberAge');
-        const memberGenderInput = document.getElementById('memberGender');
-        const memberCivilStatusInput = document.getElementById('memberCivilStatus');
-        const memberEducationalAttainmentInput = document.getElementById('memberEducationalAttainment');
-        const memberEmployedInput = document.getElementById('memberEmployed');
-        const memberOccupationInput = document.getElementById('memberOccupation');
-        const memberPlaceOfWorkInput = document.getElementById('memberPlaceOfWork');
-        const memberMonthlyIncomeInput = document.getElementById('memberMonthlyIncome');
-
-        const tableBody = document.getElementById('householdMembersTableBody');  // Ensure this targets the correct tbody by its id
-        const modalElement = document.getElementById('housingApplicationModal');
-        const modalInstance = new bootstrap.Modal(modalElement, {
-            backdrop: 'static',  // Prevent closing when clicking outside
-            keyboard: false      // Disable closing with the escape key
-        });
-
-        // Function to add household member
-        function addHouseholdMember() {
-            const member = {
-                name: memberNameInput.value,
-                relation: relationToHeadInput.value,
-                age: memberAgeInput.value,
-                gender: memberGenderInput.value,
-                civilStatus: memberCivilStatusInput.value,
-                education: memberEducationalAttainmentInput.value,
-                employed: memberEmployedInput.value,
-                occupation: memberOccupationInput.value,
-                placeOfWork: memberPlaceOfWorkInput.value,
-                income: memberMonthlyIncomeInput.value
-            };
-
-            // Debug: Log member object to check if values are captured correctly
-            console.log("New member added:", member);
-
-            // Validate fields before adding
-            if (!member.name || !member.relation || !member.age || !member.gender) {
-                alert('Please fill in all required fields.');
-                return;
-            }
-
-            // Add the household member to the array
-            householdMembers.push(member);
-
-            // Debug: Log householdMembers array to ensure members are being added
-            console.log("Household members array:", householdMembers);
-
-            // Re-render the table
-            renderHouseholdMembersTable();
-
-            // Clear input fields after adding
-            clearHouseholdMemberInputs();
-        }
-
-        // Function to render the household members table
-        function renderHouseholdMembersTable() {
-            // Clear the table body
-            tableBody.innerHTML = '';
-
-            // Debug: Log to check if render function is called
-            console.log("Rendering table with members...");
-
-            // Iterate through each household member and add a row to the table
-            householdMembers.forEach((member) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${member.name}</td>
-                    <td>${member.relation}</td>
-                    <td>${member.age}</td>
-                    <td>${member.gender}</td>
-                    <td>${member.civilStatus}</td>
-                    <td>${member.education}</td>
-                    <td>${member.employed}</td>
-                    <td>${member.occupation}</td>
-                    <td>${member.placeOfWork}</td>
-                    <td>${member.income}</td>
-                `;
-                tableBody.appendChild(row);  // Append the row to the table body
-
-                // Debug: Log each row added to the table
-                console.log("Row added to table:", row);
-            });
-
-            // Debug: Log table body content to check if it's populated
-            console.log("Table body content:", tableBody.innerHTML);
-        }
-
-        // Function to clear input fields
-        function clearHouseholdMemberInputs() {
-            memberNameInput.value = '';
-            relationToHeadInput.value = '';
-            memberAgeInput.value = '';
-            memberGenderInput.value = '';
-            memberCivilStatusInput.value = '';
-            memberEducationalAttainmentInput.value = '';
-            memberEmployedInput.value = '';
-            memberOccupationInput.value = '';
-            memberPlaceOfWorkInput.value = '';
-            memberMonthlyIncomeInput.value = '';
-        }
-
-        // Event listener for Add button
-        document.getElementById('addHouseholdBtn').addEventListener('click', function (e) {
-            e.preventDefault(); // Prevent form submission
-            e.stopPropagation(); // Prevent event bubbling
-            addHouseholdMember();
-
-            // Keep the modal open
-            setTimeout(() => {
-                modalInstance.show();
-            }, 100);
-        });
-
-        document.getElementById('clearHouseholdBtn').addEventListener('click', function (e) {
-            e.preventDefault(); // Prevent form submission
-            clearHouseholdMemberInputs();
-        });
-
-        document.getElementById('editHouseholdBtn').addEventListener('click', function (e) {
-            e.preventDefault(); // Prevent form submission
-            // Logic to edit a household member
-        });
-
-        document.getElementById('deleteHouseholdBtn').addEventListener('click', function (e) {
-            e.preventDefault(); // Prevent form submission
-            // Logic to delete a household member
-        });
-
-        // Debugging form submission
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            console.log('Form submitted, modal should not close');
-        });
-    });
-</script>
-
+        
 <script>
     
     document.addEventListener("DOMContentLoaded", function () {
@@ -1343,7 +1289,8 @@
 });
 
     </script>
-    
+
+
     
     </body>
     </html>
