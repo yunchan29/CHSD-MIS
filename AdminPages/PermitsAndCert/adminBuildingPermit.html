@@ -364,7 +364,7 @@
                  </div>
                  <button class="btn btn-primary mt-2 mb-2">View HSD Form</button><br>
                  <button class="btn btn-primary mt-2 mb-2">View File Uploads</button>
-                 <p><strong>Appointment Date</strong>:----</p>
+                 <p><strong>Appointment Date</strong>:<span id="appointmentDateSched"></p>
                  <button class="btn btn-success">Generate Order of Payment</button>
                  <div class="row">
                     <div class="col">
@@ -495,6 +495,7 @@ async function loadProfiles() {
                 <td>${data.ownerName}</td>
                 <td>${representativeName}</td>
                 <td>${createdAt}</td>
+                <td>${data.status}</td>
                 <td>
                     <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
                 </td>
@@ -525,17 +526,58 @@ async function loadProfiles() {
     }
 }
 
+
+
+// Function to control progressive status selection
+function updateStatusOptions(currentStatus) {
+    const statusSelect = document.getElementById("statusSelect");
+
+    // Define the valid next statuses for each status
+    const statusProgression = {
+        "Pending": ["Pending", "Processing"],
+        "Processing": ["Processing", "To Pay"],
+        "To Pay": ["To Pay", "For Approval"],
+        "For Approval": ["For Approval", "For Release"],
+        "For Release": ["For Release", "Claimed"],
+        "Claimed": ["Claimed"]
+    };
+
+    // Get the valid next statuses based on the current status
+    const validStatuses = statusProgression[currentStatus] || [];
+
+    // Loop through all options and hide/show based on valid statuses
+    const options = statusSelect.querySelectorAll("option");
+    options.forEach(option => {
+        if (validStatuses.includes(option.value)) {
+            option.style.display = "block"; // Show valid options
+        } else {
+            option.style.display = "none"; // Hide invalid options
+        }
+    });
+
+    // Set the statusSelect to the currentStatus
+    statusSelect.value = currentStatus;
+
+    // Disable the dropdown only if the current status is "Pending"
+    if (currentStatus === "Pending") {
+        statusSelect.disabled = true; // Disable dropdown for pending status
+    } else {
+        statusSelect.disabled = false; // Enable dropdown for other statuses
+    }
+}
+
+// Example usage in the modal:
 function openViewDetailsModal(permitData) {
     // Populate the modal with permit data
     document.getElementById("permitOwnerName").textContent = permitData.ownerName;
     document.getElementById("issuedOnDate").textContent = permitData.issuedOn;
+    document.getElementById("appointmentDateSched").textContent= permitData.appointmentDate;
 
-    // Set the status select to the current status
-    document.getElementById("statusSelect").value = permitData.status;
-
-    // Disable status select and save button by default
-    document.getElementById("statusSelect").disabled = true;
-    document.getElementById("saveStatusBtn").disabled = true;
+    // Get the current status from the permit data
+    const currentStatus = permitData.status;
+    
+    // Update the status options based on the current status
+    updateStatusOptions(currentStatus);
 
     // Show the modal using Bootstrap's Modal instance
     const viewDetailsModal = new bootstrap.Modal(document.getElementById('viewDetailsModal'));
@@ -576,6 +618,7 @@ function openViewDetailsModal(permitData) {
     };
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
     const prevPageBtn = document.getElementById("prevPageBtn");
     const nextPageBtn = document.getElementById("nextPageBtn");
@@ -604,25 +647,43 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-                            // Function to search permits by owner name or representative name
-                            function searchPermits() {
-                                const searchInput = document.getElementById("searchInput").value.toLowerCase();
-                                const tableRows = document.querySelectorAll("#buildingPermitDiv tbody tr");
+                           // Function to search permits by owner name or representative name
+function searchPermits() {
+    const searchInput = document.getElementById("searchInput").value.toLowerCase();
+    const tableRows = document.querySelectorAll("#buildingPermitDiv tbody tr");
 
-                                tableRows.forEach(row => {
-                                    const ownerName = row.querySelector("td:nth-child(1)").textContent.toLowerCase();
-                                    const representativeName = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
+    let resultsFound = false; // To track if any results are found
 
-                                    if (ownerName.includes(searchInput) || representativeName.includes(searchInput)) {
-                                        row.style.display = "";
-                                    } else {
-                                        row.style.display = "none";
-                                    }
-                                });
-                            }
+    tableRows.forEach(row => {
+        const ownerName = row.querySelector("td:nth-child(1)").textContent.toLowerCase();
+        const representativeName = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
 
-                            // Event listener for search input
-                            document.getElementById("searchInput").addEventListener("input", searchPermits);
+        // Check if the search input matches either the owner name or representative name
+        if (ownerName.includes(searchInput) || representativeName.includes(searchInput)) {
+            row.style.display = ""; // Show the row
+            resultsFound = true; // Mark that we found results
+        } else {
+            row.style.display = "none"; // Hide the row if it doesn't match
+        }
+    });
+
+    // Display a 'No results found' message if no results match
+    const noResultsMessage = document.getElementById("noResultsMessage");
+    if (!resultsFound) {
+        if (!noResultsMessage) {
+            const newRow = document.createElement("tr");
+            newRow.id = "noResultsMessage";
+            newRow.innerHTML = `<td colspan="5" class="text-center">No results found</td>`;
+            document.querySelector("#buildingPermitDiv tbody").appendChild(newRow);
+        }
+    } else if (noResultsMessage) {
+        noResultsMessage.remove(); // Remove the 'No results' message if results are found
+    }
+}
+
+// Event listener for search input
+document.getElementById("searchInput").addEventListener("input", searchPermits);
+
                         </script>
 
                         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
