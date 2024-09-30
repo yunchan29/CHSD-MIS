@@ -33,6 +33,31 @@
         .navbar-nav {
             margin-left: auto;
         }
+        .password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    padding-right: 40px; /* Ensures space for the eye icon */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-70%);
+    cursor: pointer;
+    z-index: 2;
+}
+
+.toggle-password i {
+    font-size: 1.2em; /* Adjust the icon size if needed */
+    color: #666;
+}
+
+
     </style>
 </head>
 <body>
@@ -84,16 +109,27 @@
                     <div class="mb-3">
                         <input type="email" class="form-control" id="user-email" placeholder="Email" autocomplete="email" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 password-wrapper">
                         <input type="password" class="form-control" id="user-password" placeholder="Password" autocomplete="current-password" required>
-                        <a class="justify-content-end text-primary" href="#" id="forgot-password-link">Forgot Password?</a>
+                        <span class="toggle-password" onclick="togglePassword()">
+                            <i id="eye-icon" class="fa fa-eye"></i>
+                        </span>
+                       
                     </div>
-                    <button type="submit" class="btn btn-primary text-white">Log in</button><br>
+                   <div class="row-md-3 mb-2">
+                    <a class="justify-content-end text-primary" href="#" id="forgot-password-link">Forgot Password?</a><br>
+                   </div>
+
+                    <div class="row-md-2">
+                        <button type="submit" class="btn btn-primary text-white">Log in</button><br>
+                    </div>
                 </form>
                 <hr>
-                <p>Or</p>
-        
+                <div class="row-md-2">
+                    <p><i>Don't have an account yet?</i></p>      
                 <a class="btn btn-primary mt-2 text-white" href="clientSignup.html">Sign up</a>
+                </div>
+               
             </div>
         </div>
     </div>
@@ -103,6 +139,22 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     <script>
+
+function togglePassword() {
+            const passwordField = document.getElementById("user-password");
+            const eyeIcon = document.getElementById("eye-icon");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                eyeIcon.classList.remove("fa-eye");
+                eyeIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                eyeIcon.classList.remove("fa-eye-slash");
+                eyeIcon.classList.add("fa-eye");
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOM fully loaded and parsed');
             if (typeof handleUserLoginForm === 'function') {
