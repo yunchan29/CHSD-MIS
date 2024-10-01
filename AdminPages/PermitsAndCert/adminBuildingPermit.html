@@ -348,38 +348,72 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Owner Name:</strong> <span id="permitOwnerName"></span></p>
-                <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
-                <div class="mb-3">
-                 <div class="col-md-6 align-items-center">
-                    <label for="statusSelect" class="form-label">Status</label>
-                    <select id="statusSelect" class="form-select" disabled>
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="To Pay">To Pay</option>
-                        <option value="For Approval">For Approval</option>
-                        <option value="For Release">For Release</option>
-                        <option value="Claimed">Claimed</option>
-                    </select>
-                 </div>
-                 <button class="btn btn-primary mt-2 mb-2">View HSD Form</button><br>
-                 <button class="btn btn-primary mt-2 mb-2">View File Uploads</button>
-                 <p><strong>Appointment Date</strong>:<span id="appointmentDateSched"></p>
-                 <button class="btn btn-success">Generate Order of Payment</button>
-                 <div class="row">
-                    <div class="col">
-                        <label for="officerRemarks">Comments</label>
-                        <textarea class="form-control" id="officerRemarks" rows="2">
-                          
-                        </textarea>
+                <!-- Text information at the top -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Owner Name:</strong> <span id="permitOwnerName"></span></p>
                     </div>
-                 </div>
-
+                    <div class="col-md-6">
+                        <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
+                    </div>
                 </div>
+            
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Appointment Date:</strong> <span id="appointmentDateSched"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Permit ID:</strong> <span id="permitIdDisplay"></span></p>
+                    </div>
+                </div>
+            
+                <!-- Status selection in a row -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="statusSelect" class="form-label">Status</label>
+                        <select id="statusSelect" class="form-select" disabled>
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="To Pay">To Pay</option>
+                            <option value="For Approval">For Approval</option>
+                            <option value="For Release">For Release</option>
+                            <option value="Claimed">Claimed</option>
+                        </select>
+                    </div>
+                </div>
+            
+                <!-- Comments section -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="officerRemarks">Comments</label>
+                        <textarea class="form-control" id="officerRemarks" rows="2"></textarea>
+                    </div>
+                </div>
+            
+                <!-- Buttons at the bottom -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <button class="btn btn-primary w-100 mb-2">View HSD Form</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-primary w-100 mb-2">View File Uploads</button>
+                    </div>
+                </div>
+            
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-success w-100">Generate Order of Payment</button>
+                    </div>
+                </div>
+            
+                <!-- Hidden input field to store the permit ID -->
+                <input type="hidden" id="hiddenPermitId">
             </div>
+            
+            
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" id="approveBtn">Approve</button>
-                <button type="button" class="btn btn-danger">Disapprove</button>
+                <button type="button" class="btn btn-danger" id="archivePermitButton">Disapprove</button>
                 <button type="button" id="saveStatusBtn" class="btn btn-primary" disabled>Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
@@ -430,7 +464,7 @@ let profilesPerPage = 5; // Set how many profiles you want to load per page
 let currentPage = 1; // Start with the first page
 let totalPages = 1; // Total number of pages will be calculated
 
-// Function to load building permits and display them in the table
+// Function to load building permits and display them in the table 
 async function loadProfiles() {
     try {
         const querySnapshot = await getDocs(collection(db, "buildingPermits"));
@@ -566,12 +600,17 @@ function updateStatusOptions(currentStatus) {
     }
 }
 
-// Example usage in the modal:
 function openViewDetailsModal(permitData) {
     // Populate the modal with permit data
     document.getElementById("permitOwnerName").textContent = permitData.ownerName;
-    document.getElementById("issuedOnDate").textContent = permitData.issuedOn;
-    document.getElementById("appointmentDateSched").textContent= permitData.appointmentDate;
+    document.getElementById("issuedOnDate").textContent = permitData.issuedOn ? permitData.issuedOn : "Not issued";
+    document.getElementById("appointmentDateSched").textContent = permitData.appointmentDate ? permitData.appointmentDate : "Not scheduled";
+
+    // Display the Permit ID in the modal (optional, if you want to show it)
+    document.getElementById("permitIdDisplay").textContent = permitData.id;
+
+    // Store the Permit ID in a hidden input field (if needed for future actions)
+    document.getElementById("hiddenPermitId").value = permitData.id;
 
     // Get the current status from the permit data
     const currentStatus = permitData.status;
@@ -683,6 +722,59 @@ function searchPermits() {
 
 // Event listener for search input
 document.getElementById("searchInput").addEventListener("input", searchPermits);
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const archiveButton = document.getElementById('archivePermitButton');
+
+    if (archiveButton) {
+        archiveButton.addEventListener('click', handleArchiveBuildingPermit);
+    }
+});
+
+
+async function handleArchiveBuildingPermit(event) {
+    event.preventDefault();
+
+    const buildingPermitId = event.target.getAttribute('data-id');
+
+    if (!buildingPermitId) {
+        console.error("Building Permit ID is null or undefined.");
+        alert("Error: Building Permit ID is missing.");
+        return;
+    }
+
+    const confirmed = confirm("Are you sure you want to archive this document?");
+    
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const buildingPermitRef = doc(db, "buildingPermits", buildingPermitId);
+        const buildingPermitSnapshot = await getDoc(buildingPermitRef);
+
+        if (buildingPermitSnapshot.exists()) {
+            const buildingPermitData = buildingPermitSnapshot.data();
+            
+            await setDoc(doc(db, "archivedBuildingPermits", buildingPermitId), buildingPermitData);
+            await deleteDoc(buildingPermitRef);
+
+            // Remove the row from the table
+            event.target.closest('tr').remove();
+
+            console.log("Document archived successfully!");
+            alert("Document archived successfully!");
+        } else {
+            alert("Document not found!");
+        }
+    } catch (error) {
+        console.error("Error archiving document: ", error);
+        alert("Failed to archive document: " + error.message);
+    }
+}
+
 
                         </script>
 
