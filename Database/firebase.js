@@ -86,10 +86,21 @@ async function handleAdminLogin(event) {
 
         console.log("Admin signed in:", user.uid);
 
-        const { isAdminPC, isAdminIS } = await checkUserRole(user.uid);
-        console.log('User roles:', { isAdminPC, isAdminIS });
+        // Fetch the ID token result which contains custom claims
+        const idTokenResult = await user.getIdTokenResult();
+        
+        // Extract custom claims from the token result
+        const customClaims = idTokenResult.claims;
+        const isAdminPC = customClaims.adminPC || false;
+        const isAdminIS = customClaims.adminIS || false;
+        const isMainAdmin = customClaims.mainAdmin || false;
 
-        if (isAdminPC) {
+        console.log('User roles:', { isAdminPC, isAdminIS, isMainAdmin });
+
+        if (isMainAdmin) {
+            console.log("Redirecting to Main Admin dashboard");
+            window.location.href = "/AdminPages/Admin/adminUserManagement.html";
+        } else if (isAdminPC) {
             console.log("Redirecting to adminPC dashboard");
             window.location.href = "/AdminPages/PermitsAndCert/adminDashboardP&C.html";
         } else if (isAdminIS) {
@@ -133,7 +144,7 @@ async function handleUserLogin(event) {
     }
 }
 
-//forgot password
+// forgot password
 document.addEventListener('DOMContentLoaded', function() {
     const auth = getAuth(); // Initialize Firebase Auth
 
@@ -142,15 +153,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('user-email').value; // Get email input
 
         if (email) {
-            // Call Firebase function to send password reset email
-            sendPasswordResetEmail(auth, email)
-                .then(() => {
-                    alert('Password reset email sent!');
-                })
-                .catch((error) => {
-                    console.error('Error sending password reset email:', error);
-                    alert('Failed to send reset email. Please check the email address and try again.');
-                });
+            // Show confirmation dialog
+            const confirmation = confirm('Are you sure you want to reset your password?');
+
+            if (confirmation) {
+                // Call Firebase function to send password reset email
+                sendPasswordResetEmail(auth, email)
+                    .then(() => {
+                        alert('Password reset email sent!');
+                    })
+                    .catch((error) => {
+                        console.error('Error sending password reset email:', error);
+                        alert('Failed to send reset email. Please check the email address and try again.');
+                    });
+            } else {
+                alert('Password reset canceled.');
+            }
         } else {
             alert('Please enter your email address.');
         }
