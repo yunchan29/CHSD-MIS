@@ -5,144 +5,254 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHSD MIS</title>
     <link rel="stylesheet" href="/Stylesheets/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <style>
-        /* CSS for the content container */
         .content {
-            flex: 1; /* Take remaining space */
-            overflow: hidden; /* Hide overflow content */
-            display: flex; /* Use flexbox */
-            flex-direction: column; /* Column layout */
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-
         .content-container {
-            overflow-y: auto; /* Enable vertical scrolling */
-            padding: 20px; /* Add some padding */
+            overflow-y: auto;
+            padding: 20px;
         }
-        
     </style>
 </head>
 <body>
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center px-2 pt-3 pb-4">
-                
-                <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"><i class="fa-solid fa-bars-staggered"></i></button>
+                <button class="btn d-md-none d-block close-btn px-1 py-0 text-black" aria-label="Toggle navigation"><i class="fa-solid fa-bars-staggered"></i></button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-              
                 <li class="sideNav active"><a href="/AdminPages/Admin/adminUserManagement.html" class="text-decoration-none"><i class="fa-solid fa-user-pen"></i> User Manager</a></li>
-                <li class="sideNav"><a id="admin-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
+                <li class="sideNav"><a id="admin-logout-btn" aria-label="Log out"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
             </ul>
         </div>
 
         <div class="content">
-               <!--Navigation Bar-->
-<nav class="navigationBar navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-        <!-- Mobile View -->
-        <div class="d-flex justify-content-between d-md-none d-block">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
-                <h5 class="mb-0 fs-5">CHSD</h5>
-            </a>
-            <button class="btn px-1 py-0 open-btn">
-                <i class="fa-solid fa-bars-staggered"></i>
-            </button>
-        </div>
+            <nav class="navigationBar navbar navbar-expand-lg bg-light">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between d-md-none d-block">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
+                            <h5 class="mb-0 fs-5">CHSD</h5>
+                        </a>
+                        <button class="btn px-1 py-0 open-btn" aria-label="Toggle side navigation">
+                            <i class="fa-solid fa-bars-staggered"></i>
+                        </button>
+                    </div>
   
-        <!-- Desktop View -->
-        <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
-                <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
-            </a>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!-- Additional nav items go here -->
-            </ul>
-        </div>
-    </div>
-  </nav>
+                    <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
+                            <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+                        </a>
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <!-- Additional nav items -->
+                        </ul>
+                    </div>
+                </div>
+            </nav>
             
-            <div class="contentContainer">
-                  <a href="#"><h4 class="mt-3"> <i class="fa-solid fa-circle-plus"></i> Add User</h4></a>
-                  <div class="row mt-3 col-md-6">
+            <div class="content-container">
+                <a href="#"><h4 class="mt-3"> <i class="fa-solid fa-circle-plus"></i> Add User</h4></a>
+                <div class="row mt-3 col-md-6">
                     <div class="col">
-                        <label for="fullName">Full Name</label>
-                    <input type="text" class="form-control" title="fullName" placeholder="">
+                        <label for="firstName">First Name</label>
+                        <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
                     </div>
-                  </div>
-
-                  <div class="row">
                     <div class="col">
-                        <label for="fullName">User Name</label>
-                        <input type="text" class="form-control" title="fullName" placeholder="">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
                     </div>
+                </div>
 
+                <div class="row mt-3">
                     <div class="col">
-                        <label for="fullName">Password</label>
-                    <input type="text" class="form-control" title="fullName" placeholder="">
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col">
-                        <label for="fullName">Account Type</label>
-                        <select class="form-control" id="" name="">
-                            <option value="">Administrator</option>
-                            <option value="">User</option>
-                        
-                            
-                          </select>
+                        <label for="userName">Email</label>
+                        <input type="text" class="form-control" id="userName" placeholder="User Name" required>
                     </div>
 
                     <div class="col">
-                        <label for="fullName">Enabled</label>
-                        <select class="form-control" id="" name="">
-                            <option value="">Yes</option>
-                            <option value="">No</option>
-                           
-                            
-                          </select>
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password" required>
                     </div>
-                  </div>
+                </div>
 
-                  <table class="table">
+                <div class="row mt-3">
+                    <div class="col">
+                        <label for="accountType">Account Type</label>
+                        <select class="form-control" id="accountType" required>
+                            <option value="Applicant">User</option>
+                            <option value="AdminPC">Permits Officer</option>
+                            <option value="AdminIS">Housing Officer</option>
+                        </select>
+                    </div>
+
+                    <div class="col">
+                        <label for="enabled">Enabled</label>
+                        <select class="form-control" id="enabled" required>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <table class="table mt-3">
                     <thead>
                         <tr>
                             <th>USID</th>
                             <th>Full Name</th>
-                            <th>Username</th>
+                            <th>Email</th>
                             <th>Password</th>
                             <th>Type</th>
                             <th>Enabled</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="userTableBody">
                         <!-- Users will be dynamically inserted here -->
                     </tbody>
                 </table>
-                
-             </div>
+            </div>
+        </div>
     </div>
-  
 
-    <script type="module" src="/Database/firebase.js">
+    <!-- Update User Modal -->
+    <div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="updateUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateUserModalLabel">Update User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="updateFirstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="updateFirstName" placeholder="First Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateLastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="updateLastName" placeholder="Last Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateAccountType" class="form-label">Account Type</label>
+                        <select class="form-control" id="updateAccountType" required>
+                            <option value="Applicant">User</option>
+                            <option value="AdminPC">Permits Officer</option>
+                            <option value="AdminIS">Housing Officer</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateEnabled" class="form-label">Enabled</label>
+                        <select class="form-control" id="updateEnabled" required>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/Database/firebase.js"></script>
+    <script type="module">
+        import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+            authDomain: "chsd-mis.firebaseapp.com",
+            projectId: "chsd-mis",
+            storageBucket: "chsd-mis.appspot.com",
+            messagingSenderId: "694967679357",
+            appId: "1:694967679357:web:65cffd50f13739f934f414",
+            measurementId: "G-4NQ8T3R7L2"
+        };
+    
+        // Initialize Firebase only if an app instance doesn't already exist
+        const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+    
+        const usersCollection = collection(db, 'users');
+    
+        // Load users from Firestore
+        async function loadUsers() {
+            const userTableBody = document.getElementById('userTableBody');
+            userTableBody.innerHTML = ''; // Clear previous entries
+    
+            const querySnapshot = await getDocs(usersCollection);
+            querySnapshot.forEach((doc) => {
+                const userData = doc.data();
+                userTableBody.innerHTML += `
+                    <tr>
+                        <td>${doc.id}</td>
+                        <td>${userData.firstName} ${userData.lastName}</td>
+                        <td>${userData.email}</td>
+                        <td>*******</td>
+                        <td>${userData.accountType || 'User'}</td>
+                        <td>${userData.enabled ? 'Yes' : 'No'}</td>
+                       <td>
+    <div class="btn-group">
+        <button class="btn btn-primary update-user-btn" onclick="openUpdateUserModal('${doc.id}', '${userData.firstName}', '${userData.lastName}', '${userData.accountType}', ${userData.enabled})">Update</button>
+        <button class="btn btn-danger delete-user-btn" onclick="deleteUser('${doc.id}')">Delete</button>
+    </div>
+</td>
+
+                    </tr>
+                `;
+            });
+        }
+    
+      // Open update user modal
+window.openUpdateUserModal = function(userId, firstName, lastName, accountType, enabled) {
+    document.getElementById('updateFirstName').value = firstName;
+    document.getElementById('updateLastName').value = lastName;
+    document.getElementById('updateAccountType').value = accountType;
+    // Provide a default value for enabled if it's undefined
+    document.getElementById('updateEnabled').value = (enabled !== undefined) ? enabled.toString() : 'false';
+
+    const saveChangesBtn = document.getElementById('saveChangesBtn');
+    saveChangesBtn.onclick = () => updateUser(userId);
+    new bootstrap.Modal(document.getElementById('updateUserModal')).show();
+}
+
+        // Update user in Firestore
+        async function updateUser(userId) {
+            const userRef = doc(db, 'users', userId);
+            const updatedData = {
+                firstName: document.getElementById('updateFirstName').value,
+                lastName: document.getElementById('updateLastName').value,
+                accountType: document.getElementById('updateAccountType').value,
+                enabled: document.getElementById('updateEnabled').value === 'true'
+            };
+            await updateDoc(userRef, updatedData);
+            loadUsers(); // Refresh user list
+            bootstrap.Modal.getInstance(document.getElementById('updateUserModal')).hide();
+        }
+    
+        // Delete user from Firestore
+        async function deleteUser(userId) {
+            const userRef = doc(db, 'users', userId);
+            await deleteDoc(userRef);
+            loadUsers(); // Refresh user list
+        }
+    
+        // Load users when the page is fully loaded
+        document.addEventListener('DOMContentLoaded', loadUsers);
     </script>
-
-     <!--Navigation Bar-->
-     <script>
-        document.querySelector('.open-btn').addEventListener('click', function() {
-            document.getElementById('side_nav').classList.add('active');
-        });
-      
-        document.querySelector('.close-btn').addEventListener('click', function() {
-            document.getElementById('side_nav').classList.remove('active');
-        });
-      </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

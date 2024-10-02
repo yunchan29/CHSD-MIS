@@ -1070,33 +1070,6 @@ async function loadUserPermitStatus() {
 }
 
 
-//user manager
-// Reference to the 'users' collection
-const usersCollection = collection(db, "users");
-
-// Function to load users and display them
-async function loadUsers() {
-    const querySnapshot = await getDocs(usersCollection);
-    const userTableBody = document.getElementById("userTableBody");
-
-    querySnapshot.forEach((doc) => {
-        const userData = doc.data();
-        const userRow = `
-            <tr>
-                <td>${doc.id}</td> <!-- Assuming USID is the document ID -->
-               <td>${userData.firstName} ${userData.lastName}</td>
-                <td>${userData.email}</td>
-                <td>*******</td> <!-- You may want to hide the actual password -->
-                <td>User</td> <!-- Assuming 'User' as the default account type -->
-                <td>YES</td> <!-- Assuming all users are enabled by default -->
-            </tr>
-        `;
-        userTableBody.insertAdjacentHTML('beforeend', userRow);
-    });
-}
-
-
-window.addEventListener('DOMContentLoaded', loadUsers);
 
 
 async function fetchPermitCounts() {
