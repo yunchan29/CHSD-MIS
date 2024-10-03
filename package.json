@@ -3,7 +3,7 @@
     "cors": "^2.8.5",
     "exceljs": "^4.4.0",
     "firebase": "^10.12.1",
-    "firebase-admin": "^12.1.1",
+    "firebase-admin": "^12.6.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

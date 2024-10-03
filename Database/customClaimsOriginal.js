@@ -1,3 +1,4 @@
+// customClaimsOriginal.js
 const admin = require("firebase-admin");
 
 // Initialize Firebase Admin SDK
@@ -8,62 +9,59 @@ admin.initializeApp({
     databaseURL: "https://chsd-mis.firebaseio.com"
 });
 
-// Update custom claims to make a user adminPC
-const uidAdminPC = "j84odvl9dhPFr0uBdlk5ZylM5NB3";
-admin.auth().setCustomUserClaims(uidAdminPC, { adminPC: true })
-    .then(() => {
-        console.log(`Successfully updated custom claims for ${uidAdminPC}`);
-        // Update Firestore document
-        const userRef = admin.firestore().collection('AdminPC').doc(uidAdminPC);
-        return userRef.update({
-            roles: {
-                adminPC: true
-            }
-        });
-    })
-    .then(() => {
-        console.log(`Successfully updated Firestore document for ${uidAdminPC}`);
-    })
-    .catch((error) => {
-        console.error("Error updating custom claims for adminPC:", error);
+// Function to update custom claims for AdminPC
+const assignAdminPC = async (uidAdminPC) => {
+    await admin.auth().setCustomUserClaims(uidAdminPC, { adminPC: true });
+    console.log(`Successfully updated custom claims for ${uidAdminPC}`);
+    // Update Firestore document
+    const userRef = admin.firestore().collection('AdminPC').doc(uidAdminPC);
+    await userRef.update({
+        roles: {
+            adminPC: true
+        }
     });
+    console.log(`Successfully updated Firestore document for ${uidAdminPC}`);
+};
 
-// Update custom claims to make another user adminIS
-const uidAdminIS = "Yq9U3XqQ21W7kmwzpo7Q7XyV0Dp2";  // Replace with the actual UID for the adminIS user
-admin.auth().setCustomUserClaims(uidAdminIS, { adminIS: true })
-    .then(() => {
-        console.log(`Successfully updated custom claims for ${uidAdminIS}`);
-        // Update Firestore document
-        const userRef = admin.firestore().collection('AdminIS').doc(uidAdminIS);
-        return userRef.update({
-            roles: {
-                adminIS: true
-            }
-        });
-    })
-    .then(() => {
-        console.log(`Successfully updated Firestore document for ${uidAdminIS}`);
-    })
-    .catch((error) => {
-        console.error("Error updating custom claims for adminIS:", error);
+// Function to update custom claims for AdminIS
+const assignAdminIS = async (uidAdminIS) => {
+    await admin.auth().setCustomUserClaims(uidAdminIS, { adminIS: true });
+    console.log(`Successfully updated custom claims for ${uidAdminIS}`);
+    // Update Firestore document
+    const userRef = admin.firestore().collection('AdminIS').doc(uidAdminIS);
+    await userRef.update({
+        roles: {
+            adminIS: true
+        }
     });
+    console.log(`Successfully updated Firestore document for ${uidAdminIS}`);
+};
 
-// Update custom claims to make a user mainAdmin
-const uidMainAdmin = "FB2iPd3ZmfRpd0TGbCsBjnje34F3";  // The UID of the user to be set as Main Admin
-admin.auth().setCustomUserClaims(uidMainAdmin, { mainAdmin: true })
-    .then(() => {
-        console.log(`Successfully updated custom claims for ${uidMainAdmin}`);
-        // Update Firestore document
-        const userRef = admin.firestore().collection('MainAdmin').doc(uidMainAdmin);
-        return userRef.update({
-            roles: {
-                mainAdmin: true
-            }
-        });
-    })
-    .then(() => {
-        console.log(`Successfully updated Firestore document for ${uidMainAdmin}`);
-    })
-    .catch((error) => {
-        console.error("Error updating custom claims for mainAdmin:", error);
+// Function to update custom claims for Main Admin
+const assignMainAdmin = async (uidMainAdmin) => {
+    await admin.auth().setCustomUserClaims(uidMainAdmin, { mainAdmin: true });
+    console.log(`Successfully updated custom claims for ${uidMainAdmin}`);
+    // Update Firestore document
+    const userRef = admin.firestore().collection('MainAdmin').doc(uidMainAdmin);
+    await userRef.update({
+        roles: {
+            mainAdmin: true
+        }
     });
+    console.log(`Successfully updated Firestore document for ${uidMainAdmin}`);
+};
+
+// Example UIDs for demonstration
+const uidAdminPC = "j84odvl9dhPFr0uBdlk5ZylM5NB3"; // Replace with actual UID
+const uidAdminIS = "Yq9U3XqQ21W7kmwzpo7Q7XyV0Dp2"; // Replace with actual UID
+const uidMainAdmin = "FB2iPd3ZmfRpd0TGbCsBjnje34F3"; // Replace with actual UID
+
+(async () => {
+    try {
+        await assignAdminPC(uidAdminPC);
+        await assignAdminIS(uidAdminIS);
+        await assignMainAdmin(uidMainAdmin);
+    } catch (error) {
+        console.error("Error assigning roles:", error);
+    }
+})();

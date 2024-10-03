@@ -2,6 +2,10 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+// Import the custom claims function
+const setCustomClaims = require('./AdminPages/customClaims');
+
+// Existing function to assign roles
 exports.assignRole = functions.https.onCall(async (data, context) => {
   // Verify that the request is made by an authenticated user with admin privileges
   if (!(context.auth && context.auth.token.admin)) {
@@ -26,5 +30,5 @@ exports.assignRole = functions.https.onCall(async (data, context) => {
   }
 });
 
-
-
+// Export the custom claims function
+exports.setCustomClaims = setCustomClaims;

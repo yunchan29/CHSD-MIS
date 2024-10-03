@@ -44,7 +44,7 @@
                             <i class="fa-solid fa-bars-staggered"></i>
                         </button>
                     </div>
-  
+
                     <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
                         <a class="navbar-brand d-flex align-items-center" href="#">
                             <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
@@ -94,11 +94,8 @@
                     </div>
 
                     <div class="col">
-                        <label for="enabled">Enabled</label>
-                        <select class="form-control" id="enabled" required>
-                            <option value="true">Yes</option>
-                            <option value="false">No</option>
-                        </select>
+                        <input type="hidden" id="enabled" value="true">
+
                     </div>
 
                   
@@ -174,10 +171,14 @@
     </div>
 
     <script type="module" src="/Database/firebase.js"></script>
-    <script type="module"> 
+
+    <script type="module" src="/AdminPages/Admin/firebaseconfig.js"></script>
+    <script type="module" src="/AdminPages/Admin/userManagement.js"></script>
+    <script type="module" src="/AdminPages/Admin/eventListeners.js"></script>
+    <script type="module">  
         import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     
         // Your Firebase configuration
         const firebaseConfig = {
@@ -195,118 +196,127 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
     
-        const usersCollection = collection(db, 'users');
+        const userTableBody = document.getElementById("userTableBody");
+        const updateUserModal = new bootstrap.Modal(document.getElementById("updateUserModal"), { backdrop: 'static' });
     
-        // Load users from Firestore
-        async function loadUsers() {
-            const userTableBody = document.getElementById('userTableBody');
-            userTableBody.innerHTML = ''; // Clear previous entries
+        let currentUserId = null;
     
-            const querySnapshot = await getDocs(usersCollection);
-            querySnapshot.forEach((doc) => {
+        async function renderUsers() {
+            userTableBody.innerHTML = ""; // Clear the table body before rendering
+            const usersCollection = collection(db, "users"); // Reference to the users collection
+            const snapshot = await getDocs(usersCollection);
+            snapshot.forEach((doc) => {
                 const userData = doc.data();
-                userTableBody.innerHTML += `
-                    <tr>
-                        <td>${doc.id}</td>
-                        <td>${userData.firstName} ${userData.lastName}</td>
-                        <td>${userData.email}</td>
-                        <td>*******</td>
-                        <td>${userData.accountType || 'Applicant'}</td>
-                        <td>${userData.enabled ? 'Yes' : 'No'}</td>
-                        <td>
-                            <div class="btn-group">
-                                <button class="btn btn-primary update-user-btn" onclick="openUpdateUserModal('${doc.id}', '${userData.firstName}', '${userData.lastName}', '${userData.accountType}', ${userData.enabled})">Update</button>
-                                <button class="btn btn-danger delete-user-btn" onclick="deleteUser('${doc.id}')">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${doc.id}</td> <!-- USID as document ID -->
+                    <td>${userData.firstName} ${userData.lastName}</td>
+                    <td>${userData.email}</td>
+                    <td>*******</td> <!-- Hide password -->
+                    <td>${userData.accountType || 'User'}</td>
+                    <td>${userData.enabled ? 'Yes' : 'No'}</td>
+                    <td>
+                        <button class="btn btn-primary update-user-btn" onclick="updateUser('${doc.id}')">Update</button>
+                        <button class="btn btn-danger delete-user-btn" onclick="deleteUser('${doc.id}')">Delete</button>
+                    </td>
                 `;
+                userTableBody.appendChild(row);
             });
         }
     
-        // Open update user modal
-        window.openUpdateUserModal = function(userId, firstName, lastName, accountType, enabled) {
-            document.getElementById('updateFirstName').value = firstName;
-            document.getElementById('updateLastName').value = lastName;
-            document.getElementById('updateAccountType').value = accountType;
-            // Provide a default value for enabled if it's undefined
-            document.getElementById('updateEnabled').value = (enabled !== undefined) ? enabled.toString() : 'false';
-    
-            const saveChangesBtn = document.getElementById('saveChangesBtn');
-            saveChangesBtn.onclick = () => updateUser(userId);
-            new bootstrap.Modal(document.getElementById('updateUserModal')).show();
-        }
-    
-        // Update user in Firestore
-        async function updateUser(userId) {
-            const userRef = doc(db, 'users', userId);
-            const updatedData = {
-                firstName: document.getElementById('updateFirstName').value,
-                lastName: document.getElementById('updateLastName').value,
-                accountType: document.getElementById('updateAccountType').value,
-                enabled: document.getElementById('updateEnabled').value === 'true'
-            };
-            await updateDoc(userRef, updatedData);
-            loadUsers(); // Refresh user list
-            bootstrap.Modal.getInstance(document.getElementById('updateUserModal')).hide();
-        }
-    
-       // Delete user from Firestore with confirmation
-window.deleteUser = async function(userId) {
-    if (confirm("Are you sure you want to delete this user?")) {
-        const userRef = doc(db, 'users', userId);
-        await deleteDoc(userRef);
-        loadUsers(); // Refresh user list
-    }
-}
-
-    
-        // Add user functionality
-        async function addUser(firstName, lastName, email, accountType, enabled) {
-            const userRef = doc(collection(db, 'users')); // Generate a new document reference
-            const userData = {
-                firstName,
-                lastName,
-                email,
-                accountType,
-                enabled
-            };
-    
-            await setDoc(userRef, userData);
-            loadUsers(); // Refresh user list after adding
-        }
-    
-        // Load users when the page is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
-            loadUsers();
-    
-            // Add event listener for the Add User button
-            document.getElementById('addUserBtn').addEventListener('click', (event) => {
-                event.preventDefault(); // Prevent page reload
-    
-                // Gather input values and call addUser function
-                const firstName = document.getElementById('firstName').value;
-                const lastName = document.getElementById('lastName').value;
-                const email = document.getElementById('userName').value;
-                const accountType = document.getElementById('accountType').value;
-                const enabled = document.getElementById('enabled').value === 'true';
-    
-                addUser(firstName, lastName, email, accountType, enabled);
-                alert("User Created");
-    
-                // Clear input fields after adding
-                document.getElementById('firstName').value = '';
-                document.getElementById('lastName').value = '';
-                document.getElementById('userName').value = '';
-                document.getElementById('accountType').value = '';
-                document.getElementById('enabled').checked = false; // Reset the checkbox
+    const addUserButton = document.getElementById('addUserBtn'); // Change to 'addUserBtn'
+
+    if (!addUserButton) {
+        console.error("addUserBtn not found");
+        return;
+    }
+
+    addUserButton.addEventListener('click', async () => {
+        const email = document.getElementById('userName').value; // Change to 'userName'
+        const password = document.getElementById('password').value; // Change to 'password'
+        const firstName = document.getElementById('firstName').value; // Change to 'firstName'
+        const lastName = document.getElementById('lastName').value; // Change to 'lastName'
+
+        if (!email || !password || !firstName || !lastName) {
+            alert('Please fill in all fields.');
+            return;
+        }
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Store user info in Firestore
+            const userRef = doc(db, 'users', user.uid);
+            await setDoc(userRef, {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                accountType: document.getElementById('accountType').value, // Get account type from the select element
+                enabled: true
             });
+
+            console.log('User added:', user);
+            alert("User Created");
+            renderUsers(); // Refresh the user list
+        } catch (error) {
+            console.error('Error adding user:', error);
+            alert("Error adding user: " + error.message); // Alert for error
+        }
+    });
+});
+
+        window.updateUser = async (userId) => {
+            currentUserId = userId; // Store the current user ID for update
+            const userDoc = doc(db, "users", userId);
+            const userData = await getDoc(userDoc);
+            const { firstName, lastName, accountType, enabled } = userData.data();
+    
+            document.getElementById("updateFirstName").value = firstName;
+            document.getElementById("updateLastName").value = lastName;
+            document.getElementById("updateAccountType").value = accountType;
+            document.getElementById("updateEnabled").value = enabled ? "true" : "false"; // Convert to string
+            updateUserModal.show();
+        };
+    
+        document.getElementById("saveChangesBtn").addEventListener("click", async () => {
+            const updatedFirstName = document.getElementById("updateFirstName").value;
+            const updatedLastName = document.getElementById("updateLastName").value;
+            const updatedAccountType = document.getElementById("updateAccountType").value;
+            const updatedEnabled = document.getElementById("updateEnabled").value === "true"; // Convert to boolean
+    
+            try {
+                const userDoc = doc(db, "users", currentUserId);
+                await updateDoc(userDoc, {
+                    firstName: updatedFirstName,
+                    lastName: updatedLastName,
+                    accountType: updatedAccountType,
+                    enabled: updatedEnabled
+                });
+                renderUsers(); // Refresh the user table
+                updateUserModal.hide(); // Hide modal
+            } catch (error) {
+                console.error("Error updating user: ", error);
+            }
         });
+    
+        window.deleteUser = async (userId) => {
+            const confirmDelete = confirm("Are you sure you want to delete this user?");
+            if (confirmDelete) {
+                try {
+                    await deleteDoc(doc(db, "users", userId));
+                    renderUsers(); // Refresh the user table
+                } catch (error) {
+                    console.error("Error deleting user: ", error);
+                }
+            }
+        };
+    
+        // Initialize the user list
+        renderUsers();
     </script>
     
-    
-    
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
