@@ -30,5 +30,36 @@ exports.assignRole = functions.https.onCall(async (data, context) => {
   }
 });
 
+// New function to create users
+exports.addUser = functions.https.onRequest(async (req, res) => {
+  const { firstName, lastName, email, password, accountType } = req.body;
+
+  if (!email || !password || !firstName || !lastName) {
+    return res.status(400).json({ error: 'Missing fields' });
+  }
+
+  try {
+    // Create the user in Firebase Auth
+    const userRecord = await admin.auth().createUser({
+      email: email,
+      password: password,
+    });
+
+    // Add user details to Firestore
+    await admin.firestore().collection('users').doc(userRecord.uid).set({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      accountType: accountType || 'Applicant',
+      enabled: true
+    });
+
+    res.status(200).json({ message: 'User created successfully', userId: userRecord.uid });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Export the custom claims function
 exports.setCustomClaims = setCustomClaims;

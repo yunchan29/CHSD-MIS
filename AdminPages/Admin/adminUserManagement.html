@@ -24,11 +24,18 @@
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center px-2 pt-3 pb-4">
-                <button class="btn d-md-none d-block close-btn px-1 py-0 text-black" aria-label="Toggle navigation"><i class="fa-solid fa-bars-staggered"></i></button>
+                <button class="btn d-md-none d-block close-btn px-1 py-0 text-black" aria-label="Toggle navigation">
+                    <i class="fa-solid fa-bars-staggered"></i></button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav active"><a href="/AdminPages/Admin/adminUserManagement.html" class="text-decoration-none"><i class="fa-solid fa-user-pen"></i> User Manager</a></li>
-                <li class="sideNav"><a id="admin-logout-btn" aria-label="Log out"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
+                <li class="sideNav active">
+                    <a href="/AdminPages/Admin/adminUserManagement.html" class="text-decoration-none">
+                        <i class="fa-solid fa-user-pen"></i> User Manager</a>
+                </li>
+                <li class="sideNav">
+                    <a id="admin-logout-btn" aria-label="Log out">
+                        <i class="fa-solid fa-right-from-bracket"></i> Log out</a>
+                </li>
             </ul>
         </div>
 
@@ -58,7 +65,7 @@
             </nav>
             
             <div class="content-container">
-                
+               <form id="userForm">
                 <div class="row mt-3 col-md-6">
                     <div class="col">
                         <label for="firstName">First Name</label>
@@ -95,17 +102,14 @@
 
                     <div class="col">
                         <input type="hidden" id="enabled" value="true">
-
                     </div>
-
-                  
                 </div>
+            </form>
                 <div class="row">
                     <div class="col-md-6">
                         <a href="#" id="addUserBtn" class="btn btn-light text-black mt-3">
                             <h4><i class="fa-solid fa-circle-plus"></i> Add User</h4>
                         </a>
-                        
                     </div>
                 </div>
 
@@ -169,154 +173,202 @@
             </div>
         </div>
     </div>
-
-    <script type="module" src="/Database/firebase.js"></script>
-
-    <script type="module" src="/AdminPages/Admin/firebaseconfig.js"></script>
-    <script type="module" src="/AdminPages/Admin/userManagement.js"></script>
-    <script type="module" src="/AdminPages/Admin/eventListeners.js"></script>
-    <script type="module">  
-        import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     
-        // Your Firebase configuration
+    <script type="module" src="/Database/firebase.js"></script>
+    <script type="module">
+        import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
         const firebaseConfig = {
             apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
             authDomain: "chsd-mis.firebaseapp.com",
             projectId: "chsd-mis",
             storageBucket: "chsd-mis.appspot.com",
-            messagingSenderId: "694967679357",
-            appId: "1:694967679357:web:65cffd50f13739f934f414",
-            measurementId: "G-4NQ8T3R7L2"
+            messagingSenderId: "581501837919",
+            appId: "1:581501837919:web:6c94c9cb89f58d8b7cb842",
+            measurementId: "G-9B0M0X4C0E"
         };
     
-        // Initialize Firebase only if an app instance doesn't already exist
-        const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+        // Ensure Firestore is only initialized once
+        const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
         const db = getFirestore(app);
         const auth = getAuth(app);
     
-        const userTableBody = document.getElementById("userTableBody");
-        const updateUserModal = new bootstrap.Modal(document.getElementById("updateUserModal"), { backdrop: 'static' });
+        // Set persistence for Firebase Authentication
+        setPersistence(auth, browserLocalPersistence);
     
-        let currentUserId = null;
-    
-        async function renderUsers() {
-            userTableBody.innerHTML = ""; // Clear the table body before rendering
-            const usersCollection = collection(db, "users"); // Reference to the users collection
-            const snapshot = await getDocs(usersCollection);
-            snapshot.forEach((doc) => {
-                const userData = doc.data();
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${doc.id}</td> <!-- USID as document ID -->
-                    <td>${userData.firstName} ${userData.lastName}</td>
-                    <td>${userData.email}</td>
-                    <td>*******</td> <!-- Hide password -->
-                    <td>${userData.accountType || 'User'}</td>
-                    <td>${userData.enabled ? 'Yes' : 'No'}</td>
-                    <td>
-                        <button class="btn btn-primary update-user-btn" onclick="updateUser('${doc.id}')">Update</button>
-                        <button class="btn btn-danger delete-user-btn" onclick="deleteUser('${doc.id}')">Delete</button>
-                    </td>
-                `;
-                userTableBody.appendChild(row);
-            });
-        }
-    
-        document.addEventListener('DOMContentLoaded', () => {
-    const addUserButton = document.getElementById('addUserBtn'); // Change to 'addUserBtn'
+        document.getElementById("addUserBtn").addEventListener("click", async (event) => {
+    event.preventDefault();
 
-    if (!addUserButton) {
-        console.error("addUserBtn not found");
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const email = document.getElementById("userName").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const accountType = document.getElementById("accountType").value || "Applicant"; // Default to "Applicant"
+    const enabled = document.getElementById("enabled").value === "true"; // Make sure this evaluates to boolean
+
+    // Ensure fields are filled out
+    if (!firstName || !lastName || !email || !password) {
+        alert("Please fill in all fields.");
         return;
     }
 
-    addUserButton.addEventListener('click', async () => {
-        const email = document.getElementById('userName').value; // Change to 'userName'
-        const password = document.getElementById('password').value; // Change to 'password'
-        const firstName = document.getElementById('firstName').value; // Change to 'firstName'
-        const lastName = document.getElementById('lastName').value; // Change to 'lastName'
+    try {
+        // Create user in Firebase Authentication
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('User created:', user); // Verify user creation
 
-        if (!email || !password || !firstName || !lastName) {
-            alert('Please fill in all fields.');
-            return;
-        }
-
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            // Store user info in Firestore
-            const userRef = doc(db, 'users', user.uid);
-            await setDoc(userRef, {
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                accountType: document.getElementById('accountType').value, // Get account type from the select element
-                enabled: true
+        // Set user data in Firestore
+        if (accountType === "Applicant") {
+            const userDocRef = doc(db, "users", user.uid); // Use UID as document ID
+            await setDoc(userDocRef, {
+                firstName,
+                lastName,
+                email,
+                accountType,
+                enabled,
+                isAdmin: false  // Applicants are not admins
             });
-
-            console.log('User added:', user);
-            alert("User Created");
-            renderUsers(); // Refresh the user list
-        } catch (error) {
-            console.error('Error adding user:', error);
-            alert("Error adding user: " + error.message); // Alert for error
+            console.log('Applicant data set in Firestore');
+        } else {
+            // Add user to AdminPC or AdminIS collection based on role
+            const adminCollection = accountType === "AdminPC" ? "AdminPC" : "AdminIS";
+            const adminDocRef = doc(db, adminCollection, user.uid);
+            await setDoc(adminDocRef, {
+                firstName,
+                lastName,
+                email,
+                accountType,
+                enabled,
+                isAdmin: true  // Admin roles
+            });
+            console.log(`User added to ${adminCollection} collection`);
         }
-    });
+
+        // Alert and console log
+        alert(`User ${firstName} ${lastName} added successfully with role: ${accountType}`);
+        console.log(`User ${firstName} ${lastName} added with email: ${email} and role: ${accountType}`);
+
+        clearForm();
+        fetchUsers(); // Refresh the user list
+    } catch (error) {
+        console.error("Error adding user:", error);
+        alert("Failed to add user: " + error.message);
+    }
 });
 
-        window.updateUser = async (userId) => {
-            currentUserId = userId; // Store the current user ID for update
-            const userDoc = doc(db, "users", userId);
-            const userData = await getDoc(userDoc);
-            const { firstName, lastName, accountType, enabled } = userData.data();
-    
-            document.getElementById("updateFirstName").value = firstName;
-            document.getElementById("updateLastName").value = lastName;
-            document.getElementById("updateAccountType").value = accountType;
-            document.getElementById("updateEnabled").value = enabled ? "true" : "false"; // Convert to string
-            updateUserModal.show();
-        };
-    
-        document.getElementById("saveChangesBtn").addEventListener("click", async () => {
-            const updatedFirstName = document.getElementById("updateFirstName").value;
-            const updatedLastName = document.getElementById("updateLastName").value;
-            const updatedAccountType = document.getElementById("updateAccountType").value;
-            const updatedEnabled = document.getElementById("updateEnabled").value === "true"; // Convert to boolean
+        // Fetch Users
+        async function fetchUsers() {
+            const userTableBody = document.getElementById("userTableBody");
+            userTableBody.innerHTML = ""; // Clear existing table data
     
             try {
-                const userDoc = doc(db, "users", currentUserId);
-                await updateDoc(userDoc, {
-                    firstName: updatedFirstName,
-                    lastName: updatedLastName,
-                    accountType: updatedAccountType,
-                    enabled: updatedEnabled
+                const usersSnapshot = await getDocs(collection(db, "users"));
+                usersSnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    userTableBody.innerHTML += `
+                        <tr>
+                            <td>${doc.id}</td>
+                            <td>${userData.firstName} ${userData.lastName}</td>
+                            <td>${userData.email}</td>
+                            <td>*******</td>
+                            <td>${userData.accountType || 'Applicant'}</td>
+                            <td>${userData.enabled ? 'Yes' : 'No'}</td>
+                            <td>
+                                <button class="btn btn-primary update-user-btn" data-email="${doc.id}">Update</button>
+                                <button class="btn btn-danger delete-user-btn" data-email="${doc.id}">Delete</button>
+                            </td>
+                        </tr>
+                    `;
                 });
-                renderUsers(); // Refresh the user table
-                updateUserModal.hide(); // Hide modal
             } catch (error) {
-                console.error("Error updating user: ", error);
+                console.error("Error fetching users:", error);
+            }
+        }
+    
+        // Clear Form
+        function clearForm() {
+            document.getElementById("userForm").reset();
+        }
+    
+        // Update User
+        document.addEventListener("click", async (event) => {
+            if (event.target.classList.contains("update-user-btn")) {
+                const email = event.target.getAttribute("data-email");
+                const userDocRef = doc(db, "users", email);
+                const userData = (await getDoc(userDocRef)).data();
+    
+                // Populate modal fields
+                document.getElementById("updateFirstName").value = userData.firstName;
+                document.getElementById("updateLastName").value = userData.lastName;
+                document.getElementById("updateAccountType").value = userData.accountType || 'Applicant'; // Default to "Applicant"
+                document.getElementById("updateEnabled").value = userData.enabled.toString();
+                document.getElementById("saveChangesBtn").setAttribute("data-email", email);
+    
+                // Show modal
+                const updateUserModal = new bootstrap.Modal(document.getElementById("updateUserModal"));
+                updateUserModal.show();
             }
         });
     
-        window.deleteUser = async (userId) => {
-            const confirmDelete = confirm("Are you sure you want to delete this user?");
-            if (confirmDelete) {
-                try {
-                    await deleteDoc(doc(db, "users", userId));
-                    renderUsers(); // Refresh the user table
-                } catch (error) {
-                    console.error("Error deleting user: ", error);
+        // Save Changes
+        document.getElementById("saveChangesBtn").addEventListener("click", async () => {
+            const email = document.getElementById("saveChangesBtn").getAttribute("data-email");
+            const updatedFirstName = document.getElementById("updateFirstName").value;
+            const updatedLastName = document.getElementById("updateLastName").value;
+            const updatedAccountType = document.getElementById("updateAccountType").value || 'Applicant'; // Default to "Applicant"
+            const updatedEnabled = document.getElementById("updateEnabled").value === "true";
+    
+            const userDocRef = doc(db, "users", email);
+            await updateDoc(userDocRef, {
+                firstName: updatedFirstName,
+                lastName: updatedLastName,
+                accountType: updatedAccountType,
+                enabled: updatedEnabled
+            });
+    
+            // Update user in corresponding admin collection if account type changed
+            const adminDocRef = doc(db, updatedAccountType === "Permits Officer" ? "AdminPC" : updatedAccountType === "Housing Officer" ? "AdminIS" : "MainAdmin", email);
+            await setDoc(adminDocRef, { isAdmin: true, firstName: updatedFirstName, lastName: updatedLastName, email });
+    
+            alert("User updated successfully");
+            fetchUsers(); // Refresh the user list
+    
+            const updateUserModal = bootstrap.Modal.getInstance(document.getElementById("updateUserModal"));
+            updateUserModal.hide();
+        });
+    
+        // Delete User
+        document.addEventListener("click", async (event) => {
+            if (event.target.classList.contains("delete-user-btn")) {
+                const email = event.target.getAttribute("data-email");
+    
+                // Confirm deletion
+                const confirmDelete = confirm("Are you sure you want to delete this user?");
+                if (confirmDelete) {
+                    const userDocRef = doc(db, "users", email);
+                    await deleteDoc(userDocRef);
+    
+                    // Delete from corresponding admin collection as well
+                    const adminDocRef = doc(db, email.includes("Permits Officer") ? "AdminPC" : email.includes("Housing Officer") ? "AdminIS" : "MainAdmin", email);
+                    await deleteDoc(adminDocRef);
+    
+                    alert("User deleted successfully");
+                    fetchUsers(); // Refresh the user list
+                } else {
+                    alert("User deletion cancelled");
                 }
             }
-        };
+        });
     
-        // Initialize the user list
-        renderUsers();
+        // Initial fetch
+        fetchUsers();
     </script>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    
+    
 </body>
 </html>

@@ -51,20 +51,30 @@ async function checkUserRole(userUid) {
     try {
         let isAdminPC = false;
         let isAdminIS = false;
+        let isMainAdmin = false;
 
+        // Check AdminPC collection
         const adminPCRef = doc(db, 'AdminPC', userUid);
         const adminPCSnapshot = await getDoc(adminPCRef);
         if (adminPCSnapshot.exists()) {
             isAdminPC = adminPCSnapshot.data().isAdmin === true;
         }
 
+        // Check AdminIS collection
         const adminISRef = doc(db, 'AdminIS', userUid);
         const adminISSnapshot = await getDoc(adminISRef);
         if (adminISSnapshot.exists()) {
             isAdminIS = adminISSnapshot.data().isAdmin === true;
         }
 
-        return { isAdminPC, isAdminIS };
+        // Check MainAdmin collection
+        const mainAdminRef = doc(db, 'MainAdmin', userUid);
+        const mainAdminSnapshot = await getDoc(mainAdminRef);
+        if (mainAdminSnapshot.exists()) {
+            isMainAdmin = mainAdminSnapshot.data().isAdmin === true;
+        }
+
+        return { isAdminPC, isAdminIS, isMainAdmin };
     } catch (error) {
         console.error("Error fetching user roles:", error);
         throw error;
@@ -76,7 +86,7 @@ async function handleAdminLogin(event) {
     event.preventDefault();
     const email = document.getElementById('admin-email').value;
     const password = document.getElementById('admin-password').value;
-    
+
     // Show the loading screen
     document.getElementById('loading-screen').style.display = 'flex';
 
@@ -86,17 +96,12 @@ async function handleAdminLogin(event) {
 
         console.log("Admin signed in:", user.uid);
 
-        // Fetch the ID token result which contains custom claims
-        const idTokenResult = await user.getIdTokenResult();
-        
-        // Extract custom claims from the token result
-        const customClaims = idTokenResult.claims;
-        const isAdminPC = customClaims.adminPC || false;
-        const isAdminIS = customClaims.adminIS || false;
-        const isMainAdmin = customClaims.mainAdmin || false;
+        // Check user roles from Firestore
+        const { isAdminPC, isAdminIS, isMainAdmin } = await checkUserRole(user.uid);
 
         console.log('User roles:', { isAdminPC, isAdminIS, isMainAdmin });
 
+        // Redirect based on user role
         if (isMainAdmin) {
             console.log("Redirecting to Main Admin dashboard");
             window.location.href = "/AdminPages/Admin/adminUserManagement.html";
