@@ -358,7 +358,13 @@ async function addBuildingPermit(event) {
     
     const otherScopeInput = document.getElementById("otherScopeInput").value;
     const finalScopeOfWork = (scopeOfWork === 'Others' && otherScopeInput) ? otherScopeInput : scopeOfWork;
-
+   
+    const blockNumber = document.getElementById("blockNumber").value;
+    const lotNumber = document.getElementById("lotNumber").value;
+    const NOUnits = document.getElementById("NOUnits").value;
+    const FloorArea = document.getElementById("FloorArea").value;
+    const TotalFloorArea = document.getElementById("TotalFloorArea").value;
+    const TotalEstimatedCost = document.getElementById("TotalEstimatedCost").value;
     try {
         const user = auth.currentUser;
         if (!user) {
@@ -392,6 +398,12 @@ async function addBuildingPermit(event) {
             projectJustification,
             ownerUid: ownerUid,
             status: 'Pending',
+            blockNumber,
+            lotNumber,
+            NOUnits,
+            FloorArea,
+            TotalFloorArea,
+            TotalEstimatedCost,
             createdAt: Timestamp.now()
         });
 
