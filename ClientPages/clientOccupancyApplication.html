@@ -231,6 +231,26 @@
                         <div class="label">Appointment</div>
                     </div>
                 </div>
+
+                <div class="row g-3">
+                    <label for="ownerName">Owner/Applicant Name:</label>
+                    <div class="col-md-3">
+                        <label for="ownerLastName">Last Name<span class="required-asterisk">*</span></label>
+                        <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="ownerFirstName">First Name<span class="required-asterisk">*</span></label>
+                        <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name*" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="ownerMiddleName">Middle Name</label>
+                        <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="ownerMaidenName">Maiden Name</label>
+                        <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
+                    </div>
+                </div>
                 <!-- Content -->
                 <table class="table">
                     <thead>
@@ -355,6 +375,25 @@
     </div>
 </div>
 
+<!-- Application Applied Modal -->
+<div class="modal fade" id="applicationAppliedModal" tabindex="-1" aria-labelledby="ApplicationAppliedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="ApplicationAppliedModalLabel"><i class="fa-solid fa-check-circle"></i> Success</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <h2>Application Submitted</h2>
+                <i class="fa-solid fa-check-circle fa-3x text-success"></i>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Firebase and custom scripts -->
     <script type="module" src="/Database/firebase.js"></script>
 
@@ -386,123 +425,127 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
     
-        // Handle form submission for appointment
-        document.getElementById('submitAppointment').addEventListener('click', async (event) => {
-            event.preventDefault();
-    
-            // Get appointment date
-            const appointmentDate = document.getElementById('appointmentDate').value;
-    
-            // Optional loading screen
-            document.getElementById('loading-screen').style.display = 'flex';
-    
-            try {
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        const userId = user.uid;
-    
-                        // File inputs
-                        const storageRef = ref(storage, `OccupancyPermits/${userId}`);
-                        const uploadPromises = [];
-    
-                        const buildingPermitCompletionFile = document.getElementById('buildingPermitCompletionFile')?.files[0];
-                        const approvedBuildingPermitFile = document.getElementById('approvedBuildingPermitFile')?.files[0];
-                        const approvedPlanFile = document.getElementById('approvedPlanFile')?.files[0];
-                        const structurePhotosFile = document.getElementById('structurePhotosFile')?.files[0];
-                        const sketchFile = document.getElementById('sketchFile')?.files[0];
-    
-                        // Prepare to upload files if they exist
-                        if (buildingPermitCompletionFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `buildingPermitCompletion_${buildingPermitCompletionFile.name}`), buildingPermitCompletionFile));
-                        }
-                        if (approvedBuildingPermitFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `approvedBuildingPermit_${approvedBuildingPermitFile.name}`), approvedBuildingPermitFile));
-                        }
-                        if (approvedPlanFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `approvedPlan_${approvedPlanFile.name}`), approvedPlanFile));
-                        }
-                        if (structurePhotosFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `structurePhotos_${structurePhotosFile.name}`), structurePhotosFile));
-                        }
-                        if (sketchFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `sketch_${sketchFile.name}`), sketchFile));
-                        }
-    
-                        // Wait for all uploads to finish
-                        const uploadResults = await Promise.all(uploadPromises);
-    
-                        // Get download URLs for the uploaded files
-                        const urls = await Promise.all(uploadResults.map(result => getDownloadURL(result.ref)));
-    
-                        // Save application data to Firestore
-                        await addDoc(collection(db, "OccupancyPermits"), {
-                            buildingPermitCompletionURL: urls[0] || null,
-                            approvedBuildingPermitURL: urls[1] || null,
-                            approvedPlanURL: urls[2] || null,
-                            structurePhotosURL: urls[3] || null,
-                            sketchURL: urls[4] || null,
-                            appointmentDate: new Date(appointmentDate),
-                            status: 'Pending',
-                            createdAt: Timestamp.now(),
-                            ownerUid: userId
-                        });
-    
-                        // Success message and reset form
-                        alert('Application submitted successfully!');
-                        document.getElementById('occupancyPermitForm').reset();
+     // Handle form submission for appointment
+document.getElementById('submitAppointment').addEventListener('click', async (event) => {
+    event.preventDefault();
+
+    // Disable submit button to prevent multiple submissions
+    document.getElementById('submitAppointment').disabled = true;
+
+    // Show loading spinner
+    document.getElementById('loading-screen').style.display = 'flex';
+
+    // Get appointment date
+    const appointmentDate = document.getElementById('appointmentDate').value;
+
+    try {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userId = user.uid;
+                const ownerLastName = document.getElementById('ownerLastName').value;
+                const ownerFirstName = document.getElementById('ownerFirstName').value;
+                const ownerMiddleName = document.getElementById('ownerMiddleName').value;
+                const ownerMaidenName = document.getElementById('ownerMaidenName').value;
+                const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
+                
+                const storageRef = ref(storage, `OccupancyPermits/${userId}`);
+                const uploadPromises = [];
+
+                // File inputs
+                const files = {
+                    buildingPermitCompletionFile: document.getElementById('buildingPermitCompletionFile')?.files[0],
+                    approvedBuildingPermitFile: document.getElementById('approvedBuildingPermitFile')?.files[0],
+                    approvedPlanFile: document.getElementById('approvedPlanFile')?.files[0],
+                    structurePhotosFile: document.getElementById('structurePhotosFile')?.files[0],
+                    sketchFile: document.getElementById('sketchFile')?.files[0],
+                };
+
+                // Prepare and upload files
+                for (const [key, file] of Object.entries(files)) {
+                    if (file) {
+                        uploadPromises.push(uploadBytes(ref(storageRef, `${key}_${file.name}`), file));
                     }
+                }
+
+                // Wait for all uploads to finish
+                const uploadResults = await Promise.all(uploadPromises);
+
+                // Get download URLs for the uploaded files
+                const urls = await Promise.all(uploadResults.map(result => getDownloadURL(result.ref)));
+
+                // Save application data to Firestore
+                await addDoc(collection(db, "OccupancyPermits"), {
+                    buildingPermitCompletionURL: urls[0] || null,
+                    approvedBuildingPermitURL: urls[1] || null,
+                    approvedPlanURL: urls[2] || null,
+                    structurePhotosURL: urls[3] || null,
+                    sketchURL: urls[4] || null,
+                    appointmentDate: new Date(appointmentDate),
+                    status: 'Pending',
+                    createdAt: Timestamp.now(),
+                    ownerUid: userId,
+                    ownerName,
                 });
-            } catch (error) {
-                console.error("Error submitting application:", error);
-                alert("Failed to submit the application. Please try again.");
-            } finally {
-                // Hide loading screen
-                document.getElementById('loading-screen').style.display = 'none';
+
+                // Hide the appointment modal
+                const bootstrapAppointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
+                if (bootstrapAppointmentModal) {
+                    bootstrapAppointmentModal.hide();  // Ensure appointment modal is hidden
+                }
+
+                // Smoothly show the application applied modal
+                const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
+                setTimeout(() => applicationModal.show(), 300);  // Add a small delay for smoother transition
             }
         });
-    
-        // Handle step transitions
-        document.addEventListener("DOMContentLoaded", function() {
-            const nextStepButton = document.getElementById('nextStepButton');
-            const previousStepButton = document.getElementById('previousStepButton');
-            const appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
-            const uploadModal = new bootstrap.Modal(document.getElementById('occupancyUploadModal'), {
-                backdrop: 'static',
-                keyboard: false
-            });
-    
-            nextStepButton.addEventListener('click', function() {
-                // Update the progress bar
-                const stepProgress = document.querySelector('.step-progress');
-                const steps = stepProgress.querySelectorAll('.step');
-                steps[0].classList.add('completed');
-                steps[1].classList.add('completed');
-    
-                // Hide upload modal and show appointment modal
-                const bootstrapUploadModal = bootstrap.Modal.getInstance(document.getElementById('occupancyUploadModal'));
-                bootstrapUploadModal.hide();
-                appointmentModal.show();
-            });
-    
-            appointmentModal._element.addEventListener('shown.bs.modal', function() {
-                // Access files after the modal is fully shown
-                const buildingPermitCompletionFile = document.getElementById('buildingPermitCompletionFile')?.files[0];
-                console.log(buildingPermitCompletionFile); // This should now be available
-            });
-    
-            previousStepButton.addEventListener('click', function() {
-                // Update the progress bar to revert the step
-                const stepProgress = document.querySelector('.step-progress');
-                const steps = stepProgress.querySelectorAll('.step');
-                steps[1].classList.remove('completed');
-    
-                // Hide appointment modal and show upload modal
-                const bootstrapAppointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
-                bootstrapAppointmentModal.hide();
-                uploadModal.show();
-            });
+    } catch (error) {
+        console.error("Error submitting application:", error);
+        alert("Failed to submit the application. Please try again.");
+    } finally {
+        // Hide loading screen
+        document.getElementById('loading-screen').style.display = 'none';
+        // Re-enable submit button
+        document.getElementById('submitAppointment').disabled = false;
+    }
+});
+
+    // Handle step transitions
+    document.addEventListener("DOMContentLoaded", function() {
+        const nextStepButton = document.getElementById('nextStepButton');
+        const previousStepButton = document.getElementById('previousStepButton');
+        const appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+        const uploadModal = new bootstrap.Modal(document.getElementById('occupancyUploadModal'), {
+            backdrop: 'static',
+            keyboard: false
         });
-    </script>
+
+        nextStepButton.addEventListener('click', function() {
+            // Update the progress bar
+            const stepProgress = document.querySelector('.step-progress');
+            const steps = stepProgress.querySelectorAll('.step');
+            steps[0].classList.add('completed');
+            steps[1].classList.add('completed');
+
+            // Hide upload modal and show appointment modal with smooth transition
+            const bootstrapUploadModal = bootstrap.Modal.getInstance(document.getElementById('occupancyUploadModal'));
+            bootstrapUploadModal.hide();
+            setTimeout(() => appointmentModal.show(), 200);  // Add delay for smooth transition
+        });
+
+        previousStepButton.addEventListener('click', function() {
+            // Update the progress bar to revert the step
+            const stepProgress = document.querySelector('.step-progress');
+            const steps = stepProgress.querySelectorAll('.step');
+            steps[1].classList.remove('completed');
+
+            // Hide appointment modal and show upload modal
+            const bootstrapAppointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
+            bootstrapAppointmentModal.hide();
+            setTimeout(() => uploadModal.show(), 200);  // Add delay for smooth transition
+        });
+    });
+</script>
+    
     
     
 

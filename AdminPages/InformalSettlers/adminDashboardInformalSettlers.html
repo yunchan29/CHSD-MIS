@@ -434,7 +434,236 @@
 <script type="module" src="/Database/firebase.js">
 </script>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+  // Firebase configuration
+  const firebaseConfig = {
+      apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+      authDomain: "chsd-mis.firebaseapp.com",
+      projectId: "chsd-mis",
+      storageBucket: "chsd-mis.appspot.com",
+      messagingSenderId: "694967679357",
+      appId: "1:694967679357:web:65cffd50f13739f934f414",
+      measurementId: "G-XBQTQFRLJ5"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Notification Function
+  function showNotification(message, type) {
+      const notificationContainer = document.getElementById('notification-container');
+      if (notificationContainer) {
+          const notification = document.createElement('div');
+          notification.className = `notification ${type}`;
+          notification.textContent = message;
+          notificationContainer.appendChild(notification);
+          alert("status updated successfully");
+
+          // Automatically remove notification after 5 seconds
+          setTimeout(() => {
+              notification.remove();
+          }, 5000);
+      } else {
+          console.error('Notification container not found.');
+      }
+  }
+
+  // Pagination Variables
+  let profilesPerPage = 5; // Profiles per page
+  let currentPage = 1; // Current page
+  let totalPages = 1; // Total pages
+
+  // Function to Load Housing Profiles and Display in the Table
+  async function loadProfiles() {
+      try {
+          const querySnapshot = await getDocs(collection(db, "Housing"));
+          const housingDiv = document.querySelector("tbody");
+          const prevPageBtn = document.getElementById("prevPageBtn");
+          const nextPageBtn = document.getElementById("nextPageBtn");
+          const pageInfo = document.getElementById("pageInfo");
+
+          if (!housingDiv) {
+              console.error("housingDiv not found in the DOM.");
+              return;
+          }
+
+          housingDiv.innerHTML = ""; // Clear existing rows
+
+          // Fetch and Process Housing Data
+          const housingData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const uniqueHousingData = Array.from(new Set(housingData.map(a => a.id)))
+              .map(id => housingData.find(a => a.id === id));
+
+          // Sort by createdAt (ascending)
+          uniqueHousingData.sort((a, b) => {
+              const aTime = a.createdAt?.seconds || 0;
+              const bTime = b.createdAt?.seconds || 0;
+              return aTime - bTime;
+          });
+
+          // Calculate Total Pages
+          totalPages = Math.ceil(uniqueHousingData.length / profilesPerPage);
+
+          // Determine Profiles for Current Page
+          const start = (currentPage - 1) * profilesPerPage;
+          const end = start + profilesPerPage;
+          const currentProfiles = uniqueHousingData.slice(start, end);
+
+          // Loop Through Profiles and Populate Table
+          for (const data of currentProfiles) {
+              const row = document.createElement("tr");
+
+              // Fetch Representative User Data
+              let representativeName = "";
+              if (data.ownerUid) {
+                  try {
+                      const userRef = doc(db, "users", data.ownerUid);
+                      const userDoc = await getDoc(userRef);
+                      if (userDoc.exists()) {
+                          const userData = userDoc.data();
+                          representativeName = `${userData.firstName} ${userData.lastName}`;
+                      }
+                  } catch (error) {
+                      console.error("Error fetching user data:", error);
+                  }
+              }
+
+              const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
+
+              row.innerHTML = `
+                  <td>${data.ownerName || "N/A"}</td>
+                  <td>${representativeName || "N/A"}</td>
+                  <td>${createdAt}</td>
+                  <td>${data.status || "N/A"}</td>
+                  <td>
+                      <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
+                  </td>
+              `;
+
+              housingDiv.appendChild(row);
+
+              // Add Event Listener for "View Details" Button
+              const viewDetailsBtn = row.querySelector(".view-details-btn");
+              if (viewDetailsBtn) {
+                  viewDetailsBtn.addEventListener("click", () => {
+                      openViewDetailsModal(data);
+                  });
+              }
+          }
+
+          // Update Pagination Info
+          pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+          // Enable/Disable Pagination Buttons
+          prevPageBtn.disabled = currentPage === 1;
+          nextPageBtn.disabled = currentPage === totalPages;
+
+      } catch (error) {
+          console.error("Error loading profiles:", error);
+          showNotification("Failed to load profiles.", "error");
+      }
+  }
+
+  // Function to Control Progressive Status Selection
+  function updateStatusOptions(currentStatus) {
+      const statusSelect = document.getElementById("statusSelect");
+      const statusOptions = ["Pending", "Processing", "To Pay", "For Approval", "For Release", "Claimed"];
+
+      // Clear existing options
+      statusSelect.innerHTML = "";
+
+      // Add only the next status options based on the current status
+      const currentIndex = statusOptions.indexOf(currentStatus);
+      for (let i = currentIndex; i < statusOptions.length; i++) {
+          const option = document.createElement("option");
+          option.value = statusOptions[i];
+          option.textContent = statusOptions[i];
+          statusSelect.appendChild(option);
+      }
+  }
+
+  // Function to Handle Status Update
+  async function updateStatus() {
+      const selectedProfileId = document.getElementById("profileIdInput").value;
+      const newStatus = document.getElementById("statusSelect").value;
+      const timestamp = serverTimestamp();
+
+      if (selectedProfileId) {
+          try {
+              const profileRef = doc(db, "Housing", selectedProfileId);
+              await updateDoc(profileRef, {
+                  status: newStatus,
+                  updatedAt: timestamp
+              });
+              showNotification("Status updated successfully!", "success");
+              loadProfiles();
+              closeModal("updateStatusModal"); // Close the modal after updating
+          } catch (error) {
+              console.error("Error updating status:", error);
+              showNotification("Failed to update status.", "error");
+          }
+      } else {
+          console.error("No profile selected for status update.");
+      }
+  }
+
+  // Function to Open the View Details Modal
+  function openViewDetailsModal(data) {
+      // Set modal fields
+      document.getElementById("ownerNameField").textContent = data.ownerName || "N/A";
+      document.getElementById("statusField").textContent = data.status || "N/A";
+      document.getElementById("createdAtField").textContent = new Date(data.createdAt.seconds * 1000).toLocaleString() || "N/A";
+
+      // Update Profile ID for status update
+      document.getElementById("profileIdInput").value = data.id;
+
+      // Update status options based on current status
+      updateStatusOptions(data.status);
+
+      // Show modal
+      const updateStatusModal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
+      updateStatusModal.show();
+  }
+
+  // Function to Open Housing Form Modal
+  function openViewHousingFormModal(data) {
+      // Handle loading the housing form based on the data
+      // You may need to customize this according to your form structure
+      console.log("Viewing housing form for ID:", data.id);
+  }
+
+  // Function for Next Page
+  function nextPage() {
+      if (currentPage < totalPages) {
+          currentPage++;
+          loadProfiles();
+      }
+  }
+
+  // Function for Previous Page
+  function prevPage() {
+      if (currentPage > 1) {
+          currentPage--;
+          loadProfiles();
+      }
+  }
+
+  // Event Listeners for Pagination Buttons
+  document.getElementById("prevPageBtn").addEventListener("click", prevPage);
+  document.getElementById("nextPageBtn").addEventListener("click", nextPage);
+
+  // Event Listener for Update Status Button
+  document.getElementById("updateStatusBtn").addEventListener("click", updateStatus);
+
+  // Load Profiles on Page Load
+  loadProfiles();
+</script>
 
 
 <script>

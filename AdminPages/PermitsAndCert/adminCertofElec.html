@@ -31,8 +31,8 @@
             <ul class="sideBarList list-unstyled px-2">
               <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
               <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none"><i class="fa-solid fa-building-circle-check"></i> Building Permit</a></li>
-              <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none"><i class="fa-solid fa-person-shelter"></i> Occupancy Permit</a></li>
-              <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none"><i class="fa-solid fa-bolt"></i> Electrical Inspection</a></li>
+              <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none"><i class="fa-solid fa-person-shelter"></i> Occupancy Permit</a></li>
+              <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none"><i class="fa-solid fa-bolt"></i> Electrical Inspection</a></li>
               <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCNotif.html" class="text-decoration-none"><i class="fa-solid fa-bell"></i> Notifications</a></li>
               <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCArchive.html" class="text-decoration-none"><i class="fa-solid fa-box-archive"></i> Archive</a></li>
               <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCUserManager.html" class="text-decoration-none"><i class="fa-solid fa-user-pen"></i> User Manager</a></li>
@@ -69,7 +69,7 @@
           </nav>
            
             <div class="contentContainer">
-               <h4 class="text-center">Certificate of Occupancy</h4>
+               <h4 class="text-center">Electrical Inspection</h4>
                 <!-- Bootstrap Table -->
             <div class="container">
                 
@@ -140,10 +140,10 @@
         }
       }
     
-      // Load Occupancy profiles
-      async function loadOccupancyProfiles() {
+      // Load Electrical Certifications
+      async function loadElectricalCertProfiles() {
         try {
-          const querySnapshot = await getDocs(collection(db, "OccupancyPermits"));
+          const querySnapshot = await getDocs(collection(db, "ElectricalCert"));
           const profileTableBody = document.getElementById("profileTableBody");
           if (!profileTableBody) {
             console.error("profileTableBody not found in the DOM.");
@@ -193,8 +193,6 @@
                   </button>
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item save-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-save"></i> Save</a></li>
-                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${docSnapshot.id}"><i class="fas fa-comment"></i> Remarks</a></li>
-                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#occupancyPermitModal" data-permit-id="${docSnapshot.id}"><i class="fas fa-edit"></i> Edit</a></li>
                     <li><a class="dropdown-item archive-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-archive"></i> Archive</a></li>
                   </ul>
                 </div>
@@ -209,7 +207,7 @@
               statusSelect.addEventListener("change", async (event) => {
                 const newStatus = event.target.value;
                 if (data.status !== newStatus) {
-                  const message = `${data.ownerName}'s occupancy permit is now ${newStatus.toLowerCase()}`;
+                  const message = `${data.ownerName}'s electrical certification is now ${newStatus.toLowerCase()}`;
     
                   // Trigger notification
                   showNotification(message, 'info');
@@ -229,9 +227,9 @@
     
                   // Update status in Firestore
                   try {
-                    await updateDoc(doc(db, 'OccupancyPermits', docSnapshot.id), { status: newStatus });
+                    await updateDoc(doc(db, 'ElectricalCert', docSnapshot.id), { status: newStatus });
                   } catch (error) {
-                    console.error("Error updating permit status:", error);
+                    console.error("Error updating certification status:", error);
                   }
                 }
               });
@@ -239,159 +237,89 @@
           }
     
           // Attach button listeners
-          attachSaveButtonListenersOccupancy();
-          attachArchiveButtonListenersOccupancy();
-          attachEditButtonListenersOccupancy();
-          attachRemarksButtonListenersOccupancy();
+          attachSaveButtonListenersElectricalCert();
+          attachArchiveButtonListenersElectricalCert();
         } catch (error) {
           console.error("Error loading profiles:", error);
         }
       }
     
-      // Function to handle saving an occupancy permit
-      async function handleSaveOccupancyPermit(event) {
+      // Function to handle saving a certification
+      async function handleSaveElectricalCert(event) {
         event.preventDefault();
     
-        const occupancyPermitId = event.target.getAttribute('data-id');
+        const certId = event.target.getAttribute('data-id');
         const row = event.target.closest('tr');
         const statusSelect = row.querySelector('.status-select'); 
     
         const status = statusSelect.value;
     
         try {
-            await updateDoc(doc(db, "OccupancyPermits", occupancyPermitId), {
-                status: status
-            });
-            console.log("Document successfully updated!");
-            alert("Status updated successfully!");
+          await updateDoc(doc(db, "ElectricalCert", certId), {
+            status: status
+          });
+          console.log("Document successfully updated!");
+          alert("Status updated successfully!");
         } catch (error) {
-            console.error("Error updating document: ", error);
-            alert("Failed to update status: " + error.message);
+          console.error("Error updating document: ", error);
+          alert("Failed to update status: " + error.message);
         }
     
-        await loadOccupancyProfiles(); // Refresh the profiles after updating
-    }
+        await loadElectricalCertProfiles(); // Refresh the profiles after updating
+      }
     
-    // Function to handle archiving an occupancy permit
-    async function handleArchiveOccupancyPermit(event) {
+      // Function to handle archiving a certification
+      async function handleArchiveElectricalCert(event) {
         event.preventDefault();
     
-        const occupancyPermitId = event.target.getAttribute('data-id');
-    
+        const certId = event.target.getAttribute('data-id');
         const confirmed = confirm("Are you sure you want to archive this document?");
         
         if (!confirmed) {
-            return;
+          return;
         }
     
         try {
-            const occupancyPermitRef = doc(db, "OccupancyPermits", occupancyPermitId);
-            const occupancyPermitSnapshot = await getDoc(occupancyPermitRef);
+          const certRef = doc(db, "ElectricalCert", certId);
+          const certSnapshot = await getDoc(certRef);
     
-            if (occupancyPermitSnapshot.exists()) {
-                const occupancyPermitData = occupancyPermitSnapshot.data();
-                
-                await setDoc(doc(db, "archivedOccupancyPermits", occupancyPermitId), occupancyPermitData);
-                await deleteDoc(occupancyPermitRef);
+          if (certSnapshot.exists()) {
+            const certData = certSnapshot.data();
+            
+            await updateDoc(certRef, { status: "Archived" });
+            event.target.closest('tr').remove();
     
-                event.target.closest('tr').remove();
-    
-                console.log("Document archived successfully!");
-                alert("Document archived successfully!");
-            } else {
-                alert("Document not found!");
-            }
+            console.log("Document archived successfully!");
+            alert("Document archived successfully!");
+          } else {
+            alert("Document not found!");
+          }
         } catch (error) {
-            console.error("Error archiving document: ", error);
-            alert("Failed to archive document: " + error.message);
+          console.error("Error archiving document: ", error);
+          alert("Failed to archive document: " + error.message);
         }
-    }
+      }
     
-    // Function to populate the edit form with an occupancy permit's data
-    async function populateEditFormOccupancy(permitId) {
-        console.log('populateEditFormOccupancy called with permitId:', permitId);
-    
-        const permitDoc = doc(db, "OccupancyPermits", permitId);
-    
-        // Fetch the document from Firestore
-        try {
-            const docSnapshot = await getDoc(permitDoc);
-            if (docSnapshot.exists()) {
-                const data = docSnapshot.data();
-                console.log("Permit data:", data);
-    
-                // Populate form fields with the permit data
-                document.getElementById('occupancyPermitNo').value = data.occupancyPermitNo || '';
-                document.getElementById('ownerEmail').value = data.ownerEmail || '';
-                document.getElementById('issuedOn').value = data.issuedOn || '';
-                document.getElementById('projectLocation').value = data.projectLocation || '';
-    
-                // Add additional fields specific to occupancy permits as needed
-                document.getElementById('numberOfUnits').value = data.numberOfUnits || '';
-                document.getElementById('totalFloorArea').value = data.totalFloorArea || '';
-    
-                // Store permitId in form's dataset (for further usage)
-                document.getElementById('editOccupancyForm').dataset.permitId = permitId;
-            } else {
-                console.error('No such document!');
-            }
-        } catch (error) {
-            console.error('Error getting document:', error);
-        }
-    }
-    
-    // Function to attach event listeners for the edit buttons
-    function attachEditButtonListenersOccupancy() {
-        const editButtons = document.querySelectorAll('a[data-permit-id]');
-        editButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                event.preventDefault();
-                const permitId = button.getAttribute('data-permit-id');
-                populateEditFormOccupancy(permitId);
-            });
-        });
-    }
-    
-    // Function to attach event listeners for the archive buttons
-    function attachArchiveButtonListenersOccupancy() {
-        const archiveButtons = document.querySelectorAll('.archive-btn');
-        archiveButtons.forEach(button => {
-            button.addEventListener('click', handleArchiveOccupancyPermit);
-        });
-    }
-    
-    // Function to attach event listeners for the save buttons
-    function attachSaveButtonListenersOccupancy() {
+      // Function to attach event listeners for the save buttons
+      function attachSaveButtonListenersElectricalCert() {
         const saveButtons = document.querySelectorAll('.save-btn');
         saveButtons.forEach(button => {
-            button.addEventListener('click', handleSaveOccupancyPermit);
+          button.addEventListener('click', handleSaveElectricalCert);
         });
-    }
+      }
     
-    // Function to handle showing remarks in a modal
-    async function openRemarksModalOccupancy(permitId) {
-        await showRemarksOccupancy(permitId); // You need to implement showRemarksOccupancy
-        const remarksModal = new bootstrap.Modal(document.getElementById('viewRemarks'));
-        remarksModal.show();
-    }
-    
-    // Function to attach event listeners for remarks buttons
-    function attachRemarksButtonListenersOccupancy() {
-        const remarksButtons = document.querySelectorAll('.dropdown-item[data-bs-target="#remarksModal1"]');
-        remarksButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                event.preventDefault();
-                const permitId = button.getAttribute('data-permit-id');
-                if (permitId) {
-                    openRemarksModalOccupancy(permitId);
-                }
-            });
+      // Function to attach event listeners for the archive buttons
+      function attachArchiveButtonListenersElectricalCert() {
+        const archiveButtons = document.querySelectorAll('.archive-btn');
+        archiveButtons.forEach(button => {
+          button.addEventListener('click', handleArchiveElectricalCert);
         });
-    }
+      }
     
       // Load profiles on page load
-      document.addEventListener('DOMContentLoaded', loadOccupancyProfiles);
+      document.addEventListener('DOMContentLoaded', loadElectricalCertProfiles);
     </script>
+    
     
     <script>
       document.querySelector('.open-btn').addEventListener('click', function() {

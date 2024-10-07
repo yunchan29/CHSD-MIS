@@ -196,6 +196,25 @@
                         </div>
                     </div>
                     <!-- Content -->
+                    <div class="row g-3">
+                        <label for="ownerName">Owner/Applicant Name:</label>
+                        <div class="col-md-3">
+                            <label for="ownerLastName">Last Name<span class="required-asterisk">*</span></label>
+                            <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ownerFirstName">First Name<span class="required-asterisk">*</span></label>
+                            <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name*" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ownerMiddleName">Middle Name</label>
+                            <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ownerMaidenName">Maiden Name</label>
+                            <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
+                        </div>
+                    </div>
                     <table class="table">
                         <thead>
                             <tr>
@@ -308,6 +327,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Application Applied Modal -->
+<div class="modal fade" id="applicationAppliedModal" tabindex="-1" aria-labelledby="ApplicationAppliedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="ApplicationAppliedModalLabel"><i class="fa-solid fa-check-circle"></i> Success</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <h2>Application Submitted</h2>
+                <i class="fa-solid fa-check-circle fa-3x text-success"></i>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Include Popper.js and Bootstrap.js before your custom scripts -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -320,7 +358,7 @@
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
+    
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
@@ -331,53 +369,60 @@
             appId: "1:694967679357:web:65cffd50f13739f934f414",
             measurementId: "G-XBQTQFRLJ5"
         };
-
+    
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const storage = getStorage(app);
-
-        // Handle form submission for appointment
+    
+        // Handle form submission for electrical inspection
         document.getElementById('submitAppointment').addEventListener('click', async (event) => {
             event.preventDefault();
-
-            const appointmentDate = document.getElementById('appointmentDate').value;
+    
+            // Disable the submit button and show the loading screen
+            document.getElementById('submitAppointment').disabled = true;
             document.getElementById('loading-screen').style.display = 'flex';
-
+    
+            const appointmentDate = document.getElementById('appointmentDate').value;
+    
             try {
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         const userId = user.uid;
+                        const ownerLastName = document.getElementById('ownerLastName').value;
+                        const ownerFirstName = document.getElementById('ownerFirstName').value;
+                        const ownerMiddleName = document.getElementById('ownerMiddleName').value;
+                        const ownerMaidenName = document.getElementById('ownerMaidenName').value;
+                        const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
+    
                         const storageRef = ref(storage, `ElectricalInspection/${userId}`);
                         const uploadPromises = [];
-
-                        const meralcoServiceFile = document.getElementById('meralcoServiceFile')?.files[0];
-                        const barangayClearanceFile = document.getElementById('barangayClearanceFile')?.files[0];
-                        const ownershipFile = document.getElementById('ownershipFile')?.files[0];
-                        const occupancyFile = document.getElementById('occupancyFile')?.files[0];
-                        const structurePhotoFile = document.getElementById('structurePhotoFile')?.files[0];
-
-                        if (meralcoServiceFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `meralcoService_${meralcoServiceFile.name}`), meralcoServiceFile));
+    
+                        // File inputs
+                        const files = {
+                            meralcoServiceFile: document.getElementById('meralcoServiceFile')?.files[0],
+                            barangayClearanceFile: document.getElementById('barangayClearanceFile')?.files[0],
+                            ownershipFile: document.getElementById('ownershipFile')?.files[0],
+                            occupancyFile: document.getElementById('occupancyFile')?.files[0],
+                            structurePhotoFile: document.getElementById('structurePhotoFile')?.files[0],
+                        };
+    
+                        // Prepare and upload files
+                        for (const [key, file] of Object.entries(files)) {
+                            if (file) {
+                                uploadPromises.push(uploadBytes(ref(storageRef, `${key}_${file.name}`), file));
+                            }
                         }
-                        if (barangayClearanceFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `barangayClearance_${barangayClearanceFile.name}`), barangayClearanceFile));
-                        }
-                        if (ownershipFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `ownership_${ownershipFile.name}`), ownershipFile));
-                        }
-                        if (occupancyFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `occupancy_${occupancyFile.name}`), occupancyFile));
-                        }
-                        if (structurePhotoFile) {
-                            uploadPromises.push(uploadBytes(ref(storageRef, `structurePhoto_${structurePhotoFile.name}`), structurePhotoFile));
-                        }
-
+    
+                        // Wait for all uploads to finish
                         const uploadResults = await Promise.all(uploadPromises);
+    
+                        // Get download URLs for the uploaded files
                         const urls = await Promise.all(uploadResults.map(result => getDownloadURL(result.ref)));
-
-                        await addDoc(collection(db, "ElectricalInspectionApplications"), {
+    
+                        // Save application data to Firestore
+                        await addDoc(collection(db, "ElectricalCert"), {
                             meralcoServiceURL: urls[0] || null,
                             barangayClearanceURL: urls[1] || null,
                             ownershipURL: urls[2] || null,
@@ -386,21 +431,29 @@
                             appointmentDate: new Date(appointmentDate),
                             status: 'Pending',
                             createdAt: Timestamp.now(),
-                            ownerUid: userId
+                            ownerUid: userId,
+                            ownerName,
                         });
-
-                        alert('Application submitted successfully!');
-                        document.getElementById('electricalInspectionForm').reset();
+    
+                        // Smoothly transition from appointment modal to application applied modal
+                        const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
+                        const appointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
+                        
+                        // Hide appointment modal before showing application applied modal
+                        appointmentModal.hide();
+                        setTimeout(() => applicationModal.show(), 300);  // Add a slight delay for smoother transition
                     }
                 });
             } catch (error) {
                 console.error("Error submitting application:", error);
                 alert("Failed to submit the application. Please try again.");
             } finally {
+                // Hide loading screen and re-enable the submit button
                 document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('submitAppointment').disabled = false;
             }
         });
-
+    
         // Handle step transitions
         document.addEventListener("DOMContentLoaded", function() {
             const nextStepButton = document.getElementById('nextStepButton');
@@ -410,29 +463,34 @@
                 backdrop: 'static',
                 keyboard: false
             });
-
+    
             nextStepButton.addEventListener('click', function() {
+                // Update the progress bar
                 const stepProgress = document.querySelector('.step-progress');
                 const steps = stepProgress.querySelectorAll('.step');
                 steps[0].classList.add('completed');
                 steps[1].classList.add('completed');
-
+    
+                // Smoothly transition from upload modal to appointment modal
                 const bootstrapUploadModal = bootstrap.Modal.getInstance(document.getElementById('electricalInspectionModal'));
                 bootstrapUploadModal.hide();
-                appointmentModal.show();
+                setTimeout(() => appointmentModal.show(), 200);  // Add delay for smooth transition
             });
-
+    
             previousStepButton.addEventListener('click', function() {
+                // Update the progress bar to revert the step
                 const stepProgress = document.querySelector('.step-progress');
                 const steps = stepProgress.querySelectorAll('.step');
                 steps[1].classList.remove('completed');
-
+    
+                // Smoothly transition back from appointment modal to upload modal
                 const bootstrapAppointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
                 bootstrapAppointmentModal.hide();
-                uploadModal.show();
+                setTimeout(() => uploadModal.show(), 200);  // Add delay for smooth transition
             });
         });
     </script>
+    
 
     <script>
         function uploadFile(input) {
