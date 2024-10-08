@@ -309,8 +309,10 @@
 
 
 <div class="mb-3">
+   <div class="col-md-4">
     <label for="phoneNumber" class="form-label">Cellphone/Telephone Number<span class="required-asterisk">*</span></label>
     <input type="text" class="form-control" id="phoneNumber" required>
+   </div>
 </div>
 
 
@@ -638,6 +640,8 @@
                 <!-- Content -->
                 <div class="container">
                     <h5 class="text-center mt-5 mb-4">Appointment Schedule</h5>
+                    <p class="text-center"><i>Note: Please select only weekdays.</i></p>
+                    
                     <div class="row">
                         <div class="col-md-3"></div> <!-- Empty column for spacing -->
 
@@ -1269,6 +1273,38 @@ const firebaseConfig = {
 
 
 
+<script>
+    // Function to set the minimum date to tomorrow
+    function setMinDate() {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1); // Set to tomorrow
+
+        const dd = String(tomorrow.getDate()).padStart(2, '0');
+        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const yyyy = tomorrow.getFullYear();
+        const minDate = yyyy + '-' + mm + '-' + dd; // Format as YYYY-MM-DD
+        document.getElementById('appointmentDate').setAttribute('min', minDate);
+    }
+
+    // Function to disable weekends
+    function disableWeekends() {
+        const dateInput = document.getElementById('appointmentDate');
+        dateInput.addEventListener('input', function () {
+            const selectedDate = new Date(this.value);
+            const day = selectedDate.getUTCDay();
+            
+            // Check if the selected day is Saturday (6) or Sunday (0)
+            if (day === 6 || day === 0) {
+                alert('Please select a weekday (Monday-Friday).');
+                this.value = ''; // Clear the input if it's a weekend
+            }
+        });
+    }
+
+    setMinDate();
+    disableWeekends();
+</script>
   
 
 <script>
