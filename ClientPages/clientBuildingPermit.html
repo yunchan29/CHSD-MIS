@@ -1100,7 +1100,19 @@ window.onload = toggleOtherScopeInput;
             const appointmentDate = document.getElementById('appointmentDate').value;
 
             const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
-
+            
+            const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked').nextElementSibling.textContent;
+    const projectJustification = document.querySelector('input[name="projectJustification"]:checked').nextElementSibling.textContent;
+    
+    const otherScopeInput = document.getElementById("otherScopeInput").value;
+    const finalScopeOfWork = (scopeOfWork === 'Others' && otherScopeInput) ? otherScopeInput : scopeOfWork;
+   
+    const blockNumber = document.getElementById("blockNumber").value;
+    const lotNumber = document.getElementById("lotNumber").value;
+    const NOUnits = document.getElementById("NOUnits").value;
+    const FloorArea = document.getElementById("FloorArea").value;
+    const TotalFloorArea = document.getElementById("TotalFloorArea").value;
+    const TotalEstimatedCost = document.getElementById("TotalEstimatedCost").value;
             const requiredFields = [
                 { field: issuedOn, name: 'Issued On' },
                 { field: addressTelNo, name: 'Address/Tel No' },
@@ -1149,15 +1161,25 @@ window.onload = toggleOtherScopeInput;
                 const userId = user.uid;
 
                 const permitData = {
-                    issuedOn,
-                    addressTelNo,
-                    projectLocation,
-                    phoneNumber,
-                    ownerName,
+                  
                     appointmentDate: new Date(appointmentDate),
-                    status: 'Pending',
-                    createdAt: serverTimestamp(),
-                    ownerUid: userId
+                  
+            issuedOn,
+            ownerName,
+            phoneNumber,
+            addressTelNo,
+            projectLocation,
+            scopeOfWork: finalScopeOfWork,
+            projectJustification,
+            ownerUid: userId,
+            status: 'Pending',
+            blockNumber,
+            lotNumber,
+            NOUnits,
+            FloorArea,
+            TotalFloorArea,
+            TotalEstimatedCost,
+            createdAt: serverTimestamp(),
                 };
 
                 // Create the building permit document in Firestore

@@ -721,6 +721,9 @@
     </div>
 </div>
 
+<div id="notificationContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050; display: none;">
+    <!-- Notifications will be dynamically added here -->
+</div>
 
 
                         <script type="module" src="/Database/firebase.js"></script>
@@ -869,10 +872,7 @@
             }
         }
 
-        // Pagination Variables
-        let profilesPerPage = 50; // Profiles per page
-        let currentPage = 1; // Current page
-        let totalPages = 1; // Total pages
+    
 // Function to Dynamically Append Buttons to the View Details Modal
 function appendButtons(data) {
     const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
@@ -889,25 +889,31 @@ function appendButtons(data) {
     btn1.className = 'btn btn-primary w-100 view-hsd-btn';
     btn1.setAttribute('data-permit-id', data.id);
     btn1.textContent = 'View HSD Form';
-    btn1.addEventListener('click', () => openViewHSDFormModal(data));
-    col1.appendChild(btn1);
-
-    // View File Uploads Button
-    const col2 = document.createElement('div');
-    col2.className = 'col-md-6 mb-2';
-  // View File Uploads Button
-const btn2 = document.createElement('button');
-btn2.className = 'btn btn-primary w-100';
-btn2.textContent = 'View File Uploads';
-btn2.addEventListener('click', () => {
+    btn1.addEventListener('click', () => {
     const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
     if (viewDetailsModal) {
         viewDetailsModal.hide(); // Hide View Details Modal
     }
-    openViewUploadsModal(data); // Open View Uploads Modal
+    // Open View HSD Form Modal
+    openViewHSDFormModal(data); // Open HSD Form Modal
 });
-col2.appendChild(btn2);
 
+col1.appendChild(btn1);
+
+    // View File Uploads Button
+    const col2 = document.createElement('div');
+    col2.className = 'col-md-6 mb-2';
+    const btn2 = document.createElement('button');
+    btn2.className = 'btn btn-primary w-100';
+    btn2.textContent = 'View File Uploads';
+    btn2.addEventListener('click', () => {
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) {
+            viewDetailsModal.hide(); // Hide View Details Modal
+        }
+        openViewUploadsModal(data); // Open View Uploads Modal
+    });
+    col2.appendChild(btn2);
 
     firstRow.appendChild(col1);
     firstRow.appendChild(col2);
@@ -948,9 +954,27 @@ col2.appendChild(btn2);
     col3.appendChild(btn3);
     secondRow.appendChild(col3);
 
+    // Third Row for Archive Button
+    const thirdRow = document.createElement('div');
+    thirdRow.className = 'row mt-2';
+
+    const col4 = document.createElement('div');
+    col4.className = 'col-md-12';
+    const btn4 = document.createElement('button');
+    btn4.className = 'btn btn-danger w-100 archive-permit-btn';
+    btn4.textContent = 'Archive Permit';
+    btn4.setAttribute('data-id', data.id);
+
+    // Add event listener for archiving the building permit
+    btn4.addEventListener('click', (event) => handleArchiveBuildingPermit(event));
+
+    col4.appendChild(btn4);
+    thirdRow.appendChild(col4);
+
     // Append Rows to Button Group
     viewDetailsModalBtnGrp.appendChild(firstRow);
     viewDetailsModalBtnGrp.appendChild(secondRow);
+    viewDetailsModalBtnGrp.appendChild(thirdRow);
 }
 
 
@@ -1061,7 +1085,10 @@ function generateOrderOfPayment(Data) {
 // Add event listener for calculating payment when button is clicked
 document.getElementById('calculatePaymentButton').addEventListener('click', generateOrderOfPayment);
 
-
+    // Pagination Variables
+        let profilesPerPage = 50; // Profiles per page
+        let currentPage = 1; // Current page
+        let totalPages = 1; // Total pages
         // Function to Load Building Permits and Display in the Table
         async function loadProfiles() {
             try {
@@ -1292,47 +1319,54 @@ async function openViewHSDFormModal(permitData) {
 
 
         // Function to Archive a Building Permit
-        async function handleArchiveBuildingPermit(event) {
-            event.preventDefault();
+async function handleArchiveBuildingPermit(event) {
+    event.preventDefault();
 
-            const buildingPermitId = event.target.getAttribute('data-id');
+    const buildingPermitId = event.target.getAttribute('data-id');
 
-            if (!buildingPermitId) {
-                console.error("Building Permit ID is null or undefined.");
-                showNotification("Error: Building Permit ID is missing.", "error");
-                return;
-            }
+    if (!buildingPermitId) {
+        console.error("Building Permit ID is null or undefined.");
+        showNotification("Error: Building Permit ID is missing.", "error");
+        return;
+    }
 
-            const confirmed = confirm("Are you sure you want to archive this document?");
+    const confirmed = confirm("Are you sure you want to archive this document?");
+    
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const buildingPermitRef = doc(db, "buildingPermits", buildingPermitId);
+        const buildingPermitSnapshot = await getDoc(buildingPermitRef);
+
+        if (buildingPermitSnapshot.exists()) {
+            const buildingPermitData = buildingPermitSnapshot.data();
             
-            if (!confirmed) {
-                return;
+            await setDoc(doc(db, "archivedBuildingPermits", buildingPermitId), buildingPermitData);
+            await deleteDoc(buildingPermitRef);
+
+            // Remove the row from the table
+            const tableBody = document.querySelector("#buildingPermitDiv tbody");
+            const rowToRemove = tableBody.querySelector(`button[data-permit-id="${buildingPermitId}"]`).closest('tr');
+            if (rowToRemove) rowToRemove.remove();
+
+            showNotification("Document archived successfully!", "success");
+
+            // Close the modal
+            const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+            if (viewDetailsModal) {
+                viewDetailsModal.hide(); // Hide View Details Modal
             }
 
-            try {
-                const buildingPermitRef = doc(db, "buildingPermits", buildingPermitId);
-                const buildingPermitSnapshot = await getDoc(buildingPermitRef);
-
-                if (buildingPermitSnapshot.exists()) {
-                    const buildingPermitData = buildingPermitSnapshot.data();
-                    
-                    await setDoc(doc(db, "archivedBuildingPermits", buildingPermitId), buildingPermitData);
-                    await deleteDoc(buildingPermitRef);
-
-                    // Remove the row from the table
-                    const tableBody = document.querySelector("#buildingPermitDiv tbody");
-                    const rowToRemove = tableBody.querySelector(`button[data-permit-id="${buildingPermitId}"]`).closest('tr');
-                    if (rowToRemove) rowToRemove.remove();
-
-                    showNotification("Document archived successfully!", "success");
-                } else {
-                    showNotification("Document not found!", "error");
-                }
-            } catch (error) {
-                console.error("Error archiving document: ", error);
-                showNotification(`Failed to archive document: ${error.message}`, "error");
-            }
+        } else {
+            showNotification("Document not found!", "error");
         }
+    } catch (error) {
+        console.error("Error archiving document: ", error);
+        showNotification(`Failed to archive document: ${error.message}`, "error");
+    }
+}
 
         // Function to Search Permits by Owner or Representative Name
         function searchPermits() {
