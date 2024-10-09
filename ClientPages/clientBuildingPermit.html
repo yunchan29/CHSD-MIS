@@ -842,6 +842,7 @@ termsCheckbox.addEventListener('change', updateProceedButton);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
     <script src="/ClientPages/navBarScript.js"></script>
 
+
     <script>
         document.querySelector('.open-btn').addEventListener('click', function() {
             document.getElementById('side_nav').classList.add('active');
@@ -913,75 +914,99 @@ termsCheckbox.addEventListener('change', updateProceedButton);
     
 <script>
     function uploadFile(input) {
-    const file = input.files[0];
-    if (file) {
-        // Allowed file types
-        const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf']; 
-        if (!allowedTypes.includes(file.type)) {
-            alert('Invalid file type. Please upload a JPG, PNG, or PDF file.');
-            input.value = ''; // Clear the input
-            return;
+        const file = input.files[0];
+
+        if (file) {
+            const maxSizeMB = 5;  // Set max file size (in MB)
+            const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];  // Allowed file types
+
+            // Validate file type
+            if (!allowedTypes.includes(file.type)) {
+                alert('Invalid file type. Please upload a JPG, PNG, or PDF file.');
+                input.value = ''; // Clear the input
+                return;
+            }
+
+            // Validate file size
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;  // Convert MB to bytes
+            if (file.size > maxSizeBytes) {
+                alert(`File is too large. Please upload a file smaller than ${maxSizeMB}MB.`);
+                input.value = '';  // Clear the input
+                return;
+            }
+
+            // FileReader to read file details
+            const reader = new FileReader();
+            reader.onload = function () {
+                const fileName = file.name;
+                const fileSize = formatBytes(file.size);
+                const fileItem = `
+                    <div class="file-item">
+                        <span class="file-name">${fileName} (${fileSize})</span>
+                        <span class="btn-delete" onclick="deleteFile(this, '${input.id}')">Delete</span>
+                    </div>`;
+                
+                // Display file information
+                const fileColumn = input.closest('td').querySelector('.file-column');
+                fileColumn.innerHTML = fileItem;  // Display file name and delete option
+            };
+            reader.readAsDataURL(file);
         }
-
-        // FileReader to read file details
-        const reader = new FileReader();
-        reader.onload = function() {
-            const fileName = file.name;
-            const fileSize = formatBytes(file.size);
-            const fileItem = `
-                <div class="file-item">
-                    <span class="file-name">${fileName} (${fileSize})</span>
-                    <span class="btn-delete" onclick="deleteFile(this, '${input.id}')">Delete</span>
-                </div>`;
-            
-            // Display file information
-            const fileColumn = input.closest('td').querySelector('.file-column');
-            fileColumn.innerHTML = fileItem;  // Display file name and delete option
-        };
-        reader.readAsDataURL(file);
     }
-}
 
-function deleteFile(deleteBtn, inputId) {
-    const fileItem = deleteBtn.closest('.file-item');
-    if (fileItem) {
-        fileItem.remove();  // Remove the displayed file item
-        document.getElementById(inputId).value = '';  // Clear the input for re-upload
+    function deleteFile(deleteBtn, inputId) {
+        const fileItem = deleteBtn.closest('.file-item');
+        if (fileItem) {
+            fileItem.remove();  // Remove the displayed file item
+            document.getElementById(inputId).value = '';  // Clear the input for re-upload
+        }
     }
-}
 
-// Format file size to a readable string
-function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-
-// Drag-over handler to show drag-and-drop action
-function handleDragOver(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    event.dataTransfer.dropEffect = 'copy';  // Change the cursor to indicate a drop is possible
-}
-
-// Drop handler to process the dropped files
-function handleDrop(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const files = event.dataTransfer.files;  // Get the dropped files
-    const inputFileElement = event.target.closest('.upload-btn-wrapper').querySelector('.file-input');  // Find the corresponding file input
-
-    if (inputFileElement && files.length > 0) {
-        inputFileElement.files = files;  // Assign the dropped files to the input
-        uploadFile(inputFileElement);  // Trigger the file upload function
+    // Format file size to a readable string
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
-}
 
+    // Drag-over handler to show drag-and-drop action
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.dataTransfer.dropEffect = 'copy';  // Change the cursor to indicate a drop is possible
+    }
+
+    // Drop handler to process the dropped files
+    function handleDrop(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const files = event.dataTransfer.files;  // Get the dropped files
+        const inputFileElement = event.target.closest('.upload-btn-wrapper').querySelector('.file-input');  // Find the corresponding file input
+
+        if (inputFileElement && files.length > 0) {
+            inputFileElement.files = files;  // Assign the dropped files to the input
+            uploadFile(inputFileElement);  // Trigger the file upload function
+        }
+    }
+
+    // Limit the number of files
+    function limitFiles(input, maxFiles = 5) {
+        const fileList = input.files;
+        if (fileList.length > maxFiles) {
+            alert(`You can only upload up to ${maxFiles} files.`);
+            input.value = '';  // Clear the input
+        } else {
+            for (let i = 0; i < fileList.length; i++) {
+                uploadFile(input);  // Process each file
+            }
+        }
+    }
 </script>
+
 
 <script>
     // Function to format the date as YYYY-MM-DD
@@ -1040,13 +1065,11 @@ window.onload = toggleOtherScopeInput;
 </script>
 
 <script type="module">
-    // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
         authDomain: "chsd-mis.firebaseapp.com",
@@ -1057,22 +1080,15 @@ window.onload = toggleOtherScopeInput;
         measurementId: "G-XBQTQFRLJ5"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    // Wait for the DOM to fully load
     document.addEventListener('DOMContentLoaded', () => {
-        // Attach event listener to the submit button
         document.getElementById('submitProfile').addEventListener('click', async (event) => {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault();
 
-            // Fetch form values correctly using .value
-            // Removed buildingPermitNo and hsdFormNo
-            // const buildingPermitNo = document.getElementById('buildingPermitNo').value.trim();
-            // const hsdFormNo = document.getElementById('hsdFormNo').value.trim();
             const issuedOn = document.getElementById('basic-url').value.trim();
             const addressTelNo = document.getElementById('addressTelNo').value.trim();
             const projectLocation = document.getElementById('projectLocation').value.trim();
@@ -1083,16 +1099,12 @@ window.onload = toggleOtherScopeInput;
             const ownerMaidenName = document.getElementById('ownerMaidenName').value.trim();
             const appointmentDate = document.getElementById('appointmentDate').value;
 
-            // Construct owner name
             const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
 
-            // Validate required form fields
             const requiredFields = [
-                // { field: buildingPermitNo, name: 'Building Permit No' }, // Removed
                 { field: issuedOn, name: 'Issued On' },
                 { field: addressTelNo, name: 'Address/Tel No' },
                 { field: projectLocation, name: 'Project Location' },
-                // { field: hsdFormNo, name: 'HSD Form No' }, // Removed
                 { field: phoneNumber, name: 'Phone Number' },
                 { field: ownerName, name: 'Owner Name' },
                 { field: appointmentDate, name: 'Appointment Date' }
@@ -1105,7 +1117,6 @@ window.onload = toggleOtherScopeInput;
                 }
             }
 
-            // Validate required file inputs
             const requiredFileInputs = [
                 { id: 'buildingPlanFile', name: 'Building Plan' },
                 { id: 'proofOwnershipFile', name: 'Proof of Ownership' }
@@ -1119,27 +1130,12 @@ window.onload = toggleOtherScopeInput;
                 }
             }
 
-            // Optional file inputs
-            const optionalFileInputs = [
-                { id: 'taxReceiptFile', name: 'Tax Receipt' },
-                { id: 'brgyClearanceFile', name: 'Barangay Clearance' },
-                { id: 'billMaterialsFile', name: 'Bill of Materials' },
-                { id: 'prcFile', name: 'PRC' },
-                { id: 'certExemptionFile', name: 'Certificate of Exemption' },
-                { id: 'structuralAnalysisFile', name: 'Structural Analysis' },
-                { id: 'fireClearanceFile', name: 'Fire Clearance' },
-                { id: 'boringTestFile', name: 'Boring Test' },
-                { id: 'occupancyPermitFile', name: 'Occupancy Permit' }
-            ];
-
-            // Show loading screen
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {
                 loadingScreen.style.display = 'flex';
             }
 
             try {
-                // Get the authenticated user
                 const user = await new Promise((resolve, reject) => {
                     onAuthStateChanged(auth, user => {
                         if (user) {
@@ -1151,93 +1147,63 @@ window.onload = toggleOtherScopeInput;
                 });
 
                 const userId = user.uid;
-                console.log("Authenticated user ID:", userId);  // Debugging log
 
-                // Define storage path
-                const storagePath = `buildingPermits/${userId}`;
-
-                // Prepare files to upload
-                const filesToUpload = [
-                    { inputId: 'buildingPlanFile', namePrefix: 'buildingPlan' },
-                    { inputId: 'proofOwnershipFile', namePrefix: 'proofOwnership' }
-                ];
-
-                // Add optional files
-                optionalFileInputs.forEach(file => {
-                    filesToUpload.push({ inputId: file.id, namePrefix: file.name.replace(/\s+/g, '') });
-                });
-
-                // Upload files and collect their URLs
-                const uploadPromises = filesToUpload.map(file => {
-                    const fileInput = document.getElementById(file.inputId);
-                    if (fileInput && fileInput.files[0]) {
-                        const file = fileInput.files[0];
-                        const fileRef = ref(storage, `${storagePath}/${file.namePrefix}_${file.name}`);
-                        return uploadBytes(fileRef, file)
-                            .then(snapshot => getDownloadURL(snapshot.ref))
-                            .catch(error => {
-                                console.error(`Error uploading ${file.name}:`, error);
-                                throw error;
-                            });
-                    } else {
-                        return Promise.resolve(null); // No file uploaded for this input
-                    }
-                });
-
-                const fileURLs = await Promise.all(uploadPromises);
-
-                // Map file URLs to their respective fields
-                const fileURLMapping = {
-                    buildingPlanURL: fileURLs[0],
-                    proofOwnershipURL: fileURLs[1],
-                    taxReceiptURL: fileURLs[2],
-                    brgyClearanceURL: fileURLs[3],
-                    billMaterialsURL: fileURLs[4],
-                    prcURL: fileURLs[5],
-                    certExemptionURL: fileURLs[6],
-                    structuralAnalysisURL: fileURLs[7],
-                    fireClearanceURL: fileURLs[8],
-                    boringTestURL: fileURLs[9],
-                    occupancyPermitURL: fileURLs[10]
-                };
-
-                // Build Firestore data object with correct field assignments
                 const permitData = {
-                    // buildingPermitNo,          // Removed
                     issuedOn,
                     addressTelNo,
                     projectLocation,
-                    // hsdFormNo,                 // Removed
                     phoneNumber,
                     ownerName,
-                    appointmentDate: new Date(appointmentDate),  // Store appointment date as Date object
+                    appointmentDate: new Date(appointmentDate),
                     status: 'Pending',
                     createdAt: serverTimestamp(),
                     ownerUid: userId
                 };
 
-                // Add file URLs to the data object if they exist
-                for (const [key, url] of Object.entries(fileURLMapping)) {
-                    if (url) {
-                        permitData[key] = url;
-                    }
-                }
-
-                // Save data to Firestore in the 'buildingPermits' collection
+                // Create the building permit document in Firestore
                 const permitDocRef = await addDoc(collection(db, "buildingPermits"), permitData);
-                console.log("Document written with ID:", permitDocRef.id);
+                const permitId = permitDocRef.id; // Get the newly created document ID
 
-                // Success handling
+                console.log("Document written with ID:", permitId);
+
+                // Use the permitId for storage path
+                const storagePath = `buildingPermits/${permitId}`;
+
+                const filesToUpload = [
+                    { inputId: 'buildingPlanFile', namePrefix: 'buildingPlan' },
+                    { inputId: 'proofOwnershipFile', namePrefix: 'proofOwnership' }
+                ];
+
+                const uploadPromises = filesToUpload.map(async file => {
+                    const fileInput = document.getElementById(file.inputId);
+                    if (fileInput && fileInput.files[0]) {
+                        const file = fileInput.files[0];
+                        const fileRef = ref(storage, `${storagePath}/${file.namePrefix}_${file.name}`);
+                        const snapshot = await uploadBytes(fileRef, file);
+                        return getDownloadURL(snapshot.ref);
+                    } else {
+                        return null;
+                    }
+                });
+
+                const fileURLs = await Promise.all(uploadPromises);
+
+                const fileURLMapping = {
+                    buildingPlanURL: fileURLs[0],
+                    proofOwnershipURL: fileURLs[1]
+                };
+
+                // Update the permit document with file URLs directly in the same document
+                const permitDoc = doc(db, "buildingPermits", permitId);
+                await updateDoc(permitDoc, fileURLMapping);
+
                 alert('Application submitted successfully!');
-
-                // Clear the form
-                document.getElementById('buildingPermitForm').reset();
+                window.location.reload;
 
             } catch (error) {
                 console.error("Error during submission:", error);
                 alert(`Error submitting application: ${error.message}`);
             } finally {
-                // Hide loading screen
                 if (loadingScreen) {
                     loadingScreen.style.display = 'none';
                 }

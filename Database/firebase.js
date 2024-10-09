@@ -333,109 +333,6 @@ if (googleSignInBtn) {
     googleSignInBtn.addEventListener('click', handleGoogleSignIn);
 }
 
-async function addBuildingPermit(event) {
-    event.preventDefault();
-
-    // Show the loading screen
-    document.getElementById('loading-screen').style.display = 'flex';
-
-    const buildingPermitNo = document.getElementById('buildingPermitNo').value;
-    const issuedOn = document.getElementById('basic-url').value;
-    const addressTelNo = document.getElementById('addressTelNo').value;
-    const projectLocation = document.getElementById('projectLocation').value;
-    const hsdFormNo = document.getElementById('hsdFormNo').value;
-    const phoneNumber = document.getElementById('phoneNumber').value;
-    const ownerLastName = document.getElementById('ownerLastName').value;
-    const ownerFirstName = document.getElementById('ownerFirstName').value;
-    const ownerMiddleName = document.getElementById('ownerMiddleName').value;
-    const ownerMaidenName = document.getElementById('ownerMaidenName').value;
-    const ownerEmail = document.getElementById('ownerEmail') ? document.getElementById('ownerEmail').value : null;
-
-    const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
-
-    const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked').nextElementSibling.textContent;
-    const projectJustification = document.querySelector('input[name="projectJustification"]:checked').nextElementSibling.textContent;
-    
-    const otherScopeInput = document.getElementById("otherScopeInput").value;
-    const finalScopeOfWork = (scopeOfWork === 'Others' && otherScopeInput) ? otherScopeInput : scopeOfWork;
-   
-    const blockNumber = document.getElementById("blockNumber").value;
-    const lotNumber = document.getElementById("lotNumber").value;
-    const NOUnits = document.getElementById("NOUnits").value;
-    const FloorArea = document.getElementById("FloorArea").value;
-    const TotalFloorArea = document.getElementById("TotalFloorArea").value;
-    const TotalEstimatedCost = document.getElementById("TotalEstimatedCost").value;
-    try {
-        const user = auth.currentUser;
-        if (!user) {
-            console.error("No user logged in.");
-            return;
-        }
-
-        const { isAdminPC, isAdminIS } = await checkUserRole(user.uid);
-        const isAdmin = isAdminPC || isAdminIS;
-
-        let ownerUid;
-
-        if (isAdmin && ownerEmail) {
-            const defaultPassword = 'sample'; 
-            const userCredential = await createUserWithEmailAndPassword(auth, ownerEmail, defaultPassword);
-            const newUser = userCredential.user;
-            ownerUid = newUser.uid;
-        } else {
-            ownerUid = user.uid;
-        }
-
-        const permitDocRef = await addDoc(collection(db, "buildingPermits"), {
-            buildingPermitNo,
-            issuedOn,
-            ownerName,
-            phoneNumber,
-            addressTelNo,
-            projectLocation,
-            hsdFormNo,
-            scopeOfWork: finalScopeOfWork,
-            projectJustification,
-            ownerUid: ownerUid,
-            status: 'Pending',
-            blockNumber,
-            lotNumber,
-            NOUnits,
-            FloorArea,
-            TotalFloorArea,
-            TotalEstimatedCost,
-            createdAt: Timestamp.now()
-        });
-
-        await updateDoc(doc(db, 'users', ownerUid), {
-            buildingPermits: arrayUnion({
-                permitId: permitDocRef.id,
-                buildingPermitNo,
-                issuedOn,
-                status: 'Pending',
-                projectLocation
-            })
-        });
-
-        // Open the modal
-        const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
-        applicationModal.show();
-
-    } catch (error) {
-        console.error("Error adding profile or creating user:", error);
-
-        if (error.code === "auth/missing-email") {
-            alert("User creation is not allowed for non-admin users. Please contact an administrator.");
-        } else {
-            alert("Failed to submit application. Please try again later.");
-        }
-    } finally {
-        // Hide the loading screen
-        document.getElementById('loading-screen').style.display = 'none';
-    }
-}
-
-
 
 async function editBuildingPermit(event) {
     event.preventDefault();
@@ -658,7 +555,7 @@ function attachEventListeners() {
     const userLoginForm = document.getElementById('user-login-form');
     const adminLogoutButton = document.getElementById('admin-logout-btn');
     const userLogoutButton = document.getElementById('user-logout-btn');
-    const addBuildingPermitButton = document.getElementById('submitProfile');
+
     const sendMessageForm = document.getElementById('send-message-form');
     const signUpForm = document.getElementById('client-signup-form');
     const editPermitForm = document.getElementById('editPermitForm');  
@@ -679,9 +576,7 @@ function attachEventListeners() {
         userLogoutButton.addEventListener('click', handleLogout);
     }
 
-    if (addBuildingPermitButton) {
-        addBuildingPermitButton.addEventListener('click', addBuildingPermit);
-    }
+
 
     if (sendMessageForm) {
         sendMessageForm.addEventListener('submit', sendMessage);

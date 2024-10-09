@@ -700,6 +700,28 @@
     </div>
 </div>
 
+<!-- View Uploads Modal -->
+<div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Display uploaded files as a list -->
+                <ul id="uploadedFilesList" class="list-group">
+                    <!-- Dynamically append files here -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
                         <script type="module" src="/Database/firebase.js"></script>
 
@@ -873,11 +895,19 @@ function appendButtons(data) {
     // View File Uploads Button
     const col2 = document.createElement('div');
     col2.className = 'col-md-6 mb-2';
-    const btn2 = document.createElement('button');
-    btn2.className = 'btn btn-primary w-100';
-    btn2.textContent = 'View File Uploads';
-    // TODO: Add functionality for 'View File Uploads' if needed
-    col2.appendChild(btn2);
+  // View File Uploads Button
+const btn2 = document.createElement('button');
+btn2.className = 'btn btn-primary w-100';
+btn2.textContent = 'View File Uploads';
+btn2.addEventListener('click', () => {
+    const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+    if (viewDetailsModal) {
+        viewDetailsModal.hide(); // Hide View Details Modal
+    }
+    openViewUploadsModal(data); // Open View Uploads Modal
+});
+col2.appendChild(btn2);
+
 
     firstRow.appendChild(col1);
     firstRow.appendChild(col2);
@@ -922,6 +952,65 @@ function appendButtons(data) {
     viewDetailsModalBtnGrp.appendChild(firstRow);
     viewDetailsModalBtnGrp.appendChild(secondRow);
 }
+
+
+async function openViewUploadsModal(permitData) {
+    try {
+        console.log("Fetching uploaded files for permit:", permitData.id);
+
+        // Fetch the building permit document from Firestore
+        const permitDocRef = doc(db, "buildingPermits", permitData.id);
+        const permitSnapshot = await getDoc(permitDocRef);
+
+        const uploadedFilesList = document.getElementById('uploadedFilesList');
+        uploadedFilesList.innerHTML = ''; // Clear existing files
+
+        if (!permitSnapshot.exists()) {
+            console.warn("No permit document found.");
+            const noFilesItem = document.createElement('li');
+            noFilesItem.className = 'list-group-item';
+            noFilesItem.textContent = 'No files uploaded.';
+            uploadedFilesList.appendChild(noFilesItem);
+        } else {
+            const permitData = permitSnapshot.data();
+            const { buildingPlanURL, proofOwnershipURL } = permitData;
+
+            if (!buildingPlanURL && !proofOwnershipURL) {
+                const noFilesItem = document.createElement('li');
+                noFilesItem.className = 'list-group-item';
+                noFilesItem.textContent = 'No files uploaded.';
+                uploadedFilesList.appendChild(noFilesItem);
+            } else {
+                // Add Building Plan file if exists
+                if (buildingPlanURL) {
+                    const fileItem = document.createElement('li');
+                    fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    fileItem.innerHTML = `<span>Building Plan</span>
+                                          <a href="${buildingPlanURL}" target="_blank" class="btn btn-sm btn-outline-primary">Download</a>`;
+                    uploadedFilesList.appendChild(fileItem);
+                }
+
+                // Add Proof of Ownership file if exists
+                if (proofOwnershipURL) {
+                    const fileItem = document.createElement('li');
+                    fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    fileItem.innerHTML = `<span>Proof of Ownership</span>
+                                          <a href="${proofOwnershipURL}" target="_blank" class="btn btn-sm btn-outline-primary">Download</a>`;
+                    uploadedFilesList.appendChild(fileItem);
+                }
+            }
+        }
+
+        // Show the View Uploads Modal
+        const viewUploadsModal = new bootstrap.Modal(document.getElementById('viewUploadsModal'));
+        viewUploadsModal.show();
+
+    } catch (error) {
+        console.error("Error fetching uploads:", error);
+        alert("Failed to load uploaded files.");
+    }
+}
+
 
 // Function to Generate Order of Payment with Formula and Inputs
 function generateOrderOfPayment(Data) {
