@@ -498,7 +498,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="relationToHead">Relation To The Household Head<span class="required-asterisk">*</span></label>
-                                <input type="text" class="form-control" id="relationToHead" required>
+                                <select class="form-control" id="relationToHead" required>
                             </div>
                         </div>
                         <div class="row">
@@ -526,7 +526,18 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="memberEducationalAttainment">Educational Attainment<span class="required-asterisk">*</span></label>
-                                <input type="text" class="form-control" id="memberEducationalAttainment"required>
+                                <select type="form-control" id="memberEducationalAttainment" required>
+                                    <option>Highest Educational Attainment</option>
+                                    <option>Elementary Undergraduate</option>
+                                    <option>Elementary Graduate</option>
+                                    <option>High School Undergraduate</option>
+                                    <option>High School Graduate</option>
+                                    <option>College Undergraduate</option>
+                                    <option>College Graduate</option>
+                                </select>
+
+
+
                             </div>
                         </div>
     
@@ -548,7 +559,12 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="memberMonthlyIncome">Monthly Income(PHP)<span class="required-asterisk">*</span></label>
-                                <input type="number" class="form-control" id="memberMonthlyIncome" required>
+                                <select class="form-control" id="memberMonthlyIncome" required>
+                                    <option>Below 20,000</option>
+                                    <option>20,000-25,000</option>
+                                    <option>25,000-30,000</option>
+                                    <option>Above 30,000</option>
+                                </select>
                             </div>
                             
                         </div>

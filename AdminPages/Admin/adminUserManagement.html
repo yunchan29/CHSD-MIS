@@ -94,7 +94,7 @@
                     <div class="col">
                         <label for="accountType">Account Type</label>
                         <select class="form-control" id="accountType" required>
-                            <option value="Applicant">Applicant</option>
+                           
                             <option value="AdminPC">Permits Officer</option>
                             <option value="AdminIS">Housing Officer</option>
                             <option value="MainAdmin">IT Admin</option>
@@ -143,18 +143,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="updateFirstName" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="updateFirstName" placeholder="First Name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="updateLastName" class="form-label">Last Name</label>
-                        <input type="text" class="form-control" id="updateLastName" placeholder="Last Name" required>
-                    </div>
+                  
                     <div class="mb-3">
                         <label for="updateAccountType" class="form-label">Account Type</label>
                         <select class="form-control" id="updateAccountType" required>
-                            <option value="Applicant">Applicant</option>
+                        
                             <option value="AdminPC">Permits Officer</option>
                             <option value="AdminIS">Housing Officer</option>
                             <option value="MainAdmin">IT Admin</option>
@@ -292,8 +285,7 @@
                 const userDocRef = doc(db, "users", uid);
                 const userData = (await getDoc(userDocRef)).data();
     
-                document.getElementById("updateFirstName").value = userData.firstName;
-                document.getElementById("updateLastName").value = userData.lastName;
+        
                 document.getElementById("updateAccountType").value = userData.accountType || 'Applicant';
                 document.getElementById("updateEnabled").checked = userData.enabled;
     
@@ -327,15 +319,11 @@
                 const newAdminDocRef = doc(db, newAdminCollection, uid);
                 await setDoc(newAdminDocRef, {
                     isAdmin: true,
-                    firstName: updatedFirstName,
-                    lastName: updatedLastName,
                     email: userData.email
                 });
             }
     
             await updateDoc(userDocRef, {
-                firstName: updatedFirstName,
-                lastName: updatedLastName,
                 accountType: updatedAccountType,
                 enabled: enabledStatus
             });
