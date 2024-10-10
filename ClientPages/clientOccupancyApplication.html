@@ -264,11 +264,13 @@
                             <td>Duly Accomplished Certificate of Building Permit Completion Form</td>
                             <td class="file-column">
                                 <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'buildingPermitCompletionFile')" ondragover="handleDragOver(event)">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'buildingPermitCompletionFile')" ondragover="handleDragOver(event)">
                                         <p>Drag & drop file</p>
                                     </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                                    <input type="file" class="file-input" id="buildingPermitCompletionFile" onchange="uploadFile(this)">
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('buildingPermitCompletionFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="buildingPermitCompletionFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="buildingPermitCompletionFileName" class="file-column"></div> <!-- Display file details here -->
                                 </div>
                             </td>
                         </tr>
@@ -276,11 +278,13 @@
                             <td>Photocopy of Approved Building Permit Form</td>
                             <td class="file-column">
                                 <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'approvedBuildingPermitFile')" ondragover="handleDragOver(event)">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'approvedBuildingPermitFile')" ondragover="handleDragOver(event)">
                                         <p>Drag & drop file</p>
                                     </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                                    <input type="file" class="file-input" id="approvedBuildingPermitFile" onchange="uploadFile(this)">
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('approvedBuildingPermitFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="approvedBuildingPermitFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="approvedBuildingPermitFileName" class="file-column"></div> <!-- Display file details here -->
                                 </div>
                             </td>
                         </tr>
@@ -288,11 +292,13 @@
                             <td>Photocopy of Approved Plan</td>
                             <td class="file-column">
                                 <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'approvedPlanFile')" ondragover="handleDragOver(event)">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'approvedPlanFile')" ondragover="handleDragOver(event)">
                                         <p>Drag & drop file</p>
                                     </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                                    <input type="file" class="file-input" id="approvedPlanFile" onchange="uploadFile(this)">
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('approvedPlanFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="approvedPlanFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="approvedPlanFileName" class="file-column"></div> <!-- Display file details here -->
                                 </div>
                             </td>
                         </tr>
@@ -300,11 +306,13 @@
                             <td>Photos of Structure (Front, Back, Left, Right, Lavatory, and CR)</td>
                             <td class="file-column">
                                 <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'structurePhotosFile')" ondragover="handleDragOver(event)">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'structurePhotosFile')" ondragover="handleDragOver(event)">
                                         <p>Drag & drop file</p>
                                     </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                                    <input type="file" class="file-input" id="structurePhotosFile" onchange="uploadFile(this)">
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('structurePhotosFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="structurePhotosFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="structurePhotosFileName" class="file-column"></div> <!-- Display file details here -->
                                 </div>
                             </td>
                         </tr>
@@ -312,15 +320,19 @@
                             <td>Sketch of Location and Contact Number</td>
                             <td class="file-column">
                                 <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'sketchFile')" ondragover="handleDragOver(event)">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'sketchFile')" ondragover="handleDragOver(event)">
                                         <p>Drag & drop file</p>
                                     </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                                    <input type="file" class="file-input" id="sketchFile" onchange="uploadFile(this)">
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('sketchFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="sketchFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="sketchFileName" class="file-column"></div> <!-- Display file details here -->
                                 </div>
                             </td>
                         </tr>
                     </tbody>
+                    
+                    
                 </table>
             </div>
             <div class="modal-footer">
@@ -403,111 +415,153 @@
     <script src="/ClientPages/navBarScript.js"></script>
     
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-    
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-            authDomain: "chsd-mis.firebaseapp.com",
-            projectId: "chsd-mis",
-            storageBucket: "chsd-mis.appspot.com",
-            messagingSenderId: "694967679357",
-            appId: "1:694967679357:web:65cffd50f13739f934f414",
-            measurementId: "G-XBQTQFRLJ5"
-        };
-    
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-    
-     // Handle form submission for appointment
-document.getElementById('submitAppointment').addEventListener('click', async (event) => {
-    event.preventDefault();
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    // Disable submit button to prevent multiple submissions
-    document.getElementById('submitAppointment').disabled = true;
+// Firebase configuration object
+const firebaseConfig = {
+    apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+    authDomain: "chsd-mis.firebaseapp.com",
+    projectId: "chsd-mis",
+    storageBucket: "chsd-mis.appspot.com",
+    messagingSenderId: "694967679357",
+    appId: "1:694967679357:web:65cffd50f13739f934f414",
+    measurementId: "G-XBQTQFRLJ5"
+};
 
-    // Show loading spinner
-    document.getElementById('loading-screen').style.display = 'flex';
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-    // Get appointment date
-    const appointmentDate = document.getElementById('appointmentDate').value;
+// Document Ready
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('submitAppointment').addEventListener('click', async (event) => {
+        event.preventDefault();
 
-    try {
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userId = user.uid;
-                const ownerLastName = document.getElementById('ownerLastName').value;
-                const ownerFirstName = document.getElementById('ownerFirstName').value;
-                const ownerMiddleName = document.getElementById('ownerMiddleName').value;
-                const ownerMaidenName = document.getElementById('ownerMaidenName').value;
-                const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`;
-                
-                const storageRef = ref(storage, `OccupancyPermits/${userId}`);
-                const uploadPromises = [];
+        const submitButton = document.getElementById('submitAppointment');
+        submitButton.disabled = true;
 
-                // File inputs
-                const files = {
-                    buildingPermitCompletionFile: document.getElementById('buildingPermitCompletionFile')?.files[0],
-                    approvedBuildingPermitFile: document.getElementById('approvedBuildingPermitFile')?.files[0],
-                    approvedPlanFile: document.getElementById('approvedPlanFile')?.files[0],
-                    structurePhotosFile: document.getElementById('structurePhotosFile')?.files[0],
-                    sketchFile: document.getElementById('sketchFile')?.files[0],
-                };
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+        }
 
-                // Prepare and upload files
-                for (const [key, file] of Object.entries(files)) {
-                    if (file) {
-                        uploadPromises.push(uploadBytes(ref(storageRef, `${key}_${file.name}`), file));
-                    }
-                }
+        // Collect input values
+        const appointmentDate = document.getElementById('appointmentDate').value.trim();
+        const ownerLastName = document.getElementById('ownerLastName').value.trim();
+        const ownerFirstName = document.getElementById('ownerFirstName').value.trim();
+        const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
+        const ownerMaidenName = document.getElementById('ownerMaidenName').value.trim();
+        const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
 
-                // Wait for all uploads to finish
-                const uploadResults = await Promise.all(uploadPromises);
+        // Required fields validation
+        const requiredFields = [
+            { field: appointmentDate, name: 'Appointment Date' },
+            { field: ownerName, name: 'Owner Name' }
+        ];
 
-                // Get download URLs for the uploaded files
-                const urls = await Promise.all(uploadResults.map(result => getDownloadURL(result.ref)));
-
-                // Save application data to Firestore
-                await addDoc(collection(db, "OccupancyPermits"), {
-                    buildingPermitCompletionURL: urls[0] || null,
-                    approvedBuildingPermitURL: urls[1] || null,
-                    approvedPlanURL: urls[2] || null,
-                    structurePhotosURL: urls[3] || null,
-                    sketchURL: urls[4] || null,
-                    appointmentDate: new Date(appointmentDate),
-                    status: 'Pending',
-                    createdAt: Timestamp.now(),
-                    ownerUid: userId,
-                    ownerName,
-                });
-
-                // Hide the appointment modal
-                const bootstrapAppointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
-                if (bootstrapAppointmentModal) {
-                    bootstrapAppointmentModal.hide();  // Ensure appointment modal is hidden
-                }
-
-                // Smoothly show the application applied modal
-                const applicationModal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
-                setTimeout(() => applicationModal.show(), 300);  // Add a small delay for smoother transition
+        for (const { field, name } of requiredFields) {
+            if (!field) {
+                alert(`Please fill out the ${name} field.`);
+                submitButton.disabled = false;
+                return;
             }
-        });
-    } catch (error) {
-        console.error("Error submitting application:", error);
-        alert("Failed to submit the application. Please try again.");
-    } finally {
-        // Hide loading screen
-        document.getElementById('loading-screen').style.display = 'none';
-        // Re-enable submit button
-        document.getElementById('submitAppointment').disabled = false;
-    }
+        }
+
+        // File inputs and namePrefix mapping
+        const requiredFileInputs = [
+            { id: 'buildingPermitCompletionFile', namePrefix: 'buildingPermitCompletion' },
+            { id: 'approvedBuildingPermitFile', namePrefix: 'approvedBuildingPermit' },
+            { id: 'approvedPlanFile', namePrefix: 'approvedPlan' },
+            { id: 'structurePhotosFile', namePrefix: 'structurePhotos' },
+            { id: 'sketchFile', namePrefix: 'sketch' }
+        ];
+
+        try {
+            // Ensure the user is authenticated
+            const user = await new Promise((resolve, reject) => {
+                onAuthStateChanged(auth, user => {
+                    if (user) {
+                        resolve(user);
+                    } else {
+                        reject(new Error("No user is authenticated."));
+                    }
+                });
+            });
+
+            const userId = user.uid;
+
+            // Prepare permit data for Firestore
+            const permitData = {
+                appointmentDate: new Date(appointmentDate),
+                ownerUid: userId,
+                ownerName,
+                status: 'Pending',
+                createdAt: serverTimestamp(),
+            };
+
+            // Add a new document to Firestore and get the generated document ID
+            const permitDocRef = await addDoc(collection(db, "OccupancyPermits"), permitData);
+            const permitId = permitDocRef.id;
+            const storagePath = `OccupancyPermits/${permitId}`;
+
+            // Handle file uploads and storage
+            const uploadPromises = requiredFileInputs.map(async fileInputObj => {
+                const fileInput = document.getElementById(fileInputObj.id);
+                if (fileInput && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const fileRef = ref(storage, `${storagePath}/${fileInputObj.namePrefix}_${file.name}`);
+                    const snapshot = await uploadBytes(fileRef, file);
+                    return getDownloadURL(snapshot.ref);
+                } else {
+                    console.error(`File input missing or undefined for ${fileInputObj.namePrefix}`);
+                    return null;
+                }
+            });
+
+            // Wait for all uploads and store URLs
+            const fileURLs = await Promise.all(uploadPromises);
+
+            const fileURLMapping = {
+                buildingPermitCompletionURL: fileURLs[0],
+                approvedBuildingPermitURL: fileURLs[1],
+                approvedPlanURL: fileURLs[2],
+                structurePhotosURL: fileURLs[3],
+                sketchURL: fileURLs[4],
+            };
+
+            // Update Firestore document with file URLs
+            const permitDoc = doc(db, "OccupancyPermits", permitId);
+            await updateDoc(permitDoc, fileURLMapping);
+
+            // Success feedback
+            alert('Application Submitted!');
+            var modal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
+modal.show();
+
+            window.location.reload();
+
+        } catch (error) {
+            // Log and alert on error
+            console.error("Error during submission:", error);
+            alert(`Error submitting application: ${error.message}`);
+        } finally {
+            // Hide loading screen and re-enable submit button
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+            submitButton.disabled = false;
+    
+
+        }
+    });
 });
+
+
 
     // Handle step transitions
     document.addEventListener("DOMContentLoaded", function() {
@@ -646,64 +700,103 @@ document.getElementById('submitAppointment').addEventListener('click', async (ev
 
 
 <script>
-    function uploadFile(input) {
-   const file = input.files[0];
-   if (file) {
-       const reader = new FileReader();
-       reader.onload = function() {
-           const fileName = file.name;
-           const fileSize = formatBytes(file.size);
-           const fileItem = `
-               <div class="file-item">
-                   <span class="file-name">${fileName} (${fileSize})</span>
-                   <span class="btn-delete" onclick="deleteFile(this, '${input.id}')">Delete</span>
-               </div>`;
-           const fileColumn = input.closest('tr').querySelector('.file-column');
-           fileColumn.innerHTML = fileItem;
-       };
-       reader.readAsDataURL(file);  // Read the file for preview (if needed)
-   }
-}
+    function uploadFile(input, file = null) {
+        const selectedFile = file || input.files[0];  // Use the file from input or passed as an argument
 
-function deleteFile(deleteBtn, inputId) {
-   const fileItem = deleteBtn.closest('.file-item');
-   if (fileItem) {
-       fileItem.remove();
-       // Clear the associated file input to allow re-uploading
-       document.getElementById(inputId).value = '';
-   }
-}
+        if (selectedFile) {
+            const maxSizeMB = 5;  // Set max file size (in MB)
+            const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];  // Allowed file types
 
-function formatBytes(bytes, decimals = 2) {
-   if (bytes === 0) return '0 Bytes';
-   const k = 1024;
-   const dm = decimals < 0 ? 0 : decimals;
-   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-   const i = Math.floor(Math.log(bytes) / Math.log(k));
-   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
+            // Validate file type
+            if (!allowedTypes.includes(selectedFile.type)) {
+                alert('Invalid file type. Please upload a JPG, PNG, or PDF file.');
+                input.value = ''; // Clear the input
+                return;
+            }
 
-function handleDragOver(event) {
-   event.preventDefault();
-   event.stopPropagation();
-   event.dataTransfer.dropEffect = 'copy';  // Ensure the file is accepted
-}
+            // Validate file size
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;  // Convert MB to bytes
+            if (selectedFile.size > maxSizeBytes) {
+                alert(`File is too large. Please upload a file smaller than ${maxSizeMB}MB.`);
+                input.value = '';  // Clear the input
+                return;
+            }
 
-function handleDrop(event) {
-   event.preventDefault();
-   event.stopPropagation();
+            // FileReader to read file details
+            const reader = new FileReader();
+            reader.onload = function () {
+                const fileName = selectedFile.name;
+                const fileSize = formatBytes(selectedFile.size);
+                const fileItem = `
+                    <div class="file-item">
+                        <span class="file-name">${fileName} (${fileSize})</span>
+                        <span class="btn-delete" onclick="deleteFile(this, '${input.id}')">Delete</span>
+                    </div>`;
 
-   const files = event.dataTransfer.files;  // Get dropped files
-   const inputFileElement = event.target.querySelector('.file-input');
+                // Display file information
+                const fileColumn = input.closest('.file-column'); // Get the closest file-column
+                if (fileColumn) {
+                    fileColumn.insertAdjacentHTML('beforeend', fileItem);  // Append the file item
+                } else {
+                    console.error('File column not found.');
+                }
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+    }
 
-   if (inputFileElement && files.length > 0) {
-       inputFileElement.files = files;  // Assign dropped files to input element
-       uploadFile(inputFileElement);  // Trigger file upload function
-   }
-}
+    function deleteFile(deleteBtn, inputId) {
+        const fileItem = deleteBtn.closest('.file-item');
+        if (fileItem) {
+            fileItem.remove();  // Remove the displayed file item
+            document.getElementById(inputId).value = '';  // Clear the input for re-upload
+        }
+    }
 
-       </script>
+    // Format file size to a readable string
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
 
+    // Drag-over handler to show drag-and-drop action
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.dataTransfer.dropEffect = 'copy';  // Change the cursor to indicate a drop is possible
+    }
+
+    // Drop handler to process the dropped files
+    function handleDrop(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const files = event.dataTransfer.files;  // Get the dropped files
+        const inputFileElement = event.target.closest('.upload-btn-wrapper').querySelector('.file-input');  // Find the corresponding file input
+
+        if (inputFileElement && files.length > 0) {
+            limitFiles(inputFileElement, 5, files);  // Limit the number of dropped files and handle each
+        }
+    }
+
+    // Limit the number of files
+    function limitFiles(input, maxFiles = 5, fileList = null) {
+        const files = fileList || input.files;
+        if (files.length > maxFiles) {
+            alert(`You can only upload up to ${maxFiles} files.`);
+            input.value = '';  // Clear the input
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            uploadFile(input, files[i]);  // Process each file
+        }
+    }
+</script>
 
     
 </body>

@@ -469,12 +469,12 @@
                     <td class="file-column">
                         <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                 ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                 ondrop="handleDrop(event, 'buildingPlanFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
                             <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('buildingPlanFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="buildingPlanFile" style="display: none;">
-                            <span id="buildingPlanFileName" style="margin-left: 10px;"></span>
+                            <input type="file" class="file-input" id="buildingPlanFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="buildingPlanFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
@@ -483,17 +483,15 @@
                     <td class="file-column">
                         <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                 ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                 ondrop="handleDrop(event, 'proofOwnershipFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
                             <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('proofOwnershipFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="proofOwnershipFile" style="display: none;">
-                            <span id="proofOwnershipFileName" style="margin-left: 10px;"></span>
+                            <input type="file" class="file-input" id="proofOwnershipFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="proofOwnershipFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
-                
-              
                 <tr>
                     <td>Photocopy of Tax Declaration & Current Tax Receipt</td>
                     <td class="file-column">
@@ -501,8 +499,9 @@
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'taxReceiptFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                            <input type="file" class="file-input" id="taxReceiptFile" onchange="uploadFile(this)">
+                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('taxReceiptFile').click()">Upload</button>
+                            <input type="file" class="file-input" id="taxReceiptFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="taxReceiptFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
@@ -513,8 +512,9 @@
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'brgyClearanceFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                            <input type="file" class="file-input" id="brgyClearanceFile" onchange="uploadFile(this)">
+                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('brgyClearanceFile').click()">Upload</button>
+                            <input type="file" class="file-input" id="brgyClearanceFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="brgyClearanceFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
@@ -525,8 +525,9 @@
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'billMaterialsFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                            <input type="file" class="file-input" id="billMaterialsFile" onchange="uploadFile(this)">
+                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('billMaterialsFile').click()">Upload</button>
+                            <input type="file" class="file-input" id="billMaterialsFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="billMaterialsFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
@@ -537,8 +538,9 @@
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'prcFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                            <input type="file" class="file-input" id="prcFile" onchange="uploadFile(this)">
+                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('prcFile').click()">Upload</button>
+                            <input type="file" class="file-input" id="prcFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="prcFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
@@ -549,8 +551,9 @@
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'certExemptionFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                            <input type="file" class="file-input" id="certExemptionFile" onchange="uploadFile(this)">
+                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('certExemptionFile').click()">Upload</button>
+                            <input type="file" class="file-input" id="certExemptionFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="certExemptionFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
@@ -561,8 +564,9 @@
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'structuralAnalysisFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                            <input type="file" class="file-input" id="structuralAnalysisFile" onchange="uploadFile(this)">
+                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('structuralAnalysisFile').click()">Upload</button>
+                            <input type="file" class="file-input" id="structuralAnalysisFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="structuralAnalysisFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
@@ -573,8 +577,9 @@
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'fireClearanceFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                            <input type="file" class="file-input" id="fireClearanceFile" onchange="uploadFile(this)" >
+                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('fireClearanceFile').click()">Upload</button>
+                            <input type="file" class="file-input" id="fireClearanceFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="fireClearanceFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
@@ -585,20 +590,9 @@
                             <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'boringTestFile')" ondragover="handleDragOver(event)">
                                 <p>Drag & drop file</p>
                             </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                            <input type="file" class="file-input" id="boringTestFile" onchange="uploadFile(this)">
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Occupancy Permit (Home improvement/Extension)</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'occupancyPermitFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;">Upload</button>
-                            <input type="file" class="file-input" id="occupancyPermitFile" onchange="uploadFile(this)" >
+                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('boringTestFile').click()">Upload</button>
+                            <input type="file" class="file-input" id="boringTestFile" style="display: none;" onchange="uploadFile(this)">
+                            <div id="boringTestFileName" class="file-column"></div>
                         </div>
                     </td>
                 </tr>
@@ -913,23 +907,24 @@ termsCheckbox.addEventListener('change', updateProceedButton);
 
     
 <script>
-    function uploadFile(input) {
-        const file = input.files[0];
+    // Function to handle file upload
+    function uploadFile(input, file = null) {
+        const selectedFile = file || input.files[0];  // Use the file from input or passed as an argument
 
-        if (file) {
+        if (selectedFile) {
             const maxSizeMB = 5;  // Set max file size (in MB)
             const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];  // Allowed file types
 
             // Validate file type
-            if (!allowedTypes.includes(file.type)) {
+            if (!allowedTypes.includes(selectedFile.type)) {
                 alert('Invalid file type. Please upload a JPG, PNG, or PDF file.');
-                input.value = ''; // Clear the input
+                input.value = '';  // Clear the input
                 return;
             }
 
             // Validate file size
             const maxSizeBytes = maxSizeMB * 1024 * 1024;  // Convert MB to bytes
-            if (file.size > maxSizeBytes) {
+            if (selectedFile.size > maxSizeBytes) {
                 alert(`File is too large. Please upload a file smaller than ${maxSizeMB}MB.`);
                 input.value = '';  // Clear the input
                 return;
@@ -938,22 +933,23 @@ termsCheckbox.addEventListener('change', updateProceedButton);
             // FileReader to read file details
             const reader = new FileReader();
             reader.onload = function () {
-                const fileName = file.name;
-                const fileSize = formatBytes(file.size);
+                const fileName = selectedFile.name;
+                const fileSize = formatBytes(selectedFile.size);
                 const fileItem = `
                     <div class="file-item">
                         <span class="file-name">${fileName} (${fileSize})</span>
                         <span class="btn-delete" onclick="deleteFile(this, '${input.id}')">Delete</span>
                     </div>`;
-                
+
                 // Display file information
-                const fileColumn = input.closest('td').querySelector('.file-column');
+                const fileColumn = input.closest('.upload-btn-wrapper').querySelector('.file-column');
                 fileColumn.innerHTML = fileItem;  // Display file name and delete option
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(selectedFile);  // Read the file as a data URL
         }
     }
 
+    // Function to delete the uploaded file
     function deleteFile(deleteBtn, inputId) {
         const fileItem = deleteBtn.closest('.file-item');
         if (fileItem) {
@@ -980,29 +976,29 @@ termsCheckbox.addEventListener('change', updateProceedButton);
     }
 
     // Drop handler to process the dropped files
-    function handleDrop(event) {
+    function handleDrop(event, inputId) {
         event.preventDefault();
         event.stopPropagation();
 
         const files = event.dataTransfer.files;  // Get the dropped files
-        const inputFileElement = event.target.closest('.upload-btn-wrapper').querySelector('.file-input');  // Find the corresponding file input
+        const inputFileElement = document.getElementById(inputId);  // Get the corresponding file input element
 
         if (inputFileElement && files.length > 0) {
-            inputFileElement.files = files;  // Assign the dropped files to the input
-            uploadFile(inputFileElement);  // Trigger the file upload function
+            limitFiles(inputFileElement, 5, files);  // Limit the number of dropped files and handle each
         }
     }
 
     // Limit the number of files
-    function limitFiles(input, maxFiles = 5) {
-        const fileList = input.files;
-        if (fileList.length > maxFiles) {
+    function limitFiles(input, maxFiles = 5, fileList = null) {
+        const files = fileList || input.files;
+        if (files.length > maxFiles) {
             alert(`You can only upload up to ${maxFiles} files.`);
             input.value = '';  // Clear the input
-        } else {
-            for (let i = 0; i < fileList.length; i++) {
-                uploadFile(input);  // Process each file
-            }
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            uploadFile(input, files[i]);  // Process each file
         }
     }
 </script>
@@ -1219,7 +1215,9 @@ window.onload = toggleOtherScopeInput;
                 const permitDoc = doc(db, "buildingPermits", permitId);
                 await updateDoc(permitDoc, fileURLMapping);
 
-                alert('Application submitted successfully!');
+                var modal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
+modal.show();
+
                 window.location.reload;
 
             } catch (error) {
@@ -1229,6 +1227,7 @@ window.onload = toggleOtherScopeInput;
                 if (loadingScreen) {
                     loadingScreen.style.display = 'none';
                 }
+              
             }
         });
     });
