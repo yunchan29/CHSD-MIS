@@ -701,7 +701,7 @@ function appendButtons(data) {
     firstRow.className = 'row mt-4';
 
     const col1 = document.createElement('div');
-    col1.className = 'col-md-6 mb-2';
+    col1.className = 'col-md-12 mb-2';
     const btn1 = document.createElement('button');
     btn1.className = 'btn btn-primary w-100 view-housing-btn';
     btn1.setAttribute('data-permit-id', data.id);
@@ -713,20 +713,10 @@ function appendButtons(data) {
     });
     col1.appendChild(btn1);
 
-    const col2 = document.createElement('div');
-    col2.className = 'col-md-6 mb-2';
-    const btn2 = document.createElement('button');
-    btn2.className = 'btn btn-primary w-100';
-    btn2.textContent = 'View File Uploads';
-    btn2.addEventListener('click', () => {
-        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-        if (viewDetailsModal) viewDetailsModal.hide();
-        openViewUploadsModal(data);
-    });
-    col2.appendChild(btn2);
+   
 
     firstRow.appendChild(col1);
-    firstRow.appendChild(col2);
+  
 
     // Second row for 'Archive Application'
     const secondRow = document.createElement('div');
