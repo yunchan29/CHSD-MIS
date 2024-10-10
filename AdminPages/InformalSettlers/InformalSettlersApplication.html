@@ -81,26 +81,48 @@
             </nav>
 
           <div class="contentContainer">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#housingApplicationModal">
-                Add Profile
-              </button><br>
-                <p><strong>Application Count:<span id="housingCounts"></span></strong></p>
-                <h3>Application</h3> <!-- Moved outside of the tbody -->
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Survey Number</th>
-                            <th>Name</th>
-                            <th>Date Profiled</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="housingDiv">
-                        <!-- Profiles will be inserted here by JavaScript -->
-                    </tbody>
-                </table>
-
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <!-- Add Profile Button on the left -->
+                <button type="button" class="btn btn-dark data-bs-toggle="modal" data-bs-target="#housingApplicationModal">
+                    <i class="fa-solid fa-plus"></i> Add Profile
+                </button>
+            
+                <!-- Search Bar, Sort, and Filter on the right -->
+                <div class="input-group" style="width: auto;">
+                    <input type="text" class="form-control" id="searchBar" placeholder="Search..." oninput="filterProfiles()">
+            
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="sortFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sort/Filter
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortFilterDropdown">
+                            <li><a class="dropdown-item" href="#" onclick="sortProfilesByName()">Sort by Name</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="sortProfilesByDate()">Sort by Date Profiled</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('Pending')">Filter by Pending</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('Approved')">Filter by Approved</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('Archived')">Filter by Archived</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Table Section -->
+            <h4 class="text-center mt-2 mb-2">Housing Applications</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        
+                        <th>Household Head</th>
+                        <th>Date Submitted</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody class="housingDiv">
+                    <!-- Profiles will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            
                 <div id="paginationControls">
                     <button class="btn btn-primary" id="prevPageBtn" disabled>Previous</button>
                     <span id="pageInfo">Page 1 of 1</span>
@@ -638,6 +660,11 @@
     </div>
 </div>
 
+<div id="notification-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050; display: none;">
+    <!-- Notifications will be dynamically added here -->
+</div>
+
+
     <!-- Bootstrap JS and Popper.js -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" ></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
@@ -646,7 +673,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, updateDoc, doc, serverTimestamp, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     
         // Firebase configuration
         const firebaseConfig = {
@@ -664,6 +691,63 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
     
+       // Function to dynamically append buttons to the View Details Modal for Housing
+function appendButtons(data) {
+    const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
+    viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing buttons
+
+    // First row for 'View Housing Application' and 'View File Uploads'
+    const firstRow = document.createElement('div');
+    firstRow.className = 'row mt-4';
+
+    const col1 = document.createElement('div');
+    col1.className = 'col-md-6 mb-2';
+    const btn1 = document.createElement('button');
+    btn1.className = 'btn btn-primary w-100 view-housing-btn';
+    btn1.setAttribute('data-permit-id', data.id);
+    btn1.textContent = 'View Housing Application';
+    btn1.addEventListener('click', () => {
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) viewDetailsModal.hide();
+        openViewHousingApplicationModal(data);
+    });
+    col1.appendChild(btn1);
+
+    const col2 = document.createElement('div');
+    col2.className = 'col-md-6 mb-2';
+    const btn2 = document.createElement('button');
+    btn2.className = 'btn btn-primary w-100';
+    btn2.textContent = 'View File Uploads';
+    btn2.addEventListener('click', () => {
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) viewDetailsModal.hide();
+        openViewUploadsModal(data);
+    });
+    col2.appendChild(btn2);
+
+    firstRow.appendChild(col1);
+    firstRow.appendChild(col2);
+
+    // Second row for 'Archive Application'
+    const secondRow = document.createElement('div');
+    secondRow.className = 'row mt-2';
+
+    const col3 = document.createElement('div');
+    col3.className = 'col-md-12 mb-2';
+    const btn3 = document.createElement('button');
+    btn3.className = 'btn btn-danger w-100 archive-btn';
+    btn3.textContent = 'Archive Application';
+    btn3.setAttribute('data-id', data.id);
+    btn3.addEventListener('click', handleArchiveHousingApplication);
+    col3.appendChild(btn3);
+
+    secondRow.appendChild(col3);
+
+    // Append both rows to the modal button group
+    viewDetailsModalBtnGrp.appendChild(firstRow);
+    viewDetailsModalBtnGrp.appendChild(secondRow);
+}
+
         // Notification Function
         function showNotification(message, type) {
             const notificationContainer = document.getElementById('notification-container');
@@ -672,7 +756,6 @@
                 notification.className = `notification ${type}`;
                 notification.textContent = message;
                 notificationContainer.appendChild(notification);
-                alert("Status updated successfully");
     
                 // Automatically remove notification after 5 seconds
                 setTimeout(() => {
@@ -727,13 +810,11 @@
                 for (const data of currentProfiles) {
                     const row = document.createElement("tr");
     
-                    // Fetch Representative User Data (Household Head Name)
                     let representativeName = data.householdHeadName || "N/A";
-    
                     const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
     
                     row.innerHTML = `
-                        <td>${data.ownerName || "495827350236426"}</td>
+                        
                         <td>${representativeName}</td>
                         <td>${createdAt}</td>
                         <td>${data.status || "N/A"}</td>
@@ -744,7 +825,6 @@
     
                     housingDiv.appendChild(row);
     
-                    // Add Event Listener for "View Details" Button
                     const viewDetailsBtn = row.querySelector(".view-details-btn");
                     if (viewDetailsBtn) {
                         viewDetailsBtn.addEventListener("click", () => {
@@ -753,10 +833,7 @@
                     }
                 }
     
-                // Update Pagination Info
                 pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-    
-                // Enable/Disable Pagination Buttons
                 prevPageBtn.disabled = currentPage === 1;
                 nextPageBtn.disabled = currentPage === totalPages;
     
@@ -765,115 +842,124 @@
                 showNotification("Failed to load profiles.", "error");
             }
         }
-    
-        // Function to Control Progressive Status Selection
-        function updateStatusOptions(currentStatus) {
-            const statusSelect = document.getElementById("statusSelect");
-            const statusOptions = ["Pending", "Processing", "To Pay", "For Approval", "For Release", "Claimed"];
-    
-            // Clear existing options
-            statusSelect.innerHTML = "";
-    
-            // Add only the next status options based on the current status
-            const currentIndex = statusOptions.indexOf(currentStatus);
-            for (let i = currentIndex; i < statusOptions.length; i++) {
-                const option = document.createElement("option");
-                option.value = statusOptions[i];
-                option.textContent = statusOptions[i];
-                statusSelect.appendChild(option);
-            }
+
+       // Function to Handle Status Update
+async function updateStatusOptions() {
+    const selectedProfileId = document.getElementById("profileIdInput").value;
+    const newStatus = document.getElementById("statusSelect").value;
+    const timestamp = serverTimestamp();
+
+    if (selectedProfileId) {
+        try {
+            const profileRef = doc(db, "Housing", selectedProfileId);
+            await updateDoc(profileRef, {
+                status: newStatus,
+                updatedAt: timestamp
+            });
+            showNotification("Status updated successfully!", "success");
+            loadProfiles();  // Refresh profiles after status update
+            closeModal("viewDetailsModal"); // Close the modal after updating
+        } catch (error) {
+            console.error("Error updating status:", error);
+            showNotification("Failed to update status.", "error");
         }
+    } else {
+        console.error("No profile selected for status update.");
+    }
+}
+
     
-        // Function to Handle Status Update
-        async function updateStatus() {
-            const selectedProfileId = document.getElementById("profileIdInput").value;
-            const newStatus = document.getElementById("statusSelect").value;
-            const timestamp = serverTimestamp();
+        // Function to Archive a Housing Application
+        async function handleArchiveHousingApplication(event) {
+            event.preventDefault();
+            const housingAppId = event.target.getAttribute('data-id');
     
-            if (selectedProfileId) {
-                try {
-                    const profileRef = doc(db, "Housing", selectedProfileId);
-                    await updateDoc(profileRef, {
-                        status: newStatus,
-                        updatedAt: timestamp
-                    });
-                    showNotification("Status updated successfully!", "success");
-                    loadProfiles();
-                    closeModal("viewDetailsModal"); // Close the modal after updating
-                } catch (error) {
-                    console.error("Error updating status:", error);
-                    showNotification("Failed to update status.", "error");
+            if (!housingAppId) {
+                console.error("Housing Application ID is null or undefined.");
+                showNotification("Error: Housing Application ID is missing.", "error");
+                return;
+            }
+    
+            const confirmed = confirm("Are you sure you want to archive this housing application?");
+            if (!confirmed) return;
+    
+            try {
+                const housingAppRef = doc(db, "Housing", housingAppId);
+                const housingAppSnapshot = await getDoc(housingAppRef);
+    
+                if (housingAppSnapshot.exists()) {
+                    const housingAppData = housingAppSnapshot.data();
+    
+                    await setDoc(doc(db, "archivedHousingApplications", housingAppId), housingAppData);
+                    await deleteDoc(housingAppRef);
+    
+                    const tableBody = document.querySelector(".housingDiv");  // Use class selector since tbody has class="housingDiv"
+if (tableBody) {
+    const rowToRemove = tableBody.querySelector(`button[data-permit-id="${housingAppId}"]`)?.closest('tr');
+    if (rowToRemove) rowToRemove.remove();
+} else {
+    console.error(".housingDiv not found in the DOM.");
+    showNotification("Error: Failed to locate the housing application row.", "error");
+}
+
+                    const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+                    if (viewDetailsModal) {
+                        viewDetailsModal.hide();
+                    }
+    
+                } else {
+                    showNotification("Housing application not found!", "error");
                 }
-            } else {
-                console.error("No profile selected for status update.");
+            } catch (error) {
+                console.error("Error archiving housing application: ", error);
+                showNotification(`Failed to archive housing application: ${error.message}`, "error");
             }
         }
     
+        function closeModal(modalId) {
+    const modalElement = document.getElementById(modalId);
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+        modalInstance.hide();
+    } else {
+        console.error(`No modal found with ID: ${modalId}`);
+    }
+}
+
         // Function to Open the View Details Modal
         function openViewDetailsModal(data) {
-            // Set modal fields
-            let representativeName = data.householdHeadName;
+            let representativeName = data.householdHeadName || "N/A";
             const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
-            document.getElementById("housingOwnerName").textContent = representativeName || "N/A";
-            
-            // Set the status select value
-            document.getElementById("statusSelect").value = data.status || "N/A"; // Use value instead of textContent
-            
-            // Ensure createdAtField is defined in the modal
-            document.getElementById("issuedOnDate").textContent = createdAt || "N/A"; 
     
-            // Update Profile ID for status update
+            document.getElementById("housingOwnerName").textContent = representativeName;
+            document.getElementById("issuedOnDate").textContent = createdAt;
+            document.getElementById("statusSelect").value = data.status || "N/A";
             document.getElementById("profileIdInput").value = data.id;
     
-            // Update status options based on current status
             updateStatusOptions(data.status);
+            appendButtons(data);
     
-            // Show modal
             const viewDetailsModal = new bootstrap.Modal(document.getElementById('viewDetailsModal'));
             viewDetailsModal.show();
         }
     
-        // Function for Next Page
-        function nextPage() {
-            if (currentPage < totalPages) {
-                currentPage++;
-                loadProfiles();
-            }
-        }
+        // Initialize the Table with Profiles
+        document.addEventListener("DOMContentLoaded", loadProfiles);
     
-        // Function for Previous Page
-        function prevPage() {
+        // Pagination Buttons
+        document.getElementById("prevPageBtn").addEventListener("click", () => {
             if (currentPage > 1) {
                 currentPage--;
                 loadProfiles();
             }
-        }
+        });
     
-        // Event Listeners for Pagination Buttons
-        document.getElementById("prevPageBtn").addEventListener("click", prevPage);
-        document.getElementById("nextPageBtn").addEventListener("click", nextPage);
-        document.getElementById("saveStatusBtn").addEventListener("click", updateStatus); // Added event listener for save button
-    
-        // Load Profiles on Page Load
-        loadProfiles();
-    
-        async function fetchPermitCounts() {
-            // Show the loading screen
-            document.getElementById('fetching-loading-screen').style.display = 'flex';
-    
-            // Collection references
-            const housingRef = collection(db, "Housing");
-    
-            try {
-                const housingSnapshot = await getDocs(housingRef);
-                document.getElementById("housingCounts").textContent = housingSnapshot.size;
-            } catch (error) {
-                console.error("Error fetching permit counts: ", error);
+        document.getElementById("nextPageBtn").addEventListener("click", () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadProfiles();
             }
-        }
-    
-        // Call the function to fetch and display permit counts
-        fetchPermitCounts();
+        });
     </script>
     
     <script>
