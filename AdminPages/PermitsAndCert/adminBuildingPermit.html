@@ -549,7 +549,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="calculatePaymentButton">Calculate Payment</button>
+                
                 <button type="button" class="btn btn-secondary" id="printOrderButton" disabled>
                     <i class="fa-solid fa-print"></i> Print
                 </button>
@@ -1038,18 +1038,36 @@ async function openViewUploadsModal(permitData) {
 }
 
 
-// Function to Generate Order of Payment with Formula and Inputs
+// Function to check if all required fields are filled
+function checkIfAllFieldsFilled() {
+    const numCR = document.getElementById('numCR').value.trim();
+    const lineMeter = document.getElementById('lineMeter').value.trim();
+    const floorArea = document.getElementById('floorArea').value.trim();
+    const lineAndGrade = document.getElementById('lineAndGrade').value.trim();
+    const electrical = document.getElementById('electrical').value.trim();
+    const ownerName = document.getElementById("OPOwner/Applicant").value.trim();
+    const location = document.getElementById("OPLocation").value.trim();
+
+    // Enable button only if all fields are filled
+    const printButton = document.getElementById('printOrderButton');
+    if (numCR && lineMeter && floorArea && lineAndGrade && electrical && ownerName && location) {
+        printButton.disabled = false; // Enable the button
+    } else {
+        printButton.disabled = true; // Disable the button
+    }
+}
+
+// Function to generate Order of Payment with calculations
 function generateOrderOfPayment(Data) {
     try {
-        // Separate handling for non-numeric fields (Owner/Applicant and Location)
+        // Fetch and set owner and location data if provided
         const ownerNameField = document.getElementById("OPOwner/Applicant");
         const locationField = document.getElementById("OPLocation");
 
-        // Only set the owner name and location if they exist in the data
-        if (Data.ownerName) {
+        if (Data && Data.ownerName) {
             ownerNameField.value = Data.ownerName;  // Set owner name from Data
         }
-        if (Data.projectLocation) {
+        if (Data && Data.projectLocation) {
             locationField.value = Data.projectLocation;  // Set location from Data
         }
 
@@ -1060,7 +1078,7 @@ function generateOrderOfPayment(Data) {
         const lineAndGrade = parseFloat(document.getElementById('lineAndGrade').value) || 0;
         const electrical = parseFloat(document.getElementById('electrical').value) || 0;
 
-        // Calculate fees based on numeric inputs
+        // Calculate fees
         const crFee = numCR * 100.00;
         const fenceFee = lineMeter * 7.00;
         const floorAreaFee = floorArea * 7.20;
@@ -1078,16 +1096,24 @@ function generateOrderOfPayment(Data) {
         document.getElementById('bpTotal').value = total.toFixed(2);
 
         console.log("Order of Payment calculated and modal populated.");
-        const printOrderButton = document.getElementById("printOrderButton");
-printOrderButton.disabled = false;
+        
     } catch (error) {
         console.error("Error generating Order of Payment:", error);
         alert("Failed to generate order of payment.");
     }
 }
 
-// Add event listener for calculating payment when button is clicked
-document.getElementById('calculatePaymentButton').addEventListener('click', generateOrderOfPayment);
+// Attach 'input' event listeners to fields to trigger automatic calculation
+const inputs = ['numCR', 'lineMeter', 'floorArea', 'lineAndGrade', 'electrical', 'OPOwner/Applicant', 'OPLocation'];
+inputs.forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+        generateOrderOfPayment({}); // Pass an empty object if no Data is available
+        checkIfAllFieldsFilled(); // Check if the button should be enabled
+    });
+});
+
+// Initial check in case fields are already filled (e.g., from previous inputs)
+checkIfAllFieldsFilled();
 
 
 

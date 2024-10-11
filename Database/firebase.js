@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { initializeFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc, query, where, arrayUnion, Timestamp, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
@@ -221,25 +221,43 @@ async function handleSignUp(event) {
             console.log("Uploaded avatar and obtained URL:", avatarUrl);
         }
 
-        // Save user information to Firestore
+        // Send email verification
+        await sendEmailVerification(user);
+        console.log("Verification email sent to:", email);
+        alert("A verification email has been sent to your email address. Please verify your email before logging in.");
+
+        // Save user information to Firestore (even before verification)
         const userRef = doc(db, 'users', userId);
         await setDoc(userRef, {
             firstName: firstName,
             lastName: lastName,
             email: email,
             avatarUrl: avatarUrl,
+            emailVerified: false // Set email verification status to false
         });
 
         console.log("User data saved to Firestore under collection 'users'.");
 
-        // Sign out the user after successful sign-up
-        await signOut(auth);
-        console.log("User signed out after sign up.");
+        // Monitor email verification status before allowing user to proceed
+        const checkEmailVerification = setInterval(async () => {
+            await user.reload(); // Reload user data to get latest email verification status
+            if (user.emailVerified) {
+                clearInterval(checkEmailVerification); // Stop checking once the email is verified
+                console.log("User email verified:", email);
 
-        // Slight delay before redirect to ensure all processes are completed
-        setTimeout(() => {
-            window.location.replace("/ClientPages/clientLogin.html");
-        }, 1000); // 1-second delay
+                // Update Firestore to mark the user as verified
+                await updateDoc(userRef, {
+                    emailVerified: true
+                });
+
+                // Sign out the user after email verification
+                await signOut(auth);
+                console.log("User signed out after email verification.");
+
+                // Redirect to login page
+                window.location.replace("/ClientPages/clientLogin.html");
+            }
+        }, 3000); // Check every 3 seconds
 
     } catch (error) {
         console.error("Error signing up:", error.code, error.message);
