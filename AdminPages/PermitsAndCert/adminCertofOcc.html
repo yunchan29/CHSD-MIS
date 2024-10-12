@@ -89,7 +89,7 @@
                 </div>
 
                 <h4 class="text-center">Certificate of Occupancy</h4>
-                <table class="table">
+                <table class="table table-striped">
                   <thead>
                     <tr>
                       <th>Owner</th>
@@ -102,12 +102,114 @@
                   <tbody id="profileTableBody">
                     <!-- Rows will be populated by Firebase data -->
                 </tbody>
+                
+                      
                 </table>
+                  <!-- Pagination Controls -->
+                  <div class="pagination-controls text-center">
+                    <button id="prevPageBtn" class="btn btn-primary" disabled>Previous</button>
+                    <span id="pageInfo"></span>
+                    <button id="nextPageBtn" class="btn btn-primary">Next</button>
+                </div>
+
+
              </div>
              <!-- End of Bootstrap Table -->
             </div>
         </div>
     </div>
+
+    <!-- View Uploads Modal -->
+<div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Display uploaded files as a list -->
+                <ul id="uploadedFilesList" class="list-group">
+                    <!-- Dynamically append files here -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- View Details Modal -->
+    <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewDetailsModalLabel">Permit Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Text information at the top -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Owner Name:</strong> <span id="permitOwnerName"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
+                        </div>
+                    </div>
+                
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Appointment Date:</strong> <span id="appointmentDateSched"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Permit ID:</strong> <span id="permitIdDisplay"></span></p>
+                        </div>
+                    </div>
+                
+                    <!-- Status selection in a row -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="statusSelect" class="form-label">Status</label>
+                            <select id="statusSelect" class="form-select">
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="To Pay">To Pay</option>
+                                <option value="For Approval">For Approval</option>
+                                <option value="For Release">For Release</option>
+                                <option value="Claimed">Claimed</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <!-- Comments section -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="officerRemarks">Comments</label>
+                            <textarea class="form-control" id="officerRemarks" rows="2"></textarea>
+                        </div>
+                    </div>
+                
+                    <div id="viewDetailsModalBtnGrp">
+    
+                    </div>
+                
+                    <!-- Hidden input field to store the permit ID -->
+                    <input type="hidden" id="hiddenPermitId">
+                </div>
+                
+                
+                <div class="modal-footer">
+                   
+                    <button type="button" id="saveStatusBtn" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
 
     <script type="module" src="/Database/firebase.js"></script>
     <script type="module">
@@ -131,7 +233,54 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
-  
+       
+      // Function to Dynamically Append Buttons to the View Details Modal
+function appendButtons(data) {
+    const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
+    viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing buttons
+
+    // First Row for View File Uploads Button
+    const firstRow = document.createElement('div');
+    firstRow.className = 'row mt-4';
+
+    const col1 = document.createElement('div');
+    col1.className = 'col-md-12 mb-2';
+    const btn1 = document.createElement('button');
+    btn1.className = 'btn btn-primary w-100';
+    btn1.textContent = 'View File Uploads';
+    btn1.addEventListener('click', () => {
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) {
+            viewDetailsModal.hide(); // Hide View Details Modal
+        }
+        openViewUploadsModal(data); // Open View Uploads Modal
+    });
+    col1.appendChild(btn1);
+    firstRow.appendChild(col1);
+
+    // Second Row for Archive Button
+    const secondRow = document.createElement('div');
+    secondRow.className = 'row mt-2';
+
+    const col2 = document.createElement('div');
+    col2.className = 'col-md-12';
+    const btn2 = document.createElement('button');
+    btn2.className = 'btn btn-danger w-100 archive-permit-btn';
+    btn2.textContent = 'Archive Permit';
+    btn2.setAttribute('data-id', data.id);
+
+    // Add event listener for archiving the building permit
+    btn2.addEventListener('click', (event) => handleArchiveOccupancyPermit(event));
+
+    col2.appendChild(btn2);
+    secondRow.appendChild(col2);
+
+    // Append Rows to Button Group
+    viewDetailsModalBtnGrp.appendChild(firstRow);
+    viewDetailsModalBtnGrp.appendChild(secondRow);
+}
+
+
       // Function to show notification
       function showNotification(message, type) {
           console.log(`Showing notification: ${message}`);
@@ -146,267 +295,285 @@
           }
       }
   
-      async function loadOccupancyProfiles() {
-          try {
-              const querySnapshot = await getDocs(collection(db, "OccupancyPermits"));
-              const profileTableBody = document.getElementById("profileTableBody");
-              if (!profileTableBody) {
-                  console.error("profileTableBody not found in the DOM.");
-                  return;
-              }
-              profileTableBody.innerHTML = "";
-  
-              for (const docSnapshot of querySnapshot.docs) {
-                  const data = docSnapshot.data();
-                  const row = document.createElement("tr");
-  
-                  // Fetch representative user data
-                  let representativeName = 'N/A';  // Default value if user not found
-                  if (data.ownerUid) {  // Use ownerUid to find user details
-                      try {
-                          const userRef = doc(db, 'users', data.ownerUid);  // Use the correct user reference
-                          const userDoc = await getDoc(userRef);
-                          if (userDoc.exists()) {
-                              const userData = userDoc.data();
-                              representativeName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-                          }
-                      } catch (error) {
-                          console.error("Error fetching user data:", error);
-                      }
-                  }
-  
-                  const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : 'Unknown Date';
-  
-                  row.innerHTML = `
-                      <td>${data.ownerName || 'No Name'}</td>
-                      <td>${representativeName}</td> 
-                      <td>${createdAt}</td>
-                      <td>
-                          <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${docSnapshot.id}">
-                              <option value="Pending" ${data.status === "Pending" ? 'selected' : ''}>Pending</option>
-                              <option value="Processing" ${data.status === "Processing" ? 'selected' : ''}>Processing</option>
-                              <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''}>To Pay</option>
-                              <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''}>For Approval</option>
-                              <option value="For Release" ${data.status === "For Release" ? 'selected' : ''}>For Release</option>
-                              <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''}>Claimed</option>
-                          </select>
-                      </td>
-                      <td>
-                          <div class="dropdown">
-                              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                  Actions
-                              </button>
-                              <ul class="dropdown-menu">
-                                  <li><a class="dropdown-item save-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-save"></i> Save</a></li>
-                                  <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#remarksModal1" data-permit-id="${docSnapshot.id}"><i class="fas fa-comment"></i> Remarks</a></li>
-                                  <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#occupancyPermitModal" data-permit-id="${docSnapshot.id}"><i class="fas fa-edit"></i> Edit</a></li>
-                                  <li><a class="dropdown-item archive-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-archive"></i> Archive</a></li>
-                              </ul>
-                          </div>
-                      </td>
-                      <td><button class="btn btn-primary btn-sm">View Details</button></td>
-                  `;
-                  profileTableBody.appendChild(row);
-  
-                  // Add event listener for status change
-                  const statusSelect = row.querySelector(".status-select");
-                  if (statusSelect) {
-                      statusSelect.addEventListener("change", async (event) => {
-                          const newStatus = event.target.value;
-                          if (data.status !== newStatus) {
-                              const message = `${data.ownerName || 'An occupancy permit'} is now ${newStatus.toLowerCase()}`;
-  
-                              // Trigger notification
-                              showNotification(message, 'info');
-  
-                              // Store the notification in Firestore
-                              try {
-                                  await addDoc(collection(db, "notifications"), {
-                                      userId: data.userId,  // Use the correct key
-                                      message: message,
-                                      permitId: docSnapshot.id,
-                                      timestamp: serverTimestamp(),
-                                      read: false
-                                  });
-                              } catch (error) {
-                                  console.error("Error storing notification:", error);
-                              }
-  
-                              // Update status in Firestore
-                              try {
-                                  await updateDoc(doc(db, 'OccupancyPermits', docSnapshot.id), { status: newStatus });
-                              } catch (error) {
-                                  console.error("Error updating permit status:", error);
-                              }
-                          }
-                      });
-                  }
-              }
-  
-              // Attach button listeners
-              attachSaveButtonListenersOccupancy();
-              attachArchiveButtonListenersOccupancy();
-              attachEditButtonListenersOccupancy();
-              attachRemarksButtonListenersOccupancy();
-          } catch (error) {
-              console.error("Error loading profiles:", error);
-          }
-      }
-  
-      // Function to handle saving an occupancy permit
-      async function handleSaveOccupancyPermit(event) {
-          event.preventDefault();
-  
-          const occupancyPermitId = event.target.getAttribute('data-id');
-          const row = event.target.closest('tr');
-          const statusSelect = row.querySelector('.status-select');
-  
-          const status = statusSelect.value;
-  
-          try {
-              await updateDoc(doc(db, "OccupancyPermits", occupancyPermitId), { status: status });
-              console.log("Document successfully updated!");
-              alert("Status updated successfully!");
-          } catch (error) {
-              console.error("Error updating document: ", error);
-              alert("Failed to update status: " + error.message);
-          }
-  
-          await loadOccupancyProfiles(); // Refresh the profiles after updating
-      }
-  
-      // Function to handle archiving an occupancy permit
-      async function handleArchiveOccupancyPermit(event) {
-          event.preventDefault();
-  
-          const occupancyPermitId = event.target.getAttribute('data-id');
-  
-          const confirmed = confirm("Are you sure you want to archive this document?");
-  
-          if (!confirmed) {
-              return;
-          }
-  
-          try {
-              const occupancyPermitRef = doc(db, "OccupancyPermits", occupancyPermitId);
-              const occupancyPermitSnapshot = await getDoc(occupancyPermitRef);
-  
-              if (occupancyPermitSnapshot.exists()) {
-                  const occupancyPermitData = occupancyPermitSnapshot.data();
-  
-                  await setDoc(doc(db, "archivedOccupancyPermits", occupancyPermitId), occupancyPermitData);
-                  await deleteDoc(occupancyPermitRef);
-  
-                  event.target.closest('tr').remove();
-  
-                  console.log("Document archived successfully!");
-                  alert("Document archived successfully!");
-              } else {
-                  alert("Document not found!");
-              }
-          } catch (error) {
-              console.error("Error archiving document: ", error);
-              alert("Failed to archive document: " + error.message);
-          }
-      }
-  
-      // Function to populate the edit form with an occupancy permit's data
-      async function populateEditFormOccupancy(permitId) {
-          console.log('populateEditFormOccupancy called with permitId:', permitId);
-  
-          const permitDoc = doc(db, "OccupancyPermits", permitId);
-  
-          // Fetch the document from Firestore
-          try {
-              const docSnapshot = await getDoc(permitDoc);
-              if (docSnapshot.exists()) {
-                  const data = docSnapshot.data();
-                  console.log("Permit data:", data);
-  
-                  // Populate form fields with the permit data
-                  document.getElementById('occupancyPermitNo').value = data.occupancyPermitNo || '';
-                  document.getElementById('ownerEmail').value = data.ownerEmail || '';
-                  document.getElementById('issuedOn').value = data.issuedOn || '';
-                  document.getElementById('projectLocation').value = data.projectLocation || '';
-  
-                  // Add additional fields specific to occupancy permits as needed
-                  document.getElementById('numberOfUnits').value = data.numberOfUnits || '';
-                  document.getElementById('totalFloorArea').value = data.totalFloorArea || '';
-  
-                  // Store permitId in form's dataset (for further usage)
-                  document.getElementById('editOccupancyForm').dataset.permitId = permitId;
-              } else {
-                  console.error('No such document!');
-              }
-          } catch (error) {
-              console.error('Error getting document:', error);
-          }
-      }
-  
-      // Function to attach event listeners for the edit buttons
-      function attachEditButtonListenersOccupancy() {
-          const editButtons = document.querySelectorAll('a[data-permit-id]');
-          editButtons.forEach(button => {
-              button.addEventListener('click', (event) => {
-                  event.preventDefault();
-                  const permitId = button.getAttribute('data-permit-id');
-                  populateEditFormOccupancy(permitId);
-              });
-          });
-      }
-  
-      // Function to attach event listeners for the archive buttons
-      function attachArchiveButtonListenersOccupancy() {
-          const archiveButtons = document.querySelectorAll('.archive-btn');
-          archiveButtons.forEach(button => {
-              button.addEventListener('click', handleArchiveOccupancyPermit);
-          });
-      }
-  
-      // Function to attach event listeners for the save buttons
-      function attachSaveButtonListenersOccupancy() {
-          const saveButtons = document.querySelectorAll('.save-btn');
-          saveButtons.forEach(button => {
-              button.addEventListener('click', handleSaveOccupancyPermit);
-          });
-      }
-  
-      // Function to handle showing remarks in a modal
-      async function openRemarksModalOccupancy(permitId) {
-          await showRemarksOccupancy(permitId); // You need to implement showRemarksOccupancy
-          const remarksModal = new bootstrap.Modal(document.getElementById('viewRemarks'));
-          remarksModal.show();
-      }
-  
-      // Function to attach event listeners for remarks buttons
-      function attachRemarksButtonListenersOccupancy() {
-          const remarksButtons = document.querySelectorAll('.dropdown-item[data-bs-target="#remarksModal1"]');
-          remarksButtons.forEach(button => {
-              button.addEventListener('click', (event) => {
-                  event.preventDefault();
-                  const permitId = button.getAttribute('data-permit-id');
-                  if (permitId) {
-                      openRemarksModalOccupancy(permitId);
-                  }
-              });
-          });
-      }
-  
-      // Load profiles on page load
-      document.addEventListener('DOMContentLoaded', loadOccupancyProfiles);
-  </script>
-  
-    
-   
-     <!--Navigation Bar-->
- <script>
-  document.querySelector('.open-btn').addEventListener('click', function() {
-      document.getElementById('side_nav').classList.add('active');
-  });
+// Pagination Variables
+let profilesPerPage = 50; // Profiles per page
+let currentPage = 1; // Current page
+let totalPages = 1; // Total pages
 
-  document.querySelector('.close-btn').addEventListener('click', function() {
-      document.getElementById('side_nav').classList.remove('active');
-  });
+// Function to Load Occupancy Permits and Display in the Table
+async function loadOccupancyProfiles() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "OccupancyPermits")); // Updated collection name
+        const occupancyPermitDiv = document.getElementById("profileTableBody");
+        const prevPageBtn = document.getElementById("prevPageBtn");
+        const nextPageBtn = document.getElementById("nextPageBtn");
+        const pageInfo = document.getElementById("pageInfo");
+
+        if (!occupancyPermitDiv) {
+            console.error("occupancyPermitDiv not found in the DOM.");
+            return;
+        }
+
+        occupancyPermitDiv.innerHTML = ""; // Clear existing rows
+
+        // Fetch and Process Permits Data
+        const permitsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const uniquePermitsData = Array.from(new Set(permitsData.map(a => a.id)))
+            .map(id => permitsData.find(a => a.id === id));
+
+        // Sort by createdAt (ascending)
+        uniquePermitsData.sort((a, b) => {
+            const aTime = a.createdAt?.seconds || 0;
+            const bTime = b.createdAt?.seconds || 0;
+            return aTime - bTime;
+        });
+
+        // Calculate Total Pages
+        totalPages = Math.ceil(uniquePermitsData.length / profilesPerPage);
+
+        // Determine Profiles for Current Page
+        const start = (currentPage - 1) * profilesPerPage;
+        const end = start + profilesPerPage;
+        const currentProfiles = uniquePermitsData.slice(start, end);
+
+        // Loop Through Profiles and Populate Table
+        for (const data of currentProfiles) {
+            const row = document.createElement("tr");
+
+            // Fetch Representative User Data
+            let representativeName = "";
+            if (data.ownerUid) {
+                try {
+                    const userRef = doc(db, "users", data.ownerUid);
+                    const userDoc = await getDoc(userRef);
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        representativeName = `${userData.firstName} ${userData.lastName}`;
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            }
+
+            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
+
+            row.innerHTML = `
+                <td>${data.ownerName || "N/A"}</td>
+                <td>${representativeName || "N/A"}</td>
+                <td>${createdAt}</td>
+                <td>${data.status || "N/A"}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
+                </td>
+            `;
+
+            occupancyPermitDiv.appendChild(row);
+
+            // Add Event Listener for "View Details" Button
+            const viewDetailsBtn = row.querySelector(".view-details-btn");
+            if (viewDetailsBtn) {
+                viewDetailsBtn.addEventListener("click", () => {
+                    openViewDetailsModal(data);
+                });
+            }
+        }
+
+        // Update Pagination Info
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+        // Enable/Disable Pagination Buttons
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = currentPage === totalPages;
+
+    } catch (error) {
+        console.error("Error loading profiles:", error);
+        showNotification("Failed to load profiles.", "error");
+    }
+}
+
+// Function to Control Progressive Status Selection
+function updateStatusOptions(currentStatus) {
+    const statusSelect = document.getElementById("statusSelect");
+
+    const statusProgression = {
+        "Pending": ["Pending", "Processing"],
+        "Processing": ["Processing", "To Pay"],
+        "To Pay": ["To Pay", "For Approval"],
+        "For Approval": ["For Approval", "For Release"],
+        "For Release": ["For Release", "Claimed"],
+        "Claimed": ["Claimed"]
+    };
+
+    const validStatuses = statusProgression[currentStatus] || [];
+
+    const options = statusSelect.querySelectorAll("option");
+    options.forEach(option => {
+        if (validStatuses.includes(option.value)) {
+            option.style.display = "block"; // Show valid options
+        } else {
+            option.style.display = "none"; // Hide invalid options
+        }
+    });
+
+    // Set the statusSelect to the currentStatus
+    statusSelect.value = currentStatus;
+}
+
+// Function to Open the View Details Modal
+function openViewDetailsModal(permitData) {
+    // Populate Modal Fields
+    const appointmentDate = permitData.appointmentDate ? new Date(permitData.appointmentDate.seconds * 1000).toLocaleString() : "N/A";
+    document.getElementById("permitOwnerName").textContent = permitData.ownerName || "N/A";
+    document.getElementById("issuedOnDate").textContent = permitData.issuedOn || "N/A";
+    document.getElementById("appointmentDateSched").textContent = appointmentDate || "N/A";
+    document.getElementById("permitIdDisplay").textContent = permitData.id || "N/A";
+    document.getElementById("hiddenPermitId").value = permitData.id || "";
+
+    // Update Status Options
+    updateStatusOptions(permitData.status || "Pending");
+
+    // Append Dynamic Buttons
+    appendButtons(permitData);
+
+    // Show the Modal
+    const viewDetailsModal = new bootstrap.Modal(document.getElementById('viewDetailsModal'));
+    viewDetailsModal.show();
+
+    // Add Event Listener for the Save Button (Ensure it's not duplicated)
+    const saveStatusBtn = document.getElementById("saveStatusBtn");
+    saveStatusBtn.onclick = async () => {
+        const newStatus = document.getElementById("statusSelect").value;
+        try {
+            // Update Status in Firestore
+            await updateDoc(doc(db, 'OccupancyPermits', permitData.id), { status: newStatus });
+
+            // Trigger Notification
+            const message = `${permitData.ownerName}'s occupancy permit is now ${newStatus.toLowerCase()}`;
+            showNotification(message, 'info');
+
+            // Store Notification in Firestore
+            await addDoc(collection(db, "notifications"), {
+                userId: permitData.ownerUid,
+                message: message,
+                permitId: permitData.id,
+                timestamp: serverTimestamp(),
+                read: false
+            });
+            alert("status updated successfully");
+
+            // Reload Profiles to Reflect Changes
+            loadOccupancyProfiles();
+
+            // Hide Modal
+            viewDetailsModal.hide();
+
+        } catch (error) {
+            console.error("Error updating permit status:", error);
+            showNotification("Failed to update permit status.", "error");
+        }
+    };
+}
+
+// Function to Archive an Occupancy Permit
+async function handleArchiveOccupancyPermit(event) {
+    event.preventDefault();
+
+    const occupancyPermitId = event.target.getAttribute('data-id');
+
+    if (!occupancyPermitId) {
+        console.error("Occupancy Permit ID is null or undefined.");
+        showNotification("Error: Occupancy Permit ID is missing.", "error");
+        return;
+    }
+
+    const confirmed = confirm("Are you sure you want to archive this document?");
+    
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const occupancyPermitRef = doc(db, "OccupancyPermits", occupancyPermitId); // Updated collection name
+        const occupancyPermitSnapshot = await getDoc(occupancyPermitRef);
+
+        if (occupancyPermitSnapshot.exists()) {
+            const occupancyPermitData = occupancyPermitSnapshot.data();
+            
+            await setDoc(doc(db, "archivedOccupancyPermits", occupancyPermitId), occupancyPermitData);
+await deleteDoc(occupancyPermitRef);
+
+// Remove the row from the table
+const tableBody = document.querySelector("#profileTableBody");  // Update the correct table body ID
+const rowToRemove = tableBody.querySelector(`button[data-permit-id="${occupancyPermitId}"]`).closest('tr');
+if (rowToRemove) rowToRemove.remove();
+
+
+            showNotification("Document archived successfully!", "success");
+
+            // Close the modal
+            const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+            if (viewDetailsModal) {
+                viewDetailsModal.hide(); // Hide View Details Modal
+            }
+
+        } else {
+            showNotification("Document not found!", "error");
+        }
+    } catch (error) {
+        console.error("Error archiving document: ", error);
+        showNotification(`Failed to archive document: ${error.message}`, "error");
+    }
+}
+
+// Function to Search Permits by Owner or Representative Name
+function searchOccupancyPermits() {
+    const searchInput = document.getElementById("searchInput").value.toLowerCase();
+    const tableRows = document.querySelectorAll("#occupancyPermitDiv tbody tr");
+
+    let resultsFound = false; // To track if any results are found
+
+    tableRows.forEach(row => {
+        const ownerName = row.querySelector("td:nth-child(1)").textContent.toLowerCase().includes(searchInput);
+        const representativeName = row.querySelector("td:nth-child(2)").textContent.toLowerCase().includes(searchInput);
+
+        if (ownerName || representativeName) {
+            row.style.display = ""; // Show matching row
+            resultsFound = true;
+        } else {
+            row.style.display = "none"; // Hide non-matching row
+        }
+    });
+
+    // If no results are found, show a message
+    const noResultsMessage = document.getElementById("noResultsMessage");
+    if (resultsFound) {
+        noResultsMessage.style.display = "none";
+    } else {
+        noResultsMessage.style.display = "block";
+        noResultsMessage.textContent = "No matching permits found.";
+    }
+}
+
+// Pagination Event Listeners
+document.getElementById("prevPageBtn").addEventListener("click", () => {
+    if (currentPage > 1) {
+        currentPage--;
+        loadOccupancyProfiles();
+    }
+});
+
+document.getElementById("nextPageBtn").addEventListener("click", () => {
+    if (currentPage < totalPages) {
+        currentPage++;
+        loadOccupancyProfiles();
+    }
+});
+
+// Initial Load of Occupancy Profiles
+loadOccupancyProfiles();
+
+
+
 </script>
 
 

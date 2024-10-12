@@ -105,12 +105,104 @@
         </div>
     </div>
 
+        <!-- View Uploads Modal -->
+<div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <!-- Display uploaded files as a list -->
+              <ul id="uploadedFilesList" class="list-group">
+                  <!-- Dynamically append files here -->
+              </ul>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <!-- View Details Modal -->
+  <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="viewDetailsModalLabel">Permit Details</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <!-- Text information at the top -->
+                  <div class="row">
+                      <div class="col-md-6">
+                          <p><strong>Owner Name:</strong> <span id="permitOwnerName"></span></p>
+                      </div>
+                      <div class="col-md-6">
+                          <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
+                      </div>
+                  </div>
+              
+                  <div class="row">
+                      <div class="col-md-6">
+                          <p><strong>Appointment Date:</strong> <span id="appointmentDateSched"></span></p>
+                      </div>
+                      <div class="col-md-6">
+                          <p><strong>Permit ID:</strong> <span id="permitIdDisplay"></span></p>
+                      </div>
+                  </div>
+              
+                  <!-- Status selection in a row -->
+                  <div class="row mb-3">
+                      <div class="col-md-12">
+                          <label for="statusSelect" class="form-label">Status</label>
+                          <select id="statusSelect" class="form-select">
+                              <option value="Pending">Pending</option>
+                              <option value="Processing">Processing</option>
+                              <option value="To Pay">To Pay</option>
+                              <option value="For Approval">For Approval</option>
+                              <option value="For Release">For Release</option>
+                              <option value="Claimed">Claimed</option>
+                          </select>
+                      </div>
+                  </div>
+              
+                  <!-- Comments section -->
+                  <div class="row">
+                      <div class="col-md-12">
+                          <label for="officerRemarks">Comments</label>
+                          <textarea class="form-control" id="officerRemarks" rows="2"></textarea>
+                      </div>
+                  </div>
+              
+                  <div id="viewDetailsModalBtnGrp">
+  
+                  </div>
+              
+                  <!-- Hidden input field to store the permit ID -->
+                  <input type="hidden" id="hiddenPermitId">
+              </div>
+              
+              
+              <div class="modal-footer">
+                 
+                  <button type="button" id="saveStatusBtn" class="btn btn-primary">Save</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+
     <script type="module" src="/Database/firebase.js"></script>
     <script type="module">
       // Import Firebase SDK
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, serverTimestamp, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     
       // Firebase configuration
       const firebaseConfig = {
@@ -127,7 +219,55 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
-    
+     
+
+      // Function to Dynamically Append Buttons to the View Details Modal for Electrical Certificates
+function appendButtons(data) {
+    const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
+    viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing buttons
+
+    // First Row for View File Uploads Button
+    const firstRow = document.createElement('div');
+    firstRow.className = 'row mt-4';
+
+    const col1 = document.createElement('div');
+    col1.className = 'col-md-12 mb-2';
+    const btn1 = document.createElement('button');
+    btn1.className = 'btn btn-primary w-100';
+    btn1.textContent = 'View Electrical Certificate Uploads';
+    btn1.addEventListener('click', () => {
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) {
+            viewDetailsModal.hide(); // Hide View Details Modal
+        }
+        openViewUploadsModal(data); // Open View Uploads Modal for Electrical Certificates
+    });
+    col1.appendChild(btn1);
+    firstRow.appendChild(col1);
+
+    // Second Row for Archive Button
+    const secondRow = document.createElement('div');
+    secondRow.className = 'row mt-2';
+
+    const col2 = document.createElement('div');
+    col2.className = 'col-md-12';
+    const btn2 = document.createElement('button');
+    btn2.className = 'btn btn-danger w-100 archive-electrical-cert-btn';
+    btn2.textContent = 'Archive Electrical Certificate';
+    btn2.setAttribute('data-id', data.id);
+
+    // Add event listener for archiving the electrical certificate
+    btn2.addEventListener('click', (event) => handleArchiveElectricalCert(event));
+
+    col2.appendChild(btn2);
+    secondRow.appendChild(col2);
+
+    // Append Rows to Button Group
+    viewDetailsModalBtnGrp.appendChild(firstRow);
+    viewDetailsModalBtnGrp.appendChild(secondRow);
+}
+
+
       // Function to show notification
       function showNotification(message, type) {
         console.log(`Showing notification: ${message}`);
@@ -142,184 +282,240 @@
         }
       }
     
-      // Load Electrical Certifications
-      async function loadElectricalCertProfiles() {
-        try {
-          const querySnapshot = await getDocs(collection(db, "ElectricalCert"));
-          const profileTableBody = document.getElementById("profileTableBody");
-          if (!profileTableBody) {
-            console.error("profileTableBody not found in the DOM.");
+    // Pagination Variables
+let profilesPerPage = 50; // Profiles per page
+let currentPage = 1; // Current page
+let totalPages = 1; // Total pages
+
+// Function to Load Electrical Certificates and Display in the Table
+async function loadElectricalProfiles() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "ElectricalCert")); // Updated collection name
+        const electricalCertDiv = document.getElementById("profileTableBody");
+        const prevPageBtn = document.getElementById("prevPageBtn");
+        const nextPageBtn = document.getElementById("nextPageBtn");
+        const pageInfo = document.getElementById("pageInfo");
+
+        if (!electricalCertDiv) {
+            console.error("electricalCertDiv not found in the DOM.");
             return;
-          }
-          profileTableBody.innerHTML = "";
-    
-          for (const docSnapshot of querySnapshot.docs) {
-            const data = docSnapshot.data();
+        }
+
+        electricalCertDiv.innerHTML = ""; // Clear existing rows
+
+        // Fetch and Process Certificates Data
+        const certificatesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const uniqueCertificatesData = Array.from(new Set(certificatesData.map(a => a.id)))
+            .map(id => certificatesData.find(a => a.id === id));
+
+        // Sort by createdAt (ascending)
+        uniqueCertificatesData.sort((a, b) => {
+            const aTime = a.createdAt?.seconds || 0;
+            const bTime = b.createdAt?.seconds || 0;
+            return aTime - bTime;
+        });
+
+        // Calculate Total Pages
+        totalPages = Math.ceil(uniqueCertificatesData.length / profilesPerPage);
+
+        // Determine Profiles for Current Page
+        const start = (currentPage - 1) * profilesPerPage;
+        const end = start + profilesPerPage;
+        const currentProfiles = uniqueCertificatesData.slice(start, end);
+
+        // Loop Through Profiles and Populate Table
+        for (const data of currentProfiles) {
             const row = document.createElement("tr");
-    
-            // Fetch representative user data
-            let representativeName = '';
+
+            // Fetch Representative User Data
+            let representativeName = "";
             if (data.ownerUid) {
-              try {
-                const userRef = doc(db, 'users', data.ownerUid);
-                const userDoc = await getDoc(userRef);
-                if (userDoc.exists()) {
-                  const userData = userDoc.data();
-                  representativeName = `${userData.firstName} ${userData.lastName}`;
+                try {
+                    const userRef = doc(db, "users", data.ownerUid);
+                    const userDoc = await getDoc(userRef);
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        representativeName = `${userData.firstName} ${userData.lastName}`;
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
                 }
-              } catch (error) {
-                console.error("Error fetching user data:", error);
-              }
             }
-    
-            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : '';
-    
+
+            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
+
             row.innerHTML = `
-              <td>${data.ownerName}</td>
-              <td>${representativeName}</td> 
-              <td>${createdAt}</td>
-              <td>
-                <select class="form-select form-select-sm status-select" aria-label=".form-select-sm example" data-id="${docSnapshot.id}">
-                  <option value="Pending" ${data.status === "Pending" ? 'selected' : ''} ${data.status !== "Pending" ? 'disabled' : ''}>Pending</option>
-                  <option value="Processing" ${data.status === "Processing" ? 'selected' : ''} ${(data.status !== "Pending" && data.status !== "Processing") ? 'disabled' : ''}>Processing</option>
-                  <option value="To Pay" ${data.status === "To Pay" ? 'selected' : ''} ${(data.status !== "Processing" && data.status !== "To Pay") ? 'disabled' : ''}>To Pay</option>
-                  <option value="For Approval" ${data.status === "For Approval" ? 'selected' : ''} ${(data.status !== "To Pay" && data.status !== "For Approval") ? 'disabled' : ''}>For Approval</option>
-                  <option value="For Release" ${data.status === "For Release" ? 'selected' : ''} ${(data.status !== "For Approval" && data.status !== "For Release") ? 'disabled' : ''}>For Release</option>
-                  <option value="Claimed" ${data.status === "Claimed" ? 'selected' : ''} ${(data.status !== "For Release" && data.status !== "Claimed") ? 'disabled' : ''}>Claimed</option>
-                </select>
-              </td>
-              <td>
-                <div class="dropdown">
-                  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Actions
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item save-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-save"></i> Save</a></li>
-                    <li><a class="dropdown-item archive-btn" href="#" data-id="${docSnapshot.id}"><i class="fas fa-archive"></i> Archive</a></li>
-                  </ul>
-                </div>
-              </td>
-              <td><button class="btn btn-primary btn-sm">View Details</button></td>
+                <td>${data.ownerName || "N/A"}</td>
+                <td>${representativeName || "N/A"}</td>
+                <td>${createdAt}</td>
+                <td>${data.status || "N/A"}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
+                </td>
             `;
-            profileTableBody.appendChild(row);
-    
-            // Add event listener for status change
-            const statusSelect = row.querySelector(".status-select");
-            if (statusSelect) {
-              statusSelect.addEventListener("change", async (event) => {
-                const newStatus = event.target.value;
-                if (data.status !== newStatus) {
-                  const message = `${data.ownerName}'s electrical certification is now ${newStatus.toLowerCase()}`;
-    
-                  // Trigger notification
-                  showNotification(message, 'info');
-    
-                  // Store the notification in Firestore
-                  try {
-                    await addDoc(collection(db, "notifications"), {
-                      userId: data.ownerUid, // Associate the notification with the user
-                      message: message,
-                      permitId: docSnapshot.id,
-                      timestamp: serverTimestamp(), // Use server timestamp here
-                      read: false // Mark the notification as unread initially
-                    });
-                  } catch (error) {
-                    console.error("Error storing notification:", error);
-                  }
-    
-                  // Update status in Firestore
-                  try {
-                    await updateDoc(doc(db, 'ElectricalCert', docSnapshot.id), { status: newStatus });
-                  } catch (error) {
-                    console.error("Error updating certification status:", error);
-                  }
-                }
-              });
+
+            electricalCertDiv.appendChild(row);
+
+            // Add Event Listener for "View Details" Button
+            const viewDetailsBtn = row.querySelector(".view-details-btn");
+            if (viewDetailsBtn) {
+                viewDetailsBtn.addEventListener("click", () => {
+                    openViewDetailsModal(data);
+                });
             }
-          }
-    
-          // Attach button listeners
-          attachSaveButtonListenersElectricalCert();
-          attachArchiveButtonListenersElectricalCert();
-        } catch (error) {
-          console.error("Error loading profiles:", error);
         }
-      }
-    
-      // Function to handle saving a certification
-      async function handleSaveElectricalCert(event) {
-        event.preventDefault();
-    
-        const certId = event.target.getAttribute('data-id');
-        const row = event.target.closest('tr');
-        const statusSelect = row.querySelector('.status-select'); 
-    
-        const status = statusSelect.value;
-    
+
+        // Update Pagination Info
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+        // Enable/Disable Pagination Buttons
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = currentPage === totalPages;
+
+    } catch (error) {
+        console.error("Error loading profiles:", error);
+        showNotification("Failed to load profiles.", "error");
+    }
+}
+
+// Function to Control Progressive Status Selection for Electrical Certificates
+function updateStatusOptions(currentStatus) {
+    const statusSelect = document.getElementById("statusSelect");
+
+    const statusProgression = {
+        "Pending": ["Pending", "Processing"],
+        "Processing": ["Processing", "To Pay"],
+        "To Pay": ["To Pay", "For Inspection"],
+        "For Inspection": ["For Inspection", "For Approval"],
+        "For Approval": ["For Approval", "For Release"],
+        "For Release": ["For Release", "Claimed"],
+        "Claimed": ["Claimed"]
+    };
+
+    const validStatuses = statusProgression[currentStatus] || [];
+
+    const options = statusSelect.querySelectorAll("option");
+    options.forEach(option => {
+        if (validStatuses.includes(option.value)) {
+            option.style.display = "block"; // Show valid options
+        } else {
+            option.style.display = "none"; // Hide invalid options
+        }
+    });
+
+    // Set the statusSelect to the currentStatus
+    statusSelect.value = currentStatus;
+}
+
+
+// Function to Open the View Details Modal
+function openViewDetailsModal(permitData) {
+    // Populate Modal Fields
+    const appointmentDate = permitData.appointmentDate ? new Date(permitData.appointmentDate.seconds * 1000).toLocaleString() : "N/A";
+    document.getElementById("permitOwnerName").textContent = permitData.ownerName || "N/A";
+    document.getElementById("issuedOnDate").textContent = permitData.issuedOn || "N/A";
+    document.getElementById("appointmentDateSched").textContent = appointmentDate || "N/A";
+    document.getElementById("permitIdDisplay").textContent = permitData.id || "N/A";
+    document.getElementById("hiddenPermitId").value = permitData.id || "";
+
+    // Update Status Options
+    updateStatusOptions(permitData.status || "Pending");
+
+    // Append Dynamic Buttons
+    appendButtons(permitData);
+
+    // Show the Modal
+    const viewDetailsModal = new bootstrap.Modal(document.getElementById('viewDetailsModal'));
+    viewDetailsModal.show();
+
+    // Add Event Listener for the Save Button (Ensure it's not duplicated)
+    const saveStatusBtn = document.getElementById("saveStatusBtn");
+    saveStatusBtn.onclick = async () => {
+        const newStatus = document.getElementById("statusSelect").value;
         try {
-          await updateDoc(doc(db, "ElectricalCert", certId), {
-            status: status
-          });
-          console.log("Document successfully updated!");
-          alert("Status updated successfully!");
+            // Update Status in Firestore
+            await updateDoc(doc(db, 'ElectricalCert', permitData.id), { status: newStatus });
+
+            // Trigger Notification
+            const message = `${permitData.ownerName}'s electrical certificate is now ${newStatus.toLowerCase()}`;
+            showNotification(message, 'info');
+
+            // Store Notification in Firestore
+            await addDoc(collection(db, "notifications"), {
+                userId: permitData.ownerUid,
+                message: message,
+                permitId: permitData.id,
+                timestamp: serverTimestamp(),
+                read: false
+            });
+            alert("Status updated successfully");
+
+            // Reload Profiles to Reflect Changes
+            loadElectricalProfiles();
+
+            // Hide Modal
+            viewDetailsModal.hide();
+
         } catch (error) {
-          console.error("Error updating document: ", error);
-          alert("Failed to update status: " + error.message);
+            console.error("Error updating certificate status:", error);
+            showNotification("Failed to update certificate status.", "error");
         }
+    };
+}
+
+// Function to Archive an Electrical Certificate
+async function handleArchiveElectricalCert(event) {
+    event.preventDefault();
+
+    const electricalCertId = event.target.getAttribute('data-id');
+
+    if (!electricalCertId) {
+        console.error("Electrical Certificate ID is null or undefined.");
+        showNotification("Error: Electrical Certificate ID is missing.", "error");
+        return;
+    }
+
+    const confirmed = confirm("Are you sure you want to archive this document?");
     
-        await loadElectricalCertProfiles(); // Refresh the profiles after updating
-      }
-    
-      // Function to handle archiving a certification
-      async function handleArchiveElectricalCert(event) {
-        event.preventDefault();
-    
-        const certId = event.target.getAttribute('data-id');
-        const confirmed = confirm("Are you sure you want to archive this document?");
-        
-        if (!confirmed) {
-          return;
-        }
-    
-        try {
-          const certRef = doc(db, "ElectricalCert", certId);
-          const certSnapshot = await getDoc(certRef);
-    
-          if (certSnapshot.exists()) {
-            const certData = certSnapshot.data();
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const electricalCertRef = doc(db, "ElectricalCert", electricalCertId);
+        const electricalCertSnapshot = await getDoc(electricalCertRef);
+
+        if (electricalCertSnapshot.exists()) {
+            const electricalCertData = electricalCertSnapshot.data();
             
-            await updateDoc(certRef, { status: "Archived" });
-            event.target.closest('tr').remove();
-    
-            console.log("Document archived successfully!");
-            alert("Document archived successfully!");
-          } else {
-            alert("Document not found!");
-          }
-        } catch (error) {
-          console.error("Error archiving document: ", error);
-          alert("Failed to archive document: " + error.message);
+            await setDoc(doc(db, "archivedElectricalCerts", electricalCertId), electricalCertData);
+            await deleteDoc(electricalCertRef);
+
+            // Remove the row from the table
+            const tableBody = document.querySelector("#profileTableBody");
+            const rowToRemove = tableBody.querySelector(`button[data-permit-id="${electricalCertId}"]`).closest('tr');
+            if (rowToRemove) rowToRemove.remove();
+
+            showNotification("Document archived successfully!", "success");
+
+            // Close the modal
+            const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+            if (viewDetailsModal) {
+                viewDetailsModal.hide();
+            }
+
+        } else {
+            showNotification("Document not found!", "error");
         }
-      }
-    
-      // Function to attach event listeners for the save buttons
-      function attachSaveButtonListenersElectricalCert() {
-        const saveButtons = document.querySelectorAll('.save-btn');
-        saveButtons.forEach(button => {
-          button.addEventListener('click', handleSaveElectricalCert);
-        });
-      }
-    
-      // Function to attach event listeners for the archive buttons
-      function attachArchiveButtonListenersElectricalCert() {
-        const archiveButtons = document.querySelectorAll('.archive-btn');
-        archiveButtons.forEach(button => {
-          button.addEventListener('click', handleArchiveElectricalCert);
-        });
-      }
-    
-      // Load profiles on page load
-      document.addEventListener('DOMContentLoaded', loadElectricalCertProfiles);
+    } catch (error) {
+        console.error("Error archiving document: ", error);
+        showNotification(`Failed to archive document: ${error.message}`, "error");
+    }
+}
+
+// Initial Load of Electrical Profiles
+loadElectricalProfiles();
+
     </script>
     
     
