@@ -20,6 +20,17 @@
             overflow-y: auto; /* Enable vertical scrolling */
             padding: 20px; /* Add some padding */
         }
+
+        #previewContainer {
+    resize: both; /* Allow resizing in both directions */
+    overflow: auto; /* Scroll if the content overflows */
+    min-width: 300px; /* Set a minimum width */
+    min-height: 300px; /* Set a minimum height */
+    max-width: 100%; /* Prevent it from exceeding the container */
+    max-height: 600px; /* Set a reasonable max height */
+    border: 1px solid #ddd; /* Optional: add a border for clarity */
+}
+
     </style>
 </head>
 <body>
@@ -105,27 +116,37 @@
         </div>
     </div>
 
-        <!-- View Uploads Modal -->
+       <!-- View Uploads Modal -->
 <div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="wide-modal modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <!-- Display uploaded files as a list -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <!-- Uploaded Files List -->
+            <div class="col-lg-6">
               <ul id="uploadedFilesList" class="list-group">
-                  <!-- Dynamically append files here -->
+                <!-- Dynamically append files here -->
               </ul>
+            </div>
+            <!-- Preview Section -->
+            <div class="col-lg-6">
+              <div id="previewContainer" class="border p-3" style="min-height: 300px;">
+                <p class="text-muted">Select a file to preview here.</p>
+              </div>
+            </div>
           </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
       </div>
+    </div>
   </div>
-</div>
-
+  
   <!-- View Details Modal -->
   <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
@@ -202,7 +223,7 @@
       // Import Firebase SDK
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, serverTimestamp, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, serverTimestamp, setDoc, deleteDoc   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     
       // Firebase configuration
       const firebaseConfig = {
@@ -377,6 +398,145 @@ async function loadElectricalProfiles() {
         showNotification("Failed to load profiles.", "error");
     }
 }
+
+async function openViewUploadsModal(permitData) {
+    try {
+        console.log("Fetching uploaded files for electrical certificate:", permitData.id);
+
+        // Fetch the electrical certificate document from Firestore
+        const permitDocRef = doc(db, "ElectricalCert", permitData.id);
+        const permitSnapshot = await getDoc(permitDocRef);
+
+        const uploadedFilesList = document.getElementById('uploadedFilesList');
+        uploadedFilesList.innerHTML = ''; // Clear existing files
+
+        const previewContainer = document.getElementById('previewContainer');
+        previewContainer.innerHTML = ''; // Clear any previous previews
+
+        if (!permitSnapshot.exists()) {
+            console.warn("No electrical certificate document found.");
+            const noFilesItem = document.createElement('li');
+            noFilesItem.className = 'list-group-item';
+            noFilesItem.textContent = 'No files uploaded.';
+            uploadedFilesList.appendChild(noFilesItem);
+        } else {
+            const permitData = permitSnapshot.data();
+            const { barangayClearanceURL, meralcoServiceURL, occupancyURL, ownershipURL, structurePhotoURL } = permitData;
+
+            if (!barangayClearanceURL && !meralcoServiceURL && !occupancyURL && !ownershipURL && !structurePhotoURL) {
+                const noFilesItem = document.createElement('li');
+                noFilesItem.className = 'list-group-item';
+                noFilesItem.textContent = 'No files uploaded.';
+                uploadedFilesList.appendChild(noFilesItem);
+            } else {
+                // Function to create file item with both View and Preview buttons
+                const createFileItem = (fileLabel, fileURL) => {
+                    const fileItem = document.createElement('li');
+                    fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                    fileItem.innerHTML = `<span>${fileLabel}</span>
+                                          <div>
+                                              <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                              <button class="btn btn-sm btn-outline-secondary preview-btn">Preview</button>
+                                          </div>`;
+
+                    // Attach preview event to the "Preview" button dynamically, pass both fileURL and fileLabel
+                    const previewButton = fileItem.querySelector('.preview-btn');
+                    previewButton.addEventListener('click', () => previewFile(fileURL, fileLabel));
+
+                    uploadedFilesList.appendChild(fileItem);
+                };
+
+                // Add Barangay Clearance file if exists
+                if (barangayClearanceURL) {
+                    createFileItem('Barangay Clearance', barangayClearanceURL);
+                }
+
+                // Add Meralco Service file if exists
+                if (meralcoServiceURL) {
+                    createFileItem('Meralco Service', meralcoServiceURL);
+                }
+
+                // Add Occupancy file if exists
+                if (occupancyURL) {
+                    createFileItem('Occupancy', occupancyURL);
+                }
+
+                // Add Ownership file if exists
+                if (ownershipURL) {
+                    createFileItem('Proof of Ownership', ownershipURL);
+                }
+
+                // Add Structure Photo file if exists
+                if (structurePhotoURL) {
+                    createFileItem('Structure Photo', structurePhotoURL);
+                }
+            }
+        }
+
+        // Show the View Uploads Modal
+        const viewUploadsModal = new bootstrap.Modal(document.getElementById('viewUploadsModal'));
+        viewUploadsModal.show();
+
+    } catch (error) {
+        console.error("Error fetching uploads:", error);
+        alert("Failed to load uploaded files.");
+    }
+}
+
+function previewFile(fileURL, fileLabel) {
+    const previewContainer = document.getElementById('previewContainer');
+
+    // Get the file extension by removing the query parameters from the URL
+    const cleanURL = fileURL.split('?')[0]; // This removes the query string
+    const fileExtension = cleanURL.split('.').pop().toLowerCase(); // Get the extension
+
+    // Debugging logs
+    console.log("Clean file URL:", cleanURL);
+    console.log("File extension:", fileExtension);
+    console.log("Previewing file for:", fileLabel);
+
+    previewContainer.innerHTML = `<p><strong>Previewing file for ${fileLabel}</strong></p>`; // Display file label
+
+    // Check file extension and display accordingly
+    if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
+        // For image files (jpg, jpeg, png)
+        const img = document.createElement('img');
+        img.src = fileURL;
+        img.className = 'img-fluid';
+        previewContainer.appendChild(img);
+    } else if (fileExtension === 'pdf') {
+        // For PDF files
+        const embed = document.createElement('embed');
+        embed.src = fileURL;
+        embed.type = 'application/pdf';
+        embed.width = '100%';
+        embed.height = '300px';
+        previewContainer.appendChild(embed);
+    } else {
+        // Unsupported file type message
+        previewContainer.innerHTML += '<p class="text-danger">File type not supported for preview.</p>';
+    }
+}
+
+
+const createFileItem = (fileLabel, fileURL) => {
+    const fileItem = document.createElement('li');
+    fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+    fileItem.innerHTML = `<span>${fileLabel}</span>
+                          <div>
+                              <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                              <button class="btn btn-sm btn-outline-secondary preview-btn">Preview</button>
+                          </div>`;
+
+    // Attach preview event to the "Preview" button dynamically, pass both fileURL and fileLabel
+    const previewButton = fileItem.querySelector('.preview-btn');
+    previewButton.addEventListener('click', () => previewFile(fileURL, fileLabel));
+
+    uploadedFilesList.appendChild(fileItem);
+};
+
 
 // Function to Control Progressive Status Selection for Electrical Certificates
 function updateStatusOptions(currentStatus) {
