@@ -496,7 +496,7 @@ function previewFile(fileURL, fileLabel) {
     console.log("File extension:", fileExtension);
     console.log("Previewing file for:", fileLabel);
 
-    previewContainer.innerHTML = `<p><strong>Previewing file for ${fileLabel}</strong></p>`; // Display file label
+    previewContainer.innerHTML = `<p><strong>${fileLabel}</strong></p>`; // Display file label
 
     // Check file extension and display accordingly
     if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
