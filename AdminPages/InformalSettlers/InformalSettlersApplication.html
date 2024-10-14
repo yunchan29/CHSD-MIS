@@ -592,7 +592,28 @@
 
 
 
-    <!--View Details Modal-->
+    <div class="modal fade" id="viewHousingApplicationModal" tabindex="-1" aria-labelledby="housingApplicationModalTitle" aria-hidden="true">
+        <div class="wide-modal modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="housingApplicationModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="housingApplicationModalBody">
+                    <!-- Housing application details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <!-- Print Button -->
+              
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="printHousingApplicationBtn">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    
      <!-- View Details Modal --> 
 <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -670,6 +691,17 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 
     <script type="module" src="/Database/firebase.js"></script>
+<!--Print-->
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('printHousingApplicationBtn').addEventListener('click', function () {
+        // Trigger the print dialog
+        window.print();
+    });
+});
+
+
+    </script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -691,12 +723,12 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
     
-       // Function to dynamically append buttons to the View Details Modal for Housing
+  // Function to dynamically append buttons to the View Details Modal for Housing
 function appendButtons(data) {
     const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
     viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing buttons
 
-    // First row for 'View Housing Application' and 'View File Uploads'
+    // First row for 'View Housing Application' 
     const firstRow = document.createElement('div');
     firstRow.className = 'row mt-4';
 
@@ -709,14 +741,14 @@ function appendButtons(data) {
     btn1.addEventListener('click', () => {
         const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
         if (viewDetailsModal) viewDetailsModal.hide();
+
+        // Call openViewHousingApplicationModal to display data
+        // Modified to pass the entire data object instead of just data.id
         openViewHousingApplicationModal(data);
     });
     col1.appendChild(btn1);
 
-   
-
     firstRow.appendChild(col1);
-  
 
     // Second row for 'Archive Application'
     const secondRow = document.createElement('div');
@@ -737,6 +769,8 @@ function appendButtons(data) {
     viewDetailsModalBtnGrp.appendChild(firstRow);
     viewDetailsModalBtnGrp.appendChild(secondRow);
 }
+
+
 
         // Notification Function
         function showNotification(message, type) {
@@ -832,6 +866,72 @@ function appendButtons(data) {
                 showNotification("Failed to load profiles.", "error");
             }
         }
+
+
+        function openViewHousingApplicationModal(data) {
+    // Get the modal elements
+    const modalTitle = document.getElementById('housingApplicationModalTitle');
+    const modalBody = document.getElementById('housingApplicationModalBody');
+
+    // Set modal title
+    modalTitle.textContent = `Housing Application - ${data.householdHeadName}`;
+
+    // Check if householdMembers is an array, if not, set it as an empty array
+    const householdMembers = Array.isArray(data.householdMembers) ? data.householdMembers : [];
+
+    // Populate modal body with the housing application data
+    modalBody.innerHTML = `
+        <p><strong>Number of Storeys:</strong> ${data.NOStoreys}</p>
+        <p><strong>Amount to Pay:</strong> ${data.amountToPay}</p>
+        <p><strong>Barangay:</strong> ${data.barangay}</p>
+        <p><strong>Classification Area:</strong> ${data.classificationArea}</p>
+        <p><strong>Classification of Survey Household:</strong> ${data.classificationOfSurveyHousehold}</p>
+        <p><strong>Comfort Room:</strong> ${data.comfortRoom}</p>
+        <p><strong>Construction:</strong> ${data.construction}</p>
+        <p><strong>Date Applied:</strong> ${data.dateApplied}</p>
+        <p><strong>Estimated Floor Area:</strong> ${data.estimatedFloorArea}</p>
+        <p><strong>Household Address:</strong> ${data.householdAddress}</p>
+        <p><strong>Household Amount:</strong> ${data.householdAmount}</p>
+        <p><strong>Household Birthday:</strong> ${data.householdBirthday}</p>
+        <p><strong>Household Civil Status:</strong> ${data.householdCivilStatus}</p>
+        <p><strong>Household Head Name:</strong> ${data.householdHeadName}</p>
+        <p><strong>Household Members:</strong></p>
+        ${householdMembers.map((member, index) => `
+            <p><strong>Member ${index + 1}:</strong></p>
+            <ul>
+                <li><strong>Name:</strong> ${member.name}</li>
+                <li><strong>Age:</strong> ${member.age}</li>
+                <li><strong>Gender:</strong> ${member.gender}</li>
+                <li><strong>Civil Status:</strong> ${member.civilStatus}</li>
+                <li><strong>Education:</strong> ${member.education}</li>
+                <li><strong>Employed:</strong> ${member.employed}</li>
+                <li><strong>Occupation:</strong> ${member.occupation || 'N/A'}</li>
+                <li><strong>Place of Work:</strong> ${member.placeOfWork || 'N/A'}</li>
+                <li><strong>Relation:</strong> ${member.relation}</li>
+            </ul>`).join('')}
+        <p><strong>Household Occupation:</strong> ${data.householdOccupation}</p>
+        <p><strong>Household Place of Work:</strong> ${data.householdPlaceOfWork}</p>
+        <p><strong>Remarks:</strong> ${data.householdRemarks}</p>
+        <p><strong>Info About Lot:</strong> ${data.infoAboutLot}</p>
+        <p><strong>Lot Owner:</strong> ${data.lotOwner}</p>
+        <p><strong>Mode of House:</strong> ${data.modeOfHouse}</p>
+        <p><strong>Province of Origin:</strong> ${data.provinceOfOrigin}</p>
+        <p><strong>Reasons for Establishing:</strong> ${data.reasonsForEstablishing}</p>
+        <p><strong>Relationship with Owner:</strong> ${data.relationshipWithOwner}</p>
+        <p><strong>Sitio/Purok:</strong> ${data.sitioPurok}</p>
+        <p><strong>Status:</strong> ${data.status}</p>
+        <p><strong>Structure Owner:</strong> ${data.structureOwner}</p>
+        <p><strong>Type of Structure:</strong> ${data.typeOfStructure}</p>
+        <p><strong>Year of Residency:</strong> ${data.yearOfResidency}</p>
+        <p><strong>Utilities:</strong> ${data.utilities}</p>
+    `;
+
+    // Show the modal
+    const modalInstance = new bootstrap.Modal(document.getElementById('viewHousingApplicationModal'));
+    modalInstance.show();
+}
+
+
 
        // Function to Handle Status Update
 async function updateStatusOptions() {
