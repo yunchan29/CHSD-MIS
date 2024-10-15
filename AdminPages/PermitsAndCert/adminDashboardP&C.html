@@ -179,7 +179,7 @@
         import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { initializeFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+    
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
@@ -190,7 +190,7 @@
             appId: "1:694967679357:web:65cffd50f13739f934f414",
             measurementId: "G-XBQTQFRLJ5"
         };
-
+    
         // Initialize Firebase if it hasn't been initialized already
         let app;
         if (!getApps().length) {
@@ -198,7 +198,7 @@
         } else {
             app = getApp();  // Use the already initialized app
         }
-
+    
         // Initialize Firebase services
         const auth = getAuth(app);
         const db = initializeFirestore(app, {
@@ -207,40 +207,44 @@
                 synchronizeTabs: true,  // Multi-tab persistence
             }
         });
-
+    
         window.onload = async function () {
             // Fetch data and initialize chart and calendar
             try {
                 document.getElementById("fetching-loading-screen").style.display = "flex";
-
-                // Fetch building permits and count createdAt dates
-                const buildingPermitsSnap = await getDocs(collection(db, 'buildingPermits'));
-                const buildingApplicantsCount = buildingPermitsSnap.docs.length; // Total building permit applicants
-                const buildingCreatedAt = buildingPermitsSnap.docs.map(doc => doc.data().createdAt.toDate().toISOString().split('T')[0]);
-                
-                // Fetch occupancy permits and count createdAt dates
-                const occupancyPermitsSnap = await getDocs(collection(db, 'OccupancyPermits'));
-                const occupancyApplicantsCount = occupancyPermitsSnap.docs.length; // Total occupancy permit applicants
-                const occupancyCreatedAt = occupancyPermitsSnap.docs.map(doc => doc.data().createdAt.toDate().toISOString().split('T')[0]);
-
-                // Fetch electrical certificates and count createdAt dates
-                const electricalCertSnap = await getDocs(collection(db, 'ElectricalCerts'));
-                const electricalApplicantsCount = electricalCertSnap.docs.length; // Total electrical cert applicants
-                const electricalCreatedAt = electricalCertSnap.docs.map(doc => doc.data().createdAt.toDate().toISOString().split('T')[0]);
-
-                // Combine all createdAt dates
-                const allCreatedAtDates = [...buildingCreatedAt, ...occupancyCreatedAt, ...electricalCreatedAt];
-
-                // Count applicants per day
+    
+                // Initialize a map to track the count of applicants per day
                 const applicantsPerDayCount = {};
-                allCreatedAtDates.forEach(date => {
-                    applicantsPerDayCount[date] = (applicantsPerDayCount[date] || 0) + 1;
-                });
-
+    
+                // Helper function to aggregate applicants from each collection
+                const aggregateApplicants = (snap) => {
+                    snap.forEach(doc => {
+                        const createdAt = doc.data().createdAt;
+                        if (createdAt) {
+                            const date = createdAt.toDate().toISOString().split('T')[0];
+                            applicantsPerDayCount[date] = (applicantsPerDayCount[date] || 0) + 1;
+                        } else {
+                            console.warn("Missing createdAt in document", doc.id);
+                        }
+                    });
+                };
+    
+                // Fetch building permits and aggregate counts
+                const buildingPermitsSnap = await getDocs(collection(db, 'buildingPermits'));
+                aggregateApplicants(buildingPermitsSnap);
+    
+                // Fetch occupancy permits and aggregate counts
+                const occupancyPermitsSnap = await getDocs(collection(db, 'OccupancyPermits'));
+                aggregateApplicants(occupancyPermitsSnap);
+    
+                // Fetch electrical certificates and aggregate counts
+                const electricalCertSnap = await getDocs(collection(db, 'ElectricalCert'));
+                aggregateApplicants(electricalCertSnap);
+    
                 // Prepare data for the chart
                 const labels = Object.keys(applicantsPerDayCount);
                 const data = Object.values(applicantsPerDayCount);
-
+    
                 // Initialize the applicants chart
                 const ctx = document.getElementById('applicantsChart').getContext('2d');
                 const applicantsChart = new Chart(ctx, {
@@ -259,14 +263,14 @@
                         maintainAspectRatio: false
                     }
                 });
-
+    
                 // Prepare appointment data
                 const appointmentsSnap = [...buildingPermitsSnap.docs, ...occupancyPermitsSnap.docs, ...electricalCertSnap.docs];
                 const events = appointmentsSnap.map(doc => ({
                     title: doc.data().title || "Appointment", // Use title or default
                     start: doc.data().appointmentDate?.toDate().toISOString().split('T')[0] // Ensure the date format is correct
                 })).filter(event => event.start); // Filter out events without a date
-
+    
                 // Initialize the calendar
                 const calendarEl = document.getElementById('calendar');
                 const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -281,5 +285,6 @@
             }
         }
     </script>
+    
 </body>
 </html>

@@ -704,24 +704,34 @@
 
 <!-- View Uploads Modal -->
 <div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Display uploaded files as a list -->
-                <ul id="uploadedFilesList" class="list-group">
-                    <!-- Dynamically append files here -->
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
+    <div class="wide-modal modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+          <div class="row">
+            <!-- Uploaded Files List -->
+            <div class="col-lg-6">
+              <ul id="uploadedFilesList" class="list-group">
+                <!-- Dynamically append files here -->
+              </ul>
+            </div>
+            <!-- Preview Section -->
+            <div class="col-lg-6">
+              <div id="previewContainer" class="border p-3" style="min-height: 300px;">
+                <p class="text-muted">Select a file to preview here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
 <div id="notificationContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050; display: none;">
     <!-- Notifications will be dynamically added here -->
