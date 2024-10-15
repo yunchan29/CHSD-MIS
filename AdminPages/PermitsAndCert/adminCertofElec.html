@@ -224,6 +224,35 @@
   </div>
 
 
+  <div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="validationModalLabel">Validation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="validationPreviewContainer"></div>
+          <div class="mt-3">
+            <label>Validation:</label><br>
+            <input type="radio" name="validationOptions" value="approved" id="approvedOption">
+            <label for="approvedOption">Approve</label><br>
+            <input type="radio" name="validationOptions" value="disapproved" id="disapprovedOption">
+            <label for="disapprovedOption">Disapprove</label>
+          </div>
+          <div class="mt-3">
+            <label for="validationComments">Comments:</label>
+            <textarea class="form-control" id="validationComments" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="saveValidation()">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 
     <script type="module" src="/Database/firebase.js"></script>
     <script type="module">
@@ -436,7 +465,7 @@ async function openViewUploadsModal(permitData) {
                 noFilesItem.textContent = 'No files uploaded.';
                 uploadedFilesList.appendChild(noFilesItem);
             } else {
-                // Function to create file item with both View and Preview buttons
+                // Function to create file item with both View, Preview, and Validation buttons
                 const createFileItem = (fileLabel, fileURL) => {
                     const fileItem = document.createElement('li');
                     fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
@@ -445,11 +474,16 @@ async function openViewUploadsModal(permitData) {
                                           <div>
                                               <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
                                               <button class="btn btn-sm btn-outline-secondary preview-btn">Preview</button>
+                                              <button class="btn btn-sm btn-outline-success validation-btn" data-fileurl="${fileURL}" data-filelabel="${fileLabel}">Validation</button>
                                           </div>`;
 
                     // Attach preview event to the "Preview" button dynamically, pass both fileURL and fileLabel
                     const previewButton = fileItem.querySelector('.preview-btn');
                     previewButton.addEventListener('click', () => previewFile(fileURL, fileLabel));
+
+                    // Attach validation event to open the validation modal
+                    const validationButton = fileItem.querySelector('.validation-btn');
+                    validationButton.addEventListener('click', (event) => openValidationModal(event.target.dataset.fileurl, event.target.dataset.filelabel));
 
                     uploadedFilesList.appendChild(fileItem);
                 };
@@ -491,29 +525,21 @@ async function openViewUploadsModal(permitData) {
     }
 }
 
+// Preview file function (remains the same)
 function previewFile(fileURL, fileLabel) {
     const previewContainer = document.getElementById('previewContainer');
 
-    // Get the file extension by removing the query parameters from the URL
-    const cleanURL = fileURL.split('?')[0]; // This removes the query string
-    const fileExtension = cleanURL.split('.').pop().toLowerCase(); // Get the extension
-
-    // Debugging logs
-    console.log("Clean file URL:", cleanURL);
-    console.log("File extension:", fileExtension);
-    console.log("Previewing file for:", fileLabel);
+    const cleanURL = fileURL.split('?')[0]; // Remove query string
+    const fileExtension = cleanURL.split('.').pop().toLowerCase();
 
     previewContainer.innerHTML = `<p><strong>${fileLabel}</strong></p>`; // Display file label
 
-    // Check file extension and display accordingly
     if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
-        // For image files (jpg, jpeg, png)
         const img = document.createElement('img');
         img.src = fileURL;
         img.className = 'img-fluid';
         previewContainer.appendChild(img);
     } else if (fileExtension === 'pdf') {
-        // For PDF files
         const embed = document.createElement('embed');
         embed.src = fileURL;
         embed.type = 'application/pdf';
@@ -521,28 +547,63 @@ function previewFile(fileURL, fileLabel) {
         embed.height = '300px';
         previewContainer.appendChild(embed);
     } else {
-        // Unsupported file type message
         previewContainer.innerHTML += '<p class="text-danger">File type not supported for preview.</p>';
     }
 }
 
+// Function to open the validation modal
+function openValidationModal(fileURL, fileLabel) {
+    const validationModalLabel = document.getElementById('validationModalLabel');
+    const validationPreviewContainer = document.getElementById('validationPreviewContainer');
+    const commentsInput = document.getElementById('validationComments');
 
-const createFileItem = (fileLabel, fileURL) => {
-    const fileItem = document.createElement('li');
-    fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+    validationModalLabel.textContent = `Validation for ${fileLabel}`;
+    commentsInput.value = ''; // Clear previous comments
 
-    fileItem.innerHTML = `<span>${fileLabel}</span>
-                          <div>
-                              <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
-                              <button class="btn btn-sm btn-outline-secondary preview-btn">Preview</button>
-                          </div>`;
+    // Preview the file inside the validation modal
+    previewFileInValidationModal(fileURL, fileLabel);
 
-    // Attach preview event to the "Preview" button dynamically, pass both fileURL and fileLabel
-    const previewButton = fileItem.querySelector('.preview-btn');
-    previewButton.addEventListener('click', () => previewFile(fileURL, fileLabel));
+    // Show the validation modal
+    const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+    validationModal.show();
+}
 
-    uploadedFilesList.appendChild(fileItem);
-};
+// Preview function for the validation modal
+function previewFileInValidationModal(fileURL, fileLabel) {
+    const validationPreviewContainer = document.getElementById('validationPreviewContainer');
+    validationPreviewContainer.innerHTML = `<p><strong>${fileLabel}</strong></p>`;
+
+    const cleanURL = fileURL.split('?')[0];
+    const fileExtension = cleanURL.split('.').pop().toLowerCase();
+
+    if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
+        const img = document.createElement('img');
+        img.src = fileURL;
+        img.className = 'img-fluid';
+        validationPreviewContainer.appendChild(img);
+    } else if (fileExtension === 'pdf') {
+        const embed = document.createElement('embed');
+        embed.src = fileURL;
+        embed.type = 'application/pdf';
+        embed.width = '100%';
+        embed.height = '300px';
+        validationPreviewContainer.appendChild(embed);
+    } else {
+        validationPreviewContainer.innerHTML += '<p class="text-danger">File type not supported for preview.</p>';
+    }
+}
+
+// Function to handle validation save
+function saveValidation() {
+    const selectedOption = document.querySelector('input[name="validationOptions"]:checked').value;
+    const comments = document.getElementById('validationComments').value;
+
+    console.log("Validation result:", selectedOption);
+    console.log("Comments:", comments);
+
+    // Save validation result and comments logic here...
+    // You can store it in Firestore or anywhere else
+}
 
 
 // Function to Control Progressive Status Selection for Electrical Certificates
