@@ -472,9 +472,9 @@ async function openViewUploadsModal(permitData) {
 
                     fileItem.innerHTML = `<span>${fileLabel}</span>
                                           <div>
-                                              <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
-                                              <button class="btn btn-sm btn-outline-secondary preview-btn">Preview</button>
-                                              <button class="btn btn-sm btn-outline-success validation-btn" data-fileurl="${fileURL}" data-filelabel="${fileLabel}">Validation</button>
+                                              <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-eye"></i></a>
+                                              <button class="btn btn-sm btn-outline-secondary preview-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                              <button class="btn btn-sm btn-outline-success validation-btn" data-fileurl="${fileURL}" data-filelabel="${fileLabel}"><i class="fa-solid fa-list-check"></i></button>
                                           </div>`;
 
                     // Attach preview event to the "Preview" button dynamically, pass both fileURL and fileLabel
