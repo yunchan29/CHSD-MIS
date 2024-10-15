@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHSD MIS - Dashboard</title>
-    
-    <!-- External Stylesheets -->
+    <title>CHSD MIS</title>
     <link rel="stylesheet" href="/Stylesheets/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- FullCalendar CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/main/main.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Inline Styles -->
+    <!-- FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/main.min.js"></script>
+
     <style>
-        /* General Content Styling */
-       
+        .content {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
         .content-container {
             overflow-y: auto;
             padding: 20px;
@@ -27,20 +32,18 @@
         .text-center {
             text-align: center !important;
         }
-        
-        /* Card Styling */
         .card {
             margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
-            font-size: 0.9rem; /* Adjusted card font size */
         }
         .card:hover {
             transform: scale(1.05);
         }
-      
-        
-        /* Loading Screen Styling */
+   
+        .card-text {
+            font-size: 1.5rem;
+        }
         .fetching-loading-screen {
             position: fixed;
             top: 0;
@@ -52,10 +55,7 @@
             align-items: center;
             background-color: rgba(255, 255, 255, 0.8);
             z-index: 9999;
-            font-size: 1rem; /* Adjusted font size */
         }
-
-        /* Chart and Calendar Styling */
         #applicantsChart {
             max-height: 250px;
         }
@@ -63,92 +63,34 @@
             width: 100%;
             margin: auto;
             max-width: 90%;
-            /* Removed fixed height to allow FullCalendar's 'auto' height */
-        }
-
-      
-
-       
-        /* Adjust Dashboard Heading */
-        .contentContainer h4 {
-            font-size: 1.3rem; /* Reduced font size */
-        }
-
-    
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .navbar-brand h5 {
-                font-size: 1rem; /* Further reduce on smaller screens */
-            }
-            .sideBarList li a {
-                font-size: 0.8rem;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
     <div id="fetching-loading-screen" class="fetching-loading-screen" style="display: none;">
-        <div class="spinner-border text-primary me-2" role="status">
+        <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Fetching from database...</span>
         </div>
         <p class="loading-text">Fetching from database...</p>
     </div>
 
-    <!-- Main Container -->
     <div class="main-container d-flex">
-        <!-- Sidebar Navigation -->
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center px-2 pt-3 pb-4">
-                <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"> 
-                    <i class="fa-solid fa-bars-staggered"></i>
-                </button>
+                <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"> <i class="fa-solid fa-bars-staggered"></i></button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav active">
-                    <a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none">
-                        <i class="fa-solid fa-house me-2"></i> Dashboard
-                    </a>
-                </li>
-                <li class="sideNav">
-                    <a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none">
-                        <i class="fa-solid fa-building-circle-check me-2"></i> Building Permit
-                    </a>
-                </li>
-                <li class="sideNav">
-                    <a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none">
-                        <i class="fa-solid fa-person-shelter me-2"></i> Occupancy Permit
-                    </a>
-                </li>
-                <li class="sideNav">
-                    <a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none">
-                        <i class="fa-solid fa-bolt me-2"></i> Electrical Inspection
-                    </a>
-                </li>
-                <li class="sideNav">
-                    <a href="/AdminPages/PermitsAndCert/adminPCNotif.html" class="text-decoration-none">
-                        <i class="fa-solid fa-bell me-2"></i> Notifications
-                    </a>
-                </li>
-                <li class="sideNav">
-                    <a href="/AdminPages/PermitsAndCert/adminPCArchive.html" class="text-decoration-none">
-                        <i class="fa-solid fa-box-archive me-2"></i> Archive
-                    </a>
-                </li>
-                <li class="sideNav">
-                    <a href="/AdminPages/PermitsAndCert/adminPCUserManager.html" class="text-decoration-none">
-                        <i class="fa-solid fa-user-pen me-2"></i> User Manager
-                    </a>
-                </li>
-                <li class="sideNav">
-                    <a id="admin-logout-btn" href="#" class="text-decoration-none">
-                        <i class="fa-solid fa-right-from-bracket me-2"></i> Log out
-                    </a>
-                </li>
+                <li class="sideNav active"><a href="/AdminPages/PermitsAndCert/adminDashboardP&C.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none"><i class="fa-solid fa-building-circle-check"></i> Building Permit</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none"><i class="fa-solid fa-person-shelter"></i> Occupancy Permit</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none"><i class="fa-solid fa-bolt"></i> Electrical Inspection</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCNotif.html" class="text-decoration-none"><i class="fa-solid fa-bell"></i> Notifications</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCArchive.html" class="text-decoration-none"><i class="fa-solid fa-box-archive"></i> Archive</a></li>
+                <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCUserManager.html" class="text-decoration-none"><i class="fa-solid fa-user-pen"></i> User Manager</a></li>
+                <li class="sideNav"><a id="admin-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
             </ul>
         </div>
 
-        <!-- Main Content Area -->
         <div class="content">
             <!-- Navigation Bar -->
             <nav class="navigationBar navbar navbar-expand-lg bg-light">
@@ -168,21 +110,18 @@
                     <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
                         <a class="navbar-brand d-flex align-items-center" href="#">
                             <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
-                            <h5 class="mb-0 fs-5">City Housing and Settlements Department</h5>
+                            <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
                         </a>
                     </div>
                 </div>
             </nav>
 
-            <!-- Content Container -->
             <div class="contentContainer">
-                <h4 class="text-center mb-4">Permit and Certificates Dashboard</h4>
+                <h4 class="text-center">Dashboard</h4>
 
-                <!-- Dashboard Cards -->
                 <div class="row justify-content-center text-center d-flex">
-                    <!-- Building Permit Card -->
                     <div class="col-md-4 d-flex">
-                        <a href="adminBuildingPermit.html" class="w-100 text-decoration-none text-dark">
+                        <a href="adminBuildingPermit.html" class="w-100">
                             <div class="card h-100">
                                 <div class="card-body">
                                     <h5 class="card-title">Building Permit</h5>
@@ -191,10 +130,8 @@
                             </div>
                         </a>
                     </div>
-
-                    <!-- Occupancy Permit Card -->
                     <div class="col-md-4 d-flex">
-                        <a href="adminCertofOcc.html" class="w-100 text-decoration-none text-dark">
+                        <a href="adminCertofOcc.html" class="w-100">
                             <div class="card h-100">
                                 <div class="card-body">
                                     <h5 class="card-title">Certificate of Occupancy</h5>
@@ -203,10 +140,8 @@
                             </div>
                         </a>
                     </div>
-
-                    <!-- Electrical Inspection Card -->
                     <div class="col-md-4 d-flex">
-                        <a href="adminCertofElec.html" class="w-100 text-decoration-none text-dark">
+                        <a href="adminCertofElec.html" class="w-100">
                             <div class="card h-100">
                                 <div class="card-body">
                                     <h5 class="card-title">Certificate of Electrical Inspection</h5>
@@ -216,18 +151,18 @@
                         </a>
                     </div>
                 </div>
-
-                <!-- Applicants Chart and Appointment Calendar -->
-                <div class="row justify-content-center text-center mt-5">
-                    <h4 class="mb-4">Total Applicants and Appointments</h4>
                 
-                    <!-- Total Applicants per Day Chart -->
-                    <div class="col-md-6 mb-4">
+
+                <div class="row justify-content-center text-center mt-5">
+                    
+                
+                    <!-- Column for Total Applicants Graph -->
+                    <div class="col-md-6">
                         <h5>Total Applicants per Day</h5>
                         <canvas id="applicantsChart" class="mb-3"></canvas>
                     </div>
                 
-                    <!-- Appointment Calendar -->
+                    <!-- Column for Appointment Calendar -->
                     <div class="col-md-6">
                         <h5>Appointment Calendar</h5>
                         <div id="calendar" class="p-3 border rounded shadow-sm"></div>
@@ -238,214 +173,113 @@
         </div>
     </div>
     
-    <!-- Firebase Initialization Script (Assuming this is necessary and correctly configured) -->
     <script type="module" src="/Database/firebase.js"></script>
 
-   <!-- Main Script -->
-<script type="module">
-    // Import Firebase modules
-    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { initializeFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    <script type="module">
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { initializeFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    import { Calendar } from 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js';
-import dayGridPlugin from 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/plugins/dayGrid.global.min.js';
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+            authDomain: "chsd-mis.firebaseapp.com",
+            projectId: "chsd-mis",
+            storageBucket: "chsd-mis.appspot.com",
+            messagingSenderId: "694967679357",
+            appId: "1:694967679357:web:65cffd50f13739f934f414",
+            measurementId: "G-XBQTQFRLJ5"
+        };
 
-
-    import { Chart } from 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.min.js';
-
-
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-        authDomain: "chsd-mis.firebaseapp.com",
-        projectId: "chsd-mis",
-        storageBucket: "chsd-mis.appspot.com",
-        messagingSenderId: "694967679357",
-        appId: "1:694967679357:web:65cffd50f13739f934f414",
-        measurementId: "G-XBQTQFRLJ5"
-    };
-
-    // Initialize Firebase if it hasn't been initialized already
-    let app;
-    if (!getApps().length) {
-        app = initializeApp(firebaseConfig);
-    } else {
-        app = getApp();  // Use the already initialized app
-    }
-
-    // Initialize Firebase services
-    const auth = getAuth(app);
-    const db = initializeFirestore(app, {
-        cache: {
-            sizeBytes: 40 * 1024 * 1024,  // Optional cache size
-            synchronizeTabs: true,        // Multi-tab persistence
+        // Initialize Firebase if it hasn't been initialized already
+        let app;
+        if (!getApps().length) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = getApp();  // Use the already initialized app
         }
-    });
 
-    // DOM Content Loaded Event
-    document.addEventListener('DOMContentLoaded', async function () {
-        // Show loading screen
-        document.getElementById("fetching-loading-screen").style.display = "flex";
+        // Initialize Firebase services
+        const auth = getAuth(app);
+        const db = initializeFirestore(app, {
+            cache: {
+                sizeBytes: 40 * 1024 * 1024,  // Optional cache size
+                synchronizeTabs: true,  // Multi-tab persistence
+            }
+        });
 
-        try {
-            // Fetch Building Permits
-            const buildingPermitsSnap = await getDocs(collection(db, 'buildingPermits'));
-            const buildingApplicantsCount = buildingPermitsSnap.docs.length;
-            console.log('Building Permits Count:', buildingApplicantsCount);
-            const buildingCreatedAt = buildingPermitsSnap.docs.map(doc => {
-                const data = doc.data();
-                return data.appointmentDate ? data.appointmentDate.toDate().toISOString().split('T')[0] : null;
-            }).filter(date => date !== null);
+        window.onload = async function () {
+            // Fetch data and initialize chart and calendar
+            try {
+                document.getElementById("fetching-loading-screen").style.display = "flex";
 
-            // Fetch Occupancy Permits
-            const occupancyPermitsSnap = await getDocs(collection(db, 'OccupancyPermits'));
-            const occupancyApplicantsCount = occupancyPermitsSnap.docs.length;
-            console.log('Occupancy Permits Count:', occupancyApplicantsCount);
-            const occupancyCreatedAt = occupancyPermitsSnap.docs.map(doc => {
-                const data = doc.data();
-                return data.appointmentDate ? data.appointmentDate.toDate().toISOString().split('T')[0] : null;
-            }).filter(date => date !== null);
+                // Fetch building permits and count createdAt dates
+                const buildingPermitsSnap = await getDocs(collection(db, 'buildingPermits'));
+                const buildingApplicantsCount = buildingPermitsSnap.docs.length; // Total building permit applicants
+                const buildingCreatedAt = buildingPermitsSnap.docs.map(doc => doc.data().createdAt.toDate().toISOString().split('T')[0]);
+                
+                // Fetch occupancy permits and count createdAt dates
+                const occupancyPermitsSnap = await getDocs(collection(db, 'OccupancyPermits'));
+                const occupancyApplicantsCount = occupancyPermitsSnap.docs.length; // Total occupancy permit applicants
+                const occupancyCreatedAt = occupancyPermitsSnap.docs.map(doc => doc.data().createdAt.toDate().toISOString().split('T')[0]);
 
-            // Fetch Electrical Certificates
-            const electricalCertSnap = await getDocs(collection(db, 'ElectricalCerts'));
-            const electricalApplicantsCount = electricalCertSnap.docs.length;
-            console.log('Electrical Certificates Count:', electricalApplicantsCount);
-            const electricalCreatedAt = electricalCertSnap.docs.map(doc => {
-                const data = doc.data();
-                return data.appointmentDate ? data.appointmentDate.toDate().toISOString().split('T')[0] : null;
-            }).filter(date => date !== null);
+                // Fetch electrical certificates and count createdAt dates
+                const electricalCertSnap = await getDocs(collection(db, 'ElectricalCerts'));
+                const electricalApplicantsCount = electricalCertSnap.docs.length; // Total electrical cert applicants
+                const electricalCreatedAt = electricalCertSnap.docs.map(doc => doc.data().createdAt.toDate().toISOString().split('T')[0]);
 
-            // Update Dashboard Counts
-            document.getElementById("buildingPermitCount").innerText = buildingApplicantsCount;
-            document.getElementById("occupancyPermitCount").innerText = occupancyApplicantsCount;
-            document.getElementById("electricalCertCount").innerText = electricalApplicantsCount;
+                // Combine all createdAt dates
+                const allCreatedAtDates = [...buildingCreatedAt, ...occupancyCreatedAt, ...electricalCreatedAt];
 
-            // Combine All Created At Dates
-            const allCreatedAtDates = [...buildingCreatedAt, ...occupancyCreatedAt, ...electricalCreatedAt];
-            console.log('All Created At Dates:', allCreatedAtDates);
+                // Count applicants per day
+                const applicantsPerDayCount = {};
+                allCreatedAtDates.forEach(date => {
+                    applicantsPerDayCount[date] = (applicantsPerDayCount[date] || 0) + 1;
+                });
 
-            // Count Applicants Per Day
-            const applicantsPerDayCount = {};
-            allCreatedAtDates.forEach(date => {
-                applicantsPerDayCount[date] = (applicantsPerDayCount[date] || 0) + 1;
-            });
-            console.log('Applicants Per Day Count:', applicantsPerDayCount);
+                // Prepare data for the chart
+                const labels = Object.keys(applicantsPerDayCount);
+                const data = Object.values(applicantsPerDayCount);
 
-            // Prepare Data for Chart
-            const labels = Object.keys(applicantsPerDayCount).sort();
-            const data = Object.values(applicantsPerDayCount);
-            console.log('Chart Labels:', labels);
-            console.log('Chart Data:', data);
-
-            // Initialize Applicants Chart
-            const ctx = document.getElementById('applicantsChart').getContext('2d');
-            const applicantsChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '# of Applicants',
-                        data: data,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            },
-                            ticks: {
-                                font: {
-                                    size: 10 // Adjusted font size
-                                }
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Number of Applicants'
-                            },
-                            ticks: {
-                                font: {
-                                    size: 10 // Adjusted font size
-                                },
-                                beginAtZero: true
-                            }
-                        }
+                // Initialize the applicants chart
+                const ctx = document.getElementById('applicantsChart').getContext('2d');
+                const applicantsChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '# of Applicants',
+                            data: data,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            tension: 0.3,
+                        }]
                     },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                font: {
-                                    size: 10 // Adjusted font size
-                                }
-                            }
-                        },
-                        tooltip: {
-                            bodyFont: {
-                                size: 10 // Adjusted font size
-                            },
-                            titleFont: {
-                                size: 12 // Adjusted font size
-                            }
-                        }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
                     }
-                }
-            });
+                });
 
-            // Prepare Appointment Data for Calendar
-            const appointmentsSnap = [...buildingPermitsSnap.docs, ...occupancyPermitsSnap.docs, ...electricalCertSnap.docs];
-            const events = appointmentsSnap.map(doc => {
-                const data = doc.data();
-                if (data.appointmentDate) {
-                    return {
-                        title: data.title || "Appointment",
-                        start: data.appointmentDate.toDate().toISOString().split('T')[0]
-                    };
-                } else {
-                    console.warn(`Document ID ${doc.id} is missing appointmentDate`);
-                    return null;
-                }
-            }).filter(event => event !== null && event.start);
+                // Prepare appointment data
+                const appointmentsSnap = [...buildingPermitsSnap.docs, ...occupancyPermitsSnap.docs, ...electricalCertSnap.docs];
+                const events = appointmentsSnap.map(doc => ({
+                    title: doc.data().title || "Appointment", // Use title or default
+                    start: doc.data().appointmentDate?.toDate().toISOString().split('T')[0] // Ensure the date format is correct
+                })).filter(event => event.start); // Filter out events without a date
 
-            console.log('Calendar Events:', events);
-
-            // Initialize FullCalendar
-            const calendarEl = document.getElementById('calendar');
-            const calendar = new Calendar(calendarEl, {
-                plugins: [dayGridPlugin],
-                initialView: 'dayGridMonth',
-                events: events,
-                height: 'auto', // Allows the calendar to adjust its height automatically
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                eventDisplay: 'block', // Ensures events are displayed as blocks
-                dayMaxEvents: true, // Limits the number of events per day and shows a "+n more" link
-                locales: ['en'], // Set locale if needed
-                contentHeight: 'auto' // Adjusts content height automatically
-            });
-            calendar.render();
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            alert("An error occurred while fetching data. Please try again later.");
-        } finally {
-            // Hide loading screen
-            document.getElementById("fetching-loading-screen").style.display = "none";
+                // Initialize the calendar
+                const calendarEl = document.getElementById('calendar');
+                const calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    events: events
+                });
+                calendar.render();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                document.getElementById("fetching-loading-screen").style.display = "none";
+            }
         }
-    });
-</script>
-
+    </script>
 </body>
 </html>
