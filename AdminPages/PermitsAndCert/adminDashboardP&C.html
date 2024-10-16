@@ -173,7 +173,7 @@
         </div>
     </div>
     
-    <script type="module" src="/Database/firebase.js"></script>
+  
 
     <script type="module">
         import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -209,7 +209,6 @@
         });
     
         window.onload = async function () {
-            // Fetch data and initialize chart and calendar
             try {
                 document.getElementById("fetching-loading-screen").style.display = "flex";
     
@@ -275,7 +274,13 @@
                 const calendarEl = document.getElementById('calendar');
                 const calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
-                    events: events
+                    events: events,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    height: 500 // Set a fixed height for better viewing
                 });
                 calendar.render();
             } catch (error) {
@@ -285,6 +290,8 @@
             }
         }
     </script>
+    
+<script type="module" src="/Database/firebase.js"></script>
     
 </body>
 </html>

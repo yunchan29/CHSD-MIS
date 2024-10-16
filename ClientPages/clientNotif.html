@@ -120,7 +120,7 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+const auth = getAuth(app); 
 const db = getFirestore(app);
 let notificationsPerPage = 5; // Number of notifications per page
 let currentPage = 1; // Track the current page

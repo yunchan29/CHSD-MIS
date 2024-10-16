@@ -895,6 +895,37 @@ async function downloadApplicationAsPDF(permitId) {
     }
 }
 
+
+async function fetchPermitCounts() {
+    // Show the loading screen
+    document.getElementById('fetching-loading-screen').style.display = 'flex';
+
+    // Collection references
+    const buildingPermitRef = collection(db, "buildingPermits");
+    const occupancyPermitRef = collection(db, "OccupancyPermits");
+    const electricalCertRef = collection(db, "ElectricalCert");
+
+    try {
+        // Get the total count of documents in each collection
+        const buildingPermitsSnapshot = await getDocs(buildingPermitRef);
+        const occupancyPermitsSnapshot = await getDocs(occupancyPermitRef);
+        const electricalCertsSnapshot = await getDocs(electricalCertRef);
+
+        // Update the UI with the counts
+        document.getElementById('buildingPermitCount').textContent = buildingPermitsSnapshot.size;
+        document.getElementById('occupancyPermitCount').textContent = occupancyPermitsSnapshot.size;
+        document.getElementById('electricalCertCount').textContent = electricalCertsSnapshot.size;
+    } catch (error) {
+        console.error("Error fetching permit counts: ", error);
+    } finally {
+        // Hide the loading screen
+        document.getElementById('fetching-loading-screen').style.display = 'none';
+    }
+}
+
+// Call the function to fetch and display permit counts
+fetchPermitCounts();
+
 async function loadUserPermitStatus() {  
     try {
         const user = auth.currentUser;
@@ -1078,33 +1109,3 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
         });
     }
 });
-
-async function fetchPermitCounts() {
-    // Show the loading screen
-    document.getElementById('fetching-loading-screen').style.display = 'flex';
-
-    // Collection references
-    const buildingPermitRef = collection(db, "buildingPermits");
-    const occupancyPermitRef = collection(db, "OccupancyPermits");
-    const electricalCertRef = collection(db, "ElectricalCert");
-
-    try {
-        // Get the total count of documents in each collection
-        const buildingPermitsSnapshot = await getDocs(buildingPermitRef);
-        const occupancyPermitsSnapshot = await getDocs(occupancyPermitRef);
-        const electricalCertsSnapshot = await getDocs(electricalCertRef);
-
-        // Update the UI with the counts
-        document.getElementById('buildingPermitCount').textContent = buildingPermitsSnapshot.size;
-        document.getElementById('occupancyPermitCount').textContent = occupancyPermitsSnapshot.size;
-        document.getElementById('electricalCertCount').textContent = electricalCertsSnapshot.size;
-    } catch (error) {
-        console.error("Error fetching permit counts: ", error);
-    } finally {
-        // Hide the loading screen
-        document.getElementById('fetching-loading-screen').style.display = 'none';
-    }
-}
-
-// Call the function to fetch and display permit counts
-fetchPermitCounts();
