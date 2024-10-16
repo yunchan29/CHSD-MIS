@@ -649,10 +649,8 @@
                         <select id="statusSelect" class="form-select">
                             <option value="Pending">Pending</option>
                             <option value="Processing">Processing</option>
-                            <option value="To Pay">To Pay</option>
-                            <option value="For Approval">For Approval</option>
-                            <option value="For Release">For Release</option>
-                            <option value="Claimed">Claimed</option>
+                           
+                            <option value="Submitted">Submitted</option>
                         </select>
                     </div>
                 </div>
@@ -674,7 +672,7 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button" id="saveStatusBtn" class="btn btn-primary">Save</button>
+                <button type="button" id="saveStatusButton" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -958,6 +956,11 @@ async function updateStatusOptions() {
     }
 }
 
+// Get the save button element
+const saveStatusButton = document.getElementById("saveStatusButton");
+
+// Add a click event listener to the save button
+saveStatusButton.addEventListener("click", updateStatusOptions);
     
         // Function to Archive a Housing Application
         async function handleArchiveHousingApplication(event) {

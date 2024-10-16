@@ -7,127 +7,340 @@
     <link rel="stylesheet" href="/Stylesheets/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
 </head>
+
 <body>
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center">
-                <!-- Empty avatar icon -->
-               
-               
                 <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-              <li class="sideNav active"><a href="/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-              <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersApplication.html" class="text-decoration-none"><i class="fa-solid fa-folder"></i> Housing Application</a></li>
-      
-              <li class="sideNav"><a id="admin-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
-          </ul>
+                <li class="sideNav active"><a href="/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersApplication.html" class="text-decoration-none"><i class="fa-solid fa-folder"></i> Housing Application</a></li>
+                <li class="sideNav"><a id="admin-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
+            </ul>
         </div>
 
         <div class="content">
-           <!--Navigation Bar-->
-<nav class="navigationBar navbar navbar-expand-lg bg-light">
-  <div class="container-fluid">
-      <!-- Mobile View -->
-      <div class="d-flex justify-content-between d-md-none d-block">
-          <a class="navbar-brand d-flex align-items-center" href="#">
-              <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
-              <h5 class="mb-0 fs-5">CHSD</h5>
-          </a>
-          <button class="btn px-1 py-0 open-btn">
-              <i class="fa-solid fa-bars-staggered"></i>
-          </button>
-      </div>
+            <nav class="navigationBar navbar navbar-expand-lg bg-light">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between d-md-none d-block">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
+                            <h5 class="mb-0 fs-5">CHSD</h5>
+                        </a>
+                        <button class="btn px-1 py-0 open-btn">
+                            <i class="fa-solid fa-bars-staggered"></i>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
+                        <a class="navbar-brand d-flex align-items-center" href="#">
+                            <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
+                            <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+                        </a>
+                    </div>
+                </div>
+            </nav>
 
-      <!-- Desktop View -->
-      <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
-          <a class="navbar-brand d-flex align-items-center" href="#">
-              <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
-              <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
-          </a>
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <!-- Additional nav items go here -->
-          </ul>
-      </div>
-  </div>
-</nav>
-
+            <div class="contentContainer py-5">
+                <div class="container">
+                    <!-- Hero Section -->
+                    <div class="row gy-5">
+                        <div class="col-md-12 mb-3">
+                            <div class="card text-center" style="background-color: #f7f7f7; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                                <div class="card-body">
+                                    <h2 class="mb-3" style="font-weight: 500; color: #333;">Welcome!</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             
-            <div class="contentContainer">
-               
-               <!-- Bootstrap Table -->
-               <div class="container">
-                
-                  <h5>Dashboard</h5>
-                  
-                
-                 
-               </div>
-              
-               
+                    <!-- Chart Section -->
+                    <div class="row gy-5">
+                        <div class="col-md-6 mb-3">
+                            <!-- New Card for Total Applicants as a Line Chart -->
+                            <div class="card" style="max-height: 300px;">
+                                <h6 class="card-header text-center">Total Applicants Over Time</h6>
+                                <div class="card-body" style="padding: 0.5rem;">
+                                    <canvas id="totalApplicantsChart" style="height: 200px; width: 100%;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="row gy-5">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card">
+                                        <h6 class="card-header">Area Classification</h6>
+                                        <div class="card-body">
+                                            <canvas id="chart1" style="max-width: 250px;"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card">
+                                        <h6 class="card-header">Status</h6>
+                                        <div class="card-body">
+                                            <canvas id="chart2" style="max-width: 250px;"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Additional Charts Section -->
+                    <div class="row gy-5">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <h6 class="card-header">Barangay</h6>
+                                <div class="card-body">
+                                    <canvas id="chart3" style="max-width: 300px;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <h6 class="card-header">Barangay Distribution</h6>
+                                <div class="card-body">
+                                    <canvas id="chart4" style="max-width: 250px;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <!-- Add more charts or content here -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            
         </div>
-    </div>
-</div>
 
+        <script type="module" src="/Database/firebase.js"></script>
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+            import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+            import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  
- 
-</div>
+            // Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+                authDomain: "chsd-mis.firebaseapp.com",
+                projectId: "chsd-mis",
+                storageBucket: "chsd-mis.appspot.com",
+                messagingSenderId: "694967679357",
+                appId: "1:694967679357:web:65cffd50f13739f934f414",
+                measurementId: "G-XBQTQFRLJ5"
+            };
 
-<script type="module" src="/Database/firebase.js">
-</script>
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+          // Retrieve data from Firestore
+const housingRef = collection(db, 'Housing');
+getDocs(housingRef).then((snapshot) => {
+    const classificationAreas = [];
+    const statuses = [];
+    const barangays = [];
+    const creationDates = []; // Array to store creation dates
 
-  // Firebase configuration
-  const firebaseConfig = {
-      apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-      authDomain: "chsd-mis.firebaseapp.com",
-      projectId: "chsd-mis",
-      storageBucket: "chsd-mis.appspot.com",
-      messagingSenderId: "694967679357",
-      appId: "1:694967679357:web:65cffd50f13739f934f414",
-      measurementId: "G-XBQTQFRLJ5"
-  };
+    snapshot.docs.forEach((doc) => {
+        const classificationArea = doc.data().classificationArea;
+        classificationAreas.push(classificationArea);
+        const status = doc.data().status;
+        statuses.push(status);
+        const barangay = doc.data().barangay;
+        barangays.push(barangay);
+        const createdAt = doc.data().createdAt; // Get creation date
+        creationDates.push(createdAt.toDate()); // Convert to Date object
+    });
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    // Create a pie chart for area classification
+    const ctx1 = document.getElementById('chart1').getContext('2d');
+    const chart1 = new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: ['Danger Zone', 'Safe Zone', 'Other'],
+            datasets: [{
+                label: 'Classification Area',
+                data: [
+                    classificationAreas.filter(area => area === 'Danger Zone').length,
+                    classificationAreas.filter(area => area === 'Safe Zone').length,
+                    classificationAreas.filter(area => area !== 'Danger Zone' && area !== 'Safe Zone').length
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 
- 
-</script>
+    // Create a horizontal bar chart for status distribution
+    const ctx2 = document.getElementById('chart2').getContext('2d');
+    const chart2 = new Chart(ctx2, {
+        type: 'bar', // Keep the type as 'bar'
+        data: {
+            labels: ['Pending', 'Processing', 'Submitted'], // Status labels
+            datasets: [{
+                label: 'Status',
+                data: [
+                    statuses.filter(status => status === 'Pending').length,
+                    statuses.filter(status => status === 'Processing').length,
+                    statuses.filter(status => status === 'Submitted').length
+                ], // Count occurrences of each status
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Set indexAxis to 'y' for horizontal bars
+            scales: {
+                x: {
+                    beginAtZero: true // Start x-axis at zero
+                },
+                y: {
+                    beginAtZero: true // Start y-axis at zero
+                }
+            }
+        }
+    });
 
+    // Create a pie chart for barangay
+    const ctx3 = document.getElementById('chart3').getContext('2d');
+    const chart3 = new Chart(ctx3, {
+        type: 'doughnut',
+        data: {
+            labels: [...new Set(barangays)],
+            datasets: [{
+                label: 'Barangay',
+                data: barangays.map(barangay => barangays.filter(b => b === barangay).length),
+                backgroundColor: [...new Array(barangays.length)].map(() => `#${Math.floor(Math.random() * 16777215).toString(16)}`),
+                borderColor: [...new Array(barangays.length)].map(() => `#${Math.floor(Math.random() * 16777215).toString(16)}`),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 
-<script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-      const dateInput = document.getElementById('surveyDate');
-      const today = new Date().toISOString().split('T')[0]; // Get today's date in yyyy-mm-dd format
-      dateInput.value = today;
-  });
-</script>
-<!--Navigation Bar-->
-<script>
-  document.querySelector('.open-btn').addEventListener('click', function() {
-      document.getElementById('side_nav').classList.add('active');
-  });
+    // Create a bar chart for barangay distribution
+    const ctx4 = document.getElementById('chart4').getContext('2d');
+    const chart4 = new Chart (ctx4, {
+        type: 'bar',
+        data: {
+            labels: [...new Set(barangays)],
+            datasets: [{
+                label: 'Barangay Distribution',
+                data: barangays.map(barangay => barangays.filter(b => b === barangay).length),
+                backgroundColor: [...new Array(barangays.length)].map(() => `#${Math.floor(Math.random() * 16777215).toString(16)}`),
+                borderColor: [...new Array(barangays.length)].map(() => `#${Math.floor(Math.random() * 16777215).toString(16)}`),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 
-  document.querySelector('.close-btn').addEventListener('click', function() {
-      document.getElementById('side_nav').classList.remove('active');
-  });
-</script>
+    // Create a line chart for total applicants per day
+    const ctx5 = document.getElementById('totalApplicantsChart').getContext('2d');
+    const chart5 = new Chart(ctx5, {
+        type: 'line',
+        data: {
+            labels: [], // Initialize empty labels array
+            datasets: [{
+                label: 'Total Applicants',
+                data: [], // Initialize empty data array
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 
+    // Process creation dates to count applicants per day
+    const applicantsPerDay = {};
+    creationDates.forEach((date) => {
+        const day = date.toLocaleDateString(); // Get date in 'MM/dd/yyyy' format
+        if (!applicantsPerDay[day]) {
+            applicantsPerDay[day] = 1;
+        } else {
+            applicantsPerDay[day]++;
+        }
+    });
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-<script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
-<script defer src="/Database/firebase.js" type="module"></script>
-</body>
+    // Update chart data
+    Object.keys(applicantsPerDay).forEach((day, index) => {
+        chart5.data.labels.push(day);
+        chart5.data.datasets[0].data.push(applicantsPerDay[day]);
+    });
+
+    chart5.update(); // Update the chart
+});
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                const dateInput = document.getElementById('surveyDate');
+                const today = new Date().toISOString().split('T')[0]; // Get today's date in yyyy-mm-dd format
+                dateInput.value = today;
+            });
+        </script>
+
+        <script>
+            document.querySelector('.open-btn').addEventListener('click', function() {
+                document.getElementById('side_nav').classList.add('active');
+            });
+
+            document.querySelector('.close-btn').addEventListener('click', function() {
+                document.getElementById('side_nav').classList.remove('active');
+            });
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPj Vp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous "></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmu GrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </body>
 </html>
