@@ -895,7 +895,7 @@ async function downloadApplicationAsPDF(permitId) {
     }
 }
 
-async function loadUserPermitStatus() { 
+async function loadUserPermitStatus() {  
     try {
         const user = auth.currentUser;
         if (!user) {
@@ -928,11 +928,17 @@ async function loadUserPermitStatus() {
         const housingApplicationsQuery = query(housingApplicationsRef, where("ownerUid", "==", user.uid));
         const housingApplicationsSnapshot = await getDocs(housingApplicationsQuery);
 
+        // Fetch Electrical Certifications
+        const electricalCertRef = collection(db, "ElectricalCert");
+        const electricalCertQuery = query(electricalCertRef, where("ownerUid", "==", user.uid));
+        const electricalCertSnapshot = await getDocs(electricalCertQuery);
+
         console.log("Building Permits Query Result:", buildingPermitsSnapshot.empty ? "No documents found." : `Found ${buildingPermitsSnapshot.size} documents`);
         console.log("Occupancy Permits Query Result:", occupancyPermitsSnapshot.empty ? "No documents found." : `Found ${occupancyPermitsSnapshot.size} documents`);
         console.log("Housing Applications Query Result:", housingApplicationsSnapshot.empty ? "No documents found." : `Found ${housingApplicationsSnapshot.size} documents`);
+        console.log("Electrical Cert Query Result:", electricalCertSnapshot.empty ? "No documents found." : `Found ${electricalCertSnapshot.size} documents`);
 
-        const createTableRow = (permit, permitType, permitId) => {
+        const createTableRow = (permit, permitType, permitId, commentsSummary = []) => {
             console.log("Creating table row for permit:", permit);
             
             // Owner name logic
@@ -943,11 +949,15 @@ async function loadUserPermitStatus() {
         
             // Actions (View Remarks)
             const viewRemarksButton = `
-                <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#viewRemarks" data-id="${permitId}">
+                <a class="btn btn-primary text-white" 
+                   data-bs-toggle="modal" 
+                   data-bs-target="#viewRemarks" 
+                   data-id="${permitId}" 
+                   data-comments-summary='${JSON.stringify(commentsSummary)}'>
                     <i class="fa-solid fa-comment"></i> Remarks
                 </a>
             `;
-        
+
             // Create a new table row
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -961,13 +971,30 @@ async function loadUserPermitStatus() {
             // Append the row to the table body
             tableBody.appendChild(row);
         };
-        
+
+        // Helper to extract validation comments and statuses
+        const extractCommentsSummary = (fileValidationStatus) => {
+            if (!fileValidationStatus) return [];
+            let comments = [];
+            for (const file in fileValidationStatus) {
+                const fileData = fileValidationStatus[file];
+                if (fileData.comments) {
+                    comments.push({
+                        fileName: file,
+                        status: fileData.status,  // Assuming 'status' is part of fileData
+                        comment: fileData.comments
+                    });
+                }
+            }
+            return comments;
+        };
 
         // Populate Building Permits
         if (!buildingPermitsSnapshot.empty) {
             buildingPermitsSnapshot.forEach((permitDoc) => {
                 const permit = permitDoc.data();
-                createTableRow(permit, "Building Permit", permitDoc.id);
+                const commentsSummary = extractCommentsSummary(permit.fileValidationStatus);
+                createTableRow(permit, "Building Permit", permitDoc.id, commentsSummary);
             });
         }
 
@@ -975,7 +1002,8 @@ async function loadUserPermitStatus() {
         if (!occupancyPermitsSnapshot.empty) {
             occupancyPermitsSnapshot.forEach((permitDoc) => {
                 const permit = permitDoc.data();
-                createTableRow(permit, "Certificate of Occupancy", permitDoc.id);
+                const commentsSummary = extractCommentsSummary(permit.fileValidationStatus);
+                createTableRow(permit, "Certificate of Occupancy", permitDoc.id, commentsSummary);
             });
         }
 
@@ -983,13 +1011,23 @@ async function loadUserPermitStatus() {
         if (!housingApplicationsSnapshot.empty) {
             housingApplicationsSnapshot.forEach((applicationDoc) => {
                 const application = applicationDoc.data();
-                createTableRow(application, "Housing Application", applicationDoc.id);
+                const commentsSummary = extractCommentsSummary(application.fileValidationStatus);
+                createTableRow(application, "Housing Application", applicationDoc.id, commentsSummary);
             });
         }
 
-        // If no permits found in both collections
-        if (buildingPermitsSnapshot.empty && occupancyPermitsSnapshot.empty && housingApplicationsSnapshot.empty) {
-            tableBody.innerHTML = '<tr><td colspan="5">No permits or applications found.</td></tr>';
+        // Populate Electrical Certifications
+        if (!electricalCertSnapshot.empty) {
+            electricalCertSnapshot.forEach((certDoc) => {
+                const cert = certDoc.data();
+                const commentsSummary = extractCommentsSummary(cert.fileValidationStatus);
+                createTableRow(cert, "Electrical Certification", certDoc.id, commentsSummary);
+            });
+        }
+
+        // If no permits found in any collection
+        if (buildingPermitsSnapshot.empty && occupancyPermitsSnapshot.empty && housingApplicationsSnapshot.empty && electricalCertSnapshot.empty) {
+            tableBody.innerHTML = '<tr><td colspan="6">No permits or applications found.</td></tr>';
         }
 
     } catch (error) {
@@ -999,8 +1037,47 @@ async function loadUserPermitStatus() {
     }
 }
 
+// Event listener for loading comments into the modal
+document.getElementById('viewRemarks').addEventListener('show.bs.modal', function (event) {
+    // Button that triggered the modal
+    const button = event.relatedTarget;
+    
+    // Extract info from data-* attributes
+    const commentsSummary = JSON.parse(button.getAttribute('data-comments-summary'));
+    
+    // Update the modal's content with structured comments
+    const modalBody = document.querySelector('#viewRemarks .modal-body');
+    modalBody.innerHTML = '';  // Clear previous content
 
+    if (commentsSummary.length === 0) {
+        modalBody.textContent = 'No remarks available.';
+    } else {
+        commentsSummary.forEach(commentObj => {
+            const commentRow = document.createElement('div');
+            commentRow.style.padding = '10px';
+            commentRow.style.marginBottom = '5px';
 
+            // Apply background color based on approval status
+            if (commentObj.status && commentObj.status.toLowerCase() === 'approved') {
+                commentRow.style.backgroundColor = 'green';
+                commentRow.style.color = 'white';
+            } else if (commentObj.status && commentObj.status.toLowerCase() === 'disapproved') {
+                commentRow.style.backgroundColor = 'red';
+                commentRow.style.color = 'white';
+            } else {
+                commentRow.style.backgroundColor = 'lightgray';
+            }
+
+            commentRow.innerHTML = `
+                <strong>File:</strong> ${commentObj.fileName}<br>
+                <strong>Status:</strong> ${commentObj.status}<br>
+                <strong>Comment:</strong> ${commentObj.comment}
+            `;
+
+            modalBody.appendChild(commentRow);
+        });
+    }
+});
 
 async function fetchPermitCounts() {
     // Show the loading screen

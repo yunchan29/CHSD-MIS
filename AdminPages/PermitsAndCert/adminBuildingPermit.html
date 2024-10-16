@@ -702,36 +702,68 @@
     </div>
 </div>
 
-<!-- View Uploads Modal -->
-<div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
+ <!-- View Uploads Modal -->
+ <div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
     <div class="wide-modal modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <!-- Uploaded Files List -->
-            <div class="col-lg-6">
-              <ul id="uploadedFilesList" class="list-group">
-                <!-- Dynamically append files here -->
-              </ul>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <!-- Preview Section -->
-            <div class="col-lg-6">
-              <div id="previewContainer" class="border p-3" style="min-height: 300px;">
-                <p class="text-muted">Select a file to preview here.</p>
-              </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Uploaded Files List -->
+                    <div class="col-lg-12">
+                        <ul id="uploadedFilesList" class="list-group">
+                            <!-- Dynamically append files here -->
+                        </ul>
+                    </div>
+                </div>
+                <!-- Comment Summary Section -->
+                <div id="commentSummaryContainer" class="mt-3">
+                    <h6>File Validation Comments</h6>
+                    <ul id="commentSummaryList" class="list-group">
+                        <!-- Comments will be summarized here -->
+                    </ul>
+                </div>
             </div>
-          </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
+
+<div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="validationModalLabel">Validation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="filePreviewContainer" style="display: none;"> <!-- Hidden by default -->
+                    <iframe id="filePreview" style="width: 100%; height: 400px;" frameborder="0"></iframe>
+                </div>
+                <div class="mt-3">
+                    <label>Validation:</label><br>
+                    <input type="radio" name="validationOptions" value="approved" id="approvedOption">
+                    <label for="approvedOption">Approve</label><br>
+                    <input type="radio" name="validationOptions" value="disapproved" id="disapprovedOption">
+                    <label for="disapprovedOption">Disapprove</label>
+                </div>
+                <div class="mt-3">
+                    <label for="validationComments">Comments:</label>
+                    <textarea class="form-control" id="validationComments" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveValidationBtn">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="notificationContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050; display: none;">
     <!-- Notifications will be dynamically added here -->
@@ -990,26 +1022,29 @@ col1.appendChild(btn1);
 }
 
 
+let fileValidationStatus = {}; // For tracking file validation status and comments
+
 async function openViewUploadsModal(permitData) {
     try {
-        console.log("Fetching uploaded files for permit:", permitData.id);
+        console.log("Fetching uploaded files and validation status for permit:", permitData.id);
 
         // Fetch the building permit document from Firestore
         const permitDocRef = doc(db, "buildingPermits", permitData.id);
         const permitSnapshot = await getDoc(permitDocRef);
 
         const uploadedFilesList = document.getElementById('uploadedFilesList');
-        uploadedFilesList.innerHTML = ''; // Clear existing files
+        const commentSummaryList = document.getElementById('commentSummaryList');
+        uploadedFilesList.innerHTML = '';  // Clear existing files
+        commentSummaryList.innerHTML = ''; // Clear previous comments
 
         if (!permitSnapshot.exists()) {
-            console.warn("No permit document found.");
             const noFilesItem = document.createElement('li');
             noFilesItem.className = 'list-group-item';
             noFilesItem.textContent = 'No files uploaded.';
             uploadedFilesList.appendChild(noFilesItem);
         } else {
             const permitData = permitSnapshot.data();
-            const { buildingPlanURL, proofOwnershipURL } = permitData;
+            const { buildingPlanURL, proofOwnershipURL, fileValidationStatus = {} } = permitData;
 
             if (!buildingPlanURL && !proofOwnershipURL) {
                 const noFilesItem = document.createElement('li');
@@ -1017,22 +1052,44 @@ async function openViewUploadsModal(permitData) {
                 noFilesItem.textContent = 'No files uploaded.';
                 uploadedFilesList.appendChild(noFilesItem);
             } else {
-                // Add Building Plan file if exists
-                if (buildingPlanURL) {
+                const createFileItem = (fileLabel, fileURL, fileRowId) => {
                     const fileItem = document.createElement('li');
                     fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                    fileItem.innerHTML = `<span>Building Plan</span>
-                                          <a href="${buildingPlanURL}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>`;
-                    uploadedFilesList.appendChild(fileItem);
-                }
+                    fileItem.dataset.rowid = fileRowId;
 
-                // Add Proof of Ownership file if exists
-                if (proofOwnershipURL) {
-                    const fileItem = document.createElement('li');
-                    fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                    fileItem.innerHTML = `<span>Proof of Ownership</span>
-                                          <a href="${proofOwnershipURL}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>`;
+                    fileItem.innerHTML = `
+                        <span>${fileLabel}</span>
+                        <div>
+                            <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-eye"></i></a>
+                            <button class="btn btn-sm btn-outline-success validation-btn" data-fileurl="${fileURL}" data-filelabel="${fileLabel}" data-rowid="${fileRowId}"><i class="fa-solid fa-list-check"></i></button>
+                        </div>`;
+
+                    // Attach validation event to open the validation modal
+                    const validationButton = fileItem.querySelector('.validation-btn');
+                    validationButton.addEventListener('click', (event) => {
+                        const fileRow = document.querySelector(`[data-rowid="${event.currentTarget.dataset.rowid}"]`);
+                        openValidationModal(event.currentTarget.dataset.fileurl, event.currentTarget.dataset.filelabel, fileRow);
+                    });
+
                     uploadedFilesList.appendChild(fileItem);
+                };
+
+                // Display each uploaded file
+                if (buildingPlanURL) createFileItem('Building Plan', buildingPlanURL, 'buildingPlan');
+                if (proofOwnershipURL) createFileItem('Proof of Ownership', proofOwnershipURL, 'proofOwnership');
+
+                // Check for validation comments and status
+                for (const fileRowId in fileValidationStatus) {
+                    const { status, comments } = fileValidationStatus[fileRowId];
+                    const statusText = status.charAt(0).toUpperCase() + status.slice(1); // Capitalize first letter
+                    const commentPrefix = `${fileRowId.replace(/([A-Z])/g, ' $1').trim()} - ${statusText} - `;
+
+                    const commentSummaryItem = document.createElement('li');
+                    commentSummaryItem.className = 'list-group-item';
+                    commentSummaryItem.dataset.commentid = fileRowId;
+                    commentSummaryItem.innerHTML = `<strong>${commentPrefix}</strong> ${comments ? comments : 'No comments'}`;
+
+                    commentSummaryList.appendChild(commentSummaryItem);
                 }
             }
         }
@@ -1047,6 +1104,111 @@ async function openViewUploadsModal(permitData) {
     }
 }
 
+function openValidationModal(fileURL, fileLabel, fileRow) {
+    // Hide view uploads modal
+    const viewUploadsModal = bootstrap.Modal.getInstance(document.getElementById('viewUploadsModal'));
+    viewUploadsModal.hide();
+
+    const validationModalLabel = document.getElementById('validationModalLabel');
+    const commentsInput = document.getElementById('validationComments');
+    const previewContainer = document.getElementById('filePreviewContainer');
+    const filePreview = document.getElementById('filePreview');
+
+    validationModalLabel.textContent = `Validation for ${fileLabel}`;
+    commentsInput.value = ''; // Clear previous comments
+
+    // Reset preview
+    previewContainer.style.display = 'none';
+    filePreview.src = ''; // Clear previous preview
+
+    // Check file type for preview
+    if (fileURL.endsWith('.pdf')) {
+        filePreview.src = fileURL; // Set PDF URL for preview
+        previewContainer.style.display = 'block'; // Show the preview container for PDFs
+        filePreview.type = "application/pdf"; // Ensure it's treated as PDF
+    } else {
+        // For images and other types, show image preview
+        filePreview.src = fileURL;
+        previewContainer.style.display = 'block'; // Show preview for images
+        filePreview.type = "image"; // Treat as image for other formats
+    }
+
+    // Store fileRow ID in save button for later validation
+    const saveBtn = document.getElementById('saveValidationBtn');
+    saveBtn.dataset.filerow = fileRow.dataset.rowid;
+
+    saveBtn.removeEventListener('click', saveValidation);  // Remove previous listener
+    saveBtn.addEventListener('click', saveValidation);      // Add new listener
+
+    // Show the validation modal
+    const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+    validationModal.show();
+}
+
+async function saveValidation() {
+    const selectedOption = document.querySelector('input[name="validationOptions"]:checked');
+    if (!selectedOption) {
+        alert('Please select an option (approve/disapprove).');
+        return;
+    }
+
+    const comments = document.getElementById('validationComments').value;
+    const fileRowId = document.getElementById('saveValidationBtn').dataset.filerow;
+    const fileRow = document.querySelector(`[data-rowid="${fileRowId}"]`);
+
+    fileValidationStatus[fileRowId] = {
+        status: selectedOption.value,
+        comments: comments
+    };
+
+    const permitId = document.getElementById('hiddenPermitId').value;
+
+    if (!permitId) {
+        console.error('Permit ID is not available.');
+        alert('Error: Permit data is missing.');
+        return;
+    }
+
+    const permitDocRef = doc(db, "buildingPermits", permitId);
+    try {
+        await updateDoc(permitDocRef, {
+            [`fileValidationStatus.${fileRowId}`]: {
+                status: selectedOption.value,
+                comments: comments
+            }
+        });
+        console.log('Validation saved to Firestore');
+    } catch (error) {
+        console.error("Error saving validation to Firestore:", error);
+        alert("Failed to save validation.");
+    }
+
+    // Close validation modal and reopen the view uploads modal
+    const validationModal = bootstrap.Modal.getInstance(document.getElementById('validationModal'));
+    validationModal.hide();
+
+    const viewUploadsModal = new bootstrap.Modal(document.getElementById('viewUploadsModal'));
+    viewUploadsModal.show();
+
+    // Update the comment summary section
+    const commentSummaryList = document.getElementById('commentSummaryList');
+    let existingComment = commentSummaryList.querySelector(`[data-commentid="${fileRowId}"]`);
+
+    const statusText = selectedOption.value.charAt(0).toUpperCase() + selectedOption.value.slice(1); // Capitalize the first letter
+    const commentPrefix = `${fileRow.querySelector('span').textContent} - ${statusText} - `;
+
+    if (existingComment) {
+        // Update the existing comment
+        existingComment.innerHTML = `<strong>${commentPrefix}</strong> ${comments ? comments : 'No comments'}`;
+    } else {
+        // Create a new comment if not already existing
+        const commentSummaryItem = document.createElement('li');
+        commentSummaryItem.className = 'list-group-item';
+        commentSummaryItem.dataset.commentid = fileRowId; // Use the same fileRowId to identify the comment
+        commentSummaryItem.innerHTML = `<strong>${commentPrefix}</strong> ${comments ? comments : 'No comments'}`;
+        commentSummaryList.appendChild(commentSummaryItem);
+    }
+}
 
 // Function to check if all required fields are filled
 function checkIfAllFieldsFilled() {
