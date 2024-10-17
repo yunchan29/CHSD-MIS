@@ -161,13 +161,13 @@ getDocs(housingRef).then((snapshot) => {
     const chart1 = new Chart(ctx1, {
         type: 'pie',
         data: {
-            labels: ['Danger Zone', 'Safe Zone', 'Other'],
+            labels: ['Danger Zone', 'Not Danger Zone'],
             datasets: [{
                 label: 'Classification Area',
                 data: [
                     classificationAreas.filter(area => area === 'Danger Zone').length,
-                    classificationAreas.filter(area => area === 'Safe Zone').length,
-                    classificationAreas.filter(area => area !== 'Danger Zone' && area !== 'Safe Zone').length
+                    classificationAreas.filter(area => area === 'Not Danger Zone').length,
+                    classificationAreas.filter(area => area !== 'Danger Zone' && area !== 'Not Danger Zone').length
                 ],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',

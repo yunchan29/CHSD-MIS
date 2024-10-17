@@ -877,52 +877,105 @@ function appendButtons(data) {
     // Check if householdMembers is an array, if not, set it as an empty array
     const householdMembers = Array.isArray(data.householdMembers) ? data.householdMembers : [];
 
-    // Populate modal body with the housing application data
     modalBody.innerHTML = `
-        <p><strong>Number of Storeys:</strong> ${data.NOStoreys}</p>
-        <p><strong>Amount to Pay:</strong> ${data.amountToPay}</p>
-        <p><strong>Barangay:</strong> ${data.barangay}</p>
-        <p><strong>Classification Area:</strong> ${data.classificationArea}</p>
-        <p><strong>Classification of Survey Household:</strong> ${data.classificationOfSurveyHousehold}</p>
-        <p><strong>Comfort Room:</strong> ${data.comfortRoom}</p>
-        <p><strong>Construction:</strong> ${data.construction}</p>
-        <p><strong>Date Applied:</strong> ${data.dateApplied}</p>
-        <p><strong>Estimated Floor Area:</strong> ${data.estimatedFloorArea}</p>
-        <p><strong>Household Address:</strong> ${data.householdAddress}</p>
-        <p><strong>Household Amount:</strong> ${data.householdAmount}</p>
-        <p><strong>Household Birthday:</strong> ${data.householdBirthday}</p>
-        <p><strong>Household Civil Status:</strong> ${data.householdCivilStatus}</p>
-        <p><strong>Household Head Name:</strong> ${data.householdHeadName}</p>
-        <p><strong>Household Members:</strong></p>
-        ${householdMembers.map((member, index) => `
-            <p><strong>Member ${index + 1}:</strong></p>
-            <ul>
-                <li><strong>Name:</strong> ${member.name}</li>
-                <li><strong>Age:</strong> ${member.age}</li>
-                <li><strong>Gender:</strong> ${member.gender}</li>
-                <li><strong>Civil Status:</strong> ${member.civilStatus}</li>
-                <li><strong>Education:</strong> ${member.education}</li>
-                <li><strong>Employed:</strong> ${member.employed}</li>
-                <li><strong>Occupation:</strong> ${member.occupation || 'N/A'}</li>
-                <li><strong>Place of Work:</strong> ${member.placeOfWork || 'N/A'}</li>
-                <li><strong>Relation:</strong> ${member.relation}</li>
-            </ul>`).join('')}
-        <p><strong>Household Occupation:</strong> ${data.householdOccupation}</p>
-        <p><strong>Household Place of Work:</strong> ${data.householdPlaceOfWork}</p>
-        <p><strong>Remarks:</strong> ${data.householdRemarks}</p>
-        <p><strong>Info About Lot:</strong> ${data.infoAboutLot}</p>
-        <p><strong>Lot Owner:</strong> ${data.lotOwner}</p>
-        <p><strong>Mode of House:</strong> ${data.modeOfHouse}</p>
-        <p><strong>Province of Origin:</strong> ${data.provinceOfOrigin}</p>
-        <p><strong>Reasons for Establishing:</strong> ${data.reasonsForEstablishing}</p>
-        <p><strong>Relationship with Owner:</strong> ${data.relationshipWithOwner}</p>
-        <p><strong>Sitio/Purok:</strong> ${data.sitioPurok}</p>
-        <p><strong>Status:</strong> ${data.status}</p>
-        <p><strong>Structure Owner:</strong> ${data.structureOwner}</p>
-        <p><strong>Type of Structure:</strong> ${data.typeOfStructure}</p>
-        <p><strong>Year of Residency:</strong> ${data.yearOfResidency}</p>
-        <p><strong>Utilities:</strong> ${data.utilities}</p>
-    `;
+    <div class="container">
+        <!-- Header Section with Logos -->
+      <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
+    <!-- Left Logo -->
+    <img src="/resources/pictures/calambaLogo.png" alt="Calamba Logo" style="height: 50px; width: 50px; margin-left: auto;">
+    <!-- Center Title -->
+    <div class="text-center" style="margin: 0 10px;">
+        <h5 class="mb-0">CITY HOUSING AND SETTLEMENTS DEPARTMENT</h5>
+        <p class="mb-0">City Government of Calamba</p>
+    </div>
+    <!-- Right Logo -->
+    <img src="/resources/pictures/chsd.png" alt="CHSD Logo" style="height: 50px; width: 50px; margin-right: auto;">
+</div>
+<br>
+<hr>
+        
+        <!-- Step 1: General Information -->
+        <div class="row mb-2">
+            <div class="col-md-6"><strong>Barangay:</strong> ${data.barangay}</div>
+            <div class="col-md-6"><strong>Classification Area:</strong> ${data.classificationArea}</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-md-6"><strong>Sitio/Purok:</strong> ${data.sitioPurok}</div>
+        </div>
+        <hr>
+          <h5 class="text-center mt-3">Household Head Information</h5>
+        <div class="row mb-2">
+            <div class="col-md-12"><strong>Name of the Household Head:</strong> ${data.householdHeadName}</div>
+        </div>
+        <div class="row mb-2">
+             <div class="col-md-6"><strong>Household Address:</strong> ${data.householdAddress}</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-md-6"><strong>Date Applied:</strong> ${data.dateApplied}</div>
+            <div class="col-md-6"><strong>Province of Origin:</strong> ${data.provinceOfOrigin}</div>
+        </div>
+
+        <!-- Step 2: Household Members -->
+        <h5 class="text-center mt-3">Household Members:</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Civil Status</th>
+                    <th>Education</th>
+                    <th>Employed</th>
+                    <th>Occupation</th>
+                    <th>Place of Work</th>
+                    <th>Relation</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${householdMembers.map((member, index) => `
+                <tr>
+                    <td>${member.name}</td>
+                    <td>${member.age}</td>
+                    <td>${member.gender}</td>
+                    <td>${member.civilStatus}</td>
+                    <td>${member.education}</td>
+                    <td>${member.employed}</td>
+                    <td>${member.occupation || 'N/A'}</td>
+                    <td>${member.placeOfWork || 'N/A'}</td>
+                    <td>${member.relation}</td>
+                </tr>`).join('')}
+            </tbody>
+        </table>
+
+        <!-- Step 3: Lot Information -->
+        <h5 class="text-center mt-3">Lot Information:</h5>
+        <div class="row mb-2">
+            <div class="col-md-6"><strong>Lot Owner:</strong> ${data.lotOwner}</div>
+            <div class="col-md-6"><strong>Construction:</strong> ${data.construction}</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-md-6"><strong>Comfort Room:</strong> ${data.comfortRoom}</div>
+            <div class="col-md-6"><strong>Number of Storeys:</strong> ${data.NOStoreys}</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-md-6"><strong>Estimated Floor Area:</strong> ${data.estimatedFloorArea}</div>
+            <div class="col-md-6"><strong>Utilities:</strong> ${data.utilities}</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-md-6"><strong>Mode of House Acquisition:</strong> ${data.modeOfHouse}</div>
+            <div class="col-md-6"><strong>Type of Structure:</strong> ${data.typeOfStructure}</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-md-6"><strong>Relationship with Owner:</strong> ${data.relationshipWithOwner}</div>
+            <div class="col-md-6"><strong>Amount to Pay:</strong> ${data.amountToPay}</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-md-6"><strong>Info About Lot:</strong> ${data.infoAboutLot}</div>
+            <div class="col-md-6"><strong>Year of Residency:</strong> ${data.yearOfResidency}</div>
+        </div>
+    </div>
+`;
+
 
     // Show the modal
     const modalInstance = new bootstrap.Modal(document.getElementById('viewHousingApplicationModal'));
@@ -1118,5 +1171,8 @@ document.getElementById('prevBtn3').addEventListener('click', function() {
 });
 
     </script>
+
+
+
 </body>
 </html>
