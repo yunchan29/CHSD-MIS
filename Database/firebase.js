@@ -1085,25 +1085,29 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
     } else {
         commentsSummary.forEach(commentObj => {
             const commentRow = document.createElement('div');
-            commentRow.style.padding = '10px';
-            commentRow.style.marginBottom = '5px';
+            commentRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'p-3', 'mb-3', 'border', 'rounded', 'shadow-sm');
 
-            // Apply background color based on approval status
+            // Determine the status indicator color
+            let statusColor = 'gray'; // Default color
             if (commentObj.status && commentObj.status.toLowerCase() === 'approved') {
-                commentRow.style.backgroundColor = 'green';
-                commentRow.style.color = 'white';
+                statusColor = 'green';
             } else if (commentObj.status && commentObj.status.toLowerCase() === 'disapproved') {
-                commentRow.style.backgroundColor = 'red';
-                commentRow.style.color = 'white';
-            } else {
-                commentRow.style.backgroundColor = 'lightgray';
+                statusColor = 'red';
             }
 
             commentRow.innerHTML = `
-                <strong>File:</strong> ${commentObj.fileName}<br>
+            <div>
+                <div class="row">
+                
+                </div>
                 <strong>Status:</strong> ${commentObj.status}<br>
                 <strong>Comment:</strong> ${commentObj.comment}
-            `;
+            </div>
+            <div class="ms-2">
+                <span class="badge" style="background-color: ${statusColor}; width: 16px; height: 16px; border-radius: 50%; display: inline-block; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);"></span>
+            </div>
+        `;
+
 
             modalBody.appendChild(commentRow);
         });
