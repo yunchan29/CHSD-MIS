@@ -1097,9 +1097,9 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
 
             commentRow.innerHTML = `
             <div>
-                <div class="row">
                 
-                </div>
+                 <strong>File:</strong> ${commentObj.fileName}<br>
+               
                 <strong>Status:</strong> ${commentObj.status}<br>
                 <strong>Comment:</strong> ${commentObj.comment}
             </div>
