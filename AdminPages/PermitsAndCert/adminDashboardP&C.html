@@ -201,58 +201,19 @@
                 sizeBytes: 40 * 1024 * 1024,
                 synchronizeTabs: true,
             }
+        }); 
+
+        // Check if user is logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("User  is logged in:", user);
+                fetchData(); // Call your data fetching function here
+            } else {
+                console.log("No user is logged in.");
+                // Optionally redirect
+
+            }
         });
-
-        
-
-       // Function to monitor authentication state and display user info
-function monitorAuthState() {
-    onAuthStateChanged(auth, async (user) => {
-        const userInfo = document.getElementById('user-info');
-        const userNameElement = document.getElementById('user-name');
-        const permitStatusTable = document.getElementById('permit-status-table'); // Add this line
-
-        if (user) {
-            console.log("User is logged in:", user.uid);
-
-            // Fetch and display user info
-            if (userNameElement) {
-                const userRef = doc(db, 'users', user.uid);
-                const docSnap = await getDoc(userRef);
-                if (docSnap.exists()) {
-                    const { firstName, lastName, avatarUrl } = docSnap.data();
-                    userNameElement.textContent = `${firstName} ${lastName}`;
-
-                    const avatarElement = document.getElementById('client-avatar');
-                    if (avatarUrl) {
-                        avatarElement.src = avatarUrl;
-                        avatarElement.alt = `${firstName} ${lastName}'s Avatar`;
-                    } else {
-                        avatarElement.src = '/resources/pictures/avatar3.png'; // Default avatar
-                        avatarElement.alt = 'Default Avatar';
-                    }
-                } else {
-                    console.error("No such document!");
-                }
-            }
-
-            if (userInfo) {
-                userInfo.innerHTML = `Logged in as: ${user.email}`;
-            }
-
-            // Fetch and display user permit status
-            if (permitStatusTable) {
-                await loadUserPermitStatus(); // Ensure permits are loaded
-            }
-
-        } else {
-            console.log("No user is logged in.");
-            if (userInfo) {
-                userInfo.innerHTML = "Not logged in";
-            }
-        }
-    });
-}
 
         async function fetchData() {
             try {
