@@ -1111,156 +1111,165 @@ window.onload = toggleOtherScopeInput;
     const storage = getStorage(app);
 
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('submitProfile').addEventListener('click', async (event) => {
-            event.preventDefault();
+    document.getElementById('submitProfile').addEventListener('click', async (event) => {
+        event.preventDefault();
 
-            const issuedOn = document.getElementById('basic-url').value.trim();
-            const addressTelNo = document.getElementById('addressTelNo').value.trim();
-            const projectLocation = document.getElementById('projectLocation').value.trim();
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            const ownerLastName = document.getElementById('ownerLastName').value.trim();
-            const ownerFirstName = document.getElementById('ownerFirstName').value.trim();
-            const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
-            const ownerMaidenName = document.getElementById('ownerMaidenName').value.trim();
-            const appointmentDate = document.getElementById('appointmentDate').value;
+        const issuedOn = document.getElementById('basic-url').value.trim();
+        const addressTelNo = document.getElementById('addressTelNo').value.trim();
+        const projectLocation = document.getElementById('projectLocation').value.trim();
+        const phoneNumber = document.getElementById('phoneNumber').value.trim();
+        const ownerLastName = document.getElementById('ownerLastName').value.trim();
+        const ownerFirstName = document.getElementById('ownerFirstName').value.trim();
+        const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
+        const ownerMaidenName = document.getElementById('ownerMaidenName').value.trim();
+        const appointmentDate = document.getElementById('appointmentDate').value;
 
-            const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
-            
-            const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked').nextElementSibling.textContent;
-    const projectJustification = document.querySelector('input[name="projectJustification"]:checked').nextElementSibling.textContent;
-    
-    const otherScopeInput = document.getElementById("otherScopeInput").value;
-    const finalScopeOfWork = (scopeOfWork === 'Others' && otherScopeInput) ? otherScopeInput : scopeOfWork;
-   
-    const blockNumber = document.getElementById("blockNumber").value;
-    const lotNumber = document.getElementById("lotNumber").value;
-    const NOUnits = document.getElementById("NOUnits").value;
-    const FloorArea = document.getElementById("FloorArea").value;
-    const TotalFloorArea = document.getElementById("TotalFloorArea").value;
-    const TotalEstimatedCost = document.getElementById("TotalEstimatedCost").value;
-            const requiredFields = [
-                { field: issuedOn, name: 'Issued On' },
-                { field: addressTelNo, name: 'Address/Tel No' },
-                { field: projectLocation, name: 'Project Location' },
-                { field: phoneNumber, name: 'Phone Number' },
-                { field: ownerName, name: 'Owner Name' },
-                { field: appointmentDate, name: 'Appointment Date' }
-            ];
+        const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
+        
+        const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked').nextElementSibling.textContent;
+        const projectJustification = document.querySelector('input[name="projectJustification"]:checked').nextElementSibling.textContent;
+        
+        const otherScopeInput = document.getElementById("otherScopeInput").value;
+        const finalScopeOfWork = (scopeOfWork === 'Others' && otherScopeInput) ? otherScopeInput : scopeOfWork;
+       
+        const blockNumber = document.getElementById("blockNumber").value;
+        const lotNumber = document.getElementById("lotNumber").value;
+        const NOUnits = document.getElementById("NOUnits").value;
+        const FloorArea = document.getElementById("FloorArea").value;
+        const TotalFloorArea = document.getElementById("TotalFloorArea").value;
+        const TotalEstimatedCost = document.getElementById("TotalEstimatedCost").value;
 
-            for (const { field, name } of requiredFields) {
-                if (!field) {
-                    alert(`Please fill out the ${name} field.`);
-                    return;
-                }
+        const requiredFields = [
+            { field: issuedOn, name: 'Issued On' },
+            { field: addressTelNo, name: 'Address/Tel No' },
+            { field: projectLocation, name: 'Project Location' },
+            { field: phoneNumber, name: 'Phone Number' },
+            { field: ownerName, name: 'Owner Name' },
+            { field: appointmentDate, name: 'Appointment Date' }
+        ];
+
+        for (const { field, name } of requiredFields) {
+            if (!field) {
+                alert(`Please fill out the ${name} field.`);
+                return;
             }
+        }
 
-            const requiredFileInputs = [
-                { id: 'buildingPlanFile', name: 'Building Plan' },
-                { id: 'proofOwnershipFile', name: 'Proof of Ownership' }
-            ];
+        const requiredFileInputs = [
+            { id: 'buildingPlanFile', name: 'Building Plan' },
+            { id: 'proofOwnershipFile', name: 'Proof of Ownership' },
+            { id: 'taxReceiptFile', name: 'Photocopy of Tax Declaration & Current Tax Receipt' },
+            { id: 'brgyClearanceFile', name: 'Brgy. Clearance of Building Permit' },
+            { id: 'billMaterialsFile', name: 'Bill of Materials & Specification' },
+            { id: 'prcFile', name: 'Photocopy of PRC IC/PTR of all signing engineers' },
+            { id: 'certExemptionFile', name: 'Certification of Exemption Location Clearance from CPDO' },
+            { id: 'structuralAnalysisFile', name: 'Structural Analysis (2-Storey and up)' }
+        ];
 
-            for (const { id, name } of requiredFileInputs) {
-                const fileInput = document.getElementById(id);
-                if (!fileInput || !fileInput.files[0]) {
-                    alert(`Please upload the ${name} file.`);
-                    return;
-                }
+        for (const { id, name } of requiredFileInputs) {
+            const fileInput = document.getElementById(id);
+            if (!fileInput || !fileInput.files[0]) {
+                alert(`Please upload the ${name} file.`);
+                return;
             }
+        }
 
-            const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-                loadingScreen.style.display = 'flex';
-            }
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+        }
 
-            try {
-                const user = await new Promise((resolve, reject) => {
-                    onAuthStateChanged(auth, user => {
-                        if (user) {
-                            resolve(user);
-                        } else {
-                            reject(new Error("No user is authenticated."));
-                        }
-                    }, reject);
-                });
-
-                const userId = user.uid;
-
-                const permitData = {
-                  
-                    appointmentDate: new Date(appointmentDate),
-                  
-            issuedOn,
-            ownerName,
-            phoneNumber,
-            addressTelNo,
-            projectLocation,
-            scopeOfWork: finalScopeOfWork,
-            projectJustification,
-            ownerUid: userId,
-            status: 'Pending',
-            blockNumber,
-            lotNumber,
-            NOUnits,
-            FloorArea,
-            TotalFloorArea,
-            TotalEstimatedCost,
-            createdAt: serverTimestamp(),
-                };
-
-                // Create the building permit document in Firestore
-                const permitDocRef = await addDoc(collection(db, "buildingPermits"), permitData);
-                const permitId = permitDocRef.id; // Get the newly created document ID
-
-                console.log("Document written with ID:", permitId);
-
-                // Use the permitId for storage path
-                const storagePath = `buildingPermits/${permitId}`;
-
-                const filesToUpload = [
-                    { inputId: 'buildingPlanFile', namePrefix: 'buildingPlan' },
-                    { inputId: 'proofOwnershipFile', namePrefix: 'proofOwnership' }
-                ];
-
-                const uploadPromises = filesToUpload.map(async file => {
-                    const fileInput = document.getElementById(file.inputId);
-                    if (fileInput && fileInput.files[0]) {
-                        const file = fileInput.files[0];
-                        const fileRef = ref(storage, `${storagePath}/${file.namePrefix}_${file.name}`);
-                        const snapshot = await uploadBytes(fileRef, file);
-                        return getDownloadURL(snapshot.ref);
+        try {
+            const user = await new Promise((resolve, reject) => {
+                onAuthStateChanged(auth, user => {
+                    if (user) {
+                        resolve(user);
                     } else {
-                        return null;
+                        reject(new Error("No user is authenticated."));
                     }
-                });
+                }, reject);
+            });
 
-                const fileURLs = await Promise.all(uploadPromises);
+            const userId = user.uid;
 
-                const fileURLMapping = {
-                    buildingPlanURL: fileURLs[0],
-                    proofOwnershipURL: fileURLs[1]
-                };
+            const permitData = {
+                appointmentDate: new Date(appointmentDate),
+                issuedOn,
+                ownerName,
+                phoneNumber,
+                addressTelNo,
+                projectLocation,
+                scopeOfWork: finalScopeOfWork,
+                projectJustification,
+                ownerUid: userId,
+                status: 'Pending',
+                blockNumber,
+                lotNumber,
+                NOUnits,
+                FloorArea,
+                TotalFloorArea,
+                TotalEstimatedCost,
+                createdAt: serverTimestamp(),
+            };
 
-                // Update the permit document with file URLs directly in the same document
-                const permitDoc = doc(db, "buildingPermits", permitId);
-                await updateDoc(permitDoc, fileURLMapping);
+            // Create the building permit document in Firestore
+            const permitDocRef = await addDoc(collection(db, "buildingPermits"), permitData);
+            const permitId = permitDocRef.id; // Get the newly created document ID
 
-                var modal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
-modal.show();
+            console.log("Document written with ID:", permitId);
 
-                window.location.reload;
+            // Use the permitId for storage path
+            const storagePath = `buildingPermits/${permitId}`;
 
-            } catch (error) {
-                console.error("Error during submission:", error);
-                alert(`Error submitting application: ${error.message}`);
-            } finally {
-                if (loadingScreen) {
-                    loadingScreen.style.display = 'none';
+            const filesToUpload = requiredFileInputs.map(file => ({
+                inputId: file.id,
+                namePrefix: file.name.replace(/\s+/g, '')
+            }));
+
+            const uploadPromises = filesToUpload.map(async file => {
+                const fileInput = document.getElementById(file.inputId);
+                if (fileInput && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const fileRef = ref(storage, `${storagePath}/${file.namePrefix}_${file.name}`);
+                    const snapshot = await uploadBytes(fileRef, file);
+                    return getDownloadURL(snapshot.ref);
+                } else {
+                    return null;
                 }
-              
-            }
-        });
-    });
+            });
 
+            const fileURLs = await Promise.all(uploadPromises);
+
+            const fileURLMapping = {
+                buildingPlanURL: fileURLs[0],
+                proofOwnershipURL: fileURLs[1],
+                taxReceiptURL: fileURLs[2],
+                brgyClearanceURL: fileURLs[3],
+                billMaterialsURL: fileURLs[4],
+                prcURL: fileURLs[5],
+                certExemptionURL: fileURLs[6],
+                structuralAnalysisURL: fileURLs[7]
+            };
+
+            // Update the permit document with file URLs directly in the same document
+            const permitDoc = doc(db, "buildingPermits", permitId);
+            await updateDoc(permitDoc, fileURLMapping);
+
+            var modal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
+            modal.show();
+
+            window.location.reload();
+
+        } catch (error) {
+            console.error("Error during submission:", error);
+            alert(`Error submitting application: ${error.message}`);
+        } finally {
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        }
+    });
+});
 
     
 

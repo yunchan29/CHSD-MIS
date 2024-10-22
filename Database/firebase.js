@@ -964,21 +964,11 @@ async function loadUserPermitStatus() {
         const electricalCertQuery = query(electricalCertRef, where("ownerUid", "==", user.uid));
         const electricalCertSnapshot = await getDocs(electricalCertQuery);
 
-        console.log("Building Permits Query Result:", buildingPermitsSnapshot.empty ? "No documents found." : `Found ${buildingPermitsSnapshot.size} documents`);
-        console.log("Occupancy Permits Query Result:", occupancyPermitsSnapshot.empty ? "No documents found." : `Found ${occupancyPermitsSnapshot.size} documents`);
-        console.log("Housing Applications Query Result:", housingApplicationsSnapshot.empty ? "No documents found." : `Found ${housingApplicationsSnapshot.size} documents`);
-        console.log("Electrical Cert Query Result:", electricalCertSnapshot.empty ? "No documents found." : `Found ${electricalCertSnapshot.size} documents`);
-
-        const createTableRow = (permit, permitType, permitId, commentsSummary = []) => {
-            console.log("Creating table row for permit:", permit);
-            
-            // Owner name logic
+        const createTableRow = (permit, permitType, permitId, commentsSummary = [], followupRequested = false, followupAllowed = false) => {
             const ownerName = permit.ownerName || permit.householdHeadName || 'Unknown Owner';
-        
-            // Date logic: fallback to createdAt if issuedOn is not available
             const issuedOnDate = permit.issuedOn || (permit.createdAt ? new Date(permit.createdAt.seconds * 1000).toLocaleDateString() : 'N/A');
-        
-            // Actions (View Remarks)
+
+            // Action: View Remarks
             const viewRemarksButton = `
                 <a class="btn btn-primary text-white" 
                    data-bs-toggle="modal" 
@@ -989,21 +979,27 @@ async function loadUserPermitStatus() {
                 </a>
             `;
 
-            // Create a new table row
+            // Create Follow-up button for Housing Applications only, enabled if conditions are met
+            const followupButton = permitType === "Housing Application" && followupAllowed ? `
+                <button class="btn btn-success followup-btn" 
+                        data-id="${permitId}" 
+                        ${followupRequested ? 'disabled' : ''}>
+                    ${followupRequested ? 'Requested' : 'Follow-up'}
+                </button>
+            ` : '';
+
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${ownerName}</td>
                 <td>${permitType}</td>
                 <td>${issuedOnDate}</td>
                 <td>${permit.status || 'N/A'}</td>
-                <td>${viewRemarksButton}</td>
+                <td>${viewRemarksButton} ${followupButton}</td>
             `;
-            
-            // Append the row to the table body
+
             tableBody.appendChild(row);
         };
 
-        // Helper to extract validation comments and statuses
         const extractCommentsSummary = (fileValidationStatus) => {
             if (!fileValidationStatus) return [];
             let comments = [];
@@ -1012,7 +1008,7 @@ async function loadUserPermitStatus() {
                 if (fileData.comments) {
                     comments.push({
                         fileName: file,
-                        status: fileData.status,  // Assuming 'status' is part of fileData
+                        status: fileData.status,
                         comment: fileData.comments
                     });
                 }
@@ -1020,46 +1016,55 @@ async function loadUserPermitStatus() {
             return comments;
         };
 
-        // Populate Building Permits
-        if (!buildingPermitsSnapshot.empty) {
-            buildingPermitsSnapshot.forEach((permitDoc) => {
-                const permit = permitDoc.data();
-                const commentsSummary = extractCommentsSummary(permit.fileValidationStatus);
-                createTableRow(permit, "Building Permit", permitDoc.id, commentsSummary);
-            });
-        }
+        const isFollowUpAllowed = (permit) => {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 0));  //REMEMBER TO CHANGE THIS BRUH TESTING PURPOSES ONLY
 
-        // Populate Occupancy Permits
-        if (!occupancyPermitsSnapshot.empty) {
-            occupancyPermitsSnapshot.forEach((permitDoc) => {
-                const permit = permitDoc.data();
-                const commentsSummary = extractCommentsSummary(permit.fileValidationStatus);
-                createTableRow(permit, "Certificate of Occupancy", permitDoc.id, commentsSummary);
-            });
-        }
+            // Check if the permit is "Pending" and older than 30 days
+            if (permit.status === "Pending" && permit.createdAt && permit.createdAt.toDate() <= thirtyDaysAgo) {
+                return true;
+            }
+            return false;
+        };
 
-        // Populate Housing Applications
-        if (!housingApplicationsSnapshot.empty) {
-            housingApplicationsSnapshot.forEach((applicationDoc) => {
-                const application = applicationDoc.data();
-                const commentsSummary = extractCommentsSummary(application.fileValidationStatus);
-                createTableRow(application, "Housing Application", applicationDoc.id, commentsSummary);
-            });
-        }
+        const processSnapshot = (snapshot, permitType) => {
+            if (!snapshot.empty) {
+                snapshot.forEach((permitDoc) => {
+                    const permit = permitDoc.data();
+                    const commentsSummary = extractCommentsSummary(permit.fileValidationStatus);
+                    const followupAllowed = isFollowUpAllowed(permit);
+                    createTableRow(permit, permitType, permitDoc.id, commentsSummary, permit.followup || false, followupAllowed);
+                });
+            }
+        };
 
-        // Populate Electrical Certifications
-        if (!electricalCertSnapshot.empty) {
-            electricalCertSnapshot.forEach((certDoc) => {
-                const cert = certDoc.data();
-                const commentsSummary = extractCommentsSummary(cert.fileValidationStatus);
-                createTableRow(cert, "Electrical Certification", certDoc.id, commentsSummary);
-            });
-        }
+        // Populate data for each type of permit/application
+        processSnapshot(buildingPermitsSnapshot, "Building Permit");
+        processSnapshot(occupancyPermitsSnapshot, "Certificate of Occupancy");
+        processSnapshot(housingApplicationsSnapshot, "Housing Application");
+        processSnapshot(electricalCertSnapshot, "Electrical Certification");
 
-        // If no permits found in any collection
         if (buildingPermitsSnapshot.empty && occupancyPermitsSnapshot.empty && housingApplicationsSnapshot.empty && electricalCertSnapshot.empty) {
             tableBody.innerHTML = '<tr><td colspan="6">No permits or applications found.</td></tr>';
         }
+
+        // Add follow-up button event listeners (only for Housing Applications)
+        document.querySelectorAll('.followup-btn').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const docId = event.target.getAttribute('data-id');
+                try {
+                    // Update the 'followup' field in Firestore
+                    const permitDoc = doc(db, "Housing", docId);  // Only for housing applications
+                    await updateDoc(permitDoc, { followup: true });
+
+                    // Disable the button and change its label
+                    event.target.textContent = 'Follow-up Requested';
+                    event.target.disabled = true;
+                } catch (error) {
+                    console.error("Error requesting follow-up:", error);
+                }
+            });
+        });
 
     } catch (error) {
         console.error("Error fetching permit status:", error);

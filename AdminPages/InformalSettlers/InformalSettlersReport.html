@@ -31,10 +31,10 @@
                 <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-               <li class="sideNav"><a href="/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html" class="text-decoration-none"><i class="fa-solid fa-user"></i> Profile</a></li>
+                <li class="sideNav"><a href="/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                 <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersApplication.html" class="text-decoration-none"><i class="fa-solid fa-folder"></i> Housing Application</a></li>
                 <li class="sideNav active"><a href="/AdminPages/InformalSettlers/InformalSettlersReport.html" class="text-decoration-none"><i class="fa-solid fa-chart-column"></i> Application Report</a></li>
-              
+                <li class="sideNav"><a href="/AdminPages/InformalSettlers/followup.html" class="text-decoration-none"><i class="fa-solid fa-bullhorn"></i> Follow up</a></li>
                 <li class="sideNav"><a id="admin-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
             </ul>
         </div>
@@ -114,18 +114,74 @@
 
                <div class="row">
                 <div class="col">
-                  <label for="name">Barangay</label>
-                  <input class="form-control" type="text" title="name" placeholder="">
+                  <label for="barangay">Barangay</label>
+                  <select class="form-control" id="barangay">
+                    <option value="">Select Barangay</option>
+                    <option>Barangay Uno</option>
+                    <option>Barangay Dos</option>
+                    <option>Barangay Tres</option>
+                    <option>Barangay Kwatro</option>
+                    <option>Barangay Singko</option>
+                    <option>Barangay Sais</option>
+                    <option>Barangay Syete</option>
+                    <option>Bagong Kalsada</option>
+                    <option>Banadero</option>
+                    <option>Banlic</option>
+                    <option>Barandal</option>
+                    <option>Batino</option>
+                    <option>Bubuyan</option>
+                    <option>Bucal</option>
+                    <option>Bunggo</option>
+                    <option>Burol</option>
+                    <option>Camaligan</option>
+                    <option>Canlubang</option>
+                    <option>Halang</option>
+                    <option>Hornalan</option>
+                    <option>Kay-Anlog</option>
+                    <option>Laguerta</option>
+                    <option>Lamesa</option>
+                    <option>Lawa</option>
+                    <option>Lecheria</option>
+                    <option>Lingga</option>
+                    <option>Looc</option>
+                    <option>Mabato</option>
+                    <option>Makiling</option>
+                    <option>Majada Out</option>
+                    <option>Mapagong</option>
+                    <option>Masili</option>
+                    <option>Maunong</option>
+                    <option>Mayapa</option>
+                    <option>Milagrosa</option>
+                    <option>Palingon</option>
+                    <option>Paciano Rizal</option>
+                    <option>Palo Alto</option>
+                    <option>Pansol</option>
+                    <option>Parian</option>
+                    <option>Prinza</option>
+                    <option>Punta</option>
+                    <option>Puting Lupa</option>
+                    <option>Real</option>
+                    <option>Saimsim</option>
+                    <option>Sampiruhan</option>
+                    <option>San Cristobal</option>
+                    <option>San Jose</option>
+                    <option>San Juan</option>
+                    <option>Sirang Lupa</option>
+                    <option>Sucol</option>
+                    <option>Turbina</option>
+                    <option>Ulango</option>
+                    <option>Uwisan</option>
+                    </select>
                 </div>
                 <div class="col">
-                  <label for="classification">Sitio/Purok</label>
+                  <label for="sitioPurok">Sitio/Purok</label>
                   <input class="form-control" type="text" title="classification" placeholder="">
                 </div>
              </div>
              <div class="row">
                 <div class="col-md-3">
-                    <label for="">Gender</label>
-                    <select class="form-control" id="" name="">
+                    <label for="gender">Gender</label>
+                    <select class="form-control" id="gender" name="">
                       <option value="">Male</option>
                       <option value="">Female</option>
                       <option value="">Prefer not to say</option>
@@ -144,10 +200,7 @@
                       <option value="">Separated</option>
                     </select>
                   </div>
-                <div class="col-md-6">
-                    <label for="classification">Survey No.</label>
-                  <input class="form-control" type="text" title="classification" placeholder="">
-                </div>
+            
 
                 <div class="row">
                     <div class="col-md-6">
@@ -176,39 +229,27 @@
 
             <table class="table mt-3">
                 <thead>
-                    <th>No.</th>
-                    <th>Survey No.</th>
-                    <th>Name</th>
-                    <th>Date of Birth</th>
-                    <th>Age</th>
-                    <th>Barangay</th>
-                    <th>Sitio/Purok</th>
-                    <th>COA</th>
+                    <tr>
+                        <th>Household Name</th>
+                        <th>Date of Birth</th>
+                        <th>Age</th>
+                        <th>Barangay</th>
+                        <th>Sitio/Purok</th>
+                        <th>COA</th>
+                    </tr>
                 </thead>
-
-                <tr>
-                    <td>1</td>
-                    <td>2003-UN-01-0659</td>
-                    <td>Alarcio, Krizzah Faith</td>
-                    <td>2002/12/25</td>
-                    <td>21</td>
-                    <td>Looc</td>
-                    <td>7</td>
-                    <td>Danger Zone</td>
-                </tr>
-
-                <tr>
-                    <td>2</td>
-                    <td>2003-UN-01-0159</td>
-                    <td>Napaño, Dianne Mae</td>
-                    <td>2002/10/15</td>
-                    <td>21</td>
-                    <td>Lingga</td>
-                    <td>7</td>
-                    <td>Not Danger Zone</td>
-                </tr>
-
+                <tbody>
+                    <!-- Data will be dynamically inserted here -->
+                </tbody>
             </table>
+            
+            <!-- Pagination Buttons and Page Info -->
+            <div class="pagination-controls">
+                <button id="prevPageBtn" class="btn btn-secondary" disabled>Previous</button>
+                <span id="pageInfo"></span>
+                <button id="nextPageBtn" class="btn btn-secondary" disabled>Next</button>
+            </div>
+            
             </div>
         </div>
     </div>
@@ -227,7 +268,139 @@
     });
   </script>
 
-   
+
+
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+        authDomain: "chsd-mis.firebaseapp.com",
+        projectId: "chsd-mis",
+        storageBucket: "chsd-mis.appspot.com",
+        messagingSenderId: "694967679357",
+        appId: "1:694967679357:web:65cffd50f13739f934f414",
+        measurementId: "G-XBQTQFRLJ5"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Pagination Variables
+    let profilesPerPage = 10; // Profiles per page
+    let currentPage = 1; // Current page
+    let totalPages = 1; // Total pages
+
+    // Function to Load Housing Reports for "Submitted" status
+    async function loadSubmittedReports() {
+        try {
+            // Firestore query filtering documents with "Submitted" status
+            const q = query(collection(db, "Housing"), where("status", "==", "Submitted"));
+            const querySnapshot = await getDocs(q);
+
+            // Debugging: Check the number of documents returned
+            console.log(`Documents found: ${querySnapshot.docs.length}`);
+
+            const housingDiv = document.querySelector("tbody");
+            const prevPageBtn = document.getElementById("prevPageBtn");
+            const nextPageBtn = document.getElementById("nextPageBtn");
+            const pageInfo = document.getElementById("pageInfo");
+
+            if (!housingDiv) {
+                console.error("housingDiv not found in the DOM.");
+                return;
+            }
+
+            housingDiv.innerHTML = ""; // Clear existing rows
+
+            // Fetch and Process Housing Data
+            const housingData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            // Sort by createdAt (ascending)
+            housingData.sort((a, b) => {
+                const aTime = a.createdAt?.seconds || 0;
+                const bTime = b.createdAt?.seconds || 0;
+                return aTime - bTime;
+            });
+
+            // Calculate Total Pages
+            totalPages = Math.ceil(housingData.length / profilesPerPage);
+
+            // Determine Profiles for Current Page
+            const start = (currentPage - 1) * profilesPerPage;
+            const end = start + profilesPerPage;
+            const currentProfiles = housingData.slice(start, end);
+
+            // Check if there are profiles to display
+            if (currentProfiles.length === 0) {
+                console.log("No profiles found for the current page.");
+            }
+
+            for (const data of currentProfiles) {
+                const row = document.createElement("tr");
+
+                let householdName = data.householdHeadName || "N/A";
+                let dob = data.householdBirthday || "N/A";
+                let age = calculateAge(data.householdBirthday);
+                let barangay = data.barangay || "N/A";
+                let sitioPurok = data.sitioPurok || "N/A";
+                let coa = data.classificationArea || "N/A"; // Assuming this corresponds to COA (Mode of House)
+
+                row.innerHTML = `
+                    <td>${householdName}</td>
+                    <td>${dob}</td>
+                    <td>${age}</td>
+                    <td>${barangay}</td>
+                    <td>${sitioPurok}</td>
+                    <td>${coa}</td>
+                `;
+
+                housingDiv.appendChild(row); // Add the row to the table body
+            }
+
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+
+            // Attach Pagination Event Listeners
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadSubmittedReports();
+                }
+            });
+
+            nextPageBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadSubmittedReports();
+                }
+            });
+
+        } catch (error) {
+            console.error("Error loading submitted reports:", error);
+            alert("Failed to load reports.");
+        }
+    }
+
+    // Function to calculate age from date of birth (in YYYY-MM-DD format)
+    function calculateAge(dob) {
+        if (!dob) return "N/A";
+        const birthDate = new Date(dob);
+        const diffMs = Date.now() - birthDate.getTime();
+        const ageDate = new Date(diffMs);
+        return Math.abs(ageDate.getUTCFullYear() - 1970); // Calculate age from milliseconds
+    }
+
+    // Load submitted reports on page load
+    window.onload = loadSubmittedReports;
+</script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
