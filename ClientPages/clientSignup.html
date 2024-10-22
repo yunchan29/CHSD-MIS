@@ -257,51 +257,80 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-    const video = document.getElementById('cameraViewfinder');
-    const imagePreview = document.getElementById('imagePreview');
-    const photoCaptureButton = document.getElementById('photoCaptureButton');
-    const scanningStatus = document.getElementById('scanningStatus');
-    let stream = null;
-
-    // Start the camera stream and show the viewfinder
-    async function startCamera() {
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.style.display = 'block'; // Show viewfinder
-            video.srcObject = stream;
-        } catch (error) {
-            console.error('Error accessing the camera:', error);
-        }
-    }
-
-    // Capture the photo when the button is clicked
-    photoCaptureButton.addEventListener('click', function () {
-        if (!stream) {
-            startCamera(); // Start the camera if it hasn't started yet
-            return;
-        }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Convert the canvas to an image and display it in the preview area
-        const imageDataURL = canvas.toDataURL('image/png');
-        imagePreview.src = imageDataURL;
-        imagePreview.style.display = 'block';
-
-        // Stop the camera stream and hide the viewfinder
-        stream.getTracks().forEach(track => track.stop());
-        video.style.display = 'none'; // Hide the viewfinder
-    });
-
-    // Initialize the camera when the page is loaded
-    startCamera();
-});
-
-    </script>
+            const video = document.getElementById('cameraViewfinder');
+            const imagePreview = document.getElementById('imagePreview');
+            const photoCaptureButton = document.getElementById('photoCaptureButton');
+            const cameraSelect = document.getElementById('cameraSelect');
+            let stream = null;
+        
+            // Get available cameras and populate the dropdown
+            async function getCameras() {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        
+                videoDevices.forEach((device, index) => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.text = device.label || `Camera ${index + 1}`;
+                    cameraSelect.appendChild(option);
+                });
+            }
+        
+            // Start the camera with the selected device
+            async function startCamera(deviceId) {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop()); // Stop any existing stream
+                }
+        
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { deviceId: deviceId ? { exact: deviceId } : undefined }
+                    });
+                    video.style.display = 'block'; // Show viewfinder
+                    video.srcObject = stream;
+                } catch (error) {
+                    console.error('Error accessing the camera:', error);
+                }
+            }
+        
+            // Capture the photo
+            photoCaptureButton.addEventListener('click', function () {
+                if (!stream) {
+                    startCamera(); // Start the camera if it hasn't started yet
+                    return;
+                }
+        
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+                // Convert the canvas to an image and display it in the preview area
+                const imageDataURL = canvas.toDataURL('image/png');
+                imagePreview.src = imageDataURL;
+                imagePreview.style.display = 'block';
+        
+                // Stop the camera stream and hide the viewfinder
+                stream.getTracks().forEach(track => track.stop());
+                video.style.display = 'none'; // Hide the viewfinder
+            });
+        
+            // Handle camera selection
+            cameraSelect.addEventListener('change', function () {
+                const selectedDeviceId = cameraSelect.value;
+                startCamera(selectedDeviceId);
+            });
+        
+            // Initialize by getting available cameras
+            getCameras().then(() => {
+                // Automatically start the first camera on load
+                if (cameraSelect.options.length > 0) {
+                    startCamera(cameraSelect.value);
+                }
+            });
+        });
+        </script>
 <script>
     async function performOCR(imageFile) {
         const formData = new FormData();
