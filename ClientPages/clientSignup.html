@@ -214,19 +214,24 @@
                                                 <label class="form-label">Upload your ID file with address:</label>
                                                 <input type="file" id="fileInput" accept="image/*" class="form-control">
                                             
-                                                <!-- Viewfinder for the camera -->
-                                                <video id="cameraViewfinder" autoplay style="width: 100%; height: auto; margin-top: 15px; display: none;"></video>
+                                                <!-- Camera Selection -->
+                                                <label for="cameraSelect" class="form-label mt-3">Select Camera:</label>
+                                                <select id="cameraSelect" class="form-select"></select>
                                             
                                                 <!-- Take Photo Button -->
                                                 <button type="button" class="btn btn-primary mt-3 mb-3" id="photoCaptureButton">Take a Photo</button>
                                                 <input type="file" id="photoInput" accept="image/*" capture="environment" class="form-control" style="display: none;">
                                             
-                                                <!-- Cropping and Preview -->
+                                                <!-- Video Viewfinder -->
+                                                <video id="cameraViewfinder" class="img-fluid mb-3" autoplay playsinline style="display:none;"></video>
+                                            
+                                                <!-- Image Preview -->
                                                 <div id="scanningStatus" style="display: none;">Scanning document...</div>
                                                 <img id="imagePreview" class="img-fluid mb-3" alt="Image Preview" style="display: none;">
                                                 <button type="button" id="cropButton" class="btn btn-primary" style="display: none;">Crop Image</button>
                                                 <pre id="ocrOutput" class="text-start border p-3 bg-light" style="display: none;"></pre>
                                             </div>
+                                            
                                             <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
