@@ -213,7 +213,7 @@
                                                 <!-- Upload File Section -->
                                                 <label class="form-label">Upload your ID file with address:</label>
                                                 <input type="file" id="fileInput" accept="image/*" class="form-control">
-                                            
+                                                
                                                 <!-- Camera Selection -->
                                                 <label for="cameraSelect" class="form-label mt-3">Select Camera:</label>
                                                 <select id="cameraSelect" class="form-select"></select>
@@ -221,7 +221,7 @@
                                                 <!-- Take Photo Button -->
                                                 <button type="button" class="btn btn-primary mt-3 mb-3" id="photoCaptureButton">Take a Photo</button>
                                                 <input type="file" id="photoInput" accept="image/*" capture="environment" class="form-control" style="display: none;">
-                                            
+                                                
                                                 <!-- Video Viewfinder -->
                                                 <video id="cameraViewfinder" class="img-fluid mb-3" autoplay playsinline style="display:none;"></video>
                                             
@@ -236,6 +236,7 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             </div>
+                                            
                                             
                                         </div>
                                     </div>
@@ -257,80 +258,123 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const video = document.getElementById('cameraViewfinder');
-            const imagePreview = document.getElementById('imagePreview');
-            const photoCaptureButton = document.getElementById('photoCaptureButton');
-            const cameraSelect = document.getElementById('cameraSelect');
-            let stream = null;
+    const video = document.getElementById('cameraViewfinder');
+    const imagePreview = document.getElementById('imagePreview');
+    const cameraSelect = document.getElementById('cameraSelect');
+    const scanningStatus = document.getElementById('scanningStatus');
+    let stream = null;
+    let idDetected = false;
+
+    // Get available cameras and populate the dropdown
+    async function getCameras() {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
         
-            // Get available cameras and populate the dropdown
-            async function getCameras() {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        
-                videoDevices.forEach((device, index) => {
-                    const option = document.createElement('option');
-                    option.value = device.deviceId;
-                    option.text = device.label || `Camera ${index + 1}`;
-                    cameraSelect.appendChild(option);
-                });
-            }
-        
-            // Start the camera with the selected device
-            async function startCamera(deviceId) {
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop()); // Stop any existing stream
-                }
-        
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia({
-                        video: { deviceId: deviceId ? { exact: deviceId } : undefined }
-                    });
-                    video.style.display = 'block'; // Show viewfinder
-                    video.srcObject = stream;
-                } catch (error) {
-                    console.error('Error accessing the camera:', error);
-                }
-            }
-        
-            // Capture the photo
-            photoCaptureButton.addEventListener('click', function () {
-                if (!stream) {
-                    startCamera(); // Start the camera if it hasn't started yet
-                    return;
-                }
-        
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-                // Convert the canvas to an image and display it in the preview area
-                const imageDataURL = canvas.toDataURL('image/png');
-                imagePreview.src = imageDataURL;
-                imagePreview.style.display = 'block';
-        
-                // Stop the camera stream and hide the viewfinder
-                stream.getTracks().forEach(track => track.stop());
-                video.style.display = 'none'; // Hide the viewfinder
-            });
-        
-            // Handle camera selection
-            cameraSelect.addEventListener('change', function () {
-                const selectedDeviceId = cameraSelect.value;
-                startCamera(selectedDeviceId);
-            });
-        
-            // Initialize by getting available cameras
-            getCameras().then(() => {
-                // Automatically start the first camera on load
-                if (cameraSelect.options.length > 0) {
-                    startCamera(cameraSelect.value);
-                }
-            });
+        videoDevices.forEach((device, index) => {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.text = device.label || `Camera ${index + 1}`;
+            cameraSelect.appendChild(option);
         });
-        </script>
+    }
+
+    // Start the camera with the selected device
+    async function startCamera(deviceId) {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop()); // Stop any existing stream
+        }
+
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { deviceId: deviceId ? { exact: deviceId } : undefined }
+            });
+            video.srcObject = stream;
+            video.style.display = 'block';
+        } catch (error) {
+            console.error('Error accessing the camera:', error);
+        }
+    }
+
+    // Function to capture an image from the camera stream
+    function captureImage() {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imageDataURL = canvas.toDataURL('image/png');
+        imagePreview.src = imageDataURL;
+        imagePreview.style.display = 'block';
+        
+        // Stop the camera stream once the photo is taken
+        stream.getTracks().forEach(track => track.stop());
+        video.style.display = 'none';
+        scanningStatus.style.display = 'none';
+    }
+
+    // Detect the ID in the viewfinder
+    async function detectID() {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+        // A simplified detection based on width/height ratio or color
+        const idDetected = detectIDShape(imageData);
+        if (idDetected && !idDetectedPreviously) {
+            idDetectedPreviously = true;
+            scanningStatus.textContent = 'ID detected! Capturing...';
+            captureImage();
+        } else if (!idDetected) {
+            idDetectedPreviously = false;
+        }
+    }
+
+    // Simulated ID detection (based on shape, color, or feature)
+    function detectIDShape(imageData) {
+        // Simplified mock detection logic. You can replace this with TensorFlow.js
+        // or OpenCV.js-based contour detection for actual ID detection.
+        const idWidth = video.videoWidth / 4;
+        const idHeight = video.videoHeight / 4;
+        
+        // Check aspect ratio and color intensity (mock logic)
+        if (idWidth / idHeight > 1.4 && idWidth / idHeight < 1.6) {
+            return true;
+        }
+        return false;
+    }
+
+    // Start detection loop
+    function startDetectionLoop() {
+        scanningStatus.style.display = 'block';
+        const detectionInterval = setInterval(detectID, 1000); // Check every second
+        
+        // Stop detection once the camera feed stops
+        video.addEventListener('pause', () => {
+            clearInterval(detectionInterval);
+        });
+    }
+
+    // Camera selection change event
+    cameraSelect.addEventListener('change', function () {
+        const selectedDeviceId = cameraSelect.value;
+        startCamera(selectedDeviceId);
+        startDetectionLoop();
+    });
+
+    // Initialize by getting available cameras
+    getCameras().then(() => {
+        if (cameraSelect.options.length > 0) {
+            startCamera(cameraSelect.value);
+            startDetectionLoop();
+        }
+    });
+});
+
+    </script>
 <script>
     async function performOCR(imageFile) {
         const formData = new FormData();
