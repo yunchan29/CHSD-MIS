@@ -63,6 +63,8 @@
         }
 
 
+
+
    /* General print styles */
 @media print {
   /* Hide everything except the content we want to print */
@@ -97,6 +99,29 @@
     size: A4;
     margin: 10mm;
   }
+}
+
+.watermark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allow interaction with form content */
+    opacity: 0.2;
+    z-index: -1; /* Make sure it stays in the background */
+    font-size: 60px;
+    color: #d3d3d3;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.watermark span {
+    transform: rotate(-45deg);
+    white-space: nowrap;
 }
 
 
@@ -683,6 +708,7 @@
             </div>
             <div class="modal-body">
                 <div class="printArea" id="printHSDContent">
+                    <div id="watermark" class="watermark"></div>
                 <!-- Display HSD form details organized in rows and columns -->
                 <div class="container p-3 border rounded">
                     <div class="row mb-4">
@@ -700,6 +726,13 @@
                     </div>
                     
                    <h4 class="text-center mb-3 mt-3">Building Permit Under BP220</h4>
+                   <p>HSD Form No.1</p>
+
+                   <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Building Permit No.</strong> <span id="hsdFormBuildingPermitNo"></span></p>
+                    </div>
+                   </div>
                     <!-- Row 1 -->
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -863,7 +896,7 @@
                             <p>Date Issued:</p>
                         </div>
                     </div>
-                    
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -880,7 +913,7 @@
 
 
  <!-- View Uploads Modal -->
- <div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
+<div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
     <div class="wide-modal modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -951,51 +984,63 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Function for printing the HSD Form modal (remains unchanged)
-      const printHSDButton = document.getElementById("printHSDForm");
-      if (printHSDButton) {
-        printHSDButton.addEventListener("click", function() {
-          const printContent = document.querySelector("#printHSDContent").outerHTML;
-          const originalContent = document.body.innerHTML;
-    
-          document.body.innerHTML = printContent;
-          window.print();
-          document.body.innerHTML = originalContent;
-          window.location.reload();
-        });
-      }
-    
-      // Function for printing the Order of Payment modal with input values while maintaining layout
-      const printOrderButton = document.getElementById("printOrderOfPayment");
-      if (printOrderButton) {
-        printOrderButton.addEventListener("click", function() {
-          const printContent = document.querySelector("#printOrderContent").cloneNode(true);
-    
-          // Replace input fields with their values
-          const inputs = printContent.querySelectorAll('input');
-          inputs.forEach(function(input) {
-            const value = input.value || ''; // Get the value of the input
-            const span = document.createElement('span'); // Create a span element to replace input
-            span.textContent = value; // Set the span text to the input value
-            span.style.fontWeight = 'bold'; // Optional: style it to stand out
-            input.replaceWith(span); // Replace the input with the span element
-          });
-    
-          // Set the content for printing
-          const originalContent = document.body.innerHTML;
-          document.body.innerHTML = printContent.outerHTML;
-    
-          // Trigger print
-          window.print();
-    
-          // Restore original content
-          document.body.innerHTML = originalContent;
-          window.location.reload();
-        });
-      }
+        // Function for printing the HSD Form modal with a watermark (Building Permit No.)
+        const printHSDButton = document.getElementById("printHSDForm");
+        if (printHSDButton) {
+            printHSDButton.addEventListener("click", function() {
+                const printContent = document.querySelector("#printHSDContent").cloneNode(true);
+
+                // Get the building permit number from the form
+                const buildingPermitNo = document.getElementById("hsdFormBuildingPermitNo").textContent.trim();
+
+                // Create watermark
+                const watermark = printContent.querySelector("#watermark");
+                watermark.innerHTML = `<span>${buildingPermitNo}</span>`;
+
+                // Clone the page content for printing
+                const originalContent = document.body.innerHTML;
+                document.body.innerHTML = printContent.outerHTML;
+
+                // Trigger print
+                window.print();
+
+                // Restore original content
+                document.body.innerHTML = originalContent;
+                window.location.reload();
+            });
+        }
+
+        // Function for printing the Order of Payment modal with input values while maintaining layout
+        const printOrderButton = document.getElementById("printOrderOfPayment");
+        if (printOrderButton) {
+            printOrderButton.addEventListener("click", function() {
+                const printContent = document.querySelector("#printOrderContent").cloneNode(true);
+
+                // Replace input fields with their values
+                const inputs = printContent.querySelectorAll('input');
+                inputs.forEach(function(input) {
+                    const value = input.value || ''; // Get the value of the input
+                    const span = document.createElement('span'); // Create a span element to replace input
+                    span.textContent = value; // Set the span text to the input value
+                    span.style.fontWeight = 'bold'; // Optional: style it to stand out
+                    input.replaceWith(span); // Replace the input with the span element
+                });
+
+                // Set the content for printing
+                const originalContent = document.body.innerHTML;
+                document.body.innerHTML = printContent.outerHTML;
+
+                // Trigger print
+                window.print();
+
+                // Restore original content
+                document.body.innerHTML = originalContent;
+                window.location.reload();
+            });
+        }
     });
-    </script>
-    
+</script>
+
     
     
     
@@ -1755,6 +1800,7 @@ async function openViewHSDFormModal(permitData) {
         document.getElementById("hsdFormFloorArea").textContent = data.FloorArea || "N/A";
         document.getElementById("hsdFormTotalFloorArea").textContent = data.TotalFloorArea || "N/A";
         document.getElementById("hsdFormTotalEstimatedCost").textContent = data.TotalEstimatedCost || "N/A";
+        document.getElementById("hsdFormBuildingPermitNo").textContent = data.buildingPermitNo;
 
         console.log("HSD Form fields populated");
 

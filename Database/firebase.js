@@ -1018,7 +1018,7 @@ async function loadUserPermitStatus() {
 
         const isFollowUpAllowed = (permit) => {
             const today = new Date();
-            const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 0));  //REMEMBER TO CHANGE THIS BRUH TESTING PURPOSES ONLY
+            const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30)); // Check for 30 days
 
             // Check if the permit is "Pending" and older than 30 days
             if (permit.status === "Pending" && permit.createdAt && permit.createdAt.toDate() <= thirtyDaysAgo) {
@@ -1045,7 +1045,7 @@ async function loadUserPermitStatus() {
         processSnapshot(electricalCertSnapshot, "Electrical Certification");
 
         if (buildingPermitsSnapshot.empty && occupancyPermitsSnapshot.empty && housingApplicationsSnapshot.empty && electricalCertSnapshot.empty) {
-            tableBody.innerHTML = '<tr><td colspan="6">No permits or applications found.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="5">No permits or applications found.</td></tr>';
         }
 
         // Add follow-up button event listeners (only for Housing Applications)
@@ -1073,17 +1073,11 @@ async function loadUserPermitStatus() {
     }
 }
 
-// Event listener for loading comments into the modal
 document.getElementById('viewRemarks').addEventListener('show.bs.modal', function (event) {
-    // Button that triggered the modal
     const button = event.relatedTarget;
-    
-    // Extract info from data-* attributes
     const commentsSummary = JSON.parse(button.getAttribute('data-comments-summary'));
-    
-    // Update the modal's content with structured comments
     const modalBody = document.querySelector('#viewRemarks .modal-body');
-    modalBody.innerHTML = '';  // Clear previous content
+    modalBody.innerHTML = '';
 
     if (commentsSummary.length === 0) {
         modalBody.textContent = 'No remarks available.';
@@ -1092,8 +1086,7 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
             const commentRow = document.createElement('div');
             commentRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'p-3', 'mb-3', 'border', 'rounded', 'shadow-sm');
 
-            // Determine the status indicator color
-            let statusColor = 'gray'; // Default color
+            let statusColor = 'gray';
             if (commentObj.status && commentObj.status.toLowerCase() === 'approved') {
                 statusColor = 'green';
             } else if (commentObj.status && commentObj.status.toLowerCase() === 'disapproved') {
@@ -1101,20 +1094,67 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
             }
 
             commentRow.innerHTML = `
-            <div>
-                
-                 <strong>File:</strong> ${commentObj.fileName}<br>
-               
-                <strong>Status:</strong> ${commentObj.status}<br>
-                <strong>Comment:</strong> ${commentObj.comment}
-            </div>
-            <div class="ms-2">
-                <span class="badge" style="background-color: ${statusColor}; width: 16px; height: 16px; border-radius: 50%; display: inline-block; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);"></span>
-            </div>
-        `;
+                <div>
+                    <strong>File:</strong> ${commentObj.fileName}<br>
+                    <strong>Status:</strong> ${commentObj.status}<br>
+                    <strong>Comment:</strong> ${commentObj.comment}
+                </div>
+                <div class="ms-2">
+                    <span class="badge" style="background-color: ${statusColor}; width: 16px; height: 16px; border-radius: 50%; display: inline-block; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);"></span>
+                </div>
+            `;
 
+            // If the file is disapproved, add a reupload button
+            if (commentObj.status && commentObj.status.toLowerCase() === 'disapproved') {
+                const reuploadBtn = document.createElement('div');
+                reuploadBtn.innerHTML = `
+                    <input type="file" id="reupload-${commentObj.fileName}" accept="application/pdf,image/*" style="display:none">
+                    <button class="btn btn-warning reupload-btn" data-file="${commentObj.fileName}" data-permit-id="${button.getAttribute('data-id')}"> <!-- Pass the permitId -->
+                        Reupload
+                    </button>
+                `;
+                commentRow.appendChild(reuploadBtn);
+            }
 
             modalBody.appendChild(commentRow);
         });
     }
+
+    // Event listener for the reupload button
+    document.querySelectorAll('.reupload-btn').forEach(btn => {
+        btn.addEventListener('click', async (event) => {
+            const fileName = event.target.getAttribute('data-file');
+            const permitId = event.target.getAttribute('data-permit-id'); // Get the permitId
+            const fileInput = document.getElementById(`reupload-${fileName}`);
+            fileInput.click();
+
+            fileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    try {
+                        // Ensure permitId is defined before proceeding
+                        if (!permitId) {
+                            throw new Error("No permit ID provided.");
+                        }
+
+                        // Upload the file to Firebase Storage
+                        const storageRef = ref(storage, `reuploads/${auth.currentUser.uid}/buildingPermits/${fileName}`); // Change this to your correct path if necessary
+                        const snapshot = await uploadBytes(storageRef, file);
+                        const downloadURL = await getDownloadURL(snapshot.ref);
+
+                        // Update Firestore with the new file URL
+                        const permitDoc = doc(db, "buildingPermits", permitId); // Use the correct collection
+                        await updateDoc(permitDoc, {
+                            [`${fileName}URL`]: downloadURL
+                        });
+
+                        alert('File reuploaded successfully!');
+                    } catch (error) {
+                        console.error('Error uploading file:', error);
+                        alert('Error reuploading file.');
+                    }
+                }
+            });
+        });
+    });
 });

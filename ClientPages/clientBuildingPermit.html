@@ -292,13 +292,16 @@
                         <p><i>Required fields are marked with <span class="required-asterisk">*</span></i></p>
                        
                         <div class="row g-3">
-                            
+                            <div class="col-md-6">
+                                <p>Building Permit No.<span id="buildingPermitNo"></span></p></div>
                             <div class="col-md-6">
                                 <div class="input-group">
                                     <span class="input-group-text" id="basic-addon3">Issued on:</span>
                                     <input type="date" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
                                 </div>
                             </div>
+
+
                         </div>
                       <div class="row g-3">
     <label for="ownerName">Owner/Applicant Name:</label>
@@ -1092,7 +1095,7 @@ window.onload = toggleOtherScopeInput;
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, doc, getDocs, where, onSnapshot, query, orderBy, limit, startAfter} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, doc, getDocs, where, onSnapshot, query, orderBy, limit, startAfter, getDoc, setDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
     const firebaseConfig = {
@@ -1192,7 +1195,30 @@ window.onload = toggleOtherScopeInput;
 
             const userId = user.uid;
 
+            // Step 1: Retrieve the current year
+            const currentYear = new Date().getFullYear();
+
+            // Step 2: Retrieve the last number used for the current year from Firestore
+            const permitCounterRef = doc(db, "permitCounters", currentYear.toString());
+            const permitCounterDoc = await getDoc(permitCounterRef);
+
+            let newPermitNumber;
+            if (permitCounterDoc.exists()) {
+                // Increment the number by 1
+                newPermitNumber = permitCounterDoc.data().lastNumber + 1;
+            } else {
+                // If no document exists for this year, start with 1
+                newPermitNumber = 1;
+            }
+
+            // Format the building permit number (e.g., 2024-0001)
+            const buildingPermitNo = `${currentYear}-${newPermitNumber.toString().padStart(4, '0')}`;
+
+            // Step 3: Save the updated last number back to Firestore
+            await setDoc(permitCounterRef, { lastNumber: newPermitNumber });
+
             const permitData = {
+                buildingPermitNo, // Add the generated Building Permit No.
                 appointmentDate: new Date(appointmentDate),
                 issuedOn,
                 ownerName,
@@ -1217,6 +1243,7 @@ window.onload = toggleOtherScopeInput;
             const permitId = permitDocRef.id; // Get the newly created document ID
 
             console.log("Document written with ID:", permitId);
+            console.log("Building Permit No.:", buildingPermitNo);
 
             // Use the permitId for storage path
             const storagePath = `buildingPermits/${permitId}`;
