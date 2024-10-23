@@ -516,12 +516,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // File inputs and namePrefix mapping
         const requiredFileInputs = [
-            { id: 'buildingPermitCompletionFile', namePrefix: 'buildingPermitCompletion' },
-            { id: 'approvedBuildingPermitFile', namePrefix: 'approvedBuildingPermit' },
-            { id: 'approvedPlanFile', namePrefix: 'approvedPlan' },
-            { id: 'structurePhotosFile', namePrefix: 'structurePhotos' },
-            { id: 'sketchFile', namePrefix: 'sketch' }
+            { id: 'buildingPermitCompletionFile', namePrefix: 'buildingPermitCompletion', name: 'Building Permit Completion' },
+            { id: 'approvedBuildingPermitFile', namePrefix: 'approvedBuildingPermit', name: 'Approved Building Permit' },
+            { id: 'approvedPlanFile', namePrefix: 'approvedPlan', name: 'Approved Plan' },
+            { id: 'structurePhotosFile', namePrefix: 'structurePhotos', name: 'Structure Photos' },
+            { id: 'sketchFile', namePrefix: 'sketch', name: 'Sketch' }
         ];
+
+        // Validate that all required files are uploaded
+        for (const fileInputObj of requiredFileInputs) {
+            const fileInput = document.getElementById(fileInputObj.id);
+            if (!fileInput || !fileInput.files[0]) {
+                alert(`Please upload the ${fileInputObj.name} file.`);
+                submitButton.disabled = false;
+                loadingScreen.style.display = 'none';
+                return;
+            }
+        }
 
         try {
             // Ensure the user is authenticated
@@ -583,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Success feedback
             alert('Application Submitted!');
             var modal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
-modal.show();
+            modal.show();
 
             window.location.reload();
 
@@ -597,12 +608,9 @@ modal.show();
                 loadingScreen.style.display = 'none';
             }
             submitButton.disabled = false;
-    
-
         }
     });
 });
-
 
 
     // Handle step transitions
