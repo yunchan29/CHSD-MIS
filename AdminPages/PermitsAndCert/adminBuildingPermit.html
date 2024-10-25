@@ -1206,7 +1206,7 @@ function appendButtons(data) {
     const btn1 = document.createElement('button');
     btn1.className = 'btn btn-primary w-100 view-hsd-btn';
     btn1.setAttribute('data-permit-id', data.id);
-    btn1.textContent = 'View HSD Form';
+    btn1.textContent = 'Generate BP Certificate';
     btn1.addEventListener('click', () => {
     const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
     if (viewDetailsModal) {

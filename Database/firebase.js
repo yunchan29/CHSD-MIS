@@ -944,31 +944,18 @@ async function loadUserPermitStatus() {
         }
         tableBody.innerHTML = '';
 
-        // Fetch Building Permits
-        const buildingPermitsRef = collection(db, "buildingPermits");
-        const buildingPermitsQuery = query(buildingPermitsRef, where("ownerUid", "==", user.uid));
-        const buildingPermitsSnapshot = await getDocs(buildingPermitsQuery);
-
-        // Fetch Occupancy Permits
-        const occupancyPermitsRef = collection(db, "OccupancyPermits");
-        const occupancyPermitsQuery = query(occupancyPermitsRef, where("ownerUid", "==", user.uid));
-        const occupancyPermitsSnapshot = await getDocs(occupancyPermitsQuery);
-
-        // Fetch Housing Applications
-        const housingApplicationsRef = collection(db, "Housing");
-        const housingApplicationsQuery = query(housingApplicationsRef, where("ownerUid", "==", user.uid));
-        const housingApplicationsSnapshot = await getDocs(housingApplicationsQuery);
-
-        // Fetch Electrical Certifications
-        const electricalCertRef = collection(db, "ElectricalCert");
-        const electricalCertQuery = query(electricalCertRef, where("ownerUid", "==", user.uid));
-        const electricalCertSnapshot = await getDocs(electricalCertQuery);
+        const permits = [
+            { ref: collection(db, "buildingPermits"), label: "Building Permit" },
+            { ref: collection(db, "OccupancyPermits"), label: "Certificate of Occupancy" },
+            { ref: collection(db, "Housing"), label: "Housing Application" },
+            { ref: collection(db, "ElectricalCert"), label: "Electrical Certification" }
+        ];
 
         const createTableRow = (permit, permitType, permitId, commentsSummary = [], followupRequested = false, followupAllowed = false) => {
             const ownerName = permit.ownerName || permit.householdHeadName || 'Unknown Owner';
             const issuedOnDate = permit.issuedOn || (permit.createdAt ? new Date(permit.createdAt.seconds * 1000).toLocaleDateString() : 'N/A');
+            const appointmentDate = permit.appointmentDate ? new Date(permit.appointmentDate.seconds * 1000).toLocaleDateString() : 'N/A';
 
-            // Action: View Remarks
             const viewRemarksButton = `
                 <a class="btn btn-primary text-white" 
                    data-bs-toggle="modal" 
@@ -979,14 +966,21 @@ async function loadUserPermitStatus() {
                 </a>
             `;
 
-            // Create Follow-up button for Housing Applications only, enabled if conditions are met
             const followupButton = permitType === "Housing Application" && followupAllowed ? `
                 <button class="btn btn-success followup-btn" 
                         data-id="${permitId}" 
                         ${followupRequested ? 'disabled' : ''}>
-                    ${followupRequested ? 'Requested' : 'Follow-up'}
+                    ${followupRequested ? '<i class="fa-solid fa-bullhorn"></i> Requested' : '<i class="fa-solid fa-bullhorn"></i> Follow-up'}
                 </button>
             ` : '';
+
+            const rescheduleButton = `
+                <button class="btn btn-info reschedule-btn" 
+                        data-id="${permitId}" 
+                        data-permit-type="${permitType}">
+                    <i class="fa-solid fa-calendar"></i> Resched
+                </button>
+            `;
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -994,77 +988,91 @@ async function loadUserPermitStatus() {
                 <td>${permitType}</td>
                 <td>${issuedOnDate}</td>
                 <td>${permit.status || 'N/A'}</td>
-                <td>${viewRemarksButton} ${followupButton}</td>
+                <td>${appointmentDate}</td>
+                <td>
+                    <div class="d-flex gap-2 flex-wrap">
+                        ${viewRemarksButton} 
+                        ${followupButton} 
+                        ${rescheduleButton}
+                    </div>
+                </td>
             `;
-
             tableBody.appendChild(row);
+            
+            // Follow-up button event listener
+            const followupBtn = row.querySelector('.followup-btn');
+            if (followupBtn) {
+                followupBtn.addEventListener('click', async (event) => {
+                    const docId = event.target.getAttribute('data-id');
+                    try {
+                        const permitDoc = doc(db, "Housing", docId);
+                        await updateDoc(permitDoc, { followup: true });
+                        event.target.textContent = 'Follow-up Requested';
+                        event.target.disabled = true;
+                    } catch (error) {
+                        console.error("Error requesting follow-up:", error);
+                    }
+                });
+            }
+
+            // Reschedule button event listener
+            const rescheduleBtn = row.querySelector('.reschedule-btn');
+            rescheduleBtn.addEventListener('click', async (event) => {
+                const docId = event.target.getAttribute('data-id');
+                const newDate = prompt("Please enter a new appointment date (YYYY-MM-DD):");
+
+                if (newDate) {
+                    try {
+                        const parsedDate = new Date(newDate);
+                        if (isNaN(parsedDate.getTime())) {
+                            alert("Invalid date format. Please try again.");
+                            return;
+                        }
+
+                        const permitDoc = doc(db, permitType === "Building Permit" ? "buildingPermits" :
+                                                       permitType === "Certificate of Occupancy" ? "OccupancyPermits" :
+                                                       permitType === "Housing Application" ? "Housing" : "ElectricalCert", docId);
+
+                        await updateDoc(permitDoc, { appointmentDate: Timestamp.fromDate(parsedDate) });
+                        alert('Appointment rescheduled successfully!');
+                    } catch (error) {
+                        console.error("Error rescheduling appointment:", error);
+                        alert("Error rescheduling appointment.");
+                    }
+                }
+            });
         };
 
         const extractCommentsSummary = (fileValidationStatus) => {
             if (!fileValidationStatus) return [];
-            let comments = [];
-            for (const file in fileValidationStatus) {
-                const fileData = fileValidationStatus[file];
-                if (fileData.comments) {
-                    comments.push({
-                        fileName: file,
-                        status: fileData.status,
-                        comment: fileData.comments
-                    });
-                }
-            }
-            return comments;
+            return Object.entries(fileValidationStatus).map(([file, fileData]) => ({
+                fileName: file,
+                status: fileData.status,
+                comment: fileData.comments
+            })).filter(item => item.comment);
         };
 
         const isFollowUpAllowed = (permit) => {
             const today = new Date();
-            const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30)); // Check for 30 days
-
-            // Check if the permit is "Pending" and older than 30 days
-            if (permit.status === "Pending" && permit.createdAt && permit.createdAt.toDate() <= thirtyDaysAgo) {
-                return true;
-            }
-            return false;
+            const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30));
+            return permit.status === "Pending" && permit.createdAt && permit.createdAt.toDate() <= thirtyDaysAgo;
         };
 
-        const processSnapshot = (snapshot, permitType) => {
-            if (!snapshot.empty) {
-                snapshot.forEach((permitDoc) => {
+        for (let { ref, label } of permits) {
+            const querySnapshot = await getDocs(query(ref, where("ownerUid", "==", user.uid)));
+            if (!querySnapshot.empty) {
+                querySnapshot.forEach((permitDoc) => {
                     const permit = permitDoc.data();
                     const commentsSummary = extractCommentsSummary(permit.fileValidationStatus);
                     const followupAllowed = isFollowUpAllowed(permit);
-                    createTableRow(permit, permitType, permitDoc.id, commentsSummary, permit.followup || false, followupAllowed);
+                    createTableRow(permit, label, permitDoc.id, commentsSummary, permit.followup || false, followupAllowed);
                 });
             }
-        };
-
-        // Populate data for each type of permit/application
-        processSnapshot(buildingPermitsSnapshot, "Building Permit");
-        processSnapshot(occupancyPermitsSnapshot, "Certificate of Occupancy");
-        processSnapshot(housingApplicationsSnapshot, "Housing Application");
-        processSnapshot(electricalCertSnapshot, "Electrical Certification");
-
-        if (buildingPermitsSnapshot.empty && occupancyPermitsSnapshot.empty && housingApplicationsSnapshot.empty && electricalCertSnapshot.empty) {
-            tableBody.innerHTML = '<tr><td colspan="5">No permits or applications found.</td></tr>';
         }
 
-        // Add follow-up button event listeners (only for Housing Applications)
-        document.querySelectorAll('.followup-btn').forEach(button => {
-            button.addEventListener('click', async (event) => {
-                const docId = event.target.getAttribute('data-id');
-                try {
-                    // Update the 'followup' field in Firestore
-                    const permitDoc = doc(db, "Housing", docId);  // Only for housing applications
-                    await updateDoc(permitDoc, { followup: true });
-
-                    // Disable the button and change its label
-                    event.target.textContent = 'Follow-up Requested';
-                    event.target.disabled = true;
-                } catch (error) {
-                    console.error("Error requesting follow-up:", error);
-                }
-            });
-        });
+        if (tableBody.innerHTML === '') {
+            tableBody.innerHTML = '<tr><td colspan="6">No permits or applications found.</td></tr>';
+        }
 
     } catch (error) {
         console.error("Error fetching permit status:", error);
@@ -1073,6 +1081,7 @@ async function loadUserPermitStatus() {
     }
 }
 
+// Event listener for remarks modal display
 document.getElementById('viewRemarks').addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
     const commentsSummary = JSON.parse(button.getAttribute('data-comments-summary'));
@@ -1085,13 +1094,7 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
         commentsSummary.forEach(commentObj => {
             const commentRow = document.createElement('div');
             commentRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'p-3', 'mb-3', 'border', 'rounded', 'shadow-sm');
-
-            let statusColor = 'gray';
-            if (commentObj.status && commentObj.status.toLowerCase() === 'approved') {
-                statusColor = 'green';
-            } else if (commentObj.status && commentObj.status.toLowerCase() === 'disapproved') {
-                statusColor = 'red';
-            }
+            const statusColor = commentObj.status.toLowerCase() === 'approved' ? 'green' : commentObj.status.toLowerCase() === 'disapproved' ? 'red' : 'gray';
 
             commentRow.innerHTML = `
                 <div>
@@ -1104,57 +1107,44 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
                 </div>
             `;
 
-            // If the file is disapproved, add a reupload button
-            if (commentObj.status && commentObj.status.toLowerCase() === 'disapproved') {
+            if (commentObj.status.toLowerCase() === 'disapproved') {
                 const reuploadBtn = document.createElement('div');
                 reuploadBtn.innerHTML = `
                     <input type="file" id="reupload-${commentObj.fileName}" accept="application/pdf,image/*" style="display:none">
-                    <button class="btn btn-warning reupload-btn" data-file="${commentObj.fileName}" data-permit-id="${button.getAttribute('data-id')}"> <!-- Pass the permitId -->
-                        Reupload
-                    </button>
+                    <button class="btn btn-warning reupload-btn" data-file="${commentObj.fileName}" data-permit-id="${button.getAttribute('data-id')}">Reupload</button>
                 `;
                 commentRow.appendChild(reuploadBtn);
+
+                // Reupload functionality
+                reuploadBtn.querySelector('.reupload-btn').addEventListener('click', async (e) => {
+                    const fileInput = document.getElementById(`reupload-${commentObj.fileName}`);
+                    fileInput.click();
+
+                    fileInput.addEventListener('change', async (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            try {
+                                const permitId = e.target.getAttribute('data-permit-id');
+                                const storageRef = ref(storage, `reuploads/${auth.currentUser.uid}/buildingPermits/${commentObj.fileName}`);
+                                const snapshot = await uploadBytes(storageRef, file);
+                                const downloadURL = await getDownloadURL(snapshot.ref);
+
+                                const permitDoc = doc(db, "buildingPermits", permitId);
+                                await updateDoc(permitDoc, {
+                                    [`${commentObj.fileName}URL`]: downloadURL
+                                });
+
+                                alert('File reuploaded successfully!');
+                            } catch (error) {
+                                console.error('Error uploading file:', error);
+                                alert('Error reuploading file.');
+                            }
+                        }
+                    }, { once: true });
+                });
             }
 
             modalBody.appendChild(commentRow);
         });
     }
-
-    // Event listener for the reupload button
-    document.querySelectorAll('.reupload-btn').forEach(btn => {
-        btn.addEventListener('click', async (event) => {
-            const fileName = event.target.getAttribute('data-file');
-            const permitId = event.target.getAttribute('data-permit-id'); // Get the permitId
-            const fileInput = document.getElementById(`reupload-${fileName}`);
-            fileInput.click();
-
-            fileInput.addEventListener('change', async (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    try {
-                        // Ensure permitId is defined before proceeding
-                        if (!permitId) {
-                            throw new Error("No permit ID provided.");
-                        }
-
-                        // Upload the file to Firebase Storage
-                        const storageRef = ref(storage, `reuploads/${auth.currentUser.uid}/buildingPermits/${fileName}`); // Change this to your correct path if necessary
-                        const snapshot = await uploadBytes(storageRef, file);
-                        const downloadURL = await getDownloadURL(snapshot.ref);
-
-                        // Update Firestore with the new file URL
-                        const permitDoc = doc(db, "buildingPermits", permitId); // Use the correct collection
-                        await updateDoc(permitDoc, {
-                            [`${fileName}URL`]: downloadURL
-                        });
-
-                        alert('File reuploaded successfully!');
-                    } catch (error) {
-                        console.error('Error uploading file:', error);
-                        alert('Error reuploading file.');
-                    }
-                }
-            });
-        });
-    });
 });
