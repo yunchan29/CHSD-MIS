@@ -23,6 +23,13 @@
     </style>
 </head>
 <body>
+
+    
+    <div id="loadingScreen" class="loading-screen" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center">
@@ -120,13 +127,16 @@
 
    <div class="row">
       <div class="col">
-        <label for="name">Name</label>
-        <input class="form-control" type="text" title="name" placeholder="">
+        <label for="householdHeadName>Name</label>
+        <input class="form-control" type="text" title="name" id="householdHeadName" placeholder="">
       </div>
       <div class="col">
-        <label for="classification">Classification</label>
-        <input class="form-control" type="text" title="classification" placeholder="">
-      </div>
+        <label for="classificationArea">Classification</label>
+        <select class="form-control" type="text" title="classification" id="classificationArea" placeholder="">
+            <option>Danger Zone</option>
+                <option>Not Danger Zone</option>
+                </select>
+        </div>
    </div>
 
    <div class="row">
@@ -192,13 +202,40 @@
     </div>
     <div class="col">
       <label for="sitioPurok">Sitio/Purok</label>
-      <input class="form-control" type="text" title="classification" placeholder="">
+      <select class="form-control" type="text" id="sitioPurok" placeholder="">
+        <option value="">Select Purok/Sitio</option>
+        <option>Purok 1</option>
+        <option>Purok 2</option>
+        <option>Purok 3</option>
+        <option>Purok 4</option>
+        <option>Purok 5</option>
+        <option>Purok 6</option>
+        <option>Purok 7</option>
+        <option>Purok 8</option>
+        <option>Purok 9</option>
+        <option>Purok 10</option>
+        <option>Sitio Kapayapaan</option>
+        <option>Sitio Lumot</option>
+        <option>Sitio Putol</option>
+        <option>Sitio Hulo</option>
+        <option>Sitio Masaya</option>
+        <option>Sitio Sungi</option>
+        <option>Sitio Banlic</option>
+        <option>Sitio Ilaya</option>
+        <option>Sitio Calero</option>
+        <option>Sitio Masiit</option>
+        <option>Sitio Tubigan</option>
+        <option>Sitio Sibulo</option>
+        <option>Sitio Sto. Tomas</option>
+        <option>Sitio Ronggot</option> 
+    </select>
     </div>
  </div>
  <div class="row">
     <div class="col-md-3">
         <label for="gender">Gender</label>
         <select class="form-control" id="gender" name="">
+          <option value="any">Any</option>
           <option value="">Male</option>
           <option value="">Female</option>
           <option value="">Prefer not to say</option>
@@ -225,12 +262,24 @@
           <input class="form-control" type="text" title="name" placeholder="">
         </div>
         <div class="col-md-3">
-          <label for="classification">Utilities</label>
-          <input class="form-control" type="text" title="classification" placeholder="">
+          <label for="utilities">Utilities</label>
+          <select class="form-control" id="utilities" title="classification" placeholder="">
+            <option>Meralco</option>
+            <option>Connected To Other Subscriber</option>
+            <option>None</option>
+        </select>
         </div>
         <div class="col-md-3">
-            <label for="classification">Source of Water</label>
-          <input class="form-control" type="text" title="classification" placeholder="">
+            <label for="sourceOfWater">Source of Water</label>
+          <select class="form-control" id="sourceOfWater" title="classification" placeholder="">
+            <option value="">Select Source of Water</option>
+            <option value="local_water_district">Local Water District</option>
+            <option value="deep_well">Deep Well</option>
+            <option value="shallow_well">Shallow Well</option>
+            <option value="water_delivery">Water Delivery (Private Supplier)</option>
+            <option value="communal_faucet">Communal Faucet System (Barangay/Community)</option>
+            <option value="rainwater">Rainwater Collection</option>
+        </select>
         </div>
  </div>
 
@@ -312,20 +361,44 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Elements
+    const loadingScreen = document.getElementById("loadingScreen");
+    const modal = document.getElementById("searchModal");
+    const searchButton = document.querySelector(".btn-primary.text-white");
+    const exportButton = document.querySelector(".btn-secondary");
+
+    // Show and hide loading screen
+    function showLoading() {
+        loadingScreen.style.display = "block";
+    }
+
+    function hideLoading() {
+        loadingScreen.style.display = "none";
+    }
+
+    // Close modal
+    function closeModal() {
+        modal.classList.remove("show");
+        modal.style.display = "none";
+    }
+
     // Load submitted reports on page load
     window.onload = loadSubmittedReports;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const searchButton = document.querySelector('.btn-primary.text-white');
-        const exportButton = document.querySelector('.btn-secondary');
+    document.addEventListener("DOMContentLoaded", () => {
+        // Search button event listener
+        searchButton.addEventListener("click", async () => {
+            showLoading();
 
-        searchButton.addEventListener('click', async () => {
-            const dateFrom = document.getElementById('dateFrom').value;
-            const dateTo = document.getElementById('dateTo').value;
-            const barangay = document.getElementById('barangay').value;
+            // Retrieve filter values
+            const dateFrom = document.getElementById("dateFrom").value;
+            const dateTo = document.getElementById("dateTo").value;
+            const barangay = document.getElementById("barangay").value;
 
+            // Base query for "Submitted" status
             let searchQuery = query(collection(db, "Housing"), where("status", "==", "Submitted"));
 
+            // Apply date filter if both dates are provided
             if (dateFrom && dateTo) {
                 searchQuery = query(
                     searchQuery,
@@ -333,25 +406,41 @@
                     where("dateApplied", "<=", new Date(dateTo))
                 );
             }
+            
+            // Apply barangay filter if selected
             if (barangay) {
                 searchQuery = query(searchQuery, where("barangay", "==", barangay));
             }
 
             try {
+                // Fetch matching documents
                 const snapshot = await getDocs(searchQuery);
                 const results = snapshot.docs.map(doc => doc.data());
-                displayResults(results);
+
+                // Display results or alert if none are found
+                if (results.length > 0) {
+                    displayResults(results);
+                    closeModal(); // Close modal on successful search
+                } else {
+                    alert("No records found matching the search criteria.");
+                }
             } catch (error) {
                 console.error("Error retrieving documents:", error);
+            } finally {
+                hideLoading();
             }
         });
 
-        exportButton.addEventListener('click', () => {
+        exportButton.addEventListener("click", () => {
+            showLoading();
             exportData();
+            hideLoading();
         });
     });
 
     async function loadSubmittedReports() {
+        showLoading();
+
         // Pagination Variables
         let profilesPerPage = 10;
         let currentPage = 1;
@@ -392,6 +481,8 @@
             document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
         } catch (error) {
             console.error("Error loading submitted reports:", error);
+        } finally {
+            hideLoading();
         }
     }
 
@@ -403,11 +494,11 @@
     }
 
     function displayResults(results) {
-        const tableBody = document.querySelector('.table tbody');
-        tableBody.innerHTML = '';
+        const tableBody = document.querySelector(".table tbody");
+        tableBody.innerHTML = "";
 
         results.forEach(data => {
-            const row = document.createElement('tr');
+            const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${data.householdHeadName || ''}</td>
                 <td>${data.householdBirthday || ''}</td>
@@ -421,18 +512,18 @@
     }
 
     function exportData() {
-        const tableBody = document.querySelector('.table tbody');
-        const rows = Array.from(tableBody.querySelectorAll('tr'));
+        const tableBody = document.querySelector(".table tbody");
+        const rows = Array.from(tableBody.querySelectorAll("tr"));
         const csvContent = rows.map(row => {
-            const cells = Array.from(row.querySelectorAll('td')).map(td => td.textContent);
-            return cells.join(',');
-        }).join('\n');
+            const cells = Array.from(row.querySelectorAll("td")).map(td => td.textContent);
+            return cells.join(",");
+        }).join("\n");
 
-        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const blob = new Blob([csvContent], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.download = 'Application_Report.csv';
+        link.download = "Application_Report.csv";
         link.click();
     }
 </script>
