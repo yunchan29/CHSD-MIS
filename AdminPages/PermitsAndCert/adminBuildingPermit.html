@@ -152,6 +152,7 @@
                         class="text-decoration-none"><i class="fa-solid fa-bolt"></i> Electrical Inspection</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCNotif.html"
                         class="text-decoration-none"><i class="fa-solid fa-bell"></i> Notifications</a></li>
+                     
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCArchive.html"
                         class="text-decoration-none"><i class="fa-solid fa-box-archive"></i> Archive</a></li>
      
@@ -1463,6 +1464,7 @@ async function saveValidation() {
 
     const permitDocRef = doc(db, "buildingPermits", permitId);
     try {
+        // Update file validation status in Firestore
         await updateDoc(permitDocRef, {
             [`fileValidationStatus.${fileRowId}`]: {
                 status: selectedOption.value,
@@ -1470,37 +1472,56 @@ async function saveValidation() {
             }
         });
         console.log('Validation saved to Firestore');
+
+        // Create a notification object for Firestore
+        const notificationMessage = `Validation updated for ${fileRowId}: ${selectedOption.value.toUpperCase()}. Comment: ${comments || 'No comments'}`;
+        const notificationData = {
+            permitId,
+            fileRowId,
+            message: notificationMessage,
+            timestamp: new Date(),
+            read: false // Initially set to unread
+        };
+
+        // Add the notification to Firestore
+        await addDoc(collection(db, "notifications"), notificationData);
+        console.log('Notification added to Firestore');
+
+        // Optionally, show the notification in the UI
+        showNotification(notificationMessage, 'success');
+
     } catch (error) {
         console.error("Error saving validation to Firestore:", error);
         alert("Failed to save validation.");
     }
 
-    // Close validation modal and reopen the view uploads modal
+    // Close the validation modal and reopen the view uploads modal
     const validationModal = bootstrap.Modal.getInstance(document.getElementById('validationModal'));
     validationModal.hide();
 
     const viewUploadsModal = new bootstrap.Modal(document.getElementById('viewUploadsModal'));
     viewUploadsModal.show();
 
-    // Update the comment summary section
+    // Update the comment summary section in the UI
     const commentSummaryList = document.getElementById('commentSummaryList');
     let existingComment = commentSummaryList.querySelector(`[data-commentid="${fileRowId}"]`);
 
-    const statusText = selectedOption.value.charAt(0).toUpperCase() + selectedOption.value.slice(1); // Capitalize the first letter
+    const statusText = selectedOption.value.charAt(0).toUpperCase() + selectedOption.value.slice(1);
     const commentPrefix = `${fileRow.querySelector('span').textContent} - ${statusText} - `;
 
     if (existingComment) {
-        // Update the existing comment
+        // Update the existing comment in the list
         existingComment.innerHTML = `<strong>${commentPrefix}</strong> ${comments ? comments : 'No comments'}`;
     } else {
-        // Create a new comment if not already existing
+        // Create a new comment entry if one does not already exist
         const commentSummaryItem = document.createElement('li');
         commentSummaryItem.className = 'list-group-item';
-        commentSummaryItem.dataset.commentid = fileRowId; // Use the same fileRowId to identify the comment
+        commentSummaryItem.dataset.commentid = fileRowId;
         commentSummaryItem.innerHTML = `<strong>${commentPrefix}</strong> ${comments ? comments : 'No comments'}`;
         commentSummaryList.appendChild(commentSummaryItem);
     }
 }
+
 
 // Function to check if all required fields are filled
 function checkIfAllFieldsFilled() {

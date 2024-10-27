@@ -342,186 +342,184 @@
     <script defer src="https://cdn.jsdelivr.net/npm/exceljs@4.2.1/dist/exceljs.min.js"></script>
     <script type="module" src="/Database/firebase.js"></script>
 
-    <!-- Firebase and custom scripts -->
+    // Firebase and custom scripts
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-   import { getFirestore, collection, query, where, orderBy, limit, onSnapshot, startAfter, getDocs, updateDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-   
-   // Firebase configuration
-   const firebaseConfig = {
-       apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-       authDomain: "chsd-mis.firebaseapp.com",
-       projectId: "chsd-mis",
-       storageBucket: "chsd-mis.appspot.com",
-       messagingSenderId: "694967679357",
-       appId: "1:694967679357:web:65cffd50f13739f934f414",
-       measurementId: "G-XBQTQFRLJ5"
-   };
-   // Initialize Firebase
-   const app = initializeApp(firebaseConfig);
-   const auth = getAuth(app); 
-   const db = getFirestore(app);
-
-
-    let notificationsPerPage = 5; // Number of notifications per page
-    let currentPage = 1; // Track the current page
-    let totalPages = 1; // Total pages based on the number of notifications
-    let lastVisibleDoc = null; // Keep track of the last document for pagination
-
-    // Function to load client notifications with pagination
-    async function loadClientNotifications(userId) {
-        const notificationsRef = collection(db, "notifications");
-        const notificationContainer = document.getElementById("notification-container");
-
-        const prevPageBtn = document.getElementById("prevPageBtn");
-        const nextPageBtn = document.getElementById("nextPageBtn");
-        const pageInfo = document.getElementById("pageInfo");
-
-        // Fetch total notifications for user to calculate total pages
-        const allNotificationsSnapshot = await getDocs(query(
-            notificationsRef,
-            where("userId", "==", userId)
-        ));
-
-        const totalNotifications = allNotificationsSnapshot.size;
-        totalPages = Math.ceil(totalNotifications / notificationsPerPage);
-
-        // Query notifications for the current page, ordered by timestamp
-        let notificationsQuery = query(
-            notificationsRef,
-            where("userId", "==", userId),
-            orderBy("timestamp", "desc"),
-            limit(notificationsPerPage)
-        );
-
-        // If it's not the first page, start after the last visible document
-        if (lastVisibleDoc && currentPage > 1) {
-            notificationsQuery = query(notificationsQuery, startAfter(lastVisibleDoc));
-        }
-
-        onSnapshot(notificationsQuery, (snapshot) => {
-            notificationContainer.innerHTML = ''; // Clear previous notifications
-
-            if (snapshot.docs.length === 0) {
-                notificationContainer.innerHTML = '<p>No notifications available.</p>';
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, query, where, orderBy, limit, onSnapshot, startAfter, getDocs, updateDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+            authDomain: "chsd-mis.firebaseapp.com",
+            projectId: "chsd-mis",
+            storageBucket: "chsd-mis.appspot.com",
+            messagingSenderId: "694967679357",
+            appId: "1:694967679357:web:65cffd50f13739f934f414",
+            measurementId: "G-XBQTQFRLJ5"
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+    
+        let notificationsPerPage = 5; // Number of notifications per page
+        let currentPage = 1; // Track the current page
+        let totalPages = 1; // Total pages based on the number of notifications
+        let lastVisibleDoc = null; // Keep track of the last document for pagination
+    
+        // Function to load client notifications with pagination
+        async function loadClientNotifications(userId) {
+            const notificationsRef = collection(db, "notifications");
+            const notificationContainer = document.getElementById("notification-container");
+    
+            const prevPageBtn = document.getElementById("prevPageBtn");
+            const nextPageBtn = document.getElementById("nextPageBtn");
+            const pageInfo = document.getElementById("pageInfo");
+    
+            // Fetch total notifications for user to calculate total pages
+            const allNotificationsSnapshot = await getDocs(query(
+                notificationsRef,
+                where("userId", "==", userId)
+            ));
+    
+            const totalNotifications = allNotificationsSnapshot.size;
+            totalPages = Math.ceil(totalNotifications / notificationsPerPage);
+    
+            // Query notifications for the current page, ordered by timestamp
+            let notificationsQuery = query(
+                notificationsRef,
+                where("userId", "==", userId),
+                orderBy("timestamp", "desc"),
+                limit(notificationsPerPage)
+            );
+    
+            // If it's not the first page, start after the last visible document
+            if (lastVisibleDoc && currentPage > 1) {
+                notificationsQuery = query(notificationsQuery, startAfter(lastVisibleDoc));
             }
-
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const notification = document.createElement('div');
-                notification.className = 'client-notification';
-                
-                // Apply bold style for unread notifications
-                if (!data.read) {
-                    notification.style.fontWeight = 'bold';
+    
+            onSnapshot(notificationsQuery, (snapshot) => {
+                notificationContainer.innerHTML = ''; // Clear previous notifications
+    
+                if (snapshot.docs.length === 0) {
+                    notificationContainer.innerHTML = '<p>No notifications available.</p>';
                 }
-                
-                // Make notification clickable
-                notification.innerHTML = `${data.message} <br><small>${new Date(data.timestamp.seconds * 1000).toLocaleString()}</small>`;
-                notification.style.cursor = 'pointer';
-
-                notification.addEventListener('click', async () => {
-                    // Mark the notification as read in Firestore
-                    await updateDoc(doc.ref, {
-                        read: true
-                    });
+    
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const notification = document.createElement('div');
+                    notification.className = 'client-notification';
                     
-                    // Remove the bold style
-                    notification.style.fontWeight = 'normal';
-
-                    // Reload unread notifications to update the badge
-                    fetchUnreadNotifications(userId);
+                    // Apply bold style for unread notifications
+                    if (!data.read) {
+                        notification.style.fontWeight = 'bold';
+                    }
+    
+                    // Make notification clickable
+                    notification.innerHTML = `${data.message} <br><small>${new Date(data.timestamp.seconds * 1000).toLocaleString()}</small>`;
+                    notification.style.cursor = 'pointer';
+    
+                    notification.addEventListener('click', async () => {
+                        // Mark the notification as read in Firestore
+                        await updateDoc(doc.ref, {
+                            read: true
+                        });
+    
+                        // Remove the bold style
+                        notification.style.fontWeight = 'normal';
+    
+                        // Reload unread notifications to update the badge
+                        fetchUnreadNotifications(userId);
+                    });
+    
+                    notificationContainer.appendChild(notification);
                 });
-
-                notificationContainer.appendChild(notification);
+    
+                // Track the last visible document for pagination
+                lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+    
+                // Update page info
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    
+                // Disable/enable pagination buttons
+                prevPageBtn.disabled = currentPage === 1;
+                nextPageBtn.disabled = currentPage === totalPages;
             });
-
-            // Track the last visible document for pagination
-            lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-
-            // Update page info
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-
-            // Disable/enable pagination buttons
-            prevPageBtn.disabled = currentPage === 1;
-            nextPageBtn.disabled = currentPage === totalPages;
-        });
-    }
-
-    // Function to fetch unread notifications and update the badge
-    async function fetchUnreadNotifications(userId) {
-        const notificationsRef = collection(db, "notifications");
-
-        const unreadNotificationsQuery = query(
-            notificationsRef,
-            where("userId", "==", userId),
-            where("read", "==", false)
-        );
-
-        const unreadSnapshot = await getDocs(unreadNotificationsQuery);
-        const unreadCount = unreadSnapshot.size;
-
-        updateNotificationBadge(unreadCount); // Update the badge
-    }
-
-    // Function to update the notification badge
-    function updateNotificationBadge(unreadCount) {
-        const badgeElement = document.getElementById('notification-badge');
-        if (unreadCount > 0) {
-            badgeElement.style.display = 'inline-block'; // Show the badge
-            badgeElement.textContent = unreadCount;      // Set the count
-        } else {
-            badgeElement.style.display = 'none';         // Hide the badge if no unread notifications
         }
-    }
-
-    // Function to handle authentication state
-    function handleAuthState() {
-        const prevPageBtn = document.getElementById("prevPageBtn");
-        const nextPageBtn = document.getElementById("nextPageBtn");
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in, get user ID and load notifications
-                const userId = user.uid;
-
-                // Load initial notifications
-                loadClientNotifications(userId);
-
-                // Fetch unread notifications to update the badge
-                fetchUnreadNotifications(userId);
-
-                // Handle "Previous Page" button click
-                prevPageBtn.addEventListener("click", () => {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        lastVisibleDoc = null; // Reset last visible document when going to the previous page
-                        loadClientNotifications(userId);
-                    }
-                });
-
-                // Handle "Next Page" button click
-                nextPageBtn.addEventListener("click", () => {
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        loadClientNotifications(userId);
-                    }
-                });
+    
+        // Function to fetch unread notifications and update the badge
+        async function fetchUnreadNotifications(userId) {
+            const notificationsRef = collection(db, "notifications");
+    
+            const unreadNotificationsQuery = query(
+                notificationsRef,
+                where("userId", "==", userId),
+                where("read", "==", false)
+            );
+    
+            const unreadSnapshot = await getDocs(unreadNotificationsQuery);
+            const unreadCount = unreadSnapshot.size;
+    
+            updateNotificationBadge(unreadCount); // Update the badge
+        }
+    
+        // Function to update the notification badge
+        function updateNotificationBadge(unreadCount) {
+            const badgeElement = document.getElementById('notification-badge');
+            if (unreadCount > 0) {
+                badgeElement.style.display = 'inline-block'; // Show the badge
+                badgeElement.textContent = unreadCount;      // Set the count
             } else {
-                console.error("User is not signed in.");
+                badgeElement.style.display = 'none';         // Hide the badge if no unread notifications
             }
+        }
+    
+        // Function to handle authentication state
+        function handleAuthState() {
+            const prevPageBtn = document.getElementById("prevPageBtn");
+            const nextPageBtn = document.getElementById("nextPageBtn");
+    
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is signed in, get user ID and load notifications
+                    const userId = user.uid;
+    
+                    // Load initial notifications
+                    loadClientNotifications(userId);
+    
+                    // Fetch unread notifications to update the badge
+                    fetchUnreadNotifications(userId);
+    
+                    // Handle "Previous Page" button click
+                    prevPageBtn.addEventListener("click", () => {
+                        if (currentPage > 1) {
+                            currentPage--;
+                            lastVisibleDoc = null; // Reset last visible document when going to the previous page
+                            loadClientNotifications(userId);
+                        }
+                    });
+    
+                    // Handle "Next Page" button click
+                    nextPageBtn.addEventListener("click", () => {
+                        if (currentPage < totalPages) {
+                            currentPage++;
+                            loadClientNotifications(userId);
+                        }
+                    });
+                } else {
+                    console.error("User is not signed in.");
+                }
+            });
+        }
+    
+        // Start monitoring authentication state when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            handleAuthState();
         });
-    }
-
-    // Start monitoring authentication state when the DOM is fully loaded
-    document.addEventListener('DOMContentLoaded', () => {
-        handleAuthState();
-    });
-   
-       </script>
-   
-   
+    </script>
+    
     
 
     <!-- Bootstrap and other scripts -->

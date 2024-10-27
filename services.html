@@ -399,67 +399,12 @@
 
 
                       <!-- Downloadable Forms Tab -->
-                <div class="tab-pane fade" id="downloadableForms" role="tabpanel" aria-labelledby="downloadableForms-tab">
-                    <div class="row">
-                        <!-- Card 1 -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    
-                                    <h4 class="card-title">Building Permit Form</h4>
-                                    
-                                    <a href="/resources/pictures/Sample File.pdf" class="btn btn-primary text-white" download>Download</a>
-                                   
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Card 2 -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h4 class="card-title">Occupancy Permit Form</h4>
-                                  
-                                    <a href="/resources/pictures/Sample File.pdf" class="btn btn-primary text-white" download>Download</a>
-                                    
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Card 3 -->
-                        <div class="col-md-4 mb-4">
-                          
-                
-                        </div>
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h4 class="card-title">Housing Application Form</h4>
-                                
-                                    <a href="/resources/pictures/Sample File.pdf" class="btn btn-primary text-white" download>Download</a>
-                                    
-                                </div>
-                            </div>
-                
-                        </div>
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h6 class="card-title">Citizen's Charter+Housing and Settlements Department External Services</h6>
-                                
-                                    <a href="/resources/downloadable/HSD_CitizenCharter.pdf" class="btn btn-primary text-white" download>Download</a>
-                                    
-                                </div>
-                            </div>
+<div class="tab-pane fade" id="downloadableForms" role="tabpanel" aria-labelledby="downloadableForms-tab">
+    <div class="row" id="downloadableFormsContent">
+        <!-- Downloadable forms will be injected here -->
+    </div>
+</div>
 
-                            
-                
-                        </div>
-                        
-                        
-            
-                        
-                    </div>
-                    
-                </div>
                 <div class="tab-pane fade show active" id="applicationProcess" role="tabpanel" aria-labelledby="application-process-tab">
                     <div class="stepByStep container mt-3">
                         <h3>Step-by-step Process for Online Application</h3>
@@ -491,6 +436,59 @@
             
         </div>
     </div>
+
+    <script type="module" src="/Database/firebase.js">
+
+    </script>
+    
+
+   <script type="module">
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+    authDomain: "chsd-mis.firebaseapp.com",
+    projectId: "chsd-mis",
+    storageBucket: "chsd-mis.appspot.com",
+    messagingSenderId: "694967679357",
+    appId: "1:694967679357:web:65cffd50f13739f934f414",
+    measurementId: "G-XBQTQFRLJ5"
+};
+
+// Initialize Firebase app
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const db = getFirestore(app); // Use getFirestore instead of initializeFirestore
+const storage = getStorage(app);
+
+// Load downloadable forms
+async function loadDownloadableForms() {
+    const formsCollection = collection(db, "services");
+    const querySnapshot = await getDocs(formsCollection);
+    let formsHtml = '';
+
+    querySnapshot.forEach((doc) => {
+        const form = doc.data();
+        formsHtml += `
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h4 class="card-title">${form.title}</h4>
+                        <a href="${form.downloadUrl}" class="btn btn-primary text-white" download>Download</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    document.getElementById("downloadableFormsContent").innerHTML = formsHtml;
+}
+
+document.addEventListener("DOMContentLoaded", loadDownloadableForms);
+
+   </script>
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
