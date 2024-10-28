@@ -134,33 +134,34 @@
                             <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
                         </a>
             
-                        <!-- Right-aligned content: Notifications -->
-                        <ul class="navbar-nav ms-auto">
-                            <!-- Notifications Dropdown -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa-solid fa-bell"></i>
-                                    <span id="notification-badge" class="badge bg-danger" style="display: none;">0</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" style="width: 400px; padding: 15px;">
-                                    <li>
-                                        <h6 class="dropdown-header">Notifications</h6>
-                                    </li>
-                                    <li>
-                                        <div class="notifications-container" id="notification-container" style="max-height: 400px; overflow-y: auto;">
-                                            <!-- Notifications will be dynamically added here -->
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-item text-center">
-                                            <button id="prevPageBtn" class="btn btn-secondary btn-sm">Previous</button>
-                                            <span id="pageInfo">Page 1</span>
-                                            <button id="nextPageBtn" class="btn btn-secondary btn-sm">Next</button>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+                                    <!-- Right-aligned content: Notifications -->
+<ul class="navbar-nav ms-auto">
+    <!-- Notifications Dropdown -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-bell"></i>
+            <span id="notification-badge" class="badge bg-danger" style="display: none;">0</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" style="width: 500px; padding: 15px; max-height: 500px; overflow-y: auto;">
+            <li>
+                <h6 class="dropdown-header">Notifications</h6>
+            </li>
+            <li>
+                <div class="notifications-container" id="notification-container" style="max-height: 400px; overflow-y: auto; overflow-x: hidden;">
+                    <!-- Notifications will be dynamically added here -->
+                </div>
+            </li>
+            <li>
+                <div class="dropdown-item text-center">
+                    <button id="prevPageBtn" class="btn btn-secondary btn-sm">Previous</button>
+                    <span id="pageInfo">Page 1</span>
+                    <button id="nextPageBtn" class="btn btn-secondary btn-sm">Next</button>
+                </div>
+            </li>
+        </ul>
+    </li>
+</ul>
+
                     </div>
                 </div>
             </nav>
@@ -326,11 +327,7 @@
                </select>
 
             </div>
-            <div class="col-md-8">
-               <label for="householdRemarks">Remarks</label>
-               <textarea class="form-control" id="householdRemarks" rows="1" disabled>
-               </textarea>
-            </div>
+           
         </div>
     
         <div class="row">
@@ -363,11 +360,11 @@
         <div class="row">
             <div class="col-md-3">
                 <label for="householdLastName">Last Name<span class="required-asterisk">*</span></label>
-                <input type="text" class="form-control" id="householdLastName" required>
+                <input type="text" class="form-control" id="householdLastName" disabled>
             </div>
             <div class="col-md-3">
                 <label for="householdFirstName">First Name<span class="required-asterisk">*</span></label>
-                <input type="text" class="form-control" id="householdFirstName" required>
+                <input type="text" class="form-control" id="householdFirstName" disabled>
             </div>
             <div class="col-md-3">
                 <label for="householdMiddleName">Middle Name</label>
@@ -1068,8 +1065,6 @@
                 document.getElementById('classificationArea'),
                 document.getElementById('householdBirthday'),
                 document.getElementById('householdCivilStatus'),
-                document.getElementById('householdLastName'),
-                document.getElementById('householdFirstName'),
                 document.getElementById('householdOccupation'),
                 document.getElementById('householdPlaceOfWork'),
                 document.getElementById('householdAddress'),
@@ -1121,8 +1116,8 @@
 
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-            import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-            import { getFirestore, collection, addDoc, updateDoc, doc, arrayUnion, Timestamp, getDocs, where, limit, onSnapshot, query, orderBy, startAfter} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+            import { getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+            import { getFirestore, collection, addDoc, updateDoc, doc, arrayUnion, Timestamp, getDocs, where, limit, onSnapshot, query, orderBy, startAfter, getDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         
             // Firebase configuration
             const firebaseConfig = {
@@ -1140,6 +1135,38 @@
             const auth = getAuth(app);
             const db = getFirestore(app);
         
+           // Function to autofill the household name fields based on logged-in user data
+async function autofillHouseholdNameFields() {
+    const householdLastNameInput = document.getElementById('householdLastName');
+    const householdFirstNameInput = document.getElementById('householdFirstName');
+
+    const user = auth.currentUser;
+    if (user) {
+        try {
+            const userRef = doc(db, 'users', user.uid);
+            const docSnap = await getDoc(userRef);
+            
+            if (docSnap.exists()) {
+                const { firstName, lastName } = docSnap.data();
+
+                if (householdFirstNameInput) householdFirstNameInput.value = firstName || '';
+                if (householdLastNameInput) householdLastNameInput.value = lastName || '';
+            } else {
+                console.error("User document does not exist!");
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    } else {
+        console.log("No user is logged in.");
+        if (householdFirstNameInput) householdFirstNameInput.value = '';
+        if (householdLastNameInput) householdLastNameInput.value = '';
+    }
+}
+
+// Call the autofill function when the user’s authentication state changes
+onAuthStateChanged(auth, autofillHouseholdNameFields);
+
             // Declare the householdMembers array to store all household members from step 2
             let householdMembers = [];
         
@@ -1295,7 +1322,7 @@
                     const barangay = document.getElementById('barangay').value;
                     const sitioPurok = document.getElementById('sitioPurok').value;
                     const classificationArea = document.getElementById('classificationArea').value;
-                    const householdRemarks = document.getElementById('householdRemarks').value;
+         
                     const householdBirthday = document.getElementById('householdBirthday').value;
                     const householdSex = document.getElementById('householdSex').value;
                     const householdCivilStatus = document.getElementById('householdCivilStatus').value;
@@ -1550,6 +1577,9 @@
     document.addEventListener('DOMContentLoaded', () => {
         handleAuthState();
     });
+
+ 
+
         </script>
         
         
