@@ -450,10 +450,11 @@ background: rgba(255, 255, 255, 0.474) !important;
 .clientLoginBackground {
     position: relative;
     padding: 5%;
-    background: url("/resources/pictures/header4.png");
+    background: url("/resources/pictures/clientBackground3.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: scroll;
+    background-position: bottom;
     z-index: 1; /* Ensures the content appears above the overlay */
 }
 
@@ -812,7 +813,7 @@ border-radius: 12px;
 
 
 .clientSignUpWrapper{
-    background:url("/resources/pictures/clientBackgroundBlur.png");
+    background:url("/resources/pictures/clientLoading.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     height:100vh;
