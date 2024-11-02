@@ -112,14 +112,14 @@
   });
 </script>
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, collection, getDocs, updateDoc, doc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
         authDomain: "chsd-mis.firebaseapp.com",
@@ -130,9 +130,7 @@
         measurementId: "G-XBQTQFRLJ5"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
 
@@ -158,6 +156,7 @@
             const downloadUrl = await getDownloadURL(snapshot.ref);
             await addDoc(formsCollectionRef, { title: title, downloadUrl: downloadUrl });
             uploadStatus.innerText = "Form uploaded successfully!";
+            Swal.fire("Uploaded!", "Form uploaded successfully!", "success");
             loadForms();
             document.getElementById("uploadForm").reset();
         } catch (error) {
@@ -166,36 +165,54 @@
     });
 
     async function loadForms() {
-    const formsList = document.getElementById("formsList");
-    formsList.innerHTML = "";
-    const querySnapshot = await getDocs(formsCollectionRef);
-    querySnapshot.forEach((docSnapshot) => {
-        const form = docSnapshot.data();
-        formsList.innerHTML += `
-            <div class="col-md-4 mb-4" id="form-${docSnapshot.id}">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h4 class="card-title">${form.title}</h4>
-                        <div class="d-flex flex-wrap gap-2">
-                            <a href="${form.downloadUrl}" target="_blank" class="btn btn-info text-white">Preview</a>
-                            <button class="btn btn-warning" onclick="editForm('${docSnapshot.id}', '${form.title}')">Edit</button>
-                            <button class="btn btn-primary" onclick="reuploadForm('${docSnapshot.id}')">Reupload</button>
-                            <button class="btn btn-danger" onclick="deleteForm('${docSnapshot.id}')">Delete</button>
+        const formsList = document.getElementById("formsList");
+        formsList.innerHTML = "";
+        const querySnapshot = await getDocs(formsCollectionRef);
+        querySnapshot.forEach((docSnapshot) => {
+            const form = docSnapshot.data();
+            formsList.innerHTML += `
+                <div class="col-md-4 mb-4" id="form-${docSnapshot.id}" draggable="true">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="card-title">${form.title}</h4>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="${form.downloadUrl}" target="_blank" class="btn btn-info text-white">Preview</a>
+                                <button class="btn btn-warning" onclick="editForm('${docSnapshot.id}', '${form.title}')">Edit</button>
+                                <button class="btn btn-primary" onclick="reuploadForm('${docSnapshot.id}')">Reupload</button>
+                                <button class="btn btn-danger" onclick="deleteForm('${docSnapshot.id}')">Delete</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>`;
-    });
-}
+                </div>`;
+        });
 
+        // Initialize SortableJS on formsList
+        new Sortable(formsList, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            onEnd: (evt) => {
+                console.log(`Item moved from ${evt.oldIndex} to ${evt.newIndex}`);
+            }
+        });
+    }
 
-    // Delete form function with confirmation
+    // Delete form function with SweetAlert confirmation
     window.deleteForm = async (formId) => {
-        const confirmDelete = confirm("Are you sure you want to delete this form?");
-        if (confirmDelete) {
-            await deleteDoc(doc(db, "services", formId));
-            document.getElementById(`form-${formId}`).remove();
-        }
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This action cannot be undone!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                await deleteDoc(doc(db, "services", formId));
+                document.getElementById(`form-${formId}`).remove();
+                Swal.fire("Deleted!", "The form has been deleted.", "success");
+            }
+        });
     };
 
     // Edit form function
@@ -217,20 +234,16 @@
             if (newFile.files.length > 0) {
                 const file = newFile.files[0];
                 const storageRef = ref(storage, `forms/${file.name}`);
-                try {
-                    await uploadBytes(storageRef, file);
-                    const newDownloadUrl = await getDownloadURL(storageRef);
-                    await updateDoc(doc(db, "services", formId), { downloadUrl: newDownloadUrl });
-                    alert("File reuploaded successfully!");
-                    loadForms();
-                } catch (error) {
-                    alert("Error reuploading file.");
-                }
+                await uploadBytes(storageRef, file);
+                const downloadUrl = await getDownloadURL(storageRef);
+                await updateDoc(doc(db, "services", formId), { downloadUrl });
+                Swal.fire("Reuploaded!", "The form has been reuploaded successfully.", "success");
+                loadForms();
             }
         });
     };
 
-    document.addEventListener("DOMContentLoaded", loadForms);
+    loadForms();
 </script>
 
 

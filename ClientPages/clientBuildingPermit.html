@@ -1094,6 +1094,8 @@ window.onload = toggleOtherScopeInput;
 
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1284,9 +1286,11 @@ window.onload = toggleOtherScopeInput;
             const permitDoc = doc(db, "buildingPermits", permitId);
             await updateDoc(permitDoc, fileURLMapping);
 
-            var modal = new bootstrap.Modal(document.getElementById('applicationAppliedModal'));
-            modal.show();
-
+            Swal.fire({
+  title: "Success",
+  text: "Application Submitted",
+  icon: "success"
+});
             window.location.reload();
 
         } catch (error) {
@@ -1489,7 +1493,12 @@ window.onload = toggleOtherScopeInput;
                 const requiredFileInputs = [buildingPlanInput, proofOwnershipInput];
                 for (const input of requiredFileInputs) {
                     if (!input.files[0]) {
-                        alert('Please upload all required files before proceeding.');
+                        Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "Please upload all required files",
+  footer: '<a href="#">Why do I have this issue?</a>'
+});
                         return; // Stop if any required file is missing
                     }
                 }

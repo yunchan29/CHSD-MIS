@@ -449,14 +449,7 @@
                         </div>
                     </div>
                 
-                    <!-- Comments section -->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label for="officerRemarks">Comments</label>
-                            <textarea class="form-control" id="officerRemarks" rows="2"></textarea>
-                        </div>
-                    </div>
-                
+                   
                     <div id="viewDetailsModalBtnGrp">
     
                     </div>
@@ -476,6 +469,7 @@
     </div>
 
     
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script type="module" src="/Database/firebase.js"></script>
     <script type="module">
@@ -725,7 +719,11 @@ function openViewDetailsModal(permitData) {
                 timestamp: serverTimestamp(),
                 read: false
             });
-            alert("status updated successfully");
+            Swal.fire({
+  title: "Success!",
+  text: "Status Updated Successfully!",
+  icon: "success"
+});
 
             // Reload Profiles to Reflect Changes
             loadOccupancyProfiles();
@@ -752,44 +750,59 @@ async function handleArchiveOccupancyPermit(event) {
         return;
     }
 
-    const confirmed = confirm("Are you sure you want to archive this document?");
-    
-    if (!confirmed) {
-        return;
-    }
+    // SweetAlert for confirmation
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, archive it!"
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const occupancyPermitRef = doc(db, "OccupancyPermits", occupancyPermitId);
+                const occupancyPermitSnapshot = await getDoc(occupancyPermitRef);
 
-    try {
-        const occupancyPermitRef = doc(db, "OccupancyPermits", occupancyPermitId); // Updated collection name
-        const occupancyPermitSnapshot = await getDoc(occupancyPermitRef);
+                if (occupancyPermitSnapshot.exists()) {
+                    const occupancyPermitData = occupancyPermitSnapshot.data();
+                    
+                    // Archive document
+                    await setDoc(doc(db, "archivedOccupancyPermits", occupancyPermitId), occupancyPermitData);
+                    await deleteDoc(occupancyPermitRef);
 
-        if (occupancyPermitSnapshot.exists()) {
-            const occupancyPermitData = occupancyPermitSnapshot.data();
-            
-            await setDoc(doc(db, "archivedOccupancyPermits", occupancyPermitId), occupancyPermitData);
-await deleteDoc(occupancyPermitRef);
+                    // Remove the row from the table
+                    const tableBody = document.querySelector("#profileTableBody"); // Update the correct table body ID if needed
+                    const rowToRemove = tableBody.querySelector(`button[data-permit-id="${occupancyPermitId}"]`).closest('tr');
+                    if (rowToRemove) rowToRemove.remove();
 
-// Remove the row from the table
-const tableBody = document.querySelector("#profileTableBody");  // Update the correct table body ID
-const rowToRemove = tableBody.querySelector(`button[data-permit-id="${occupancyPermitId}"]`).closest('tr');
-if (rowToRemove) rowToRemove.remove();
+                    showNotification("Document archived successfully!", "success");
 
+                    // Close the modal
+                    const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+                    if (viewDetailsModal) {
+                        viewDetailsModal.hide(); // Hide View Details Modal
+                    }
 
-            showNotification("Document archived successfully!", "success");
+                    // Success feedback
+                    Swal.fire({
+                        title: "Archived!",
+                        text: "Your file has been archived successfully.",
+                        icon: "success"
+                    });
 
-            // Close the modal
-            const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-            if (viewDetailsModal) {
-                viewDetailsModal.hide(); // Hide View Details Modal
+                } else {
+                    showNotification("Document not found!", "error");
+                }
+            } catch (error) {
+                console.error("Error archiving document: ", error);
+                showNotification(`Failed to archive document: ${error.message}`, "error");
             }
-
-        } else {
-            showNotification("Document not found!", "error");
         }
-    } catch (error) {
-        console.error("Error archiving document: ", error);
-        showNotification(`Failed to archive document: ${error.message}`, "error");
-    }
+    });
 }
+
 
 let fileValidationStatus = {}; // For tracking validation status and comments
 
@@ -943,6 +956,11 @@ async function saveValidation() {
             }
         });
         console.log('Validation saved to Firestore');
+        Swal.fire({
+  title: "Validated!",
+  text: "File Validated Successfully!",
+  icon: "success"
+});
     } catch (error) {
         console.error("Error saving validation to Firestore:", error);
         alert("Failed to save validation.");
