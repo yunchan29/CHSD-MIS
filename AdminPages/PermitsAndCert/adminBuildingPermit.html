@@ -1035,7 +1035,18 @@
     });
 </script>
 
-    
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init({
+        publicKey: "VtfvHWTpFE6-TDb0r",
+      });
+   })();
+</script>
+
+
     
     
                         <script type="module" src="/Database/firebase.js"></script>
@@ -1445,12 +1456,6 @@ async function saveValidation() {
     const comments = document.getElementById('validationComments').value;
     const fileRowId = document.getElementById('saveValidationBtn').dataset.filerow;
     const fileRow = document.querySelector(`[data-rowid="${fileRowId}"]`);
-
-    fileValidationStatus[fileRowId] = {
-        status: selectedOption.value,
-        comments: comments
-    };
-
     const permitId = document.getElementById('hiddenPermitId').value;
 
     if (!permitId) {
@@ -1459,9 +1464,35 @@ async function saveValidation() {
         return;
     }
 
+    // Update file validation status in Firestore
+    fileValidationStatus[fileRowId] = {
+        status: selectedOption.value,
+        comments: comments
+    };
+
     const permitDocRef = doc(db, "buildingPermits", permitId);
+
     try {
-        // Update file validation status in Firestore
+        // Retrieve permit document to get ownerUID
+        const permitDocSnap = await getDoc(permitDocRef);
+        if (!permitDocSnap.exists()) {
+            console.error("Permit document does not exist.");
+            return;
+        }
+
+        const ownerUid = permitDocSnap.data().ownerUid;
+        
+        // Fetch the email of the owner using ownerUID from the 'users' collection
+        const userDocRef = doc(db, "users", ownerUid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (!userDocSnap.exists()) {
+            console.error("User document not found.");
+            return;
+        }
+
+        const userEmail = userDocSnap.data().email;
+
+        // Update the validation status in Firestore
         await updateDoc(permitDocRef, {
             [`fileValidationStatus.${fileRowId}`]: {
                 status: selectedOption.value,
@@ -1484,13 +1515,27 @@ async function saveValidation() {
         await addDoc(collection(db, "notifications"), notificationData);
         console.log('Notification added to Firestore');
 
+        // Send email notification using EmailJS
+        emailjs.send("service_hy9w8j7", "template_dh7hos5", {
+            permit_id: permitId,
+            file_row_id: fileRowId,
+            status: selectedOption.value.toUpperCase(),
+            comments: comments || "No comments",
+            user_email: userEmail // Send to owner's email
+        })
+        .then((response) => {
+            console.log('Email sent successfully:', response.status, response.text);
+        }, (error) => {
+            console.error('Failed to send email:', error);
+        });
+
         // Optionally, show the notification in the UI
         showNotification(notificationMessage, 'success');
         Swal.fire({
-  title: "Success!",
-  text: "File Validated",
-  icon: "success"
-});
+            title: "Success!",
+            text: "File Validated",
+            icon: "success"
+        });
 
     } catch (error) {
         console.error("Error saving validation to Firestore:", error);
@@ -1523,7 +1568,6 @@ async function saveValidation() {
         commentSummaryList.appendChild(commentSummaryItem);
     }
 }
-
 
 // Function to check if all required fields are filled
 function checkIfAllFieldsFilled() {
@@ -1733,66 +1777,91 @@ checkIfAllFieldsFilled();
             statusSelect.value = currentStatus;
         }
 
-        // Function to Open the View Details Modal
-        function openViewDetailsModal(permitData) {
-            // Populate Modal Fields
+    // Function to Open the View Details Modal
+function openViewDetailsModal(permitData) {
+    // Populate Modal Fields
+    const appointmentDate = permitData.appointmentDate ? new Date(permitData.appointmentDate.seconds * 1000).toLocaleString() : "N/A";
+    document.getElementById("permitOwnerName").textContent = permitData.ownerName || "N/A";
+    document.getElementById("issuedOnDate").textContent = permitData.issuedOn || "N/A";
+    document.getElementById("appointmentDateSched").textContent = appointmentDate || "N/A";
+    document.getElementById("permitIdDisplay").textContent = permitData.id || "N/A";
+    document.getElementById("hiddenPermitId").value = permitData.id || "";
 
-            const appointmentDate = permitData.appointmentDate ? new Date(permitData.appointmentDate.seconds * 1000).toLocaleString() : "N/A";
-            document.getElementById("permitOwnerName").textContent = permitData.ownerName || "N/A";
-            document.getElementById("issuedOnDate").textContent = permitData.issuedOn || "N/A";
-            document.getElementById("appointmentDateSched").textContent = appointmentDate || "N/A";
-            document.getElementById("permitIdDisplay").textContent = permitData.id || "N/A";
-            document.getElementById("hiddenPermitId").value = permitData.id || "";
+    // Update Status Options
+    updateStatusOptions(permitData.status || "Pending");
 
-            // Update Status Options
-            updateStatusOptions(permitData.status || "Pending");
+    // Append Dynamic Buttons
+    appendButtons(permitData);
 
-            // Append Dynamic Buttons
-            appendButtons(permitData);
+    // Show the Modal
+    const viewDetailsModal = new bootstrap.Modal(document.getElementById('viewDetailsModal'));
+    viewDetailsModal.show();
 
-            // Show the Modal
-            const viewDetailsModal = new bootstrap.Modal(document.getElementById('viewDetailsModal'));
-            viewDetailsModal.show();
+    // Add Event Listener for the Save Button (Ensure it's not duplicated)
+    const saveStatusBtn = document.getElementById("saveStatusBtn");
+    saveStatusBtn.onclick = async () => {
+        const newStatus = document.getElementById("statusSelect").value;
+        try {
+            // Update Status in Firestore
+            await updateDoc(doc(db, 'buildingPermits', permitData.id), { status: newStatus });
 
-            // Add Event Listener for the Save Button (Ensure it's not duplicated)
-            const saveStatusBtn = document.getElementById("saveStatusBtn");
-            saveStatusBtn.onclick = async () => {
-                const newStatus = document.getElementById("statusSelect").value;
-                try {
-                    // Update Status in Firestore
-                    await updateDoc(doc(db, 'buildingPermits', permitData.id), { status: newStatus });
+            // Fetch owner email using ownerUid from Firestore
+            const userDocRef = doc(db, "users", permitData.ownerUid);
+            const userDoc = await getDoc(userDocRef);
 
-                    // Trigger Notification
-                    const message = `${permitData.ownerName}'s building permit is now ${newStatus.toLowerCase()}`;
-                    showNotification(message, 'info');
+            if (userDoc.exists()) {
+                const ownerEmail = userDoc.data().email;
 
+                // Trigger Notification
+                const message = `${permitData.ownerName}'s building permit is now ${newStatus.toLowerCase()}`;
+                showNotification(message, 'info');
 
-                    // Store Notification in Firestore
-                    await addDoc(collection(db, "notifications"), {
-                        userId: permitData.ownerUid,
-                        message: message,
-                        permitId: permitData.id,
-                        timestamp: serverTimestamp(),
-                        read: false
-                    });
-                    Swal.fire({
-  title: "Success",
-  text: "Status Updated!",
-  icon: "success"
-});
+                // Store Notification in Firestore
+                await addDoc(collection(db, "notifications"), {
+                    userId: permitData.ownerUid,
+                    message: message,
+                    permitId: permitData.id,
+                    timestamp: serverTimestamp(),
+                    read: false
+                });
 
-                    // Reload Profiles to Reflect Changes
-                    loadProfiles();
+                // Send Email Notification using EmailJS
+                emailjs.send("service_hy9w8j7", "template_eaugq7e", {
+                    permit_owner_name: permitData.ownerName,
+                    permit_id: permitData.id,
+                    new_status: newStatus,
+                    to_email: ownerEmail  // Pass the fetched email to the template
+                })
+                .then((response) => {
+                    console.log('Status update email sent successfully:', response.status, response.text);
+                }, (error) => {
+                    console.error('Failed to send status update email:', error);
+                });
 
-                    // Hide Modal
-                    viewDetailsModal.hide();
+                // Show success alert
+                Swal.fire({
+                    title: "Success",
+                    text: "Status Updated!",
+                    icon: "success"
+                });
 
-                } catch (error) {
-                    console.error("Error updating permit status:", error);
-                    showNotification("Failed to update permit status.", "error");
-                }
-            };
+                // Reload Profiles to Reflect Changes
+                loadProfiles();
+
+                // Hide Modal
+                viewDetailsModal.hide();
+
+            } else {
+                console.error("Owner document not found in Firestore.");
+                showNotification("Failed to send email: Owner data not found.", "error");
+            }
+        } catch (error) {
+            console.error("Error updating permit status:", error);
+            showNotification("Failed to update permit status.", "error");
         }
+    };
+}
+
 
       // Function to Open the View HSD Form Modal with Debugging
 // Function to Open the View HSD Form Modal
