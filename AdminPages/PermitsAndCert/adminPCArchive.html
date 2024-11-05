@@ -106,29 +106,114 @@
             </nav>
 
             <div class="content-container">
-                <div class="contentContainer"
-                <!-- Archive Cards Section -->
+                <div class="contentContainer">
+                <!---Archive Cards Section -->
                 <div class="card-container">
                     <div class="archive-card building-card">
                         <i class="fa-solid fa-building-circle-check card-icon"></i>
                         <h5>Building Permit Archive</h5>
                         <p>View and manage archived building permits.</p>
+                           <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buildingPermitArchiveModal">
+    View
+  </button>
                     </div>
                     <div class="archive-card occupancy-card">
                         <i class="fa-solid fa-person-shelter card-icon"></i>
                         <h5>Occupancy Archive</h5>
                         <p>View and manage archived occupancy certificates.</p>
+                         <!-- Button trigger modal -->
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#occupancyArchiveModal">
+   View
+  </button>
+  
                     </div>
                     <div class="archive-card electrical-card">
                         <i class="fa-solid fa-bolt card-icon"></i>
                         <h5>Electrical Inspection Archive</h5>
                         <p>View and manage archived electrical inspections.</p>
+                        <!-- Button trigger modal -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#electricalCertArchiveModal">
+    View
+  </button>
                     </div>
                 </div>
                 </div>
             </div>
         </div>
     </div>
+
+    
+  
+  <!-- Building Permit Modal -->
+  <div class="modal fade" id="buildingPermitArchiveModal" tabindex="-1" aria-labelledby="buildingPermitArchiveModal" aria-hidden="true">
+    <div class="wide-modal modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="buildingPermitArchiveLabel">Building Permit Archive</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="buildingPermitModalBody">Loading...
+            <table class="table table-striped">
+                <thead>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Date Submitted</th> 
+                </thead>
+                <tbody id="buildingPermitArchives">
+
+                    
+                </tbody>
+            </table>
+        </div>
+         
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+  <!-- Occupancy Archive Modal -->
+  <div class="modal fade" id="occupancyArchiveModal" tabindex="-1" aria-labelledby="occupancyArchiveModalLabel" aria-hidden="true">
+    <div class="wide-modal modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="occupancyArchiveModalLabel">Occupancy Permit Archive</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="occupancyModalBody">Loading...</div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  
+  <!-- Electrical Cert Archive Modal -->
+  <div class="modal fade" id="electricalCertArchiveModal" tabindex="-1" aria-labelledby="electricalCertArchiveModalLabel" aria-hidden="true">
+    <div class="wide-modal modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="electricalCertArchiveModalLabel">Electrical Cert Archive</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="electricalCertModalBody">Loading...</div>
+         
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
     
     <script type="module" src="/Database/firebase.js"></script>
     <script>
@@ -140,6 +225,66 @@
             document.getElementById('side_nav').classList.remove('active');
         });
     </script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+        authDomain: "chsd-mis.firebaseapp.com",
+        projectId: "chsd-mis",
+        storageBucket: "chsd-mis.appspot.com",
+        messagingSenderId: "694967679357",
+        appId: "1:694967679357:web:65cffd50f13739f934f414",
+        measurementId: "G-XBQTQFRLJ5"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+  
+    // Function to retrieve and display data
+    async function displayArchivedDocuments(collectionName, modalBodyId) {
+      const querySnapshot = await getDocs(collection(db, collectionName));
+      const modalBody = document.getElementById(modalBodyId);
+      modalBody.innerHTML = ""; // Clear existing content
+  
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const row = document.createElement("tr");
+        row.innerHTML = `
+
+        ID: ${doc.id}, Owner: ${data.ownerName}
+        <tbody>
+            <tr>${doc.id}</tr>
+            <tr>${data.ownerName}</tr>
+            <tr>${data.dateSubmitted}</tr>
+            <tr><button type="button" class="btn btn-success">Retrieve</button></tr>
+           
+
+        </tbody>
+        `;
+
+        modalBody.appendChild(item);
+      });
+    }
+  
+    // Event listeners to fetch data when each modal is opened
+    document.getElementById("buildingPermitArchiveModal").addEventListener("show.bs.modal", () => {
+      displayArchivedDocuments("archivedBuildingPermits", "buildingPermitModalBody");
+    });
+  
+    document.getElementById("occupancyArchiveModal").addEventListener("show.bs.modal", () => {
+      displayArchivedDocuments("archivedOccupancyPermits", "occupancyModalBody");
+    });
+  
+    document.getElementById("electricalCertArchiveModal").addEventListener("show.bs.modal", () => {
+      displayArchivedDocuments("archivedElectricalCerts", "electricalCertModalBody");
+    });
+  </script>
+  
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>

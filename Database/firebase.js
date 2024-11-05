@@ -149,43 +149,13 @@ async function handleUserLogin(event) {
     }
 }
 
-// forgot password
-document.addEventListener('DOMContentLoaded', function() {
-    const auth = getAuth(); // Initialize Firebase Auth
 
-    document.getElementById('forgot-password-link').addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default link behavior
-        const email = document.getElementById('user-email').value; // Get email input
-
-        if (email) {
-            // Show confirmation dialog
-            const confirmation = confirm('Are you sure you want to reset your password?');
-
-            if (confirmation) {
-                // Call Firebase function to send password reset email
-                sendPasswordResetEmail(auth, email)
-                    .then(() => {
-                        alert('Password reset email sent!');
-                    })
-                    .catch((error) => {
-                        console.error('Error sending password reset email:', error);
-                        alert('Failed to send reset email. Please check the email address and try again.');
-                    });
-            } else {
-                alert('Password reset canceled.');
-            }
-        } else {
-            alert('Please enter your email address.');
-        }
-    });
-});
-
-// Function to handle user signup
 async function handleSignUp(event) {
     event.preventDefault();
 
     const firstName = document.getElementById('client-first-name').value;
     const lastName = document.getElementById('client-last-name').value;
+    const middleName = document.getElementById("client-middle-name").value;
     const email = document.getElementById('client-signup-email').value;
     const password = document.getElementById('client-signup-password').value;
     const confirmPassword = document.getElementById('client-confirm-password').value;
@@ -224,16 +194,25 @@ async function handleSignUp(event) {
         // Send email verification
         await sendEmailVerification(user);
         console.log("Verification email sent to:", email);
-        alert("A verification email has been sent to your email address. Please verify your email before logging in.");
+          // Hide the loading screen in case of an error
+          
+        Swal.fire({
+            title: 'Verification Email Sent!',
+            text: 'A verification email has been sent to your email address. Please verify your email before logging in.',
+            icon: 'info',
+            confirmButtonText: 'OK'
+        });
 
         // Save user information to Firestore (even before verification)
         const userRef = doc(db, 'users', userId);
         await setDoc(userRef, {
             firstName: firstName,
+            middleName: middleName,
             lastName: lastName,
             email: email,
             avatarUrl: avatarUrl,
-            emailVerified: false // Set email verification status to false
+            emailVerified: false, // Set email verification status to false
+            createdAt: serverTimestamp() // Add server timestamp here
         });
 
         console.log("User data saved to Firestore under collection 'users'.");
@@ -267,8 +246,6 @@ async function handleSignUp(event) {
         document.getElementById('loading-screen').style.display = 'none';
     }
 }
-
-
 // Function to monitor authentication state and display user info
 function monitorAuthState() {
     onAuthStateChanged(auth, async (user) => {
