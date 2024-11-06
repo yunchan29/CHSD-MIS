@@ -307,20 +307,21 @@
       const db = getFirestore(app);
      
 
-      // Function to Dynamically Append Buttons to the View Details Modal for Electrical Certificates
+    // Function to Dynamically Append Buttons to the View Details Modal for Electrical Certificates
 function appendButtons(data) {
     const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
     viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing buttons
 
-    // First Row for View File Uploads Button
+    // First Row for View File Uploads and Generate Electrical Certificate
     const firstRow = document.createElement('div');
     firstRow.className = 'row mt-4';
 
+    // View Electrical Certificate Uploads Button
     const col1 = document.createElement('div');
-    col1.className = 'col-md-12 mb-2';
+    col1.className = 'col-md-6 mb-2';
     const btn1 = document.createElement('button');
     btn1.className = 'btn btn-primary w-100';
-    btn1.textContent = 'View Electrical Certificate Uploads';
+    btn1.textContent = 'View File Uploads';
     btn1.addEventListener('click', () => {
         const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
         if (viewDetailsModal) {
@@ -329,29 +330,84 @@ function appendButtons(data) {
         openViewUploadsModal(data); // Open View Uploads Modal for Electrical Certificates
     });
     col1.appendChild(btn1);
-    firstRow.appendChild(col1);
 
-    // Second Row for Archive Button
+    // Generate Electrical Certificate Button
+    const col2 = document.createElement('div');
+    col2.className = 'col-md-6 mb-2';
+    const btn2 = document.createElement('button');
+    btn2.className = 'btn btn-primary w-100';
+    btn2.textContent = 'Generate Certificate';
+    btn2.addEventListener('click', () => {
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) {
+            viewDetailsModal.hide(); // Hide View Details Modal
+        }
+        openGenerateElectricalCertModal(data); // Open Generate Electrical Certificate Modal
+    });
+    col2.appendChild(btn2);
+
+    firstRow.appendChild(col1);
+    firstRow.appendChild(col2);
+
+    // Second Row for Generate Order of Payment Button
     const secondRow = document.createElement('div');
     secondRow.className = 'row mt-2';
 
-    const col2 = document.createElement('div');
-    col2.className = 'col-md-12';
-    const btn2 = document.createElement('button');
-    btn2.className = 'btn btn-danger w-100 archive-electrical-cert-btn';
-    btn2.textContent = 'Archive Electrical Certificate';
-    btn2.setAttribute('data-id', data.id);
+    const col3 = document.createElement('div');
+    col3.className = 'col-md-12';
+    const btn3 = document.createElement('button');
+    btn3.className = 'btn btn-success w-100 generate-order-payment-btn';
+    btn3.textContent = 'Generate Order of Payment';
+
+    // Add event listener for generating Order of Payment
+    btn3.addEventListener('click', () => {
+        generateOrderOfPayment(data); // Generate order of payment using the data
+        
+        // Hide the View Details modal
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) {
+            viewDetailsModal.hide(); // Hide View Details Modal
+        }
+
+        // Trigger Order of Payment Modal
+        const orderOfPaymentModal = new bootstrap.Modal(document.getElementById('orderOfPaymentModal'));
+        orderOfPaymentModal.show();
+
+        // Remove the backdrop manually after the modal closes to avoid the lingering backdrop
+        document.getElementById('orderOfPaymentModal').addEventListener('hidden.bs.modal', function () {
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove(); // Ensure the backdrop is removed
+            }
+        });
+    });
+
+    col3.appendChild(btn3);
+    secondRow.appendChild(col3);
+
+    // Third Row for Archive Button
+    const thirdRow = document.createElement('div');
+    thirdRow.className = 'row mt-2';
+
+    const col4 = document.createElement('div');
+    col4.className = 'col-md-12';
+    const btn4 = document.createElement('button');
+    btn4.className = 'btn btn-danger w-100 archive-electrical-cert-btn';
+    btn4.textContent = 'Archive Electrical Certificate';
+    btn4.setAttribute('data-id', data.id);
 
     // Add event listener for archiving the electrical certificate
-    btn2.addEventListener('click', (event) => handleArchiveElectricalCert(event));
+    btn4.addEventListener('click', (event) => handleArchiveElectricalCert(event));
 
-    col2.appendChild(btn2);
-    secondRow.appendChild(col2);
+    col4.appendChild(btn4);
+    thirdRow.appendChild(col4);
 
     // Append Rows to Button Group
     viewDetailsModalBtnGrp.appendChild(firstRow);
     viewDetailsModalBtnGrp.appendChild(secondRow);
+    viewDetailsModalBtnGrp.appendChild(thirdRow);
 }
+
 
 
       // Function to show notification

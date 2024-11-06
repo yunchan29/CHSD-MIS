@@ -148,72 +148,86 @@
   <!-- Building Permit Modal -->
   <div class="modal fade" id="buildingPermitArchiveModal" tabindex="-1" aria-labelledby="buildingPermitArchiveModal" aria-hidden="true">
     <div class="wide-modal modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="buildingPermitArchiveLabel">Building Permit Archive</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="buildingPermitArchiveLabel">Building Permit Archive</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Date Submitted</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="buildingPermitArchives"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-body" id="buildingPermitModalBody">Loading...
-            <table class="table table-striped">
-                <thead>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Date Submitted</th> 
-                </thead>
-                <tbody id="buildingPermitArchives">
-
-                    
-                </tbody>
-            </table>
-        </div>
-         
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
- 
-  <!-- Occupancy Archive Modal -->
-  <div class="modal fade" id="occupancyArchiveModal" tabindex="-1" aria-labelledby="occupancyArchiveModalLabel" aria-hidden="true">
+<!-- Occupancy Archive Modal -->
+<div class="modal fade" id="occupancyArchiveModal" tabindex="-1" aria-labelledby="occupancyArchiveModalLabel" aria-hidden="true">
     <div class="wide-modal modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="occupancyArchiveModalLabel">Occupancy Permit Archive</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="occupancyArchiveModalLabel">Occupancy Permit Archive</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Date Submitted</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="occupancyModalBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-body" id="occupancyModalBody">Loading...</div>
-        
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  
-  
-  <!-- Electrical Cert Archive Modal -->
-  <div class="modal fade" id="electricalCertArchiveModal" tabindex="-1" aria-labelledby="electricalCertArchiveModalLabel" aria-hidden="true">
+<!-- Electrical Inspection Archive Modal -->
+<div class="modal fade" id="electricalCertArchiveModal" tabindex="-1" aria-labelledby="electricalCertArchiveModalLabel" aria-hidden="true">
     <div class="wide-modal modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="electricalCertArchiveModalLabel">Electrical Cert Archive</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="electricalCertArchiveModalLabel">Electrical Inspection Archive</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Date Submitted</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="electricalCertModalBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-body" id="electricalCertModalBody">Loading...</div>
-         
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
     
     <script type="module" src="/Database/firebase.js"></script>
     <script>
@@ -245,44 +259,35 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
   
-    // Function to retrieve and display data
-    async function displayArchivedDocuments(collectionName, modalBodyId) {
-      const querySnapshot = await getDocs(collection(db, collectionName));
-      const modalBody = document.getElementById(modalBodyId);
-      modalBody.innerHTML = ""; // Clear existing content
-  
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const row = document.createElement("tr");
-        row.innerHTML = `
+    async function displayArchivedDocuments(collectionName, tableBodyId) {
+            const querySnapshot = await getDocs(collection(db, collectionName));
+            const tableBody = document.getElementById(tableBodyId);
+            tableBody.innerHTML = ""; // Clear existing content
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${doc.id}</td>
+                    <td>${data.ownerName || "N/A"}</td>
+                    <td>${data.dateSubmitted || "N/A"}</td>
+                    <td><button type="button" class="btn btn-success">Retrieve</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
 
-        ID: ${doc.id}, Owner: ${data.ownerName}
-        <tbody>
-            <tr>${doc.id}</tr>
-            <tr>${data.ownerName}</tr>
-            <tr>${data.dateSubmitted}</tr>
-            <tr><button type="button" class="btn btn-success">Retrieve</button></tr>
-           
+        document.getElementById("buildingPermitArchiveModal").addEventListener("show.bs.modal", () => {
+            displayArchivedDocuments("archivedBuildingPermits", "buildingPermitArchives");
+        });
 
-        </tbody>
-        `;
+        document.getElementById("occupancyArchiveModal").addEventListener("show.bs.modal", () => {
+            displayArchivedDocuments("archivedOccupancyPermits", "occupancyModalBody");
+        });
 
-        modalBody.appendChild(item);
-      });
-    }
-  
-    // Event listeners to fetch data when each modal is opened
-    document.getElementById("buildingPermitArchiveModal").addEventListener("show.bs.modal", () => {
-      displayArchivedDocuments("archivedBuildingPermits", "buildingPermitModalBody");
-    });
-  
-    document.getElementById("occupancyArchiveModal").addEventListener("show.bs.modal", () => {
-      displayArchivedDocuments("archivedOccupancyPermits", "occupancyModalBody");
-    });
-  
-    document.getElementById("electricalCertArchiveModal").addEventListener("show.bs.modal", () => {
-      displayArchivedDocuments("archivedElectricalCerts", "electricalCertModalBody");
-    });
+        document.getElementById("electricalCertArchiveModal").addEventListener("show.bs.modal", () => {
+            displayArchivedDocuments("archivedElectricalCerts", "electricalCertModalBody");
+        });
   </script>
   
 

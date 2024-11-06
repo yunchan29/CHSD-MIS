@@ -494,17 +494,18 @@
       const auth = getAuth(app);
       const db = getFirestore(app);
        
-      // Function to Dynamically Append Buttons to the View Details Modal
+      // Function to Dynamically Append Buttons to the View Details Modal for Occupancy Permit
 function appendButtons(data) {
     const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
     viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing buttons
 
-    // First Row for View File Uploads Button
+    // First Row of Buttons
     const firstRow = document.createElement('div');
     firstRow.className = 'row mt-4';
 
+    // View File Uploads Button
     const col1 = document.createElement('div');
-    col1.className = 'col-md-12 mb-2';
+    col1.className = 'col-md-6 mb-2';
     const btn1 = document.createElement('button');
     btn1.className = 'btn btn-primary w-100';
     btn1.textContent = 'View File Uploads';
@@ -516,29 +517,84 @@ function appendButtons(data) {
         openViewUploadsModal(data); // Open View Uploads Modal
     });
     col1.appendChild(btn1);
-    firstRow.appendChild(col1);
 
-    // Second Row for Archive Button
+    // Generate Permit Button
+    const col2 = document.createElement('div');
+    col2.className = 'col-md-6 mb-2';
+    const btn2 = document.createElement('button');
+    btn2.className = 'btn btn-primary w-100';
+    btn2.textContent = 'Generate Permit';
+    btn2.addEventListener('click', () => {
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) {
+            viewDetailsModal.hide(); // Hide View Details Modal
+        }
+        openGenerateOccupancyPermitModal(data); // Open Generate Permit Modal
+    });
+    col2.appendChild(btn2);
+
+    firstRow.appendChild(col1);
+    firstRow.appendChild(col2);
+
+    // Second Row for Generate Order of Payment Button
     const secondRow = document.createElement('div');
     secondRow.className = 'row mt-2';
 
-    const col2 = document.createElement('div');
-    col2.className = 'col-md-12';
-    const btn2 = document.createElement('button');
-    btn2.className = 'btn btn-danger w-100 archive-permit-btn';
-    btn2.textContent = 'Archive Permit';
-    btn2.setAttribute('data-id', data.id);
+    const col3 = document.createElement('div');
+    col3.className = 'col-md-12';
+    const btn3 = document.createElement('button');
+    btn3.className = 'btn btn-success w-100 generate-order-payment-btn';
+    btn3.textContent = 'Generate Order of Payment';
 
-    // Add event listener for archiving the building permit
-    btn2.addEventListener('click', (event) => handleArchiveOccupancyPermit(event));
+    // Add event listener for generating Order of Payment
+    btn3.addEventListener('click', () => {
+        generateOrderOfPayment(data); // Generate order of payment using the data
+        
+        // Hide the View Details modal
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) {
+            viewDetailsModal.hide(); // Hide View Details Modal
+        }
 
-    col2.appendChild(btn2);
-    secondRow.appendChild(col2);
+        // Trigger Order of Payment Modal
+        const orderOfPaymentModal = new bootstrap.Modal(document.getElementById('orderOfPaymentModal'));
+        orderOfPaymentModal.show();
+
+        // Remove the backdrop manually after the modal closes to avoid the lingering backdrop
+        document.getElementById('orderOfPaymentModal').addEventListener('hidden.bs.modal', function () {
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove(); // Ensure the backdrop is removed
+            }
+        });
+    });
+
+    col3.appendChild(btn3);
+    secondRow.appendChild(col3);
+
+    // Third Row for Archive Button
+    const thirdRow = document.createElement('div');
+    thirdRow.className = 'row mt-2';
+
+    const col4 = document.createElement('div');
+    col4.className = 'col-md-12';
+    const btn4 = document.createElement('button');
+    btn4.className = 'btn btn-danger w-100 archive-permit-btn';
+    btn4.textContent = 'Archive Permit';
+    btn4.setAttribute('data-id', data.id);
+
+    // Add event listener for archiving the occupancy permit
+    btn4.addEventListener('click', (event) => handleArchiveOccupancyPermit(event));
+
+    col4.appendChild(btn4);
+    thirdRow.appendChild(col4);
 
     // Append Rows to Button Group
     viewDetailsModalBtnGrp.appendChild(firstRow);
     viewDetailsModalBtnGrp.appendChild(secondRow);
+    viewDetailsModalBtnGrp.appendChild(thirdRow);
 }
+
 
 
       // Function to show notification
