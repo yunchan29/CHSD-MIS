@@ -1,0 +1,56 @@
+Date : 2024-11-06 13:07:04
+Directory : d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\Database
+Total : 26 files,  -6089 codes, 22 comments, -898 blanks, all -6965 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |          9 |      1,187 |        181 |        287 |      1,655 |
+| JSON       |          2 |         26 |          0 |          2 |         28 |
+| HTML       |         15 |     -7,302 |       -159 |     -1,187 |     -8,648 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                                | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                                   |         26 |     -6,089 |         22 |       -898 |     -6,965 |
+| . (Files)                                                                                                                                           |          7 |      1,091 |        106 |        235 |      1,432 |
+| ..                                                                                                                                                  |         18 |     -7,318 |       -159 |     -1,188 |     -8,665 |
+| ..\ClientPages                                                                                                                                      |         18 |     -7,318 |       -159 |     -1,188 |     -8,665 |
+| dist                                                                                                                                                |          1 |        138 |         75 |         55 |        268 |
++-----------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                                                            | language   | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\applicationproto.html                         | HTML       |       -273 |        -12 |        -31 |       -316 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientApplication.html                        | HTML       |       -260 |        -12 |        -55 |       -327 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientBuildingPermit.html                     | HTML       |     -1,335 |        -25 |       -243 |     -1,603 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientDashboard.html                          | HTML       |       -469 |        -17 |        -88 |       -574 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientElectricalApplication.html              | HTML       |       -735 |        -15 |       -106 |       -856 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientHousingApplication.html                 | HTML       |     -1,420 |        -16 |       -256 |     -1,692 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientLogin.html                              | HTML       |       -214 |         -1 |        -29 |       -244 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientNotif.html                              | HTML       |       -219 |        -10 |        -40 |       -269 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientOccupancyApplication.html               | HTML       |       -865 |        -16 |       -135 |     -1,016 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientProfile.html                            | HTML       |       -108 |         -2 |        -18 |       -128 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientRequirements.html                       | HTML       |       -568 |        -12 |        -62 |       -642 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientSignup.html                             | HTML       |       -542 |         -9 |        -93 |       -644 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\nav2.html                                     | HTML       |        -51 |         -5 |         -7 |        -63 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\nav2.js                                       | JavaScript |         -8 |          0 |          0 |         -8 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\nav3.html                                     | HTML       |        -42 |         -5 |         -5 |        -52 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\nav3.js                                       | JavaScript |         -8 |          0 |          0 |         -8 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\navBarScript.js                               | JavaScript |          0 |          0 |         -1 |         -1 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\profileBackup.html                            | HTML       |       -201 |         -2 |        -19 |       -222 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\Database\chsd-mis-79b43ccc3955.json                       | JSON       |         13 |          0 |          1 |         14 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\Database\chsd-mis-firebase-adminsdk-zwcv4-c37b5b4525.json | JSON       |         13 |          0 |          1 |         14 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\Database\customClaimsOriginal.js                          | JavaScript |         51 |          9 |          8 |         68 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\Database\dist\bundle.js                                   | JavaScript |        138 |         75 |         55 |        268 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\Database\firebase.js                                      | JavaScript |        853 |         78 |        197 |      1,128 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\Database\firebase2.js                                     | JavaScript |         98 |         14 |         21 |        133 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\Database\updateCustomClaims.js                            | JavaScript |         40 |          5 |          5 |         50 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\Database\webpack.config.js                                | JavaScript |         23 |          0 |          2 |         25 |
+| Total                                                                                                                                               |            |     -6,089 |         22 |       -898 |     -6,965 |
++-----------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

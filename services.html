@@ -152,11 +152,9 @@
                     <button class="nav-link active" id="application-process-tab" data-bs-toggle="tab" data-bs-target="#applicationProcess" type="button" role="tab" aria-controls="applicationProcess" aria-selected="false"><h6>Online Application Process</h6></button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="permits-tab" data-bs-toggle="tab" data-bs-target="#permits" type="button" role="tab" aria-controls="permits" aria-selected="true"><h6>Permits and Certificates</h6></button>
+                    <button class="nav-link" id="permits-tab" data-bs-toggle="tab" data-bs-target="#permits" type="button" role="tab" aria-controls="permits" aria-selected="true"><h6>Requirements</h6></button>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="housing-tab" data-bs-toggle="tab" data-bs-target="#housing" type="button" role="tab" aria-controls="housing" aria-selected="false"><h6>Housing</h6></button>
-                </li>
+              
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="downloadableForms-tab" data-bs-toggle="tab" data-bs-target="#downloadableForms" type="button" role="tab" aria-controls="downloadableForms" aria-selected="false"><h6>Downloadable Forms</h6></button>
                 </li>
@@ -265,24 +263,12 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Housing Tab -->
-              <!-- Housing Tab -->
-<div class="tab-pane fade" id="housing" role="tabpanel" aria-labelledby="housing-tab">
-    <div class="accordion" id="accordionHousing">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingFour">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                    <h5>Housing Application</h5>
-                </button>
-            </h2>
-            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
-                data-bs-parent="#accordionHousing">
-                <div class="accordion-body">
-                    <div class="container">
+                    </div>
+
+                    <div class="container" id="housingApplicationContainer">
+                        <div class="contentContainer" style="background-color: white;">
+                        <h5>Housing Application</h5>
                         <p>Who may avail: All residents of the City of Calamba aged 18-55 years old without owning their own land.</p>
                         <h6>Requirements:</h6>
                         <p><i>Note: Requirements marked with "*" are situational and depend on your current circumstances.</i></p>
@@ -427,7 +413,7 @@
                                     <td>Philippine Statistics Authority or Civil Registry Office where born</td>
                                 </tr>
                                 <tr>
-                                    <td>34. Notarized Affidavit (Housing and Land in Calamba City) (1 original copy) - if the housing being applied for is owned by the City Government *</td>
+                                    <td>34. Notarized Affidavit (Housing and Land in Calamba City) (1 original copy) - if applicant owns property outside Calamba City *</td>
                                     <td>Housing and Settlements Department or Notary Public</td>
                                 </tr>
                                 <tr>
@@ -435,15 +421,13 @@
                                     <td>Housing and Settlements Department, government agency managing the housing or Notary Public</td>
                                 </tr>
                             </tbody>
-                            
                         </table>
                     </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-</div>
+              
+            
+        
 
 
 
@@ -485,6 +469,12 @@
             
         </div>
     </div>
+    </div>
+
+    <footer class="bg-dark text-center text-white py-3">
+        <p class="mb-0">&copy; 2024 City Housing and Settlements Department. All rights reserved.</p>
+    </footer>
+    
 
     <script type="module" src="/Database/firebase.js">
 
