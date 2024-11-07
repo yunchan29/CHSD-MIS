@@ -7,121 +7,444 @@
     <link rel="stylesheet" href="/Stylesheets/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* CSS for the content container */
-        .content {
-            flex: 1; /* Take remaining space */
-            overflow: hidden; /* Hide overflow content */
-            display: flex; /* Use flexbox */
-            flex-direction: column; /* Column layout */
-        }
-
-        .content-container {
-            overflow-y: auto; /* Enable vertical scrolling */
-            padding: 20px; /* Add some padding */
-        }
-
-        .wide-modal {
-            max-width: 80%;
-        }
-
-        .form-control {
-            margin-bottom: 1rem; /* Add margin between form controls */
-        }
-
-        .form-check {
-            margin-bottom: 0.5rem; /* Add margin between checkboxes */
-        }
-
-        .row.g-3 .col-md-6,
-        .row.g-3 .col-md-4,
-        .row.g-3 .col-md-12 {
-            margin-bottom: 1rem; /* Add margin to columns */
-        }
-
-        .d-flex .me-2 {
-            margin-right: 1rem; /* Add margin to the right of the input */
-        }
-    </style>
+<style>
+    .toggle-password {
+        top: 60%;
+        right: 1rem;
+      
+        cursor: pointer;
+        color: #6c757d;
+    }
+</style>
+   
 </head>
 <body>
-    <div class="main-container contentWrap d-flex">
+
+    <div class="main-container d-flex">
+        <!-- Sidebar -->
         <div class="sideNav" id="side_nav">
             <div class="container">
-                <div class="header-box text-center pt-3 pb-4">
+                <div class="header-box text-center px-2 pt-3 pb-4">
+                    <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"><i class="fa-solid fa-bars-staggered"></i></button>
                     <div class="avatar-placeholder">
-                        <img src="/resources/pictures/avatar3.png" alt="Avatar">
+                        <img id="client-avatar" src="" alt="loading..." width="100" height="100">
                     </div>
                     <div class="avatar-text">
-                        <!-- Client ID and Name -->
-                        <div>Client ID: 232345</div>
-                        <div>Taylor Shift</div>
+                        <div id="user-name">loading...</div>
                     </div>
-                    <button class="btn d-md-none d-block close-btn px-1 py-0 text-white"><i class="fal fa-stream"></i>Menu</button>
                 </div>
             </div>
             <ul class="sideBarList list-unstyled px-2">
-                <li class="sideNav"><a href="/ClientPages/clientDashboard.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-                <li class="sideNav active"><a href="clientProfile.html" class="text-decoration-none"><i class="fa-solid fa-comment"></i> Chat</a></li>
+                <li class="sideNav"><a href="clientDashboard.html" class="text-decoration-none"><i class="fa-solid fa-circle-info"></i> Application Status</a></li>
+                <li class="sideNav"><a href="clientRequirements.html" class="text-decoration-none"><i class="fa-solid fa-list"></i> Requirements List</a></li>
+                <li class="sideNav"><a href="clientApplication.html" class="text-decoration-none"><i class="fa-solid fa-newspaper"></i> Applications</a></li>
+                <li class="sideNav"><a href="clientProfile.html" class="text-decoration-none"><i class="fa-solid fa-gear"></i> Settings</a></li>
+                
                 <li class="sideNav" id="user-logout-btn"><a href="#" class="text-decoration-none"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
-               
             </ul>
         </div>
 
         <div class="content">
-           
-            <div class="contentContainer">
-                <h4 class="text-start">Message</h4>
-                <!-- Add this HTML to your chat page -->
-                <div id="chat-container" class="client-chat">
-                    <div id="chat-messages" class="messages"></div>
-                    <form id="send-message-form">
-                        <input type="text" id="message-input" placeholder="Type your message here...">
-                        <button type="submit">Send</button>
-                    </form>
-                </div>
-            
+            <!-- Navigation Bar -->
+   <!-- Navigation Bar -->
+<nav class="navigationBar navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+        <!-- Mobile View -->
+        <div class="d-flex justify-content-between d-md-none d-block">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="/resources/pictures/chsd.png" alt="CHSD" width="40" height="40" class="me-2">
+                <h5 class="mb-0 fs-5">CHSD</h5>
+            </a>
+            <button class="btn px-1 py-0 open-btn">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </div>
 
-               
+        <!-- Desktop View -->
+        <div class="collapse navbar-collapse d-none d-md-flex" id="navbarSupportedContent">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="/resources/pictures/chsd.png" alt="CHSD" width="75" height="75" class="me-2">
+                <h5 class="mb-0 fs-5 fs-lg-4">City Housing and Settlements Department</h5>
+            </a>
+
+            <!-- Right-aligned content: Notifications -->
+            <ul class="navbar-nav ms-auto">
+                <!-- Notifications Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-bell"></i> Notifications
+                        <span id="notification-badge" class="badge bg-danger" style="display: none;">0</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" style="width: 400px; padding: 15px;">
+                        <li>
+                            <h6 class="dropdown-header">Notifications</h6>
+                        </li>
+                        <li>
+                            <div class="notifications-container" id="notification-container" style="max-height: 400px; overflow-y: auto;">
+                                <!-- Notifications will be dynamically added here -->
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-item text-center">
+                                <button id="prevPageBtn" class="btn btn-secondary btn-sm">Previous</button>
+                                <span id="pageInfo">Page 1</span>
+                                <button id="nextPageBtn" class="btn btn-secondary btn-sm">Next</button>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
-  
-    <script id="replace_with_navbar" src="nav3.js"></script>
+</nav>
+
+
+<div class="contentContainer container mt-5">
+    <div class="row g-4">
+        <!-- Avatar Upload Section -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="bi bi-person-circle display-6 text-primary me-3"></i>
+                        <h4 class="card-title mb-0">Profile Management</h4>
+                    </div>
+                    <!-- Profile Picture Preview -->
+                    <div class="text-center mb-4">
+                        <img id="profile-picture-preview" src="/resources/pictures/avatar3.png" alt="Avatar Preview" 
+                             class="img-thumbnail rounded-circle shadow-sm" 
+                             style="width: 120px; height: 120px; object-fit: cover;">
+                    </div>
+                    <form id="avatar-upload-form" class="mt-3">
+                        <div class="mb-3">
+                            <label for="avatar-upload" class="form-label fw-semibold">Upload New Avatar</label>
+                            <input type="file" id="avatar-upload" class="form-control" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-upload me-2"></i>Upload Avatar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Update Section -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="bi bi-key display-6 text-primary me-3"></i>
+                        <h4 class="card-title mb-0">Update Password</h4>
+                    </div>
+                    <form id="password-update-form" class="mt-3">
+                        <div class="mb-3 position-relative">
+                            <label for="current-password" class="form-label fw-semibold">Current Password</label>
+                            <input type="password" id="current-password" class="form-control" placeholder="Enter current password" required>
+                            <i class="fa fa-eye-slash toggle-password position-absolute" data-target="current-password"></i>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="new-password" class="form-label fw-semibold">New Password</label>
+                            <input type="password" id="new-password" class="form-control" placeholder="Enter new password" required>
+                            <i class="fa fa-eye-slash toggle-password position-absolute" data-target="new-password"></i>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="confirm-new-password" class="form-label fw-semibold">Confirm New Password</label>
+                            <input type="password" id="confirm-new-password" class="form-control" placeholder="Confirm new password" required>
+                            <i class="fa fa-eye-slash toggle-password position-absolute" data-target="confirm-new-password"></i>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-shield-lock-fill me-2"></i>Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script type="module" src="/Database/firebase.js"></script>
-   
     <script>
-        // JavaScript to handle click event on sidebar items
-        document.addEventListener("DOMContentLoaded", function() {
-            var sideNavItems = document.querySelectorAll('.sideNav');
-            sideNavItems.forEach(function(item) {
-                item.addEventListener('click', function() {
-                    // Remove the 'active' class from all items
-                    sideNavItems.forEach(function(item) {
-                        item.classList.remove('active');
-                    });
-                    // Add the 'active' class to the clicked item
-                    this.classList.add('active');
-                });
+        // Profile picture preview functionality
+        document.getElementById('avatar-upload').addEventListener('change', function(event) {
+            const preview = document.getElementById('profile-picture-preview');
+            const file = event.target.files[0];
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+            }
+        });
+    
+        // Password visibility toggle functionality
+        document.querySelectorAll('.toggle-password').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const targetInput = document.getElementById(this.dataset.target);
+                const isPassword = targetInput.getAttribute('type') === 'password';
+                targetInput.setAttribute('type', isPassword ? 'text' : 'password');
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
             });
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-          let currentStep = 1; // Start from the first step
-          
-          function goToNextStep() {
-            if (currentStep < 3) {
-              currentStep++;
-              document.querySelectorAll('.step')[currentStep - 1].classList.add('completed');
+
+   
+   <!-- Firebase and custom scripts -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, query, where, orderBy, limit, onSnapshot, startAfter, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+        authDomain: "chsd-mis.firebaseapp.com",
+        projectId: "chsd-mis",
+        storageBucket: "chsd-mis.appspot.com",
+        messagingSenderId: "694967679357",
+        appId: "1:694967679357:web:65cffd50f13739f934f414",
+        measurementId: "G-XBQTQFRLJ5"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app); 
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    let notificationsPerPage = 5; // Number of notifications per page
+    let currentPage = 1; // Track the current page
+    let totalPages = 1; // Total pages based on the number of notifications
+    let lastVisibleDoc = null; // Keep track of the last document for pagination
+
+    // Function to load client notifications with pagination
+    async function loadClientNotifications(userId) {
+        const notificationsRef = collection(db, "notifications");
+        const notificationContainer = document.getElementById("notification-container");
+
+        const prevPageBtn = document.getElementById("prevPageBtn");
+        const nextPageBtn = document.getElementById("nextPageBtn");
+        const pageInfo = document.getElementById("pageInfo");
+
+        // Fetch total notifications for user to calculate total pages
+        const allNotificationsSnapshot = await getDocs(query(
+            notificationsRef,
+            where("userId", "==", userId)
+        ));
+
+        const totalNotifications = allNotificationsSnapshot.size;
+        totalPages = Math.ceil(totalNotifications / notificationsPerPage);
+
+        // Query notifications for the current page, ordered by timestamp
+        let notificationsQuery = query(
+            notificationsRef,
+            where("userId", "==", userId),
+            orderBy("timestamp", "desc"),
+            limit(notificationsPerPage)
+        );
+
+        // If it's not the first page, start after the last visible document
+        if (lastVisibleDoc && currentPage > 1) {
+            notificationsQuery = query(notificationsQuery, startAfter(lastVisibleDoc));
+        }
+
+        onSnapshot(notificationsQuery, (snapshot) => {
+            notificationContainer.innerHTML = ''; // Clear previous notifications
+
+            if (snapshot.docs.length === 0) {
+                notificationContainer.innerHTML = '<p>No notifications available.</p>';
             }
-          }
-      
-          document.getElementById('nextStepButton').addEventListener('click', goToNextStep);
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const notification = document.createElement('div');
+                notification.className = 'client-notification';
+                notification.textContent = `${data.message} at ${new Date(data.timestamp.seconds * 1000).toLocaleString()}`;
+                notificationContainer.appendChild(notification);
+            });
+
+            // Track the last visible document for pagination
+            lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+
+            // Update page info
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+            // Disable/enable pagination buttons
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
         });
+    }
+
+    // Function to handle authentication state
+    function handleAuthState() {
+        const prevPageBtn = document.getElementById("prevPageBtn");
+        const nextPageBtn = document.getElementById("nextPageBtn");
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userId = user.uid;
+
+                // Load initial notifications
+                loadClientNotifications(userId);
+
+                // Handle "Previous Page" button click
+                prevPageBtn.addEventListener("click", () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        lastVisibleDoc = null; // Reset last visible document when going to the previous page
+                        loadClientNotifications(userId);
+                    }
+                });
+
+                // Handle "Next Page" button click
+                nextPageBtn.addEventListener("click", () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        loadClientNotifications(userId);
+                    }
+                });
+
+                // Avatar and Password Update Event Listeners
+                setupProfileManagement(userId);
+            } else {
+                console.error("User is not signed in.");
+            }
+        });
+    }
+// Profile Management Functions
+function setupProfileManagement(userId) {
+    // Handle avatar upload
+    document.getElementById("avatar-upload-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById("avatar-upload");
+        const file = fileInput.files[0];
+
+        if (file) {
+            const storageRef = ref(storage, `avatars/${userId}`);
+            
+            try {
+                // Upload file to Firebase Storage
+                await uploadBytes(storageRef, file);
+                const avatarUrl = await getDownloadURL(storageRef);
+
+                // Update user's avatar URL in Firestore
+                await updateDoc(doc(db, "users", userId), { avatarUrl });
+
+                // Success SweetAlert2 message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profile Updated',
+                    text: 'Profile picture updated successfully!',
+                });
+            } catch (error) {
+                console.error("Error updating avatar:", error);
+
+                // Error SweetAlert2 message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: 'Failed to update profile picture.',
+                });
+            }
+        }
+    });
+
+    // Handle password update
+    document.getElementById("password-update-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const currentPassword = document.getElementById("current-password").value;
+        const newPassword = document.getElementById("new-password").value;
+        const confirmNewPassword = document.getElementById("confirm-new-password").value;
+
+        if (newPassword !== confirmNewPassword) {
+            // SweetAlert2 message for password mismatch
+            Swal.fire({
+                icon: 'warning',
+                title: 'Password Mismatch',
+                text: 'New password and confirm password do not match.',
+            });
+            return;
+        }
+
+        try {
+            const user = auth.currentUser;
+            const credential = EmailAuthProvider.credential(user.email, currentPassword);
+
+            // Reauthenticate user
+            await reauthenticateWithCredential(user, credential);
+            // Update password
+            await updatePassword(user, newPassword);
+
+            // Success SweetAlert2 message
+            Swal.fire({
+                icon: 'success',
+                title: 'Password Updated',
+                text: 'Password updated successfully!',
+            });
+        } catch (error) {
+            console.error("Error updating password:", error);
+
+            // Error SweetAlert2 message
+            Swal.fire({
+                icon: 'error',
+                title: 'Update Failed',
+                text: 'Failed to update password. Please ensure your current password is correct.',
+            });
+        }
+    });
+}
+
+
+    // Start monitoring authentication state when the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        handleAuthState();
+    });
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    var sideNav = document.getElementById('side_nav');
+    var openBtn = document.querySelector('.open-btn');
+    var closeBtn = document.querySelector('.close-btn');
+    var dropdownItems = document.querySelectorAll('.sideNav.dropdown');
+
+    // Toggle the sidebar for mobile view
+    openBtn.addEventListener('click', function() {
+        sideNav.classList.add('active');
+    });
+
+    closeBtn.addEventListener('click', function() {
+        sideNav.classList.remove('active');
+    });
+
+    // Handle dropdown in sidebar
+    dropdownItems.forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevents clicks from closing the sidebar
+            this.classList.toggle('open');
+        });
+    });
+
+    // Close the sidebar when clicking outside of it (optional)
+    document.addEventListener('click', function(e) {
+        if (!sideNav.contains(e.target) && !openBtn.contains(e.target)) {
+            sideNav.classList.remove('active');
+        }
+    });
+});
+
+
     </script>
-    
+    <!-- Bootstrap and other scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-    <script src="https://kit.fontawesome.com/8d1b0b1c7b.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
 </body>
 </html>
