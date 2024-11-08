@@ -19,6 +19,16 @@
             padding: 20px;
         }
     </style>
+    <style>
+        /* Adjust eye icon alignment */
+        .eye-icon {
+            right: 20px;
+            top: 45%;
+            
+          
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div class="main-container d-flex">
@@ -77,20 +87,29 @@
                             <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
                         </div>
                     </div>
-
+                
                     <div class="row mt-3">
                         <div class="col">
                             <label for="userName">Email</label>
-                            <input type="text" class="form-control" id="userName" placeholder="User  Name" required>
-                        </div>
-
-                        <div class="col">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                            <input type="email" class="form-control" id="userName" placeholder="User Name" required>
                         </div>
                     </div>
-
-                    <div class=" row mt-3">
+                
+                    <div class="row mt-3">
+                        <div class="col position-relative">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                            <i class="fa fa-eye-slash position-absolute eye-icon" id="togglePassword"></i>
+                        </div>
+                
+                        <div class="col position-relative">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required>
+                            <i class="fa fa-eye-slash position-absolute eye-icon" id="toggleConfirmPassword"></i>
+                        </div>
+                    </div>
+                
+                    <div class="row mt-3">
                         <div class="col">
                             <label for="accountType">Account Type</label>
                             <select class="form-control" id="accountType" required>
@@ -100,20 +119,23 @@
                                 <option value="Applicant">Applicant</option>
                             </select>
                         </div>
-
+                
                         <div class="col">
                             <input type="hidden" id="enabled" value="true">
                         </div>
                     </div>
+                
+                   
                 </form>
 
                 <div class="row">
                     <div class="col-md-6">
-                        <a href="#" id="addUserBtn" class="btn btn-light text-black mt-3">
-                            <h4><i class="fa-solid fa-circle-plus"></i> Add User</h4>
+                        <a href="#" id="addUserBtn" class="btn btn-primary mt-3 text-white">
+                            <i class="fa-solid fa-circle-plus"></i> Add User
                         </a>
                     </div>
                 </div>
+                
 
                 <div class="row mt-3">
                     <div class="col-md-6">
@@ -137,7 +159,7 @@
                             <th>UID</th>
                             <th>Full Name</th>
                             <th>Email</th>
-                            <th>Password</th>
+                           
                             <th>Type</th>
                             <th>Enabled</th>
                             <th>Actions</th>
@@ -190,6 +212,25 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordField = document.getElementById('password');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            const type = confirmPasswordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordField.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
@@ -369,7 +410,7 @@
                             <td>${userData.id}</td>
                             <td>${userData.firstName} ${userData.lastName}</td>
                             <td>${userData.email}</td>
-                            <td>*******</td>
+                            
                             <td>${userData.accountType || 'Applicant'}</td>
                             <td>${userData.enabled !== undefined ? (userData.enabled ? 'Yes' : 'No') : 'Yes'}</td>
                             <td>
