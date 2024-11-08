@@ -218,7 +218,7 @@
     </script>
 
    
-   <!-- Firebase and custom scripts -->
+ <!-- Firebase and custom scripts -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -236,7 +236,7 @@
         measurementId: "G-XBQTQFRLJ5"
     };
 
-    // Initialize Firebase
+    // Initialize Firebase services
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app); 
     const db = getFirestore(app);
@@ -251,79 +251,81 @@
     async function loadClientNotifications(userId) {
         const notificationsRef = collection(db, "notifications");
         const notificationContainer = document.getElementById("notification-container");
-
-        const prevPageBtn = document.getElementById("prevPageBtn");
-        const nextPageBtn = document.getElementById("nextPageBtn");
         const pageInfo = document.getElementById("pageInfo");
 
-        const allNotificationsSnapshot = await getDocs(query(
-            notificationsRef,
-            where("userId", "==", userId)
-        ));
+        try {
+            // Calculate total pages
+            const totalNotifications = (await getDocs(query(notificationsRef, where("userId", "==", userId)))).size;
+            totalPages = Math.ceil(totalNotifications / notificationsPerPage);
 
-        const totalNotifications = allNotificationsSnapshot.size;
-        totalPages = Math.ceil(totalNotifications / notificationsPerPage);
+            // Set up paginated query
+            let notificationsQuery = query(
+                notificationsRef,
+                where("userId", "==", userId),
+                orderBy("timestamp", "desc"),
+                limit(notificationsPerPage)
+            );
 
-        let notificationsQuery = query(
-            notificationsRef,
-            where("userId", "==", userId),
-            orderBy("timestamp", "desc"),
-            limit(notificationsPerPage)
-        );
-
-        if (lastVisibleDoc && currentPage > 1) {
-            notificationsQuery = query(notificationsQuery, startAfter(lastVisibleDoc));
-        }
-
-        onSnapshot(notificationsQuery, (snapshot) => {
-            notificationContainer.innerHTML = '';
-            if (snapshot.docs.length === 0) {
-                notificationContainer.innerHTML = '<p>No notifications available.</p>';
+            if (lastVisibleDoc && currentPage > 1) {
+                notificationsQuery = query(notificationsQuery, startAfter(lastVisibleDoc));
             }
 
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const notification = document.createElement('div');
-                notification.className = 'client-notification';
-                notification.textContent = `${data.message} at ${new Date(data.timestamp.seconds * 1000).toLocaleString()}`;
-                notificationContainer.appendChild(notification);
-            });
+            // Listen for snapshot updates
+            onSnapshot(notificationsQuery, (snapshot) => {
+                notificationContainer.innerHTML = '';
+                if (snapshot.empty) {
+                    notificationContainer.innerHTML = '<p>No notifications available.</p>';
+                    return;
+                }
 
-            lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-            prevPageBtn.disabled = currentPage === 1;
-            nextPageBtn.disabled = currentPage === totalPages;
-        });
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    const notification = document.createElement('div');
+                    notification.className = 'client-notification';
+                    notification.textContent = `${data.message} at ${new Date(data.timestamp.seconds * 1000).toLocaleString()}`;
+                    notificationContainer.appendChild(notification);
+                });
+
+                lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                document.getElementById("prevPageBtn").disabled = currentPage === 1;
+                document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
+            });
+        } catch (error) {
+            console.error("Error loading notifications:", error);
+        }
     }
 
-    // Function to handle authentication state
+    // Authentication state handling
     function handleAuthState() {
-        const prevPageBtn = document.getElementById("prevPageBtn");
-        const nextPageBtn = document.getElementById("nextPageBtn");
-
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const userId = user.uid;
 
                 loadClientNotifications(userId);
-                prevPageBtn.addEventListener("click", () => {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        lastVisibleDoc = null;
-                        loadClientNotifications(userId);
-                    }
-                });
-                nextPageBtn.addEventListener("click", () => {
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        loadClientNotifications(userId);
-                    }
-                });
-
+                setupPaginationListeners(userId);
                 setupProfileManagement(userId);
-                setupTwoFactorAuthentication(userId); // Initialize 2FA setup
+                setupTwoFactorAuthentication(userId);
             } else {
                 console.error("User is not signed in.");
+            }
+        });
+    }
+
+    // Setup Pagination Event Listeners
+    function setupPaginationListeners(userId) {
+        document.getElementById("prevPageBtn").addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                lastVisibleDoc = null;
+                loadClientNotifications(userId);
+            }
+        });
+
+        document.getElementById("nextPageBtn").addEventListener("click", () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadClientNotifications(userId);
             }
         });
     }
@@ -332,15 +334,13 @@
     function setupProfileManagement(userId) {
         document.getElementById("avatar-upload-form").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const fileInput = document.getElementById("avatar-upload");
-            const file = fileInput.files[0];
+            const file = document.getElementById("avatar-upload").files[0];
 
             if (file) {
                 const storageRef = ref(storage, `avatars/${userId}`);
                 try {
                     await uploadBytes(storageRef, file);
                     const avatarUrl = await getDownloadURL(storageRef);
-
                     await updateDoc(doc(db, "users", userId), { avatarUrl });
 
                     Swal.fire({
@@ -350,7 +350,6 @@
                     });
                 } catch (error) {
                     console.error("Error updating avatar:", error);
-
                     Swal.fire({
                         icon: 'error',
                         title: 'Update Failed',
@@ -398,33 +397,56 @@
         });
     }
 
-    // Two-Factor Authentication Setup
-    function setupTwoFactorAuthentication(userId) {
-        document.getElementById("2fa-setup-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const recoveryEmail = document.getElementById("recovery-email").value;
+   // Two-Factor Authentication Setup
+function setupTwoFactorAuthentication(userId) {
+    const recoveryEmailInput = document.getElementById("recovery-email");
 
-            try {
-                await updateDoc(doc(db, "users", userId), { recoveryEmail });
-                Swal.fire({
-                    icon: 'success',
-                    title: '2FA Setup Complete',
-                    text: 'Recovery email set successfully!',
-                });
-            } catch (error) {
-                console.error("Error setting recovery email:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Setup Failed',
-                    text: 'Failed to set recovery email. Please try again later.',
-                });
+    // Fetch the current recovery email and display it
+    async function displayCurrentRecoveryEmail() {
+        try {
+            const userDoc = await getDoc(doc(db, "users", userId));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (userData.recoveryEmail) {
+                    recoveryEmailInput.value = userData.recoveryEmail; // Display the current recovery email
+                }
+            } else {
+                console.error("User document does not exist.");
             }
-        });
+        } catch (error) {
+            console.error("Error retrieving recovery email:", error);
+        }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        handleAuthState();
+    // Call display function immediately to load email
+    displayCurrentRecoveryEmail();
+
+    // Update recovery email in Firestore
+    document.getElementById("2fa-setup-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const recoveryEmail = recoveryEmailInput.value;
+
+        try {
+            await updateDoc(doc(db, "users", userId), { recoveryEmail });
+            Swal.fire({
+                icon: 'success',
+                title: 'Recovery Email Updated',
+                text: 'Your recovery email has been updated successfully!',
+            });
+        } catch (error) {
+            console.error("Error updating recovery email:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Update Failed',
+                text: 'Failed to update recovery email.',
+            });
+        }
     });
+}
+
+
+
+    document.addEventListener('DOMContentLoaded', handleAuthState);
 </script>
 
 <script>
