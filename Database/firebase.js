@@ -928,7 +928,7 @@ async function loadUserPermitStatus() {
             { ref: collection(db, "ElectricalCert"), label: "Electrical Certification" }
         ];
 
-        const createTableRow = (permit, permitType, permitId, commentsSummary = [], followupRequested = false, followupAllowed = false) => {
+        const createTableRow = (permit, permitType, permitId, permitNumber, commentsSummary = [], followupRequested = false, followupAllowed = false) => {
             const ownerName = permit.ownerName || permit.householdHeadName || 'Unknown Owner';
             const issuedOnDate = permit.issuedOn || (permit.createdAt ? new Date(permit.createdAt.seconds * 1000).toLocaleDateString() : 'N/A');
             const appointmentDate = permit.appointmentDate ? new Date(permit.appointmentDate.seconds * 1000).toLocaleDateString() : 'N/A';
@@ -961,6 +961,7 @@ async function loadUserPermitStatus() {
 
             const row = document.createElement('tr');
             row.innerHTML = `
+                <td>${permitNumber || 'N/A'}</td>
                 <td>${ownerName}</td>
                 <td>${permitType}</td>
                 <td>${issuedOnDate}</td>
@@ -975,8 +976,7 @@ async function loadUserPermitStatus() {
                 </td>
             `;
             tableBody.appendChild(row);
-            
-            // Follow-up button event listener
+
             const followupBtn = row.querySelector('.followup-btn');
             if (followupBtn) {
                 followupBtn.addEventListener('click', async (event) => {
@@ -992,32 +992,91 @@ async function loadUserPermitStatus() {
                 });
             }
 
-            // Reschedule button event listener
-            const rescheduleBtn = row.querySelector('.reschedule-btn');
-            rescheduleBtn.addEventListener('click', async (event) => {
-                const docId = event.target.getAttribute('data-id');
-                const newDate = prompt("Please enter a new appointment date (YYYY-MM-DD):");
+            // Reschedule button event listener with CalendarJS
+// Reschedule button event listener with CalendarJS
+const rescheduleBtn = row.querySelector('.reschedule-btn');
+rescheduleBtn.addEventListener('click', (event) => {
+    const docId = event.target.getAttribute('data-id');
+    const permitType = event.target.getAttribute('data-permit-type');
 
-                if (newDate) {
-                    try {
-                        const parsedDate = new Date(newDate);
-                        if (isNaN(parsedDate.getTime())) {
-                            alert("Invalid date format. Please try again.");
-                            return;
-                        }
+    // Show the modal
+    const calendarModal = new bootstrap.Modal(document.getElementById('calendarModal'));
+    calendarModal.show();
 
-                        const permitDoc = doc(db, permitType === "Building Permit" ? "buildingPermits" :
-                                                       permitType === "Certificate of Occupancy" ? "OccupancyPermits" :
-                                                       permitType === "Housing Application" ? "Housing" : "ElectricalCert", docId);
+    // Get calendar element
+    const calendarEl = document.getElementById('calendar');
 
-                        await updateDoc(permitDoc, { appointmentDate: Timestamp.fromDate(parsedDate) });
-                        alert('Appointment rescheduled successfully!');
-                    } catch (error) {
-                        console.error("Error rescheduling appointment:", error);
-                        alert("Error rescheduling appointment.");
-                    }
-                }
+    // Reinitialize or refresh the calendar each time the modal opens to avoid rendering issues
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+        dateClick: async function(info) {
+            const selectedDate = info.date;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Clear the time portion for accurate date comparison
+
+            // Restrict weekends (Saturday: 6, Sunday: 0) and past days (including today)
+            const day = selectedDate.getDay(); // getDay() returns day index: 0 = Sunday, 6 = Saturday
+            if (day === 0 || day === 6) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Selection',
+                    text: 'Rescheduling on Saturdays and Sundays is not allowed.',
+                });
+                return;
+            }
+            if (selectedDate <= today) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Selection',
+                    text: 'Rescheduling to today or a past date is not allowed.',
+                });
+                return;
+            }
+
+            // Show confirmation before rescheduling
+            const confirmation = await Swal.fire({
+                icon: 'question',
+                title: 'Confirm Reschedule',
+                text: `Do you want to reschedule the appointment to ${selectedDate.toLocaleDateString()}?`,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Reschedule',
+                cancelButtonText: 'Cancel'
             });
+
+            if (confirmation.isConfirmed) {
+                try {
+                    const permitDoc = doc(db, 
+                        permitType === "Building Permit" ? "buildingPermits" :
+                        permitType === "Certificate of Occupancy" ? "OccupancyPermits" :
+                        permitType === "Housing Application" ? "Housing" : "ElectricalCert", 
+                        docId
+                    );
+
+                    await updateDoc(permitDoc, { appointmentDate: Timestamp.fromDate(selectedDate) });
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Rescheduled!',
+                        text: 'Appointment rescheduled successfully!',
+                    });
+
+                    calendarModal.hide();
+                } catch (error) {
+                    console.error("Error rescheduling appointment:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error rescheduling appointment. Please try again.',
+                    });
+                }
+            }
+        }
+    });
+    calendar.render();
+});
+
+
         };
 
         const extractCommentsSummary = (fileValidationStatus) => {
@@ -1040,15 +1099,16 @@ async function loadUserPermitStatus() {
             if (!querySnapshot.empty) {
                 querySnapshot.forEach((permitDoc) => {
                     const permit = permitDoc.data();
+                    const permitNumber = permit.buildingPermitNo || (label === "Housing Application" ? permit.housingPermitNo : null);
                     const commentsSummary = extractCommentsSummary(permit.fileValidationStatus);
                     const followupAllowed = isFollowUpAllowed(permit);
-                    createTableRow(permit, label, permitDoc.id, commentsSummary, permit.followup || false, followupAllowed);
+                    createTableRow(permit, label, permitDoc.id, permitNumber, commentsSummary, permit.followup || false, followupAllowed);
                 });
             }
         }
 
         if (tableBody.innerHTML === '') {
-            tableBody.innerHTML = '<tr><td colspan="6">No permits or applications found.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="7">No permits or applications found.</td></tr>';
         }
 
     } catch (error) {

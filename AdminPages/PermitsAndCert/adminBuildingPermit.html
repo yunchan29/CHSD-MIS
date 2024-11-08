@@ -103,30 +103,30 @@
   }
 }
 
-.watermark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* Allow interaction with form content */
-    opacity: 0.2;
-    z-index: -1; /* Make sure it stays in the background */
-    font-size: 60px;
-    color: #d3d3d3;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
+#watermark {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Ensures it stays behind content */
+        opacity: 1; /* Adjust for desired transparency */
+        font-size: 3rem;
+        color: gray;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none; /* Make sure it's non-interactive */
+        transform: rotate(-45deg);
+    }
 
-.watermark span {
-    transform: rotate(-45deg);
-    white-space: nowrap;
-}
-
-
+    /* Spread watermark text across the page */
+    #watermark span {
+        display: inline-block;
+        white-space: nowrap;
+        margin: 2rem; /* Spacing between each watermark text */
+        opacity: 0.2;
+    }
 
     
 
@@ -976,9 +976,36 @@
     <!-- Notifications will be dynamically added here -->
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+    /* Style for watermark */
+    #watermark {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Ensures it stays behind content */
+        opacity: 0.1; /* Adjust for desired transparency */
+        font-size: 3rem;
+        color: gray;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none; /* Make sure it's non-interactive */
+        transform: rotate(-45deg);
+    }
+
+    /* Spread watermark text across the page */
+    #watermark span {
+        display: inline-block;
+        white-space: nowrap;
+        margin: 2rem; /* Spacing between each watermark text */
+        opacity: 0.2;
+    }
+</style>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Function for printing the HSD Form modal with a watermark (Building Permit No.)
         const printHSDButton = document.getElementById("printHSDForm");
         if (printHSDButton) {
             printHSDButton.addEventListener("click", function() {
@@ -988,8 +1015,17 @@
                 const buildingPermitNo = document.getElementById("hsdFormBuildingPermitNo").textContent.trim();
 
                 // Create watermark
-                const watermark = printContent.querySelector("#watermark");
-                watermark.innerHTML = `<span>${buildingPermitNo}</span>`;
+                const watermark = document.createElement("div");
+                watermark.id = "watermark";
+                
+                // Repeat the watermark text across the page
+                for (let i = 0; i < 10; i++) {
+                    const watermarkText = document.createElement("span");
+                    watermarkText.textContent = buildingPermitNo;
+                    watermark.appendChild(watermarkText);
+                }
+                
+                printContent.appendChild(watermark);
 
                 // Clone the page content for printing
                 const originalContent = document.body.innerHTML;
@@ -1004,36 +1040,32 @@
             });
         }
 
-        // Function for printing the Order of Payment modal with input values while maintaining layout
         const printOrderButton = document.getElementById("printOrderOfPayment");
         if (printOrderButton) {
             printOrderButton.addEventListener("click", function() {
                 const printContent = document.querySelector("#printOrderContent").cloneNode(true);
 
-                // Replace input fields with their values
                 const inputs = printContent.querySelectorAll('input');
                 inputs.forEach(function(input) {
-                    const value = input.value || ''; // Get the value of the input
-                    const span = document.createElement('span'); // Create a span element to replace input
-                    span.textContent = value; // Set the span text to the input value
-                    span.style.fontWeight = 'bold'; // Optional: style it to stand out
-                    input.replaceWith(span); // Replace the input with the span element
+                    const value = input.value || '';
+                    const span = document.createElement('span');
+                    span.textContent = value;
+                    span.style.fontWeight = 'bold';
+                    input.replaceWith(span);
                 });
 
-                // Set the content for printing
                 const originalContent = document.body.innerHTML;
                 document.body.innerHTML = printContent.outerHTML;
 
-                // Trigger print
                 window.print();
 
-                // Restore original content
                 document.body.innerHTML = originalContent;
                 window.location.reload();
             });
         }
     });
 </script>
+
 
 <script type="text/javascript"
         src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">

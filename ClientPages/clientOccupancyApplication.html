@@ -259,10 +259,41 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <label for="buildingPermitNo">Building Permit No.</label>
-                        <input type="text" id="buildingPermitNo" class="form-control" placeholder="ex. 2024-XXXX">
+                        <label for="buildingPermitOption">Building Permit Option</label>
+                        
+                        <!-- Toggle Buttons for Selection -->
+                        <div class="btn-group d-flex" role="group">
+                            <input type="radio" class="btn-check" name="permitOption" id="typeOption" autocomplete="off" checked>
+                            <label class="btn btn-outline-secondary flex-fill" for="typeOption">Type Permit No.</label>
+                
+                            <input type="radio" class="btn-check" name="permitOption" id="selectOption" autocomplete="off">
+                            <label class="btn btn-outline-secondary flex-fill" for="selectOption">Select Permit</label>
                         </div>
+                
+                        <!-- Dynamic Instructional Text -->
+                        <small id="instructionText" class="form-text text-muted mt-2">
+                            Please type the Building Permit Number.
+                        </small>
+                
+                        <!-- Input for Typing Permit Number -->
+                        <div id="permitInputContainer" class="mt-2">
+                            <input type="text" id="buildingPermitNo" class="form-control" placeholder="ex. 2024-XXXX">
+                        </div>
+                
+                        <!-- Button for Selecting Permit from Modal -->
+                        <div id="permitSelectContainer" class="mt-2 d-none">
+                            <button type="button" id="openPermitModalBtn" class="btn btn-outline-secondary w-100">Select Permit from List</button>
+                        </div>
+                
+                        <!-- Readonly Display of Selected Permit Number -->
+                        <div id="selectedPermitDisplay" class="mt-2 d-none">
+                            <input type="text" id="selectedPermitNumber" class="form-control" readonly>
+                            <small class="form-text text-muted">Selected Permit Number</small>
+                        </div>
+                    </div>
                 </div>
+                
+                
                 <div class="row">
                     <label for="ownerName">Owner/Applicant Name:</label>
                     <div class="col-md-3">
@@ -374,6 +405,25 @@
     </div>
 </div>
 
+<div class="modal" id="permitSelectionModal" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Building Permit</h5>
+                <button type="button" id="closePermitModalBtn" class="btn-close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="permitList" class="list-group">
+                    <!-- Building permits will be loaded here dynamically -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeModalFooterBtn" class="btn btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Appointment Modal -->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
@@ -436,7 +486,21 @@
         </div>
     </div>
 </div>
+<script>
+    const instructionText = document.getElementById("instructionText");
+document.getElementById("typeOption").addEventListener("change", function() {
+    document.getElementById("permitInputContainer").classList.remove("d-none");
+    document.getElementById("permitSelectContainer").classList.add("d-none");
+    instructionText.textContent = "Please type the Building Permit Number.";
+});
 
+document.getElementById("selectOption").addEventListener("change", function() {
+    document.getElementById("permitInputContainer").classList.add("d-none");
+    document.getElementById("permitSelectContainer").classList.remove("d-none");
+    instructionText.textContent = "Please select a Building Permit from the list.";
+});
+
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -807,10 +871,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    document.addEventListener('DOMContentLoaded', () => {
+    // Add event listeners for buttons
+    document.getElementById('openPermitModalBtn').addEventListener('click', openPermitSelectionModal);
+    document.getElementById('closePermitModalBtn').addEventListener('click', closePermitSelectionModal);
+    document.getElementById('closeModalFooterBtn').addEventListener('click', closePermitSelectionModal);
+
+    async function openPermitSelectionModal() {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("No user is signed in.");
+            return;
+        }
+
+        const modal = document.getElementById('permitSelectionModal');
+        const permitList = document.getElementById('permitList');
+        permitList.innerHTML = '';  // Clear previous entries
+
+        // Fetch building permits for the logged-in user
+        const buildingPermitsRef = collection(db, "buildingPermits");
+        const querySnapshot = await getDocs(query(buildingPermitsRef, where("ownerUid", "==", user.uid)));
+
+        // Populate modal with fetched building permits and client names
+        querySnapshot.forEach((doc) => {
+            const permit = doc.data();
+            const listItem = document.createElement('li');
+            listItem.textContent = `${permit.buildingPermitNo} - ${permit.ownerName || 'Unknown Owner'}`;
+            listItem.className = "list-group-item list-group-item-action";
+            listItem.addEventListener('click', () => selectPermit(permit.buildingPermitNo));
+            permitList.appendChild(listItem);
+        });
+
+        // Show the modal
+        modal.style.display = 'block';
+    }
+
+    function closePermitSelectionModal() {
+        document.getElementById('permitSelectionModal').style.display = 'none';
+    }
+
+    function selectPermit(permitNo) {
+        document.getElementById('buildingPermitNo').value = permitNo;
+        closePermitSelectionModal();
+    }
+});
+
+
     // Start monitoring authentication state when the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', () => {
         handleAuthState();
     });
+    
 </script>
     
     
