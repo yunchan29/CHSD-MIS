@@ -393,6 +393,88 @@
     </div>
 </div>
 
+<!-- Privacy Policy Modal for Electrical Inspection Permit -->
+<div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered wide-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyPolicyModalLabel">Privacy Policy and Terms of Service</h5>
+            </div>
+            <div class="modal-body" id="privacyPolicyContent" style="max-height: 400px; overflow-y: auto;">
+                <h5>Privacy Policy</h5>
+                <p>We are committed to protecting your privacy. This privacy policy explains how we collect, use, and share your personal information when you apply for an electrical inspection permit through our system. By submitting your application, you consent to our privacy policy and the collection, use, and sharing of your information as described here.</p>
+
+                <ul>
+                    <li><b>Information Collection:</b> We collect personal data such as your name, address, contact information, and project specifics necessary for processing your electrical inspection permit application.</li>
+                    <li><b>Use of Data:</b> The data collected is used to facilitate the application process, verify compliance, and communicate with you regarding the status of your application.</li>
+                    <li><b>Data Sharing:</b> Your data will be shared only as needed with relevant authorities or as required by law for completing the inspection and approval process.</li>
+                </ul>
+
+                <h5>Terms and Conditions</h5>
+                <p>By using this service, you agree to the following terms and conditions:</p>
+                <ul>
+                    <li>You will provide accurate and truthful information in your application.</li>
+                    <li>You acknowledge that the electrical inspection process may require coordination with authorized inspectors and additional scheduling.</li>
+                    <li>You agree to adhere to all fees, safety requirements, and legal standards necessary for the inspection.</li>
+                    <li>Submitting false information may result in penalties or denial of the permit.</li>
+                </ul>
+            </div>
+            <div class="modal-footer d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="termsCheckbox">
+                    <label class="form-check-label" for="termsCheckbox">
+                        I have read and agree to the Privacy Policy and Terms and Conditions
+                    </label>
+                </div>
+                <div>
+                    <a type="button" class="btn btn-secondary text-white me-2" href="clientApplication.html">Back</a>
+                    <button type="button" class="btn btn-primary" id="acceptPolicyButton" disabled>Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Disable the "Proceed" button until the user scrolls to the bottom and checks the checkbox
+    const modalContent = document.getElementById('privacyPolicyContent');
+    const acceptPolicyButton = document.getElementById('acceptPolicyButton');
+    const termsCheckbox = document.getElementById('termsCheckbox');
+    
+    function updateProceedButton() {
+      // Enable the button if the user has scrolled to the bottom and checked the box
+      const isScrolledToBottom = modalContent.scrollHeight - modalContent.scrollTop === modalContent.clientHeight;
+      const isCheckboxChecked = termsCheckbox.checked;
+      acceptPolicyButton.disabled = !(isScrolledToBottom && isCheckboxChecked);
+    }
+    
+    // Add scroll event listener to check if the user has scrolled to the bottom
+    modalContent.addEventListener('scroll', updateProceedButton);
+    
+    // Add change event listener for checkbox
+    termsCheckbox.addEventListener('change', updateProceedButton);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Show the privacy policy modal every time the page is loaded
+            var privacyModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
+            privacyModal.show();
+      
+            // Handle the "Proceed" button click
+            document.getElementById('acceptPolicyButton').addEventListener('click', function () {
+                // Hide the privacy policy modal
+                var privacyModalEl = document.getElementById('privacyPolicyModal');
+                var privacyModalInstance = bootstrap.Modal.getInstance(privacyModalEl);
+                privacyModalInstance.hide();
+                
+                // Show the building permit modal
+                var electricalInspectionModal = new bootstrap.Modal(document.getElementById('electricalInspectionModal'));
+                electricalInspectionModal.show();
+            });
+        });
+    </script>
+
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
     // Prevent dropdown from closing when clicking on buttons or notifications

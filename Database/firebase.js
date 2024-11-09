@@ -903,7 +903,7 @@ async function fetchPermitCounts() {
 // Call the function to fetch and display permit counts
 fetchPermitCounts();
 
-async function loadUserPermitStatus() {  
+async function loadUserPermitStatus() {
     try {
         const user = auth.currentUser;
         if (!user) {
@@ -945,8 +945,9 @@ async function loadUserPermitStatus() {
 
             const followupButton = permitType === "Housing Application" && followupAllowed ? `
                 <button class="btn btn-success followup-btn" 
-                        data-id="${permitId}" 
-                        ${followupRequested ? 'disabled' : ''}>
+                        data-bs-toggle="modal" 
+                        data-bs-target="#followUpModal"
+                        data-id="${permitId}">
                     ${followupRequested ? '<i class="fa-solid fa-bullhorn"></i> Requested' : '<i class="fa-solid fa-bullhorn"></i> Follow-up'}
                 </button>
             ` : '';
@@ -977,23 +978,6 @@ async function loadUserPermitStatus() {
             `;
             tableBody.appendChild(row);
 
-            // Follow-up button event listener
-            const followupBtn = row.querySelector('.followup-btn');
-            if (followupBtn) {
-                followupBtn.addEventListener('click', async (event) => {
-                    const docId = event.target.getAttribute('data-id');
-                    try {
-                        const permitDoc = doc(db, "Housing", docId);
-                        await updateDoc(permitDoc, { followup: true });
-                        event.target.textContent = 'Follow-up Requested';
-                        event.target.disabled = true;
-                    } catch (error) {
-                        console.error("Error requesting follow-up:", error);
-                    }
-                });
-            }
-
-            // Reschedule button event listener with CalendarJS
             const rescheduleBtn = row.querySelector('.reschedule-btn');
             rescheduleBtn.addEventListener('click', (event) => {
                 const docId = event.target.getAttribute('data-id');
@@ -1008,7 +992,7 @@ async function loadUserPermitStatus() {
                     dateClick: async function(info) {
                         const selectedDate = info.date;
                         const today = new Date();
-                        today.setHours(0, 0, 0, 0); // Clear time portion for date comparison
+                        today.setHours(0, 0, 0, 0);
 
                         if (selectedDate <= today || [0, 6].includes(selectedDate.getDay())) {
                             Swal.fire({
@@ -1082,7 +1066,43 @@ async function loadUserPermitStatus() {
     } finally {
         document.getElementById('fetching-loading-screen').style.display = 'none';
     }
+
+    document.getElementById('submitFollowUpRequest').addEventListener('click', async () => {
+        const followUpButton = document.querySelector('.followup-btn[data-bs-target="#followUpModal"]');
+        const docId = followUpButton ? followUpButton.getAttribute('data-id') : null;
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const householdAddress = document.getElementById('householdAddress').value;
+
+        if (!docId || !phoneNumber || !householdAddress) {
+            console.error("Required fields are missing");
+            return;
+        }
+
+        try {
+            const permitDoc = doc(db, "Housing", docId);
+            await updateDoc(permitDoc, {
+                followup: true,
+                telephone: phoneNumber,
+                householdAddress
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'Follow-up Requested!',
+                text: 'Your follow-up request has been submitted successfully.'
+            });
+            document.querySelector(`.followup-btn[data-id="${docId}"]`).innerHTML = '<i class="fa-solid fa-bullhorn"></i> Requested';
+            bootstrap.Modal.getInstance(document.getElementById('followUpModal')).hide();
+        } catch (error) {
+            console.error("Error requesting follow-up:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an issue submitting your follow-up request. Please try again.'
+            });
+        }
+    });
 }
+
 
 // Event listener for remarks modal display
 document.getElementById('viewRemarks').addEventListener('show.bs.modal', function (event) {
