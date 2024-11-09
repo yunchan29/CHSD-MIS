@@ -836,44 +836,46 @@
 
 </script>
 <script>
-// Disable the "Proceed" button until the user scrolls to the bottom and checks the checkbox
-const modalContent = document.getElementById('privacyPolicyContent');
-const acceptPolicyButton = document.getElementById('acceptPolicyButton');
-const termsCheckbox = document.getElementById('termsCheckbox');
-
-function updateProceedButton() {
-  // Enable the button if the user has scrolled to the bottom and checked the box
-  const isScrolledToBottom = modalContent.scrollHeight - modalContent.scrollTop === modalContent.clientHeight;
-  const isCheckboxChecked = termsCheckbox.checked;
-  acceptPolicyButton.disabled = !(isScrolledToBottom && isCheckboxChecked);
-}
-
-// Add scroll event listener to check if the user has scrolled to the bottom
-modalContent.addEventListener('scroll', updateProceedButton);
-
-// Add change event listener for checkbox
-termsCheckbox.addEventListener('change', updateProceedButton);
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Show the privacy policy modal every time the page is loaded
-        var privacyModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
-        privacyModal.show();
-  
-        // Handle the "Proceed" button click
-        document.getElementById('acceptPolicyButton').addEventListener('click', function () {
-            // Hide the privacy policy modal
-            var privacyModalEl = document.getElementById('privacyPolicyModal');
-            var privacyModalInstance = bootstrap.Modal.getInstance(privacyModalEl);
-            privacyModalInstance.hide();
-            
-            // Show the building permit modal
-            var buildingPermitModal = new bootstrap.Modal(document.getElementById('buildingPermitModal'));
-            buildingPermitModal.show();
+    // Disable the "Proceed" button until the user scrolls to the bottom and checks the checkbox
+    const modalContent = document.getElementById('privacyPolicyContent');
+    const acceptPolicyButton = document.getElementById('acceptPolicyButton');
+    const termsCheckbox = document.getElementById('termsCheckbox');
+    
+    function updateProceedButton() {
+        // Allow a 5-pixel margin for easier detection near the bottom
+        const isScrolledToBottom = modalContent.scrollTop + modalContent.clientHeight >= modalContent.scrollHeight - 5;
+        const isCheckboxChecked = termsCheckbox.checked;
+        acceptPolicyButton.disabled = !(isScrolledToBottom && isCheckboxChecked);
+    }
+    
+    // Add scroll event listener to check if the user has scrolled to the bottom
+    modalContent.addEventListener('scroll', updateProceedButton);
+    
+    // Add change event listener for checkbox
+    termsCheckbox.addEventListener('change', updateProceedButton);
+    </script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Show the privacy policy modal every time the page is loaded
+            const privacyModalEl = document.getElementById('privacyPolicyModal');
+            const privacyModal = privacyModalEl ? new bootstrap.Modal(privacyModalEl) : null;
+            privacyModal?.show();
+    
+            // Handle the "Proceed" button click
+            document.getElementById('acceptPolicyButton').addEventListener('click', function () {
+                // Hide the privacy policy modal
+                const privacyModalInstance = bootstrap.Modal.getInstance(privacyModalEl);
+                privacyModalInstance?.hide();
+    
+                // Show the building permit modal
+                const buildingPermitModalEl = document.getElementById('buildingPermitModal');
+                const buildingPermitModal = buildingPermitModalEl ? new bootstrap.Modal(buildingPermitModalEl) : null;
+                buildingPermitModal?.show();
+            });
         });
-    });
-</script>
-
+    </script>
+    
 
 
     <!-- Firebase and custom scripts -->
