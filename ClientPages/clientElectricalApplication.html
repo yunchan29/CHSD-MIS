@@ -435,44 +435,70 @@
     </div>
 </div>
 
+<!-- Privacy Modal Initialization -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Initialize and show the privacy policy modal
         const privacyModalEl = document.getElementById('privacyPolicyModal');
         const privacyModal = privacyModalEl ? new bootstrap.Modal(privacyModalEl) : null;
-        privacyModal?.show();
+        
+        if (privacyModal) {
+            console.log("Privacy modal initialized and shown");
+            privacyModal.show();
+        } else {
+            console.error("Privacy modal element not found!");
+        }
+    });
+</script>
 
-        // Initialize the electrical inspection modal for later use
-        const electricalInspectionModalEl = document.getElementById('electricalInspectionModal');
-        const electricalInspectionModal = electricalInspectionModalEl ? new bootstrap.Modal(electricalInspectionModalEl) : null;
-
-        // Elements within the modal
+<!-- Proceed Button Logic (Enable only when scrolled to bottom and checkbox is checked) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
         const modalContent = document.getElementById('privacyPolicyContent');
         const acceptPolicyButton = document.getElementById('acceptPolicyButton');
         const termsCheckbox = document.getElementById('termsCheckbox');
 
         function updateProceedButton() {
-            // Allow a 5-pixel margin to detect scroll near the bottom
             const isScrolledToBottom = modalContent.scrollTop + modalContent.clientHeight >= modalContent.scrollHeight - 5;
             const isCheckboxChecked = termsCheckbox?.checked;
             acceptPolicyButton.disabled = !(isScrolledToBottom && isCheckboxChecked);
         }
 
-        // Attach event listeners if elements exist
         if (modalContent && acceptPolicyButton && termsCheckbox) {
             modalContent.addEventListener('scroll', updateProceedButton);
             termsCheckbox.addEventListener('change', updateProceedButton);
             updateProceedButton();  // Initial check for button state
-
-            // Handle "Proceed" button click to close policy modal and show electrical inspection modal
-            acceptPolicyButton.addEventListener('click', function () {
-                privacyModal?.hide();
-                electricalInspectionModal?.show();
-            });
         }
     });
 </script>
 
+<!-- Proceed Action Script (Hide Privacy Modal, Show Electrical Inspection Modal) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const privacyModalEl = document.getElementById('privacyPolicyModal');
+        const acceptPolicyButton = document.getElementById('acceptPolicyButton');
+        
+        acceptPolicyButton.addEventListener('click', function () {
+            console.log("Proceed button clicked");
+
+            const privacyModalInstance = bootstrap.Modal.getInstance(privacyModalEl);
+            if (privacyModalInstance) {
+                privacyModalInstance.hide();
+            } else {
+                console.error("Failed to get privacy modal instance");
+            }
+
+            const electricalInspectionModalEl = document.getElementById('electricalInspectionModal');
+            const electricalInspectionModal = electricalInspectionModalEl ? new bootstrap.Modal(electricalInspectionModalEl) : null;
+
+            if (electricalInspectionModal) {
+                console.log("Electrical inspection modal initialized and shown");
+                electricalInspectionModal.show();
+            } else {
+                console.error("Electrical inspection modal element not found!");
+            }
+        });
+    });
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
     // Prevent dropdown from closing when clicking on buttons or notifications

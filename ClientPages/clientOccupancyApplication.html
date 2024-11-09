@@ -444,20 +444,16 @@
                         <div class="label">Appointment</div>
                     </div>
                 </div>
-                <!-- Content -->
                 <div class="container">
                     <h5 class="text-center mt-5 mb-4">Appointment Schedule</h5>
-                    <div class="row">
-                        <div class="col-md-3"></div> <!-- Empty column for spacing -->
-                        <div class="row justify-content-center">
-                            <div class="col-md-6">
-                                <label for="appointmentDate">Date</label>
-                                <input type="date" class="form-control" id="appointmentDate">
-                            </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <label for="appointmentDate">Date</label>
+                            <input type="date" class="form-control" id="appointmentDate">
                         </div>
-                        <div class="col-md-3"></div> <!-- Empty column for spacing -->
                     </div>
                 </div>
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -468,24 +464,7 @@
     </div>
 </div>
 
-<!-- Application Applied Modal -->
-<div class="modal fade" id="applicationAppliedModal" tabindex="-1" aria-labelledby="ApplicationAppliedModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="ApplicationAppliedModalLabel"><i class="fa-solid fa-check-circle"></i> Success</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <h2>Application Submitted</h2>
-                <i class="fa-solid fa-check-circle fa-3x text-success"></i>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 
 <!-- Privacy Policy Modal for Occupancy Permit -->
@@ -531,40 +510,61 @@
 </div>
 
 <script>
+    // Disable the "Proceed" button until the user scrolls to the bottom and checks the checkbox
+    const modalContent = document.getElementById('privacyPolicyContent');
+    const acceptPolicyButton = document.getElementById('acceptPolicyButton');
+    const termsCheckbox = document.getElementById('termsCheckbox');
+
+    function updateProceedButton() {
+        // Allow a 5-pixel margin for easier detection near the bottom
+        const isScrolledToBottom = modalContent.scrollTop + modalContent.clientHeight >= modalContent.scrollHeight - 5;
+        const isCheckboxChecked = termsCheckbox.checked;
+        acceptPolicyButton.disabled = !(isScrolledToBottom && isCheckboxChecked);
+    }
+
+    // Add scroll event listener to check if the user has scrolled to the bottom
+    modalContent.addEventListener('scroll', updateProceedButton);
+
+    // Add change event listener for checkbox
+    termsCheckbox.addEventListener('change', updateProceedButton);
+</script>
+
+<script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Initialize and show the privacy policy modal
+        // Show the privacy policy modal every time the page is loaded
         const privacyModalEl = document.getElementById('privacyPolicyModal');
         const privacyModal = privacyModalEl ? new bootstrap.Modal(privacyModalEl) : null;
-        privacyModal?.show();
-
-        // Initialize occupancy upload modal for later use
-        const occupancyUploadModalEl = document.getElementById('occupancyUploadModal');
-        const occupancyUploadModal = occupancyUploadModalEl ? new bootstrap.Modal(occupancyUploadModalEl) : null;
-
-        // Modal content and controls
-        const modalContent = document.getElementById('privacyPolicyContent');
-        const acceptPolicyButton = document.getElementById('acceptPolicyButton');
-        const termsCheckbox = document.getElementById('termsCheckbox');
-
-        function updateProceedButton() {
-            // Allow a 5-pixel margin to ensure users can enable the button even if close to the bottom
-            const isScrolledToBottom = modalContent.scrollTop + modalContent.clientHeight >= modalContent.scrollHeight - 5;
-            const isCheckboxChecked = termsCheckbox?.checked;
-            acceptPolicyButton.disabled = !(isScrolledToBottom && isCheckboxChecked);
+        
+        if (privacyModal) {
+            console.log("Privacy modal initialized and shown");
+            privacyModal.show();
+        } else {
+            console.error("Privacy modal element not found!");
         }
 
-        // Attach event listeners if elements exist
-        if (modalContent && acceptPolicyButton && termsCheckbox) {
-            modalContent.addEventListener('scroll', updateProceedButton);
-            termsCheckbox.addEventListener('change', updateProceedButton);
-            updateProceedButton();  // Initial button state check
+        // Handle the "Proceed" button click for privacy modal
+        document.getElementById('acceptPolicyButton').addEventListener('click', function () {
+            console.log("Proceed button clicked");
 
-            // Handle the "Proceed" button click to close the policy and show occupancy modal
-            acceptPolicyButton.addEventListener('click', function () {
-                privacyModal?.hide();
-                occupancyUploadModal?.show();
-            });
-        }
+            // Hide the privacy policy modal
+            const privacyModalInstance = bootstrap.Modal.getInstance(privacyModalEl);
+            if (privacyModalInstance) {
+                privacyModalInstance.hide();
+            } else {
+                console.error("Failed to get privacy modal instance");
+            }
+
+            // Show the occupancy upload modal
+            const occupancyUploadModalEl = document.getElementById('occupancyUploadModal');
+            const occupancyUploadModal = occupancyUploadModalEl ? new bootstrap.Modal(occupancyUploadModalEl) : null;
+
+            if (occupancyUploadModal) {
+                console.log("Occupancy upload modal initialized and shown");
+                occupancyUploadModal.show();
+            } else {
+                console.error("Occupancy upload modal element not found!");
+            }
+        });
     });
 </script>
 
