@@ -765,11 +765,69 @@
                                 </select>
                             </div>
                         </div>
+                        
+                        <p><i>Note:</i> To complete your requirements, please provide the following documents (after filling out the form) and then proceed to the City Housing and Settlements Department Office.</p>
+
+                        <div class="container mt-5">
+                            <h2>Housing Application Requirements Generator</h2>
+                            <p><strong>Who may avail:</strong> All residents of the City of Calamba aged 18-55 years old without owning their own land.</p>
+                            
+                            <form>
+                                <!-- Questionnaire Section -->
+                                <h5>Application Questionnaire</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="applicantStatus">Marital Status</label>
+                                        <i class="text-muted">Katayuan sa Pag-aasawa</i>
+                                        <select class="form-control" id="applicantStatus">
+                                            <option value="">Select Status</option>
+                                            <option value="single">Single</option>
+                                            <option value="married">Married</option>
+                                            <option value="widowed">Widowed</option>
+                                            <option value="living_with_partner">Living with Partner</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label for="employmentType">Employment Type</label>
+                                        <i class="text-muted">Uri ng Pagkakakitaan</i>
+                                        <select class="form-control" id="employmentType">
+                                            <option value="">Select Employment</option>
+                                            <option value="regular">Regular</option>
+                                            <option value="contractual">Contractual</option>
+                                            <option value="self-employed">Self-Employed</option>
+                                            <option value="unemployed">Unemployed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                        
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="hasDependents">Do you have dependents?</label>
+                                        <i class="text-muted">May mga kasama ka ba sa bahay(mga anak o iba pang kamag anak)?</i>
+                                        <select class="form-control" id="hasDependents">
+                                            <option value="">Select Option</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                        
+                                <button type="button" class="btn btn-primary mt-3" onclick="generateRequirements()">Generate Requirements</button>
+                            </form>
+                            
+                            <!-- Requirements Display Section -->
+                            <div class="mt-4">
+                                <h5>Requirements Checklist</h5>
+                                <ul id="requirementsChecklist"></ul>
+                            </div>
+                        </div>
+                        
                         <div class="row">
                             <div class="col-md-3"></div> <!-- Empty column for spacing -->
                             <div class="row justify-content-center">
                                 <div class="col-md-6">
-                                    <label for="appointmentDate">Date</label>
+                                    <label for="appointmentDate">Appointment Schedule(for submission of requirements)</label>
                                     <input type="date" class="form-control" id="appointmentDate">
                                 </div>
                             </div>
@@ -778,6 +836,7 @@
                        
                        
                        </form>
+                       
                     
                 </div>
             </div>
@@ -871,7 +930,82 @@
         </div>
     </div>
 </div>
+<script>
+    function generateRequirements() {
+        // Get answers from the form
+        const maritalStatus = document.getElementById("applicantStatus").value;
+        const employmentType = document.getElementById("employmentType").value;
+        const hasDependents = document.getElementById("hasDependents").value;
+        
+        // Clear the previous checklist
+        const checklist = document.getElementById("requirementsChecklist");
+        checklist.innerHTML = "";
 
+        // Create an array to store requirements
+        let requirements = [
+            { text: "Notarized application form for housing and land <i>(Notaryadong aplikasyon para sa pabahay at lupa)</i>", source: "Housing and Settlements Department" },
+            { text: "Most recent 3R family picture with all members included <i>(Pinakabagong 3R na larawan ng buong pamilya)</i>", source: "Client" },
+            { text: "Birth Certificate of the Applicant <i>(Sertipiko ng Kapanganakan ng Aplikante)</i>", source: "Philippine Statistics Authority or Civil Registry Office" },
+            { text: "2x2 ID Picture of the Applicant <i>(2x2 na larawan ng Aplikante)</i>", source: "Client" },
+            { text: "1x1 ID Picture of the Applicant <i>(1x1 na larawan ng Aplikante)</i>", source: "Client" },
+            { text: "Certification of Non-Ownership <i>(Katibayan ng Hindi Pagmamay-ari)</i>", source: "City Assessment Office" },
+            { text: "Barangay Clearance for Housing Ownership Application <i>(Barangay Clearance para sa Aplikasyon ng Pabahay)</i>", source: "Barangay where currently residing" },
+            { text: "1 Valid ID of the Applicant <i>(1 Valid ID ng Aplikante)</i>", source: "Various Government Issuers" },
+            { text: "White long folder <i>(Puting mahabang folder)</i>", source: "Store" }
+        ];
+
+        // Conditional Requirements
+        if (maritalStatus === "single") {
+            requirements.push({ text: "Certificate of No Marriage or CENOMAR <i>(Sertipiko ng Walang Kasal o CENOMAR)</i>", source: "Philippine Statistics Authority" });
+        }
+        if (maritalStatus === "married") {
+            requirements.push(
+                { text: "Marriage Contract <i>(Kontrata ng Kasal)</i>", source: "Philippine Statistics Authority or Civil Registry Office" },
+                { text: "Birth Certificate of Spouse <i>(Sertipiko ng Kapanganakan ng Asawa)</i>", source: "Philippine Statistics Authority or Civil Registry Office" },
+                { text: "1 Valid ID of Spouse <i>(1 Valid ID ng Asawa)</i>", source: "Various Government Issuers" }
+            );
+        }
+        if (maritalStatus === "widowed") {
+            requirements.push(
+                { text: "Marriage Contract <i>(Kontrata ng Kasal)</i>", source: "Philippine Statistics Authority or Civil Registry Office" },
+                { text: "Death Certificate of spouse <i>(Sertipiko ng Kamatayan ng Asawa)</i>", source: "Philippine Statistics Authority" }
+            );
+        }
+        if (maritalStatus === "living_with_partner") {
+            requirements.push(
+                { text: "Marriage Contract from previous marriage <i>(Kontrata ng Kasal mula sa nakaraang kasal)</i>", source: "Philippine Statistics Authority or Civil Registry Office" },
+                { text: "Certificate of No Marriage or CENOMAR of the single partner <i>(Sertipiko ng Walang Kasal o CENOMAR ng walang asawang kapareha)</i>", source: "Philippine Statistics Authority" },
+                { text: "Notarized Affidavit of Abandonment <i>(Notaryadong Sinumpaang Salaysay ng Pagsuko)</i>", source: "Notary Public" },
+                { text: "Notarized Affidavit of Cohabitation <i>(Notaryadong Sinumpaang Salaysay ng Pagsasama)</i>", source: "Housing and Settlements Department and Notary Public" },
+                { text: "1 Valid ID of live-in partner <i>(1 Valid ID ng kaparehang kinakasama)</i>", source: "Various Government Issuers" }
+            );
+        }
+        if (employmentType === "regular") {
+            requirements.push({ text: "Income Tax Return or Certificate of Compensation <i>(Income Tax Return o Sertipiko ng Kabayaran)</i>", source: "Place of employment" });
+        } else if (employmentType === "contractual") {
+            requirements.push({ text: "Certificate of Compensation or Notarized Affidavit of Income <i>(Sertipiko ng Kabayaran o Notaryadong Sinumpaang Salaysay ng Kita)</i>", source: "Place of employment or Notary Public" });
+        } else if (employmentType === "self-employed") {
+            requirements.push({ text: "Notarized Affidavit of Income <i>(Notaryadong Sinumpaang Salaysay ng Kita)</i>", source: "Notary Public" });
+        } else if (employmentType === "unemployed") {
+            requirements.push(
+                { text: "Notarized Affidavit of Support <i>(Notaryadong Sinumpaang Salaysay ng Suporta)</i>", source: "Housing and Settlements Department or Notary Public" },
+                { text: "1 Valid ID of the person supporting the applicant <i>(1 Valid ID ng sumusuporta sa aplikante)</i>", source: "Various Government Issuers" }
+            );
+        }
+        if (hasDependents === "yes") {
+            requirements.push({ text: "Birth Certificate of each dependent <i>(Sertipiko ng Kapanganakan ng bawat umaasa)</i>", source: "Philippine Statistics Authority or Civil Registry Office" });
+        }
+
+        // Display requirements
+        requirements.forEach(req => {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `${req.text} <strong>(Source: ${req.source})</strong>`;
+            checklist.appendChild(listItem);
+        });
+    }
+</script>
+
+    
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
