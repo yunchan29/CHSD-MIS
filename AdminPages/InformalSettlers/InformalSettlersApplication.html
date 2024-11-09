@@ -117,7 +117,7 @@
           <div class="contentContainer">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <!-- Add Profile Button on the left -->
-                <button type="button" class="btn btn-dark data-bs-toggle="modal" data-bs-target="#housingApplicationModal">
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#housingApplicationModal">
                     <i class="fa-solid fa-plus"></i> Add Profile
                 </button>
             
@@ -167,464 +167,619 @@
            
             
 
-  
-  <div class="modal fade" id="housingApplicationModal" tabindex="-1" aria-labelledby="housingApplicationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered wide-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="housingApplicationModalLabel">Housing Application</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            
+                <div class="modal fade" id="housingApplicationModal" tabindex="-1" aria-labelledby="housingApplicationModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+
+                    <div class="modal-dialog modal-dialog-centered wide-modal">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="housingApplicationModalLabel">Housing Application</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            
+                                
                 
-
-               
-                <div class="step-progress mb-4">
-                    <div class="step completed" id="step-1">
-                        <div class="circle"></div>
-                        <div class="label">Information of Household</div>
-                    </div>
-                    <div class="step" id="step-2">
-                        <div class="circle"></div>
-                        <div class="label">Household Members</div>
-                    </div>
-                    <div class="step" id="step-3">
-                        <div class="circle"></div>
-                        <div class="label">Lot and House Characteristics</div>
-                    </div>
-                </div>
-               
-              <!-- Form Steps -->
-<div class="form-step active" id="form-step-1">
-    <h5>Household Head Details</h5>
-    <div class="row">
-        <div class="col">
-            <label for="surveyNo">Survey No.</label>
-            <input type="text" id="surveyNo" class="form-control">
-        </div>
-        <div class="col">
-            <label for="dateApplied">Date</label>
-            <input type="date" id="dateApplied" class="form-control">
-        </div>
-        <div class="col">
-            <label for="barangay">Barangay</label>
-            <select class="form-control" id="barangay">
-              <option>Barangay 1</option>
-              <option>Barangay 2</option>
-              <option>Barangay 3</option>
-            </select>
-        </div>
-        <div class="col">
-            <label for="sitioPurok">Sitio/Purok</label>
-            <select class="form-control" id="sitioPurok">
-                <option>Purok 1</option>
-                <option></option>
-                <option></option>
-                <option></option>
-
-            </select>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-           <label for="classificationArea">Classification Area</label>
-           <input type="text" class="form-control" id="classificationArea">
-        </div>
-        <div class="col-md-8">
-           <label for="householdRemarks">Remarks</label>
-           <textarea class="form-control" id="householdRemarks" rows="1">
-           </textarea>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-3">
-           <label for="householdBirthday">Date of Birth</label>
-           <input type="date" class="form-control" id="householdBirthday">
-        </div>
-        <div class="col-md-3">
-            <label for="householdSex">Sex</label>
-            <select class="form-control" id="householdSex">
-                <option>Male</option>
-                <option>Female</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label for="householdCivilStatus">Civil Status</label>
-            <select class="form-control" id="householdCivilStatus">
-                <option></option>
-                <option></option>
-            </select>
-        </div>
-    </div>
-
-
-    <div class="row">
-        <div class="col-md-3">
-            <label for="householdLastName">Last Name</label>
-            <input type="text" class="form-control" id="householdLastName">
-        </div>
-        <div class="col-md-3">
-            <label for="householdFirstName">First Name</label>
-            <input type="text" class="form-control" id="householdFirstName">
-        </div>
-        <div class="col-md-3">
-            <label for="householdMiddleName">Middle Name</label>
-            <input type="text" class="form-control" id="householdMiddleName">
-        </div>
-        <div class="col-md-3">
-            <label for="householdMaidenName">Maiden Name</label>
-            <input type="text" class="form-control" id="householdMaidenName">
-        </div>
-    </div>
-
-    <div class="row">
-       <div class="col-md-6">
-        <label for="householdOccupation">Occupation</label>
-        <input type="text" class="form-control" id="householdOccupation">
-       </div>
-
-       <div class="col-md-6">
-         <label for="householdPlaceOfWork">Place Of Work</label>
-         <input type="text" class="form-control" id="householdPlaceOfWork">
-       </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <label for="householdAddress">Present Address</label>
-            <textarea class="form-control" id="householdAddress" rows="1"></textarea>
-        </div>
-    </div>
-
-    <div class="row">
-
-    </div>
-
-    <div class="row">
-        <h5>Name of Spouse</h5>
-    </div>
-    <div class="row">
-        <div class="col-md-3">
-            <label for="spouseLastName">Last Name</label>
-            <input type="text" class="form-control" id="spouseLastName">
-        </div>
-        <div class="col-md-3">
-            <label for="spouseFirstName">First Name</label>
-            <input type="text" class="form-control" id="spouseFirstName">
-        </div>
-        <div class="col-md-3">
-            <label for="spouseMiddleName">Middle Name</label>
-            <input type="text" class="form-control" id="spouseMiddleName">
-        </div>
-        <div class="col-md-3">
-            <label for="spouseMaidenName">Maiden Name</label>
-            <input type="text" class="form-control" id="spouseMaidenName">
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-3">
-            <label for="spouseBirthday">Date of Birth</label>
-            <input type="date" class="form-control" id="spouseBirthday">
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-           <label for="classificationOfSurveyHousehold">Classification Of Survey Household</label>
-           <select class="form-control" id="classificationOfSurveyHousehold">
-            <option></option>
-           </select>
-        </div>
-        <div class="col-md-2">
-            <label for="householdAmount">Amount</label>
-            <input type="number" class="form-control" id="householdAmount">
-        </div>
-        <div class="col-md-6">
-            <label for="structureOwner">Structure Owner</label>
-            <input type="text" class="form-control" id="structureOwner">
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-             <label for="provinceOfOrigin">Province Of Origin</label>
-             <input type="text" class="form-control" id="provinceOfOrigin">
-        </div>
-        <div class="col-md-3">
-            <label for="householdSize">Household Size</label>
-            <input type="number" class="form-control" id="householdSize">
-        </div>
-        <div class="col-md-3">
-            <label for="yearOfResidency">Year of Residency</label>
-            <input type="text" class="form-control" id="yearOfResidency">
-        </div>
-    </div>
-
-    <div class="row">
-
-        <label for="reasonsForEstablishing">Reasons For Establishing Residence In The Area</label>
-        <textarea class="form-control" id="reasonsForEstablishing"></textarea>
-    </div>
-
-   
-    
-        
-
-
-   
-  
-
-    <div class="row justify-content-end mt-4">
-        <div class="col">
-           
-        </div>
-    </div>
-</div>
-
-
-                <div class="form-step" id="form-step-2">
-                    
-                    
-                    <h5>Household Members Information</h5>
+                               
+                                <div class="step-progress mb-4">
+                                    <div class="step completed" id="step-1">
+                                        <div class="circle"></div>
+                                        <div class="label">Information of Household</div>
+                                    </div>
+                                    <div class="step" id="step-2">
+                                        <div class="circle"></div>
+                                        <div class="label">Household Members</div>
+                                    </div>
+                                    <div class="step" id="step-3">
+                                        <div class="circle"></div>
+                                        <div class="label">Lot and House Characteristics</div>
+                                    </div>
+                                </div>
+                               
+                              <!-- Form Steps -->
+                               <form id="housingApplicationForm">
+            
+                <div class="form-step active" id="form-step-1">
+                    <p>Note: Fill up all the fields to proceed to the next step.</p>
+                                    <p><i>Required fields are marked with <span class="required-asterisk">*</span></i></p>
+                    <h5>Household Head Details</h5>
                     <div class="row">
-                        <div class="col-md-6">
-                            <label for="memberName">Name</label>
-                            <input type="text" id="memberName" class="form-control">
+                        <div class="col">
+                            <label for="surveyNo">Survey No.</label>
+                            <input type="text" id="surveyNo" class="form-control">
                         </div>
-                        <div class="col-md-6">
-                            <label for="relationToHead">Relation To The Household Head</label>
-                            <input type="text" class="form-control" id="relationToHead">
+                        <div class="col">
+                            <label for="dateApplied">Date<span class="required-asterisk">*</span></label>
+                            <input type="date" id="dateApplied" class="form-control" required>
                         </div>
+                        <div class="col">
+                            <label for="barangay">Barangay<span class="required-asterisk">*</span></label>
+                            <select class="form-control" id="barangay" required>
+                                <option value="">Select Barangay</option>
+                                <option>Barangay Uno</option>
+                                <option>Barangay Dos</option>
+                                <option>Barangay Tres</option>
+                                <option>Barangay Kwatro</option>
+                                <option>Barangay Singko</option>
+                                <option>Barangay Sais</option>
+                                <option>Barangay Syete</option>
+                                <option>Bagong Kalsada</option>
+                                <option>Banadero</option>
+                                <option>Banlic</option>
+                                <option>Barandal</option>
+                                <option>Batino</option>
+                                <option>Bubuyan</option>
+                                <option>Bucal</option>
+                                <option>Bunggo</option>
+                                <option>Burol</option>
+                                <option>Camaligan</option>
+                                <option>Canlubang</option>
+                                <option>Halang</option>
+                                <option>Hornalan</option>
+                                <option>Kay-Anlog</option>
+                                <option>Laguerta</option>
+                                <option>Lamesa</option>
+                                <option>Lawa</option>
+                                <option>Lecheria</option>
+                                <option>Lingga</option>
+                                <option>Looc</option>
+                                <option>Mabato</option>
+                                <option>Makiling</option>
+                                <option>Majada Out</option>
+                                <option>Mapagong</option>
+                                <option>Masili</option>
+                                <option>Maunong</option>
+                                <option>Mayapa</option>
+                                <option>Milagrosa</option>
+                                <option>Palingon</option>
+                                <option>Paciano Rizal</option>
+                                <option>Palo Alto</option>
+                                <option>Pansol</option>
+                                <option>Parian</option>
+                                <option>Prinza</option>
+                                <option>Punta</option>
+                                <option>Puting Lupa</option>
+                                <option>Real</option>
+                                <option>Saimsim</option>
+                                <option>Sampiruhan</option>
+                                <option>San Cristobal</option>
+                                <option>San Jose</option>
+                                <option>San Juan</option>
+                                <option>Sirang Lupa</option>
+                                <option>Sucol</option>
+                                <option>Turbina</option>
+                                <option>Ulango</option>
+                                <option>Uwisan</option>
+                            </select>                
+                            
+                        </div>
+                        <div class="col">
+                            <label for="sitioPurok">Sitio/Purok<span class="required-asterisk">*</span></label>
+                            <select class="form-control" id="sitioPurok" required>
+                                <option value="">Select Purok/Sitio</option>
+                                <option>Purok 1</option>
+                                <option>Purok 2</option>
+                                <option>Purok 3</option>
+                                <option>Purok 4</option>
+                                <option>Purok 5</option>
+                                <option>Purok 6</option>
+                                <option>Purok 7</option>
+                                <option>Purok 8</option>
+                                <option>Purok 9</option>
+                                <option>Purok 10</option>
+                                <option>Sitio Kapayapaan</option>
+                                <option>Sitio Lumot</option>
+                                <option>Sitio Putol</option>
+                                <option>Sitio Hulo</option>
+                                <option>Sitio Masaya</option>
+                                <option>Sitio Sungi</option>
+                                <option>Sitio Banlic</option>
+                                <option>Sitio Ilaya</option>
+                                <option>Sitio Calero</option>
+                                <option>Sitio Masiit</option>
+                                <option>Sitio Tubigan</option>
+                                <option>Sitio Sibulo</option>
+                                <option>Sitio Sto. Tomas</option>
+                                <option>Sitio Ronggot</option> 
+                            </select>
+                        </div>
+                        
                     </div>
+                
                     <div class="row">
-                        <div class="col-md-2">
-                            <label for="memberAge">Age</label>
-                            <input type="number" class="form-control" id="memberAge">
+                        <div class="col-md-4">
+                           <label for="classificationArea">Classification Area<span class="required-asterisk">*</span></label>
+                           <select class="form-control" id="classificationArea" required>
+                            <option>Danger Zone</option>
+                            <option>Not Danger Zone</option>
+                           </select>
+            
                         </div>
-                        <div class="col-md-2">
-                            <label for="memberGender">Gender</label>
-                            <select class="form-control" id="memberGender">
+                       
+                    </div>
+                
+                    <div class="row">
+                        <div class="col-md-3">
+                           <label for="householdBirthday">Date of Birth<span class="required-asterisk">*</span></label>
+                           <input type="date" class="form-control" id="householdBirthday" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="householdSex">Sex<span class="required-asterisk">*</span></label>
+                            <select class="form-control" id="householdSex" required>
                                 <option>Male</option>
                                 <option>Female</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <label for="memberCivilStatus">Civil Status</label>
-                            <select class="form-control" id="memberCivilStatus">
+                        <div class="col-md-3">
+                            <label for="householdCivilStatus">Civil Status<span class="required-asterisk">*</span></label>
+                            <select class="form-control" id="householdCivilStatus" required>
                                 <option>Single</option>
-                                <option></option>
+                                <option>Married</option>
+                                <option>Live in</option>
+                                <option>Widowed</option>
+                                <option>Single Parent</option>
+                                <option>Separated</option>
+            
                             </select>
+                        </div>
+                    </div>
+                
+                
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="householdLastName">Last Name<span class="required-asterisk">*</span></label>
+                            <input type="text" class="form-control" id="householdLastName">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="householdFirstName">First Name<span class="required-asterisk">*</span></label>
+                            <input type="text" class="form-control" id="householdFirstName">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="householdMiddleName">Middle Name</label>
+                            <input type="text" class="form-control" id="householdMiddleName">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="householdMaidenName">Maiden Name</label>
+                            <input type="text" class="form-control" id="householdMaidenName">
+                        </div>
+                    </div>
+                
+                    <div class="row">
+                       <div class="col-md-6">
+                        <label for="householdOccupation">Occupation<span class="required-asterisk">*</span></label>
+                        <input type="text" class="form-control" id="householdOccupation" required>
+                       </div>
+                
+                       <div class="col-md-6">
+                         <label for="householdPlaceOfWork">Place Of Work<span class="required-asterisk">*</span></label>
+                         <input type="text" class="form-control" id="householdPlaceOfWork" required>
+                       </div>
+                    </div>
+                
+                    <div class="row">
+                        <div class="col">
+                            <label for="householdAddress">Present Address<span class="required-asterisk">*</span></label>
+                            <textarea class="form-control" id="householdAddress" rows="1" required></textarea>
+                        </div>
+                    </div>
+                
+                    <div class="row">
+                
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- Checkbox to toggle spouse fields -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="hasSpouse">
+                                <label class="form-check-label" for="hasSpouse">
+                                    Check if you have a spouse
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Spouse fields -->
+                    <div class="row">
+                        <h5>Name of Spouse</h5>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="spouseLastName">Last Name</label>
+                            <input type="text" class="form-control" id="spouseLastName" disabled>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="spouseFirstName">First Name</label>
+                            <input type="text" class="form-control" id="spouseFirstName" disabled>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="spouseMiddleName">Middle Name</label>
+                            <input type="text" class="form-control" id="spouseMiddleName" disabled>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="spouseMaidenName">Maiden Name</label>
+                            <input type="text" class="form-control" id="spouseMaidenName" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="spouseBirthday">Date of Birth</label>
+                            <input type="date" class="form-control" id="spouseBirthday" disabled>
+                        </div>
+                    </div>
+                    
+                
+                    <div class="row">
+                        <div class="col-md-4">
+                           <label for="classificationOfSurveyHousehold">Classification Of Survey Household<span class="required-asterisk">*</span></label>
+                           <select class="form-control" id="classificationOfSurveyHousehold" required>
+                            <option>Caretaker</option>
+                            <option>Co-Owner</option>
+                            <option>Owner</option>
+                            <option>Renter</option>
+                            <option>RFO</option>
+                            <option>Sharer</option>
+                           </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="householdAmount">Amount<span class="required-asterisk">*</span></label>
+                            <input type="number" class="form-control" id="householdAmount" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="memberEducationalAttainment">Educational Attainment</label>
-                            <input type="text" class="form-control" id="memberEducationalAttainment">
+                            <label for="structureOwner">Structure Owner<span class="required-asterisk">*</span></label>
+                            <input type="text" class="form-control" id="structureOwner" required>
                         </div>
                     </div>
-
+                
                     <div class="row">
-                        <div class="col-md-2">
-                            <label for="memberEmployed">Employed</label>
-                            <select class="form-control" id="memberEmployed">
-                                <option></option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="memberOccupation">Occupation</label>
-                            <input type="text" class="form-control" id="memberOccupation">
+                        <div class="col-md-6">
+                             <label for="provinceOfOrigin">Province Of Origin<span class="required-asterisk">*</span></label>
+                             <input type="text" class="form-control" id="provinceOfOrigin" required>
                         </div>
                         <div class="col-md-3">
-                            <label for="memberPlaceOfWork">Place of Work</label>
-                            <input type="text" class="form-control" id="memberPlaceOfWork">
+                            <label for="householdSize">Household Size<span class="required-asterisk">*</span></label>
+                            <input type="number" class="form-control" id="householdSize" required>
                         </div>
                         <div class="col-md-3">
-                            <label for="memberMonthlyIncome">Monthly Income(PHP)</label>
-                            <input type="number" class="form-control" id="memberMonthlyIncome">
+                            <label for="yearOfResidency">Year of Residency<span class="required-asterisk">*</span></label>
+                            <input type="text" class="form-control" id="yearOfResidency" required>
                         </div>
-                        
                     </div>
-
+                
+                    <div class="row">
+                
+                        <label for="reasonsForEstablishing">Reasons For Establishing Residence In The Area<span class="required-asterisk">*</span></label>
+                        <select class="form-control" id="reasonsForEstablishing">
+                            <option>Proximity of Livelihood</option>
+                            <option>Rent Free or Affordable Rental Rates</option>
+                            <option>Acquired Right</option>
+                            <option>Family Ties</option>
+                            <option>Near School</option>
+                            <option>No Other Place to Go</option>
+                        </select>
+                    </div>
+                
+                   
+                    
+                        
+                
+                
+                   
+                  
+                
                     <div class="row justify-content-end mt-4">
                         <div class="col">
                            
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col text-end">
-                            <button class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add</button>
-                            <button class="btn btn-secondary"><i class="fa-solid fa-delete-left"></i> Clear</button>
-                            <button class="btn btn-secondary"><i class="fa-solid fa-pencil"></i> Edit</button>
-                            <button class="btn btn-secondary"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </div>
-                    </div>
-
-                    <div class="contentContainer">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Relation</th>
-                                    <th>Age</th>
-                                    <th>Gender</th>
-                                    <th>Civil Status</th>
-                                    <th>Educational Attainment</th>
-                                    <th>Employed</th>
-                                    <th>Occupation</th>
-                                    <th>Place of Work</th>
-                                    <th>Monthly Income</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    
                 </div>
-
-                <div class="form-step" id="form-step-3">
-                    <h5>Lot Information</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="lotOwner">Owner</label>
-                            <input type="text" class="form-control" id="lotOwner">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="construction">Construction/Building Materials Used</label>
-                            <select class="form-control" i="construction">
-                                <option>Concrete</option>
-                                <option>Wood/Nipa</option>
-                                <option>Plastic Roof Only</option>
-                                <option>Tent</option>
-                                <option>Mixed Materials</option>
-                                <option>Sharer</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="NOStoreys">Number Of Storeys</label>
-                            <input type="number" id="NOStoreys" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="estimatedFloorArea">Estimated Floor Area</label>
-                            <input type="number" class="form-control" id="estimatedFloorArea">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="comfortRoom">Comfort Room</label>
-                            <select class="form-control" id="comfortRoom">
-                                <option>With Septic Tank Vault</option>
-                                <option>Without Septic</option>
-                                <option>None</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="utilities">Utilities/Facilities Present Power(Electricity)</label>
-                            <select class="form-control" id="utilities">
-                                <option>Meralco</option>
-                                <option>Connected To Other Subscriber</option>
-                                <option>None</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="sourceOfWater">Source of Water</label>
-                            <select class="form-control" id="sourceOfWater">
-                                <option></option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="telephone">Telephone</label>
-                            <select class="form-control" id="telephone">
-                                <option>Landline</option>
-                                <option>Cellphone</option>
-                                <option>Others</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="modeOfHouse">Mode Of House/Structure Acquistion</label>
-                            <select class="form-control" id="modeOfHouse">
-                                <option>Sold Rights</option>
-                                <option>Transfer Rights</option>
-                                <option>Constructed</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="infoAboutLot">Information About The Surveyed Lot</label>
-                            <select class="form-control" id="infoAboutLot">
-                                <option>Caretaker</option>
-                                <option>Co-Owner</option>
-                                <option>Renter</option>
-                                <option>RFO</option>
-                                <option>Sharer</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-2">
-                            <label for="amountToPay">Amount To Pay</label>
-                            <input type="number" id="amountToPay" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="relationshipWithOwner">Relationship With The Owner</label>
-                            <select class="form-control" id="relationshipWithOwner">
-                                <option>Lot Owner</option>
-                                <option>Child</option>
-                                <option>Parent</option>
-                                <option>Relative</option>
-                                <option>Others</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="typeOfStructure">Type Of Structure</label>
-                            <select class="form-control" id="typeOfStructure">
-                                <option>Residential</option>
-                                <option>Commercial</option>
-                                <option>Apartment</option>
-                                <option>Institution</option>
-                                <option>Others</option>
-                            </select>
-                        </div>
-                    </div>
-                   
-                    <div class="row justify-content-between mt-4">
-                       <div class="col">
-                        
-                       
-                       </div>
-                    </div>
                 
+                
+                                <div class="form-step" id="form-step-2">
+                                    
+                                    
+                                    <h5>Household Members Information</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="memberName">Name<span class="required-asterisk">*</span></label>
+                                            <input type="text" id="memberName" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="relationToHead">Relation To The Household Head<span class="required-asterisk">*</span></label>
+                                            <select class="form-control" id="relationToHead" required>
+                                                <option>Father</option>
+                                                <option>Mother</option>
+                                                <option>Child</option>
+                                                <option>Sibling</option>
+                                                <option>Husband</option>
+                                                <option>Wife</option>
+                                                <option>Uncle</option>
+                                                <option>Aunt</option>
+                                                <option>Grandmother</option>
+                                                <option>Grandfather</option>
+                                                <option>Others</option>
+                                                </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label for="memberAge">Age<span class="required-asterisk">*</span></label>
+                                            <input type="number" class="form-control" id="memberAge" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="memberGender">Gender<span class="required-asterisk">*</span></label>
+                                            <select class="form-control" id="memberGender" required>
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="memberCivilStatus">Civil Status<span class="required-asterisk">*</span></label>
+                                            <select class="form-control" id="memberCivilStatus" required>
+                                                <option>Single</option>
+                                                <option>Married</option>
+                                                <option>Live in</option>
+                                                <option>Widowed</option>
+                                                <option>Single Parent</option>
+                                                <option>Separated</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="memberEducationalAttainment">Educational Attainment<span class="required-asterisk">*</span></label>
+                                            <select class="form-control" id="memberEducationalAttainment" required>
+                                                <option>Highest Educational Attainment</option>
+                                                <option>Elementary Undergraduate</option>
+                                                <option>Elementary Graduate</option>
+                                                <option>High School Undergraduate</option>
+                                                <option>High School Graduate</option>
+                                                <option>College Undergraduate</option>
+                                                <option>College Graduate</option>
+                                            </select>
+            
+            
+            
+                                        </div>
+                                    </div>
+                
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label for="memberEmployed">Employed<span class="required-asterisk">*</span></label>
+                                            <select class="form-control" id="memberEmployed" required>
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="memberOccupation">Occupation<span class="required-asterisk">*</span></label>
+                                            <input type="text" class="form-control" id="memberOccupation" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="memberPlaceOfWork">Place of Work<span class="required-asterisk">*</span></label>
+                                            <input type="text" class="form-control" id="memberPlaceOfWork" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="memberMonthlyIncome">Monthly Income(PHP)<span class="required-asterisk">*</span></label>
+                                            <select class="form-control" id="memberMonthlyIncome" required>
+                                                <option>Below 20,000</option>
+                                                <option>20,000-25,000</option>
+                                                <option>25,000-30,000</option>
+                                                <option>Above 30,000</option>
+                                            </select>
+                                        </div>
+                                        
+                                    </div>
+                
+                                    <div class="row justify-content-end mt-4">
+                                        <div class="col">
+                                           
+                                        </div>
+                                    </div>
+                                    
+            
+                                    <div id="addHouseholdLoading" class="spinner-border text-primary" role="status" style="display: none;">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col text-end">
+                                            <button class="btn btn-secondary" type="button" id="addHouseholdBtn"><i class="fa-solid fa-plus"></i> Add</button>
+                                            <button class="btn btn-secondary" type="button" id="clearHouseholdBtn"><i class="fa-solid fa-delete-left"></i> Clear</button>
+                                            <button class="btn btn-secondary" type="button" id="editHouseholdBtn"><i class="fa-solid fa-pencil"></i> Edit</button>
+                                            <button class="btn btn-secondary" type="button" id="deleteHouseholdBtn"><i class="fa-solid fa-trash"></i> Delete</button>
+                                        </div>
+                                    </div>
+                
+                                    <div class="contentContainer">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Relation</th>
+                                                    <th>Age</th>
+                                                    <th>Gender</th>
+                                                    <th>Civil Status</th>
+                                                    <th>Educational Attainment</th>
+                                                    <th>Employed</th>
+                                                    <th>Occupation</th>
+                                                    <th>Place of Work</th>
+                                                    <th>Monthly Income</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="householdMembersTableBody"> <!-- Added id to tbody -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                </div>
+                
+                                <div class="form-step" id="form-step-3">
+                                    <h5>Lot Information</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="lotOwner">Owner</label>
+                                            <input type="text" class="form-control" id="lotOwner">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="construction">Construction/Building Materials Used</label>
+                                            <select class="form-control" id="construction">
+                                                <option>Concrete</option>
+                                                <option>Wood/Nipa</option>
+                                                <option>Plastic Roof Only</option>
+                                                <option>Tent</option>
+                                                <option>Mixed Materials</option>
+                                                <option>Sharer</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="NOStoreys">Number Of Storeys</label>
+                                            <input type="number" id="NOStoreys" class="form-control">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="estimatedFloorArea">Estimated Floor Area</label>
+                                            <input type="number" class="form-control" id="estimatedFloorArea">
+                                        </div>
+                                    </div>
+                
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="comfortRoom">Comfort Room</label>
+                                            <select class="form-control" id="comfortRoom">
+                                                <option>With Septic Tank Vault</option>
+                                                <option>Without Septic</option>
+                                                <option>None</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="utilities">Utilities/Facilities Present Power(Electricity)</label>
+                                            <select class="form-control" id="utilities">
+                                                <option>Meralco</option>
+                                                <option>Connected To Other Subscriber</option>
+                                                <option>None</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="sourceOfWater">Source of Water</label>
+                                            <select class="form-control" id="sourceOfWater">
+                                                <option value="">Select Source of Water</option>
+                                                <option value="local_water_district">Local Water District</option>
+                                                <option value="deep_well">Deep Well</option>
+                                                <option value="shallow_well">Shallow Well</option>
+                                                <option value="water_delivery">Water Delivery (Private Supplier)</option>
+                                                <option value="communal_faucet">Communal Faucet System (Barangay/Community)</option>
+                                                <option value="rainwater">Rainwater Collection</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label for="telephone">Cellphone Number:</label>
+                                            <input type="number" class="form-control" id="telephone">
+                                        </div>
+                                    </div>
+                
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="modeOfHouse">Mode Of House/Structure Acquistion</label>
+                                            <select class="form-control" id="modeOfHouse">
+                                                <option>Sold Rights</option>
+                                                <option>Transfer Rights</option>
+                                                <option>Constructed</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="infoAboutLot">Information About The Surveyed Lot</label>
+                                            <select class="form-control" id="infoAboutLot">
+                                                <option>Caretaker</option>
+                                                <option>Co-Owner</option>
+                                                <option>Renter</option>
+                                                <option>RFO</option>
+                                                <option>Sharer</option>
+                                            </select>
+                                        </div>
+                
+                                        <div class="col-md-2">
+                                            <label for="amountToPay">Amount To Pay</label>
+                                            <input type="number" id="amountToPay" class="form-control">
+                                        </div>
+                                    </div>
+                
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="relationshipWithOwner">Relationship With The Owner</label>
+                                            <select class="form-control" id="relationshipWithOwner">
+                                                <option>Lot Owner</option>
+                                                <option>Child</option>
+                                                <option>Parent</option>
+                                                <option>Relative</option>
+                                                <option>Others</option>
+                                            </select>
+                                        </div>
+                
+                                        <div class="col-md-6">
+                                            <label for="typeOfStructure">Type Of Structure</label>
+                                            <select class="form-control" id="typeOfStructure">
+                                                <option>Residential</option>
+                                                <option>Commercial</option>
+                                                <option>Apartment</option>
+                                                <option>Institution</option>
+                                                <option>Others</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!--<div class="row">
+                                        <div class="col-md-3"></div> 
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-6">
+                                                <label for="appointmentDate">Date</label>
+                                                <input type="date" class="form-control" id="appointmentDate">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3"></div> 
+                                    </div>-->
+                                   
+                                   
+                                   </form>
+                                
+                            </div>
+                        </div>
+                        <div class="modal-footer"> 
+                            <button type="button" class="btn btn-primary" id="nextBtn1">Next</button>
+                            <button type="button" class="btn btn-secondary" id="prevBtn2" style="display:none;">Previous</button>
+                            <button type="button" class="btn btn-primary" id="nextBtn2" style="display:none;">Next</button>
+                            <button type="button" class="btn btn-secondary" id="prevBtn3" style="display:none;">Previous</button>
+                            <button type="button" class="btn btn-primary" id="submitBtn" style="display:none;">Submit</button>
+                        </div>
+                        
+                          
+                      </div>
+                    </div>
             </div>
-        </div>
-        <div class="modal-footer"> 
-            <button type="button" class="btn btn-primary" id="nextBtn1">Next</button>
-            <button type="button" class="btn btn-secondary" id="prevBtn2" style="display:none;">Previous</button>
-            <button type="button" class="btn btn-primary" id="nextBtn2" style="display:none;">Next</button>
-            <button type="button" class="btn btn-secondary" id="prevBtn3" style="display:none;">Previous</button>
-            <button type="button" class="btn btn-primary" id="submitBtn" style="display:none;">Submit</button>
-        </div>
-        
-          
-      </div>
-    </div>
-  </div>
-
-          </div>
-        </div>
-    </div>
-
+            </div>
+            </div>
 
 
     <div class="modal fade" id="viewHousingApplicationModal" tabindex="-1" aria-labelledby="housingApplicationModalTitle" aria-hidden="true">
@@ -742,11 +897,84 @@
 });
 
     </script>
+    <script>
+        // Get the elements
+        const memberEmployed = document.getElementById('memberEmployed');
+        const memberOccupation = document.getElementById('memberOccupation');
+        const memberPlaceOfWork = document.getElementById('memberPlaceOfWork');
+        const memberMonthlyIncome = document.getElementById('memberMonthlyIncome');
+    
+        // Function to enable/disable fields based on employment status
+        function toggleEmploymentFields() {
+            if (memberEmployed.value === 'No') {
+                memberOccupation.disabled = true;
+                memberPlaceOfWork.disabled = true;
+                memberMonthlyIncome.disabled = true;
+    
+                // Clear the values of the disabled fields
+                memberOccupation.value = '';
+                memberPlaceOfWork.value = '';
+                memberMonthlyIncome.value = '';
+            } else {
+                memberOccupation.disabled = false;
+                memberPlaceOfWork.disabled = false;
+                memberMonthlyIncome.disabled = false;
+            }
+        }
+    
+        // Add event listener to the dropdown to trigger the function when the value changes
+        memberEmployed.addEventListener('change', toggleEmploymentFields);
+    
+        // Run the function on page load to set the initial state
+        toggleEmploymentFields();
+    </script>
+    <script>
+    
+        document.addEventListener("DOMContentLoaded", function () {
+        // Set the default value for "Date Applied" to today's date
+        const dateAppliedInput = document.getElementById("dateApplied");
+        const today = new Date().toISOString().split('T')[0];
+        dateAppliedInput.value = today;
+    
+        // Disable future dates and the current date for the household birthday and spouse birthday
+        const householdBirthdayInput = document.getElementById("householdBirthday");
+        const spouseBirthdayInput = document.getElementById("spouseBirthday");
+        const minAgeDate = new Date();
+        minAgeDate.setFullYear(minAgeDate.getFullYear() - 18); // At least 18 years old
+        
+        // Setting the max date for birthdates to ensure 18+ age
+        const maxDate = minAgeDate.toISOString().split('T')[0];
+        householdBirthdayInput.max = maxDate;
+        spouseBirthdayInput.max = maxDate;
+        
+        // Disable today and future dates for the household and spouse birthday
+        householdBirthdayInput.setAttribute('max', maxDate);
+        spouseBirthdayInput.setAttribute('max', maxDate);
+    
+        // Enable or disable spouse fields based on the "hasSpouse" checkbox
+        const hasSpouseCheckbox = document.getElementById("hasSpouse");
+        const spouseFields = [
+            document.getElementById("spouseLastName"),
+            document.getElementById("spouseFirstName"),
+            document.getElementById("spouseMiddleName"),
+            document.getElementById("spouseMaidenName"),
+            document.getElementById("spouseBirthday")
+        ];
+    
+        hasSpouseCheckbox.addEventListener("change", function () {
+            spouseFields.forEach(field => {
+                field.disabled = !hasSpouseCheckbox.checked;
+            });
+        });
+    });
+    
+        </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, updateDoc, doc, serverTimestamp, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, updateDoc, doc, serverTimestamp, getDoc, setDoc, deleteDoc, query, where, orderBy, limit, addDoc, Timestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     
         // Firebase configuration
         const firebaseConfig = {
@@ -764,6 +992,291 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
     
+        // Declare the householdMembers array to store all household members from step 2
+        let householdMembers = [];
+        
+        // Input fields for household members
+        const memberNameInput = document.getElementById('memberName');
+        const relationToHeadInput = document.getElementById('relationToHead');
+        const memberAgeInput = document.getElementById('memberAge');
+        const memberGenderInput = document.getElementById('memberGender');
+        const memberCivilStatusInput = document.getElementById('memberCivilStatus');
+        const memberEducationalAttainmentInput = document.getElementById('memberEducationalAttainment');
+        const memberEmployedInput = document.getElementById('memberEmployed');
+        const memberOccupationInput = document.getElementById('memberOccupation');
+        const memberPlaceOfWorkInput = document.getElementById('memberPlaceOfWork');
+        const memberMonthlyIncomeInput = document.getElementById('memberMonthlyIncome');
+        const tableBody = document.getElementById('householdMembersTableBody');
+    
+        // Loading spinner for household member addition
+        const addMemberLoadingSpinner = document.getElementById('addHouseholdLoading');
+    
+        // Function to add household member
+        function addHouseholdMember(e) {
+            // Prevent form submission behavior
+            e.preventDefault();
+            e.stopPropagation();
+    
+            // Show loading spinner
+            addMemberLoadingSpinner.style.display = 'inline-block';
+    
+            const member = {
+                name: memberNameInput.value,
+                relation: relationToHeadInput.value,
+                age: memberAgeInput.value,
+                gender: memberGenderInput.value,
+                civilStatus: memberCivilStatusInput.value,
+                education: memberEducationalAttainmentInput.value,
+                employed: memberEmployedInput.value,
+                occupation: memberOccupationInput.value,
+                placeOfWork: memberPlaceOfWorkInput.value,
+                income: memberMonthlyIncomeInput.value,
+            };
+    
+            // Validate required fields
+            if (!member.name || !member.relation || !member.age || !member.gender) {
+                alert('Please fill in all required fields.');
+                addMemberLoadingSpinner.style.display = 'none';
+                return;
+            }
+    
+            // Add the new member to the householdMembers array
+            householdMembers.push(member);
+    
+            // Append the new household member to the table
+            appendHouseholdMemberRow(member);
+    
+            // Clear input fields after adding
+            clearHouseholdMemberInputs();
+    
+            // Hide the loading spinner
+            setTimeout(() => {
+                addMemberLoadingSpinner.style.display = 'none';
+            }, 500);
+        }
+    
+        // Function to append the new household member to the table without reloading
+        function appendHouseholdMemberRow(member) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${member.name}</td>
+                <td>${member.relation}</td>
+                <td>${member.age}</td>
+                <td>${member.gender}</td>
+                <td>${member.civilStatus}</td>
+                <td>${member.education}</td>
+                <td>${member.employed}</td>
+                <td>${member.occupation}</td>
+                <td>${member.placeOfWork}</td>
+                <td>${member.income}</td>
+            `;
+            tableBody.appendChild(row);
+        }
+    
+        // Function to clear input fields
+        function clearHouseholdMemberInputs() {
+            memberNameInput.value = '';
+            relationToHeadInput.value = '';
+            memberAgeInput.value = '';
+            memberGenderInput.value = '';
+            memberCivilStatusInput.value = '';
+            memberEducationalAttainmentInput.value = '';
+            memberEmployedInput.value = '';
+            memberOccupationInput.value = '';
+            memberPlaceOfWorkInput.value = '';
+            memberMonthlyIncomeInput.value = '';
+        }
+    
+        // Add event listener to the "Add" button to trigger the add household member function
+        document.getElementById('addHouseholdBtn').addEventListener('click', function (e) {
+            addHouseholdMember(e); // Call the function to add the member and stop form submission
+        });
+    
+        // Function to handle Step 3 (Lot and House Characteristics)
+        async function addLotAndHouseDetails() {
+            const lotOwner = document.getElementById('lotOwner').value;
+            const construction = document.getElementById('construction').value;
+            const NOStoreys = document.getElementById('NOStoreys').value;
+            const estimatedFloorArea = document.getElementById('estimatedFloorArea').value;
+            const comfortRoom = document.getElementById('comfortRoom').value;
+            const utilities = document.getElementById('utilities').value;
+            const sourceOfWater = document.getElementById('sourceOfWater').value;
+            const telephone = document.getElementById('telephone').value;
+            const modeOfHouse = document.getElementById('modeOfHouse').value;
+            const infoAboutLot = document.getElementById('infoAboutLot').value;
+            const amountToPay = document.getElementById('amountToPay').value;
+            const relationshipWithOwner = document.getElementById('relationshipWithOwner').value;
+            const typeOfStructure = document.getElementById('typeOfStructure').value;
+    
+            // Validate required fields
+            if (!lotOwner || !NOStoreys || !estimatedFloorArea) {
+                alert('Please fill in all required fields in the Lot and House Characteristics section.');
+                return;
+            }
+    
+            return {
+                lotOwner,
+                construction,
+                NOStoreys,
+                estimatedFloorArea,
+                comfortRoom,
+                utilities,
+                sourceOfWater,
+                telephone,
+                modeOfHouse,
+                infoAboutLot,
+                amountToPay,
+                relationshipWithOwner,
+                typeOfStructure
+            };
+        }
+    
+        // Add event listener to the submit button to trigger the form submission
+        document.getElementById('submitBtn').addEventListener('click', addHousingApplication);
+    
+        async function generateSurveyNo() {
+const currentYear = new Date().getFullYear();
+let newNumber = '0001'; // Default starting number if no entries exist
+
+// Query Firestore for housing applications with the current year in surveyNo
+const querySnapshot = await getDocs(query(
+    collection(db, "Housing"),
+    where("surveyNo", ">=", `${currentYear}-0000`),
+    where("surveyNo", "<", `${currentYear + 1}-0000`),
+    orderBy("surveyNo", "desc"),
+    limit(1)
+));
+
+if (!querySnapshot.empty) {
+    // Get the latest survey number and increment the numeric part
+    const latestSurveyNo = querySnapshot.docs[0].data().surveyNo;
+    const latestNumber = parseInt(latestSurveyNo.split('-')[1]);
+    newNumber = String(latestNumber + 1).padStart(4, '0');
+}
+
+return `${currentYear}-${newNumber}`;
+}
+
+async function addHousingApplication(event) {
+event.preventDefault();
+
+// Show the loading screen
+document.getElementById('loading-screen').style.display = 'flex';
+
+setTimeout(async () => {
+    // Generate survey number
+    const surveyNo = await generateSurveyNo();
+
+    // Gather Step 1 data (Household Head Details)
+    const dateApplied = document.getElementById('dateApplied').value;
+    const barangay = document.getElementById('barangay').value;
+    const sitioPurok = document.getElementById('sitioPurok').value;
+    const classificationArea = document.getElementById('classificationArea').value;
+    
+    const householdBirthday = document.getElementById('householdBirthday').value;
+    const householdSex = document.getElementById('householdSex').value;
+    const householdCivilStatus = document.getElementById('householdCivilStatus').value;
+    const householdLastName = document.getElementById('householdLastName').value;
+    const householdFirstName = document.getElementById('householdFirstName').value;
+    const householdMiddleName = document.getElementById('householdMiddleName').value;
+    const householdMaidenName = document.getElementById('householdMaidenName').value;
+    const householdOccupation = document.getElementById('householdOccupation').value;
+    const householdPlaceOfWork = document.getElementById('householdPlaceOfWork').value;
+    const householdAddress = document.getElementById('householdAddress').value;
+
+    // Spouse information (optional)
+    const spouseLastName = document.getElementById('spouseLastName').value;
+    const spouseFirstName = document.getElementById('spouseFirstName').value;
+    const spouseMiddleName = document.getElementById('spouseMiddleName').value;
+    const spouseMaidenName = document.getElementById('spouseMaidenName').value;
+    const spouseBirthday = document.getElementById('spouseBirthday').value;
+
+    // Additional Step 1 details
+    const classificationOfSurveyHousehold = document.getElementById('classificationOfSurveyHousehold').value;
+    const householdAmount = document.getElementById('householdAmount').value;
+    const structureOwner = document.getElementById('structureOwner').value;
+    const provinceOfOrigin = document.getElementById('provinceOfOrigin').value;
+    const householdSize = document.getElementById('householdSize').value;
+    const yearOfResidency = document.getElementById('yearOfResidency').value;
+    const reasonsForEstablishing = document.getElementById('reasonsForEstablishing').value;
+
+    const householdHeadName = `${householdLastName} ${householdFirstName} ${householdMiddleName} ${householdMaidenName}`;
+
+    // Get appointment date (new field)
+   // const appointmentDate = document.getElementById('appointmentDate').value;
+
+    // Step 3: Lot and House Details
+    const lotHouseDetails = await addLotAndHouseDetails();
+
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("No user logged in.");
+            return;
+        }
+
+        // Include household members from Step 2
+        if (householdMembers.length === 0) {
+            alert("Please add at least one household member.");
+            return;
+        }
+
+        const housingDocRef = await addDoc(collection(db, "Housing"), {
+            surveyNo,
+            dateApplied,
+            barangay,
+            sitioPurok,
+            classificationArea,
+            householdBirthday,
+            householdSex,
+            householdCivilStatus,
+            householdHeadName,
+            householdOccupation,
+            householdPlaceOfWork,
+            householdAddress,
+            spouseName: `${spouseLastName} ${spouseFirstName} ${spouseMiddleName} ${spouseMaidenName}`,
+            spouseBirthday,
+            classificationOfSurveyHousehold,
+            householdAmount,
+            structureOwner,
+            provinceOfOrigin,
+            householdSize,
+            yearOfResidency,
+            reasonsForEstablishing,
+            householdMembers,
+           // appointmentDate: appointmentDate ? Timestamp.fromDate(new Date(appointmentDate)) : null,
+            ...lotHouseDetails,
+            ownerUid: user.uid,
+            status: 'Pending',
+            createdAt: Timestamp.now(),
+        });
+
+        await updateDoc(doc(db, 'users', user.uid), {
+            housingApplications: arrayUnion({
+                applicationId: housingDocRef.id,
+                surveyNo,
+                status: 'Pending',
+            }),
+        });
+
+        const housingModal = bootstrap.Modal.getInstance(document.getElementById('housingApplicationModal'));
+        housingModal.hide();
+
+        Swal.fire({
+            title: "Success!",
+            text: "Application Submitted",
+            icon: "success"
+        });
+
+    } catch (error) {
+        console.error("Error submitting housing application:", error);
+        alert("Failed to submit application. Please try again later.");
+    } finally {
+        document.getElementById('loading-screen').style.display = 'none';
+    }
+}, 100);
+}
+
   // Function to dynamically append buttons to the View Details Modal for Housing
 function appendButtons(data) {
     const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
@@ -966,6 +1479,11 @@ function filterByStatus(status) {
         
         <!-- Step 1: General Information -->
         <div class="row mb-2">
+            <div class="col-md-6">
+                <strong>Survey No.:</strong> ${data.surveyNo}
+                </div>
+                </div>
+        <div class="row mb-2">
             <div class="col-md-6"><strong>Barangay:</strong> ${data.barangay}</div>
             <div class="col-md-6"><strong>Classification Area:</strong> ${data.classificationArea}</div>
         </div>
@@ -1031,7 +1549,7 @@ function filterByStatus(status) {
             <div class="col-md-6"><strong>Number of Storeys:</strong> ${data.NOStoreys}</div>
         </div>
         <div class="row mb-2">
-            <div class="col-md-6"><strong>Estimated Floor Area:</strong> ${data.estimatedFloorArea}</div>
+            <div class="col-md-6"><strong>Estimated Floor Area:</strong> ${data.estimatedFloorArea} SQ.M</div>
             <div class="col-md-6"><strong>Utilities:</strong> ${data.utilities}</div>
         </div>
         <div class="row mb-2">
