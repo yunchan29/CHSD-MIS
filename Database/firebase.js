@@ -977,6 +977,7 @@ async function loadUserPermitStatus() {
             `;
             tableBody.appendChild(row);
 
+            // Follow-up button event listener
             const followupBtn = row.querySelector('.followup-btn');
             if (followupBtn) {
                 followupBtn.addEventListener('click', async (event) => {
@@ -993,90 +994,55 @@ async function loadUserPermitStatus() {
             }
 
             // Reschedule button event listener with CalendarJS
-// Reschedule button event listener with CalendarJS
-const rescheduleBtn = row.querySelector('.reschedule-btn');
-rescheduleBtn.addEventListener('click', (event) => {
-    const docId = event.target.getAttribute('data-id');
-    const permitType = event.target.getAttribute('data-permit-type');
+            const rescheduleBtn = row.querySelector('.reschedule-btn');
+            rescheduleBtn.addEventListener('click', (event) => {
+                const docId = event.target.getAttribute('data-id');
+                const permitType = event.target.getAttribute('data-permit-type');
+                const calendarModal = new bootstrap.Modal(document.getElementById('calendarModal'));
+                calendarModal.show();
 
-    // Show the modal
-    const calendarModal = new bootstrap.Modal(document.getElementById('calendarModal'));
-    calendarModal.show();
+                const calendarEl = document.getElementById('calendar');
+                const calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    selectable: true,
+                    dateClick: async function(info) {
+                        const selectedDate = info.date;
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0); // Clear time portion for date comparison
 
-    // Get calendar element
-    const calendarEl = document.getElementById('calendar');
+                        if (selectedDate <= today || [0, 6].includes(selectedDate.getDay())) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Invalid Selection',
+                                text: 'Rescheduling on weekends or past dates is not allowed.',
+                            });
+                            return;
+                        }
 
-    // Reinitialize or refresh the calendar each time the modal opens to avoid rendering issues
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        selectable: true,
-        dateClick: async function(info) {
-            const selectedDate = info.date;
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // Clear the time portion for accurate date comparison
+                        const confirmation = await Swal.fire({
+                            icon: 'question',
+                            title: 'Confirm Reschedule',
+                            text: `Do you want to reschedule the appointment to ${selectedDate.toLocaleDateString()}?`,
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, Reschedule',
+                        });
 
-            // Restrict weekends (Saturday: 6, Sunday: 0) and past days (including today)
-            const day = selectedDate.getDay(); // getDay() returns day index: 0 = Sunday, 6 = Saturday
-            if (day === 0 || day === 6) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Selection',
-                    text: 'Rescheduling on Saturdays and Sundays is not allowed.',
+                        if (confirmation.isConfirmed) {
+                            try {
+                                const permitDoc = doc(db, permitType === "Building Permit" ? "buildingPermits" : permitType === "Certificate of Occupancy" ? "OccupancyPermits" : permitType === "Housing Application" ? "Housing" : "ElectricalCert", docId);
+                                await updateDoc(permitDoc, { appointmentDate: Timestamp.fromDate(selectedDate) });
+
+                                Swal.fire({ icon: 'success', title: 'Rescheduled!', text: 'Appointment rescheduled successfully!' });
+                                calendarModal.hide();
+                            } catch (error) {
+                                console.error("Error rescheduling appointment:", error);
+                                Swal.fire({ icon: 'error', title: 'Error', text: 'Error rescheduling appointment. Please try again.' });
+                            }
+                        }
+                    }
                 });
-                return;
-            }
-            if (selectedDate <= today) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Selection',
-                    text: 'Rescheduling to today or a past date is not allowed.',
-                });
-                return;
-            }
-
-            // Show confirmation before rescheduling
-            const confirmation = await Swal.fire({
-                icon: 'question',
-                title: 'Confirm Reschedule',
-                text: `Do you want to reschedule the appointment to ${selectedDate.toLocaleDateString()}?`,
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Reschedule',
-                cancelButtonText: 'Cancel'
+                calendar.render();
             });
-
-            if (confirmation.isConfirmed) {
-                try {
-                    const permitDoc = doc(db, 
-                        permitType === "Building Permit" ? "buildingPermits" :
-                        permitType === "Certificate of Occupancy" ? "OccupancyPermits" :
-                        permitType === "Housing Application" ? "Housing" : "ElectricalCert", 
-                        docId
-                    );
-
-                    await updateDoc(permitDoc, { appointmentDate: Timestamp.fromDate(selectedDate) });
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Rescheduled!',
-                        text: 'Appointment rescheduled successfully!',
-                    });
-
-                    calendarModal.hide();
-                } catch (error) {
-                    console.error("Error rescheduling appointment:", error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error rescheduling appointment. Please try again.',
-                    });
-                }
-            }
-        }
-    });
-    calendar.render();
-});
-
-
         };
 
         const extractCommentsSummary = (fileValidationStatus) => {
@@ -1090,7 +1056,7 @@ rescheduleBtn.addEventListener('click', (event) => {
 
         const isFollowUpAllowed = (permit) => {
             const today = new Date();
-            const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30));
+            const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 0));
             return permit.status === "Pending" && permit.createdAt && permit.createdAt.toDate() <= thirtyDaysAgo;
         };
 
@@ -1099,7 +1065,7 @@ rescheduleBtn.addEventListener('click', (event) => {
             if (!querySnapshot.empty) {
                 querySnapshot.forEach((permitDoc) => {
                     const permit = permitDoc.data();
-                    const permitNumber = permit.buildingPermitNo || (label === "Housing Application" ? permit.housingPermitNo : null);
+                    const permitNumber = label === "Housing Application" ? permit.surveyNo : permit.buildingPermitNo;
                     const commentsSummary = extractCommentsSummary(permit.fileValidationStatus);
                     const followupAllowed = isFollowUpAllowed(permit);
                     createTableRow(permit, label, permitDoc.id, permitNumber, commentsSummary, permit.followup || false, followupAllowed);

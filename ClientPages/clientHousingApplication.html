@@ -711,12 +711,8 @@
                             </div>
                             
                             <div class="col-md-6">
-                                <label for="telephone">Telephone</label>
-                                <select class="form-control" id="telephone">
-                                    <option>Landline</option>
-                                    <option>Cellphone</option>
-                                    <option>Others</option>
-                                </select>
+                                <label for="telephone">Cellphone Number:</label>
+                                <input type="number" class="form-control" id="telephone">
                             </div>
                         </div>
     
@@ -768,6 +764,16 @@
                                     <option>Others</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3"></div> <!-- Empty column for spacing -->
+                            <div class="row justify-content-center">
+                                <div class="col-md-6">
+                                    <label for="appointmentDate">Date</label>
+                                    <input type="date" class="form-control" id="appointmentDate">
+                                </div>
+                            </div>
+                            <div class="col-md-3"></div> <!-- Empty column for spacing -->
                         </div>
                        
                        
@@ -1138,10 +1144,11 @@
             const auth = getAuth(app);
             const db = getFirestore(app);
         
-           // Function to autofill the household name fields based on logged-in user data
+// Function to autofill the household name fields based on logged-in user data
 async function autofillHouseholdNameFields() {
     const householdLastNameInput = document.getElementById('householdLastName');
     const householdFirstNameInput = document.getElementById('householdFirstName');
+    const householdMiddleNameInput = document.getElementById('householdMiddleName');
 
     const user = auth.currentUser;
     if (user) {
@@ -1150,10 +1157,11 @@ async function autofillHouseholdNameFields() {
             const docSnap = await getDoc(userRef);
             
             if (docSnap.exists()) {
-                const { firstName, lastName } = docSnap.data();
+                const { firstName, lastName, middleName } = docSnap.data();
 
                 if (householdFirstNameInput) householdFirstNameInput.value = firstName || '';
                 if (householdLastNameInput) householdLastNameInput.value = lastName || '';
+                if (householdMiddleNameInput) householdMiddleNameInput.value = middleName || '';
             } else {
                 console.error("User document does not exist!");
             }
@@ -1164,8 +1172,10 @@ async function autofillHouseholdNameFields() {
         console.log("No user is logged in.");
         if (householdFirstNameInput) householdFirstNameInput.value = '';
         if (householdLastNameInput) householdLastNameInput.value = '';
+        if (householdMiddleNameInput) householdMiddleNameInput.value = '';
     }
 }
+
 
 // Call the autofill function when the user’s authentication state changes
 onAuthStateChanged(auth, autofillHouseholdNameFields);
@@ -1312,122 +1322,150 @@ onAuthStateChanged(auth, autofillHouseholdNameFields);
             // Add event listener to the submit button to trigger the form submission
             document.getElementById('submitBtn').addEventListener('click', addHousingApplication);
         
-            async function addHousingApplication(event) {
-                event.preventDefault();
+            async function generateSurveyNo() {
+    const currentYear = new Date().getFullYear();
+    let newNumber = '0001'; // Default starting number if no entries exist
+
+    // Query Firestore for housing applications with the current year in surveyNo
+    const querySnapshot = await getDocs(query(
+        collection(db, "Housing"),
+        where("surveyNo", ">=", `${currentYear}-0000`),
+        where("surveyNo", "<", `${currentYear + 1}-0000`),
+        orderBy("surveyNo", "desc"),
+        limit(1)
+    ));
+
+    if (!querySnapshot.empty) {
+        // Get the latest survey number and increment the numeric part
+        const latestSurveyNo = querySnapshot.docs[0].data().surveyNo;
+        const latestNumber = parseInt(latestSurveyNo.split('-')[1]);
+        newNumber = String(latestNumber + 1).padStart(4, '0');
+    }
+
+    return `${currentYear}-${newNumber}`;
+}
+
+async function addHousingApplication(event) {
+    event.preventDefault();
+
+    // Show the loading screen
+    document.getElementById('loading-screen').style.display = 'flex';
+
+    setTimeout(async () => {
+        // Generate survey number
+        const surveyNo = await generateSurveyNo();
+
+        // Gather Step 1 data (Household Head Details)
+        const dateApplied = document.getElementById('dateApplied').value;
+        const barangay = document.getElementById('barangay').value;
+        const sitioPurok = document.getElementById('sitioPurok').value;
+        const classificationArea = document.getElementById('classificationArea').value;
         
-                // Show the loading screen
-                document.getElementById('loading-screen').style.display = 'flex';
-        
-                setTimeout(async () => {
-                    // Gather Step 1 data (Household Head Details)
-                    const surveyNo = document.getElementById('surveyNo').value;
-                    const dateApplied = document.getElementById('dateApplied').value;
-                    const barangay = document.getElementById('barangay').value;
-                    const sitioPurok = document.getElementById('sitioPurok').value;
-                    const classificationArea = document.getElementById('classificationArea').value;
-         
-                    const householdBirthday = document.getElementById('householdBirthday').value;
-                    const householdSex = document.getElementById('householdSex').value;
-                    const householdCivilStatus = document.getElementById('householdCivilStatus').value;
-                    const householdLastName = document.getElementById('householdLastName').value;
-                    const householdFirstName = document.getElementById('householdFirstName').value;
-                    const householdMiddleName = document.getElementById('householdMiddleName').value;
-                    const householdMaidenName = document.getElementById('householdMaidenName').value;
-                    const householdOccupation = document.getElementById('householdOccupation').value;
-                    const householdPlaceOfWork = document.getElementById('householdPlaceOfWork').value;
-                    const householdAddress = document.getElementById('householdAddress').value;
-        
-                    // Spouse information (optional)
-                    const spouseLastName = document.getElementById('spouseLastName').value;
-                    const spouseFirstName = document.getElementById('spouseFirstName').value;
-                    const spouseMiddleName = document.getElementById('spouseMiddleName').value;
-                    const spouseMaidenName = document.getElementById('spouseMaidenName').value;
-                    const spouseBirthday = document.getElementById('spouseBirthday').value;
-        
-                    // Additional Step 1 details
-                    const classificationOfSurveyHousehold = document.getElementById('classificationOfSurveyHousehold').value;
-                    const householdAmount = document.getElementById('householdAmount').value;
-                    const structureOwner = document.getElementById('structureOwner').value;
-                    const provinceOfOrigin = document.getElementById('provinceOfOrigin').value;
-                    const householdSize = document.getElementById('householdSize').value;
-                    const yearOfResidency = document.getElementById('yearOfResidency').value;
-                    const reasonsForEstablishing = document.getElementById('reasonsForEstablishing').value;
-        
-                    const householdHeadName = `${householdLastName} ${householdFirstName} ${householdMiddleName} ${householdMaidenName}`;
-        
-                    // Step 3: Lot and House Details
-                    const lotHouseDetails = await addLotAndHouseDetails();
-        
-                    try {
-                        const user = auth.currentUser;
-                        if (!user) {
-                            console.error("No user logged in.");
-                            return;
-                        }
-        
-                        // Include household members from Step 2
-                        if (householdMembers.length === 0) {
-                            alert("Please add at least one household member.");
-                            return;
-                        }
-        
-                        const housingDocRef = await addDoc(collection(db, "Housing"), {
-                            surveyNo,
-                            dateApplied,
-                            barangay,
-                            sitioPurok,
-                            classificationArea,
-                            householdRemarks,
-                            householdBirthday,
-                            householdSex,
-                            householdCivilStatus,
-                            householdHeadName,
-                            householdOccupation,
-                            householdPlaceOfWork,
-                            householdAddress,
-                            spouseName: `${spouseLastName} ${spouseFirstName} ${spouseMiddleName} ${spouseMaidenName}`,
-                            spouseBirthday,
-                            classificationOfSurveyHousehold,
-                            householdAmount,
-                            structureOwner,
-                            provinceOfOrigin,
-                            householdSize,
-                            yearOfResidency,
-                            reasonsForEstablishing,
-                            householdMembers, // Added the household members array here
-                            ...lotHouseDetails, // Added the lot and house details here
-                            ownerUid: user.uid,
-                            status: 'Pending',
-                            createdAt: Timestamp.now(),
-                        });
-        
-                        // Update user's housing applications with reference to this new housing application
-                        await updateDoc(doc(db, 'users', user.uid), {
-                            housingApplications: arrayUnion({
-                                applicationId: housingDocRef.id,
-                                surveyNo,
-                                status: 'Pending',
-                            }),
-                        });
-        
-                        // Hide the modal and show success
-                        const housingModal = bootstrap.Modal.getInstance(document.getElementById('housingApplicationModal'));
-                        housingModal.hide();
-        
-                        Swal.fire({
-  title: "Success!",
-  text: "Application Submitted",
-  icon: "success"
-});
-        
-                    } catch (error) {
-                        console.error("Error submitting housing application:", error);
-                        alert("Failed to submit application. Please try again later.");
-                    } finally {
-                        document.getElementById('loading-screen').style.display = 'none';
-                    }
-                }, 100);
+        const householdBirthday = document.getElementById('householdBirthday').value;
+        const householdSex = document.getElementById('householdSex').value;
+        const householdCivilStatus = document.getElementById('householdCivilStatus').value;
+        const householdLastName = document.getElementById('householdLastName').value;
+        const householdFirstName = document.getElementById('householdFirstName').value;
+        const householdMiddleName = document.getElementById('householdMiddleName').value;
+        const householdMaidenName = document.getElementById('householdMaidenName').value;
+        const householdOccupation = document.getElementById('householdOccupation').value;
+        const householdPlaceOfWork = document.getElementById('householdPlaceOfWork').value;
+        const householdAddress = document.getElementById('householdAddress').value;
+
+        // Spouse information (optional)
+        const spouseLastName = document.getElementById('spouseLastName').value;
+        const spouseFirstName = document.getElementById('spouseFirstName').value;
+        const spouseMiddleName = document.getElementById('spouseMiddleName').value;
+        const spouseMaidenName = document.getElementById('spouseMaidenName').value;
+        const spouseBirthday = document.getElementById('spouseBirthday').value;
+
+        // Additional Step 1 details
+        const classificationOfSurveyHousehold = document.getElementById('classificationOfSurveyHousehold').value;
+        const householdAmount = document.getElementById('householdAmount').value;
+        const structureOwner = document.getElementById('structureOwner').value;
+        const provinceOfOrigin = document.getElementById('provinceOfOrigin').value;
+        const householdSize = document.getElementById('householdSize').value;
+        const yearOfResidency = document.getElementById('yearOfResidency').value;
+        const reasonsForEstablishing = document.getElementById('reasonsForEstablishing').value;
+
+        const householdHeadName = `${householdLastName} ${householdFirstName} ${householdMiddleName} ${householdMaidenName}`;
+
+        // Get appointment date (new field)
+        const appointmentDate = document.getElementById('appointmentDate').value;
+
+        // Step 3: Lot and House Details
+        const lotHouseDetails = await addLotAndHouseDetails();
+
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                console.error("No user logged in.");
+                return;
             }
+
+            // Include household members from Step 2
+            if (householdMembers.length === 0) {
+                alert("Please add at least one household member.");
+                return;
+            }
+
+            const housingDocRef = await addDoc(collection(db, "Housing"), {
+                surveyNo,
+                dateApplied,
+                barangay,
+                sitioPurok,
+                classificationArea,
+                householdBirthday,
+                householdSex,
+                householdCivilStatus,
+                householdHeadName,
+                householdOccupation,
+                householdPlaceOfWork,
+                householdAddress,
+                spouseName: `${spouseLastName} ${spouseFirstName} ${spouseMiddleName} ${spouseMaidenName}`,
+                spouseBirthday,
+                classificationOfSurveyHousehold,
+                householdAmount,
+                structureOwner,
+                provinceOfOrigin,
+                householdSize,
+                yearOfResidency,
+                reasonsForEstablishing,
+                householdMembers,
+                appointmentDate: appointmentDate ? Timestamp.fromDate(new Date(appointmentDate)) : null,
+                ...lotHouseDetails,
+                ownerUid: user.uid,
+                status: 'Pending',
+                createdAt: Timestamp.now(),
+            });
+
+            await updateDoc(doc(db, 'users', user.uid), {
+                housingApplications: arrayUnion({
+                    applicationId: housingDocRef.id,
+                    surveyNo,
+                    status: 'Pending',
+                }),
+            });
+
+            const housingModal = bootstrap.Modal.getInstance(document.getElementById('housingApplicationModal'));
+            housingModal.hide();
+
+            Swal.fire({
+                title: "Success!",
+                text: "Application Submitted",
+                icon: "success"
+            });
+
+        } catch (error) {
+            console.error("Error submitting housing application:", error);
+            alert("Failed to submit application. Please try again later.");
+        } finally {
+            document.getElementById('loading-screen').style.display = 'none';
+        }
+    }, 100);
+}
+
+
 
             let notificationsPerPage = 5; // Number of notifications per page
     let currentPage = 1; // Track the current page

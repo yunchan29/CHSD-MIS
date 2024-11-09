@@ -742,6 +742,7 @@
 });
 
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -970,6 +971,7 @@ function filterByStatus(status) {
         </div>
         <div class="row mb-2">
             <div class="col-md-6"><strong>Sitio/Purok:</strong> ${data.sitioPurok}</div>
+            <div class="col-md-6"><strong>Cellphone No.:</strong> ${data.telephone}</div>
         </div>
         <hr>
           <h5 class="text-center mt-3">Household Head Information</h5>
@@ -1055,28 +1057,68 @@ function filterByStatus(status) {
 
 
 
-       // Function to Handle Status Update
+  // Function to Handle Status Update
 async function updateStatusOptions() {
     const selectedProfileId = document.getElementById("profileIdInput").value;
     const newStatus = document.getElementById("statusSelect").value;
     const timestamp = serverTimestamp();
 
-    if (selectedProfileId) {
-        try {
-            const profileRef = doc(db, "Housing", selectedProfileId);
-            await updateDoc(profileRef, {
-                status: newStatus,
-                updatedAt: timestamp
-            });
-            showNotification("Status updated successfully!", "success");
-            loadProfiles();  // Refresh profiles after status update
-            closeModal("viewDetailsModal"); // Close the modal after updating
-        } catch (error) {
-            console.error("Error updating status:", error);
-            showNotification("Failed to update status.", "error");
-        }
-    } else {
+    if (!selectedProfileId) {
         console.error("No profile selected for status update.");
+        return;
+    }
+
+    try {
+        // Retrieve the current status from Firestore
+        const profileRef = doc(db, "Housing", selectedProfileId);
+        const profileSnapshot = await getDoc(profileRef);
+
+        if (!profileSnapshot.exists()) {
+            console.error("Profile not found in Firestore.");
+            return;
+        }
+
+        const currentStatus = profileSnapshot.data().status;
+
+        // Only proceed if the status has changed
+        if (newStatus === currentStatus) {
+            console.log("No changes to the status.");
+            return; // Exit if there's no change
+        }
+
+        // Show confirmation dialog with SweetAlert2
+        const { isConfirmed } = await Swal.fire({
+            title: "Update Status?",
+            text: `Are you sure you want to update the status to "${newStatus}"?`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, update it!"
+        });
+
+        if (!isConfirmed) return;
+
+        // Proceed with the status update
+        await updateDoc(profileRef, {
+            status: newStatus,
+            updatedAt: timestamp
+        });
+
+        // Success notification
+        Swal.fire({
+            title: "Success!",
+            text: "Status updated successfully!",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false
+        });
+
+        loadProfiles();  // Refresh profiles after status update
+        closeModal("viewDetailsModal"); // Close the modal after updating
+    } catch (error) {
+        console.error("Error updating status:", error);
+        showNotification("Failed to update status.", "error");
     }
 }
 
@@ -1085,54 +1127,75 @@ const saveStatusButton = document.getElementById("saveStatusButton");
 
 // Add a click event listener to the save button
 saveStatusButton.addEventListener("click", updateStatusOptions);
-    
+
         // Function to Archive a Housing Application
-        async function handleArchiveHousingApplication(event) {
-            event.preventDefault();
-            const housingAppId = event.target.getAttribute('data-id');
-    
-            if (!housingAppId) {
-                console.error("Housing Application ID is null or undefined.");
-                showNotification("Error: Housing Application ID is missing.", "error");
-                return;
+async function handleArchiveHousingApplication(event) {
+    event.preventDefault();
+    const housingAppId = event.target.getAttribute('data-id');
+
+    if (!housingAppId) {
+        console.error("Housing Application ID is null or undefined.");
+        showNotification("Error: Housing Application ID is missing.", "error");
+        return;
+    }
+
+    // Use SweetAlert2 for confirmation dialog
+    const { isConfirmed } = await Swal.fire({
+        title: "Archive Housing Application?",
+        text: "Are you sure you want to archive this housing application?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, archive it!"
+    });
+
+    if (!isConfirmed) return;
+
+    try {
+        const housingAppRef = doc(db, "Housing", housingAppId);
+        const housingAppSnapshot = await getDoc(housingAppRef);
+
+        if (housingAppSnapshot.exists()) {
+            const housingAppData = housingAppSnapshot.data();
+
+            // Move document to archivedHousingApplications collection
+            await setDoc(doc(db, "archivedHousingApplications", housingAppId), housingAppData);
+            await deleteDoc(housingAppRef);
+
+            // Remove the row from the table
+            const tableBody = document.querySelector(".housingDiv");  // Use class selector since tbody has class="housingDiv"
+            if (tableBody) {
+                const rowToRemove = tableBody.querySelector(`button[data-permit-id="${housingAppId}"]`)?.closest('tr');
+                if (rowToRemove) rowToRemove.remove();
+            } else {
+                console.error(".housingDiv not found in the DOM.");
+                showNotification("Error: Failed to locate the housing application row.", "error");
             }
-    
-            const confirmed = confirm("Are you sure you want to archive this housing application?");
-            if (!confirmed) return;
-    
-            try {
-                const housingAppRef = doc(db, "Housing", housingAppId);
-                const housingAppSnapshot = await getDoc(housingAppRef);
-    
-                if (housingAppSnapshot.exists()) {
-                    const housingAppData = housingAppSnapshot.data();
-    
-                    await setDoc(doc(db, "archivedHousingApplications", housingAppId), housingAppData);
-                    await deleteDoc(housingAppRef);
-    
-                    const tableBody = document.querySelector(".housingDiv");  // Use class selector since tbody has class="housingDiv"
-if (tableBody) {
-    const rowToRemove = tableBody.querySelector(`button[data-permit-id="${housingAppId}"]`)?.closest('tr');
-    if (rowToRemove) rowToRemove.remove();
-} else {
-    console.error(".housingDiv not found in the DOM.");
-    showNotification("Error: Failed to locate the housing application row.", "error");
+
+            // Hide the modal if it's open
+            const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+            if (viewDetailsModal) {
+                viewDetailsModal.hide();
+            }
+
+            // Success notification
+            Swal.fire({
+                title: "Archived!",
+                text: "The housing application has been archived.",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            showNotification("Housing application not found!", "error");
+        }
+    } catch (error) {
+        console.error("Error archiving housing application: ", error);
+        showNotification(`Failed to archive housing application: ${error.message}`, "error");
+    }
 }
 
-                    const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-                    if (viewDetailsModal) {
-                        viewDetailsModal.hide();
-                    }
-    
-                } else {
-                    showNotification("Housing application not found!", "error");
-                }
-            } catch (error) {
-                console.error("Error archiving housing application: ", error);
-                showNotification(`Failed to archive housing application: ${error.message}`, "error");
-            }
-        }
-    
         function closeModal(modalId) {
     const modalElement = document.getElementById(modalId);
     const modalInstance = bootstrap.Modal.getInstance(modalElement);
