@@ -63,6 +63,28 @@
     }
 }
    
+.btn-upload {
+        padding: 8px 16px;
+        background-color: #4CAF50 !important;
+        color: white !important;
+        border: none;
+        cursor: pointer !important;
+    }
+    .btn-upload:hover {
+        background-color: #45a049;
+    }
+    .file-item {
+        display: flex;
+        align-items: center;
+    }
+    .file-name {
+        margin-right: 10px;
+    }
+    .btn-delete {
+        color: red;
+        cursor: pointer;
+    }
+   
 
     </style>
 </head>
@@ -120,7 +142,7 @@
                 <h5>Profile</h5>
                 <div class="row mt-4">
                     <div class="col">
-                        <a class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#occupancyPermitModal"><i class="fa-solid fa-plus"></i> Add Profile</a>
+                        <a class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#electricalInspectionModal"><i class="fa-solid fa-plus"></i> Add Profile</a>
                     </div>
                 <div class="d-flex justify-content-end mb-3">
                   <input type="text" class="form-control search-bar" placeholder="Search">
@@ -281,6 +303,211 @@
     </div>
 </div>
 
+
+   <!-- Certificate of Electrical Inspection Upload Modal -->
+   <div class="modal fade" id="electricalInspectionModal" tabindex="-1" aria-labelledby="electricalInspectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="electricalInspectionModalLabel">Certificate of Electrical Inspection</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Step Progress Bar -->
+                <div class="step-progress mb-4">
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Upload Requirements</div>
+                    </div>
+                    <div class="step">
+                        <div class="circle"></div>
+                        <div class="label">Appointment</div>
+                    </div>
+                </div>
+                <!-- Content -->
+                <div class="row g-3">
+                    <label for="ownerName">Owner/Applicant Name:</label>
+                     <input type="text" id="ownerName" name="ownerName" class="form-control" placeholder="Last Name, First Name, Middle Name">
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="light">Light</label>
+                        <select class="form-control" id="light">
+                            <option value="">Select Light Type</option>
+                            <option value="LED - Residential">LED - Residential</option>
+                            <option value="Fluorescent - Residential">Fluorescent - Residential</option>
+                            <option value="Incandescent - Residential">Incandescent - Residential</option>
+                            <option value="LED - Commercial">LED - Commercial</option>
+                            <option value="Fluorescent - Commercial">Fluorescent - Commercial</option>
+                            <option value="Halogen - Commercial">Halogen - Commercial</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="switch">Switch</label>
+                        <select class="form-control" id="switch">
+                            <option value="">Select Switch Type</option>
+                            <option value="Single Pole (Residential)">Single Pole (Residential)</option>
+                            <option value="Double Pole (Residential)">Double Pole (Residential)</option>
+                            <option value="Three-Way (Residential)">Three-Way (Residential)</option>
+                            <option value="Single Pole (Commercial)">Single Pole (Commercial)</option>
+                            <option value="Double Pole (Commercial)">Double Pole (Commercial)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="electricalMotor">Electrical Motor</label>
+                        <select class="form-control" id="electricalMotor">
+                            <option value="">Select Motor Type</option>
+                            <option value="0.5 HP (Residential)">0.5 HP (Residential)</option>
+                            <option value="1 HP (Residential)">1 HP (Residential)</option>
+                            <option value="3 HP (Commercial)">3 HP (Commercial)</option>
+                            <option value="5 HP (Commercial)">5 HP (Commercial)</option>
+                            <option value="10 HP (Industrial)">10 HP (Industrial)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="convOutlet">Convenience Outlet</label>
+                        <select class="form-control" id="convOutlet">
+                            <option value="">Select Number of Outlets</option>
+                            <option value="1 Outlet - 15A (Residential)">1 Outlet - 15A (Residential)</option>
+                            <option value="2 Outlets - 15A (Residential)">2 Outlets - 15A (Residential)</option>
+                            <option value="1 Outlet - 20A (Commercial)">1 Outlet - 20A (Commercial)</option>
+                            <option value="2 Outlets - 20A (Commercial)">2 Outlets - 20A (Commercial)</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="otherApparatus">Other Apparatus</label>
+                        <select class="form-control" id="otherApparatus">
+                            <option value="">Select Apparatus Type</option>
+                            <option value="Generator (Residential)">Generator (Residential)</option>
+                            <option value="UPS (Residential)">UPS (Residential)</option>
+                            <option value="Generator (Commercial)">Generator (Commercial)</option>
+                            <option value="UPS (Commercial)">UPS (Commercial)</option>
+                            <option value="Inverter (Solar)">Inverter (Solar)</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="totalKVA">Total KVA</label>
+                        <select class="form-control" id="totalKVA">
+                            <option value="">Select KVA Rating</option>
+                            <option value="1 KVA (Residential)">1 KVA (Residential)</option>
+                            <option value="2 KVA (Residential)">2 KVA (Residential)</option>
+                            <option value="5 KVA (Commercial)">5 KVA (Commercial)</option>
+                            <option value="10 KVA (Commercial)">10 KVA (Commercial)</option>
+                            <option value="50 KVA (Industrial)">50 KVA (Industrial)</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <label for="natureOfWork">Nature of Work</label>
+                        <select class="form-control" id="natureOfWork">
+                            <option value="">Select Nature of Work</option>
+                            <option value="New Installation">New Installation</option>
+                            <option value="Repair">Repair</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Modification">Modification</option>
+                            <option value="Temporary Service">Temporary Service</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Requirements</th>
+                            <th>File</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Photocopy of Meralco Service Application</td>
+                            <td class="file-column">
+                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'meralcoServiceFile')" ondragover="handleDragOver(event)">
+                                        <p>Drag & drop file</p>
+                                    </div>
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('meralcoServiceFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="meralcoServiceFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="meralcoServiceFileName" class="file-column"></div> <!-- Display file details here -->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Photocopy of Barangay Clearance</td>
+                            <td class="file-column">
+                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'barangayClearanceFile')" ondragover="handleDragOver(event)">
+                                        <p>Drag & drop file</p>
+                                    </div>
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('barangayClearanceFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="barangayClearanceFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="barangayClearanceFileName" class="file-column"></div> <!-- Display file details here -->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Proof of Ownership</td>
+                            <td class="file-column">
+                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'ownershipFile')" ondragover="handleDragOver(event)">
+                                        <p>Drag & drop file</p>
+                                    </div>
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('ownershipFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="ownershipFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="ownershipFileName" class="file-column"></div> <!-- Display file details here -->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Photocopy of Certificate of Occupancy-Building Permit</td>
+                            <td class="file-column">
+                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'occupancyFile')" ondragover="handleDragOver(event)">
+                                        <p>Drag & drop file</p>
+                                    </div>
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('occupancyFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="occupancyFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="occupancyFileName" class="file-column"></div> <!-- Display file details here -->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Picture of Structure and Contact Number</td>
+                            <td class="file-column">
+                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                         ondrop="handleDrop(event, 'structurePhotoFile')" ondragover="handleDragOver(event)">
+                                        <p>Drag & drop file</p>
+                                    </div>
+                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('structurePhotoFile').click()">Upload</button>
+                                    <input type="file" class="file-input" id="structurePhotoFile" style="display: none;" onchange="uploadFile(this)">
+                                    <div id="structurePhotoFileName" class="file-column"></div> <!-- Display file details here -->
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitAppointment">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
@@ -288,9 +515,10 @@
     <script type="module">
       // Import Firebase SDK
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-      import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, serverTimestamp, setDoc, deleteDoc   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    
+      import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, doc, getDocs, setDoc, deleteDoc, limit, orderBy, onSnapshot, query, where, startAfter, getDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
       // Firebase configuration
       const firebaseConfig = {
         apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
@@ -306,7 +534,158 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
-     
+      const storage = getStorage(app);
+
+    document.addEventListener('DOMContentLoaded', () => {
+    let formSubmitted = false;
+
+    document.getElementById('submitAppointment').addEventListener('click', async (event) => {
+        event.preventDefault();
+        const submitButton = document.getElementById('submitAppointment');
+        submitButton.disabled = true;
+
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+        }
+
+        // Collect input values
+        const ownerName = document.getElementById("ownerName").value.trim();
+        const light = document.getElementById("light").value.trim();
+        const switchType = document.getElementById("switch").value.trim();
+        const electricalMotor = document.getElementById("electricalMotor").value.trim();
+        const convOutlet = document.getElementById("convOutlet").value.trim();
+        const otherApparatus = document.getElementById("otherApparatus").value.trim();
+        const totalKVA = document.getElementById("totalKVA").value.trim();
+        const natureOfWork = document.getElementById("natureOfWork").value.trim();
+
+        // Required field validation
+        const requiredFields = [
+            { field: ownerName, name: 'Owner Name' }
+        ];
+
+        for (const { field, name } of requiredFields) {
+            if (!field) {
+                alert(`Please fill out the ${name} field.`);
+                submitButton.disabled = false;
+                return;
+            }
+        }
+
+        // File inputs for Electrical Inspection
+        const requiredFileInputs = [
+            { id: 'meralcoServiceFile', name: 'Meralco Service', namePrefix: 'meralcoService' },
+            { id: 'barangayClearanceFile', name: 'Barangay Clearance', namePrefix: 'barangayClearance' },
+            { id: 'ownershipFile', name: 'Proof of Ownership', namePrefix: 'ownership' },
+            { id: 'occupancyFile', name: 'Occupancy', namePrefix: 'occupancy' },
+            { id: 'structurePhotoFile', name: 'Structure Photo', namePrefix: 'structurePhoto' }
+        ];
+
+        // Validate that each required file is uploaded
+        for (const { id, name } of requiredFileInputs) {
+            const fileInput = document.getElementById(id);
+            if (!fileInput || !fileInput.files[0]) {
+                alert(`Please upload the ${name} file.`);
+                submitButton.disabled = false;
+                return;
+            }
+        }
+
+        try {
+            // Ensure the user is authenticated
+            const user = await new Promise((resolve, reject) => {
+                onAuthStateChanged(auth, user => {
+                    if (user) {
+                        resolve(user);
+                    } else {
+                        reject(new Error("No user is authenticated."));
+                    }
+                });
+            });
+
+            const userId = user.uid;
+
+            // Prepare inspection data for Firestore
+            const inspectionData = {
+                ownerUid: userId,
+                ownerName,
+                light,
+                switchType,
+                electricalMotor,
+                convOutlet,
+                otherApparatus,
+                totalKVA,
+                natureOfWork,
+                status: 'Pending',
+                createdAt: serverTimestamp(),
+            };
+
+            // Add a new document to Firestore for Electrical Inspection
+            const inspectionDocRef = await addDoc(collection(db, "ElectricalCert"), inspectionData);
+            const inspectionId = inspectionDocRef.id;
+            const storagePath = `ElectricalCert/${inspectionId}`;
+
+            // Handle file uploads and storage
+            const uploadPromises = requiredFileInputs.map(async fileInputObj => {
+                const fileInput = document.getElementById(fileInputObj.id);
+                if (fileInput && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const sanitizedFileName = fileInputObj.namePrefix + '_' + file.name.replace(/\s+/g, '');
+                    const fileRef = ref(storage, `${storagePath}/${sanitizedFileName}`);
+                    const snapshot = await uploadBytes(fileRef, file);
+                    return getDownloadURL(snapshot.ref);
+                } else {
+                    console.error(`File input missing or undefined for ${fileInputObj.name}`);
+                    return null;
+                }
+            });
+
+            // Wait for all uploads and store URLs
+            const fileURLs = await Promise.all(uploadPromises);
+
+            const fileURLMapping = {
+                meralcoServiceURL: fileURLs[0],
+                barangayClearanceURL: fileURLs[1],
+                ownershipURL: fileURLs[2],
+                occupancyURL: fileURLs[3],
+                structurePhotoURL: fileURLs[4],
+            };
+
+            // Update Firestore document with file URLs
+            const inspectionDoc = doc(db, "ElectricalCert", inspectionId);
+            await updateDoc(inspectionDoc, fileURLMapping);
+            
+            // Set formSubmitted to true after successful submission
+            formSubmitted = true;
+
+            Swal.fire({
+                title: "Success!",
+                text: "Application Submitted",
+                icon: "success"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Hide both modals after confirmation
+                    const uploadModal = bootstrap.Modal.getInstance(document.getElementById('electricalInspectionModal'));
+                    const appointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
+                    
+                    if (uploadModal) uploadModal.hide();
+                    if (appointmentModal) appointmentModal.hide();
+                }
+            });
+
+        } catch (error) {
+            console.error("Error during submission:", error);
+            alert(`Error submitting application: ${error.message}`);
+        } finally {
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+            submitButton.disabled = false;
+        }
+    });
+});
+
+
 
     // Function to Dynamically Append Buttons to the View Details Modal for Electrical Certificates
 function appendButtons(data) {
@@ -908,6 +1287,107 @@ loadElectricalProfiles();
           document.getElementById('side_nav').classList.remove('active');
       });
     </script>
+
+<script>
+    function uploadFile(input, file = null) {
+        const selectedFile = file || input.files[0];  // Use the file from input or passed as an argument
+
+        if (selectedFile) {
+            const maxSizeMB = 5;  // Set max file size (in MB)
+            const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];  // Allowed file types
+
+            // Validate file type
+            if (!allowedTypes.includes(selectedFile.type)) {
+                alert('Invalid file type. Please upload a JPG, PNG, or PDF file.');
+                input.value = ''; // Clear the input
+                return;
+            }
+
+            // Validate file size
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;  // Convert MB to bytes
+            if (selectedFile.size > maxSizeBytes) {
+                alert(`File is too large. Please upload a file smaller than ${maxSizeMB}MB.`);
+                input.value = '';  // Clear the input
+                return;
+            }
+
+            // FileReader to read file details
+            const reader = new FileReader();
+            reader.onload = function () {
+                const fileName = selectedFile.name;
+                const fileSize = formatBytes(selectedFile.size);
+                const fileItem = `
+                    <div class="file-item">
+                        <span class="file-name">${fileName} (${fileSize})</span>
+                        <span class="btn-delete" onclick="deleteFile(this, '${input.id}')">Delete</span>
+                    </div>`;
+
+                // Display file information
+                const fileColumn = input.closest('.file-column'); // Get the closest file-column
+                if (fileColumn) {
+                    fileColumn.insertAdjacentHTML('beforeend', fileItem);  // Append the file item
+                } else {
+                    console.error('File column not found.');
+                }
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+    }
+
+    function deleteFile(deleteBtn, inputId) {
+        const fileItem = deleteBtn.closest('.file-item');
+        if (fileItem) {
+            fileItem.remove();  // Remove the displayed file item
+            document.getElementById(inputId).value = '';  // Clear the input for re-upload
+        }
+    }
+
+    // Format file size to a readable string
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    // Drag-over handler to show drag-and-drop action
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.dataTransfer.dropEffect = 'copy';  // Change the cursor to indicate a drop is possible
+    }
+
+    // Drop handler to process the dropped files
+    function handleDrop(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const files = event.dataTransfer.files;  // Get the dropped files
+        const inputFileElement = event.target.closest('.upload-btn-wrapper').querySelector('.file-input');  // Find the corresponding file input
+
+        if (inputFileElement && files.length > 0) {
+            limitFiles(inputFileElement, 5, files);  // Limit the number of dropped files and handle each
+        }
+    }
+
+    // Limit the number of files
+    function limitFiles(input, maxFiles = 5, fileList = null) {
+        const files = fileList || input.files;
+        if (files.length > maxFiles) {
+            alert(`You can only upload up to ${maxFiles} files.`);
+            input.value = '';  // Clear the input
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            uploadFile(input, files[i]);  // Process each file
+        }
+    }
+</script>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>

@@ -229,21 +229,95 @@
                     <!-- Content -->
                     <div class="row g-3">
                         <label for="ownerName">Owner/Applicant Name:</label>
-                        <div class="col-md-3">
-                            <label for="ownerLastName">Last Name<span class="required-asterisk">*</span></label>
-                            <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name" required>
+                         <input type="text" id="ownerName" name="ownerName" class="form-control" placeholder="Last Name, First Name, Middle Name">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="light">Light</label>
+                            <select class="form-control" id="light">
+                                <option value="">Select Light Type</option>
+                                <option value="LED - Residential">LED - Residential</option>
+                                <option value="Fluorescent - Residential">Fluorescent - Residential</option>
+                                <option value="Incandescent - Residential">Incandescent - Residential</option>
+                                <option value="LED - Commercial">LED - Commercial</option>
+                                <option value="Fluorescent - Commercial">Fluorescent - Commercial</option>
+                                <option value="Halogen - Commercial">Halogen - Commercial</option>
+                                <option value="Other">Other</option>
+                            </select>
                         </div>
-                        <div class="col-md-3">
-                            <label for="ownerFirstName">First Name<span class="required-asterisk">*</span></label>
-                            <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name*" required>
+                        
+                        <div class="col-md-4">
+                            <label for="switch">Switch</label>
+                            <select class="form-control" id="switch">
+                                <option value="">Select Switch Type</option>
+                                <option value="Single Pole (Residential)">Single Pole (Residential)</option>
+                                <option value="Double Pole (Residential)">Double Pole (Residential)</option>
+                                <option value="Three-Way (Residential)">Three-Way (Residential)</option>
+                                <option value="Single Pole (Commercial)">Single Pole (Commercial)</option>
+                                <option value="Double Pole (Commercial)">Double Pole (Commercial)</option>
+                            </select>
                         </div>
-                        <div class="col-md-3">
-                            <label for="ownerMiddleName">Middle Name</label>
-                            <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
+                        
+                        <div class="col-md-4">
+                            <label for="electricalMotor">Electrical Motor</label>
+                            <select class="form-control" id="electricalMotor">
+                                <option value="">Select Motor Type</option>
+                                <option value="0.5 HP (Residential)">0.5 HP (Residential)</option>
+                                <option value="1 HP (Residential)">1 HP (Residential)</option>
+                                <option value="3 HP (Commercial)">3 HP (Commercial)</option>
+                                <option value="5 HP (Commercial)">5 HP (Commercial)</option>
+                                <option value="10 HP (Industrial)">10 HP (Industrial)</option>
+                            </select>
                         </div>
-                        <div class="col-md-3">
-                            <label for="ownerMaidenName">Maiden Name</label>
-                            <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
+                        
+                        <div class="col-md-6">
+                            <label for="convOutlet">Convenience Outlet</label>
+                            <select class="form-control" id="convOutlet">
+                                <option value="">Select Number of Outlets</option>
+                                <option value="1 Outlet - 15A (Residential)">1 Outlet - 15A (Residential)</option>
+                                <option value="2 Outlets - 15A (Residential)">2 Outlets - 15A (Residential)</option>
+                                <option value="1 Outlet - 20A (Commercial)">1 Outlet - 20A (Commercial)</option>
+                                <option value="2 Outlets - 20A (Commercial)">2 Outlets - 20A (Commercial)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="otherApparatus">Other Apparatus</label>
+                            <select class="form-control" id="otherApparatus">
+                                <option value="">Select Apparatus Type</option>
+                                <option value="Generator (Residential)">Generator (Residential)</option>
+                                <option value="UPS (Residential)">UPS (Residential)</option>
+                                <option value="Generator (Commercial)">Generator (Commercial)</option>
+                                <option value="UPS (Commercial)">UPS (Commercial)</option>
+                                <option value="Inverter (Solar)">Inverter (Solar)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="totalKVA">Total KVA</label>
+                            <select class="form-control" id="totalKVA">
+                                <option value="">Select KVA Rating</option>
+                                <option value="1 KVA (Residential)">1 KVA (Residential)</option>
+                                <option value="2 KVA (Residential)">2 KVA (Residential)</option>
+                                <option value="5 KVA (Commercial)">5 KVA (Commercial)</option>
+                                <option value="10 KVA (Commercial)">10 KVA (Commercial)</option>
+                                <option value="50 KVA (Industrial)">50 KVA (Industrial)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <label for="natureOfWork">Nature of Work</label>
+                            <select class="form-control" id="natureOfWork">
+                                <option value="">Select Nature of Work</option>
+                                <option value="New Installation">New Installation</option>
+                                <option value="Repair">Repair</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Modification">Modification</option>
+                                <option value="Temporary Service">Temporary Service</option>
+                            </select>
                         </div>
                     </div>
                     <table class="table">
@@ -547,156 +621,180 @@
         const storage = getStorage(app);
     
         document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('submitAppointment').addEventListener('click', async (event) => {
-            event.preventDefault();
+    let formSubmitted = false; // Variable to track submission status
 
-            const submitButton = document.getElementById('submitAppointment');
-            submitButton.disabled = true;
+    document.getElementById('submitAppointment').addEventListener('click', async (event) => {
+        event.preventDefault();
 
-            const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-                loadingScreen.style.display = 'flex';
+        const submitButton = document.getElementById('submitAppointment');
+        submitButton.disabled = true;
+
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+        }
+
+        // Collect input values
+        const appointmentDate = document.getElementById('appointmentDate').value.trim();
+        const ownerName = document.getElementById("ownerName").value;
+        const light = document.getElementById("light").value;
+        const switchType = document.getElementById("switch").value;
+        const electricalMotor = document.getElementById("electricalMotor").value;
+        const convOutlet = document.getElementById("convOutlet").value;
+        const otherApparatus = document.getElementById("otherApparatus").value;
+        const totalKVA = document.getElementById("totalKVA").value;
+        const natureOfWork = document.getElementById("natureOfWork").value;
+
+        const requiredFields = [
+            { field: appointmentDate, name: 'Appointment Date' },
+            { field: ownerName, name: 'Owner Name' }
+        ];
+
+        for (const { field, name } of requiredFields) {
+            if (!field) {
+                alert(`Please fill out the ${name} field.`);
+                submitButton.disabled = false;
+                return;
             }
+        }
 
-            // Collect input values
-            const appointmentDate = document.getElementById('appointmentDate').value.trim();
-            const ownerLastName = document.getElementById('ownerLastName').value.trim();
-            const ownerFirstName = document.getElementById('ownerFirstName').value.trim();
-            const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
-            const ownerMaidenName = document.getElementById('ownerMaidenName').value.trim();
-            const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
+        // File inputs for Electrical Inspection
+        const requiredFileInputs = [
+            { id: 'meralcoServiceFile', namePrefix: 'meralcoService' },
+            { id: 'barangayClearanceFile', namePrefix: 'barangayClearance' },
+            { id: 'ownershipFile', namePrefix: 'ownership' },
+            { id: 'occupancyFile', namePrefix: 'occupancy' },
+            { id: 'structurePhotoFile', namePrefix: 'structurePhoto' }
+        ];
 
-            const requiredFields = [
-                { field: appointmentDate, name: 'Appointment Date' },
-                { field: ownerName, name: 'Owner Name' }
-            ];
-
-            for (const { field, name } of requiredFields) {
-                if (!field) {
-                    alert(`Please fill out the ${name} field.`);
-                    submitButton.disabled = false;
-                    return;
-                }
-            }
-
-            // File inputs for Electrical Inspection
-            const requiredFileInputs = [
-                { id: 'meralcoServiceFile', namePrefix: 'meralcoService' },
-                { id: 'barangayClearanceFile', namePrefix: 'barangayClearance' },
-                { id: 'ownershipFile', namePrefix: 'ownership' },
-                { id: 'occupancyFile', namePrefix: 'occupancy' },
-                { id: 'structurePhotoFile', namePrefix: 'structurePhoto' }
-            ];
-
-            try {
-                // Ensure the user is authenticated
-                const user = await new Promise((resolve, reject) => {
-                    onAuthStateChanged(auth, user => {
-                        if (user) {
-                            resolve(user);
-                        } else {
-                            reject(new Error("No user is authenticated."));
-                        }
-                    });
-                });
-
-                const userId = user.uid;
-
-                // Prepare inspection data for Firestore
-                const inspectionData = {
-                    appointmentDate: new Date(appointmentDate),
-                    ownerUid: userId,
-                    ownerName,
-                    status: 'Pending',
-                    createdAt: serverTimestamp(),
-                };
-
-                // Add a new document to Firestore for Electrical Inspection
-                const inspectionDocRef = await addDoc(collection(db, "ElectricalCert"), inspectionData);
-                const inspectionId = inspectionDocRef.id;
-                const storagePath = `ElectricalCert/${inspectionId}`;
-
-                // Handle file uploads and storage
-                const uploadPromises = requiredFileInputs.map(async fileInputObj => {
-                    const fileInput = document.getElementById(fileInputObj.id);
-                    if (fileInput && fileInput.files[0]) {
-                        const file = fileInput.files[0];
-                        const fileRef = ref(storage, `${storagePath}/${fileInputObj.namePrefix}_${file.name}`);
-                        const snapshot = await uploadBytes(fileRef, file);
-                        return getDownloadURL(snapshot.ref);
+        try {
+            // Ensure the user is authenticated
+            const user = await new Promise((resolve, reject) => {
+                onAuthStateChanged(auth, user => {
+                    if (user) {
+                        resolve(user);
                     } else {
-                        console.error(`File input missing or undefined for ${fileInputObj.namePrefix}`);
-                        return null;
+                        reject(new Error("No user is authenticated."));
                     }
                 });
+            });
 
-                // Wait for all uploads and store URLs
-                const fileURLs = await Promise.all(uploadPromises);
+            const userId = user.uid;
 
-                const fileURLMapping = {
-                    meralcoServiceURL: fileURLs[0],
-                    barangayClearanceURL: fileURLs[1],
-                    ownershipURL: fileURLs[2],
-                    occupancyURL: fileURLs[3],
-                    structurePhotoURL: fileURLs[4],
-                };
+            // Prepare inspection data for Firestore
+            const inspectionData = {
+                appointmentDate: new Date(appointmentDate),
+                ownerUid: userId,
+                ownerName,
+                light,
+                switchType,
+                electricalMotor,
+                convOutlet,
+                otherApparatus,
+                totalKVA,
+                natureOfWork,
+                status: 'Pending',
+                createdAt: serverTimestamp(),
+            };
 
-                // Update Firestore document with file URLs
-                const inspectionDoc = doc(db, "ElectricalCert", inspectionId);
-                await updateDoc(inspectionDoc, fileURLMapping);
-                Swal.fire({
-  title: "Success!",
-  text: "Application Submitted",
-  icon: "success"
-});
-               
+            // Add a new document to Firestore for Electrical Inspection
+            const inspectionDocRef = await addDoc(collection(db, "ElectricalCert"), inspectionData);
+            const inspectionId = inspectionDocRef.id;
+            const storagePath = `ElectricalCert/${inspectionId}`;
 
-            } catch (error) {
-                console.error("Error during submission:", error);
-                alert(`Error submitting application: ${error.message}`);
-            } finally {
-                if (loadingScreen) {
-                    loadingScreen.style.display = 'none';
+            // Handle file uploads and storage
+            const uploadPromises = requiredFileInputs.map(async fileInputObj => {
+                const fileInput = document.getElementById(fileInputObj.id);
+                if (fileInput && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const fileRef = ref(storage, `${storagePath}/${fileInputObj.namePrefix}_${file.name}`);
+                    const snapshot = await uploadBytes(fileRef, file);
+                    return getDownloadURL(snapshot.ref);
+                } else {
+                    console.error(`File input missing or undefined for ${fileInputObj.namePrefix}`);
+                    return null;
                 }
-                submitButton.disabled = false;
+            });
+
+            // Wait for all uploads and store URLs
+            const fileURLs = await Promise.all(uploadPromises);
+
+            const fileURLMapping = {
+                meralcoServiceURL: fileURLs[0],
+                barangayClearanceURL: fileURLs[1],
+                ownershipURL: fileURLs[2],
+                occupancyURL: fileURLs[3],
+                structurePhotoURL: fileURLs[4],
+            };
+
+            // Update Firestore document with file URLs
+            const inspectionDoc = doc(db, "ElectricalCert", inspectionId);
+            await updateDoc(inspectionDoc, fileURLMapping);
+            
+            // Set formSubmitted to true after successful submission
+            formSubmitted = true;
+
+            Swal.fire({
+                title: "Success!",
+                text: "Application Submitted",
+                icon: "success"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Hide both modals after confirmation
+                    const uploadModal = bootstrap.Modal.getInstance(document.getElementById('electricalInspectionModal'));
+                    const appointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
+                    
+                    if (uploadModal) uploadModal.hide();
+                    if (appointmentModal) appointmentModal.hide();
+                }
+            });
+
+        } catch (error) {
+            console.error("Error during submission:", error);
+            alert(`Error submitting application: ${error.message}`);
+        } finally {
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
             }
-        });
+            submitButton.disabled = false;
+        }
     });
-        // Handle step transitions
-    document.addEventListener("DOMContentLoaded", function() {
-        const nextStepButton = document.getElementById('nextStepButton');
-        const previousStepButton = document.getElementById('previousStepButton');
-        const appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
-        const uploadModal = new bootstrap.Modal(document.getElementById('electricalInspectionModal'), {
-            backdrop: 'static',
-            keyboard: false
-        });
 
-        nextStepButton.addEventListener('click', function() {
-            // Update the progress bar
-            const stepProgress = document.querySelector('.step-progress');
-            const steps = stepProgress.querySelectorAll('.step');
-            steps[0].classList.add('completed');
-            steps[1].classList.add('completed');
-
-            // Hide upload modal and show appointment modal with smooth transition
-            const bootstrapUploadModal = bootstrap.Modal.getInstance(document.getElementById('electricalInspectionModal'));
-            bootstrapUploadModal.hide();
-            setTimeout(() => appointmentModal.show(), 200);  // Add delay for smooth transition
-        });
-
-        previousStepButton.addEventListener('click', function() {
-            // Update the progress bar to revert the step
-            const stepProgress = document.querySelector('.step-progress');
-            const steps = stepProgress.querySelectorAll('.step');
-            steps[1].classList.remove('completed');
-
-            // Hide appointment modal and show upload modal
-            const bootstrapAppointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
-            bootstrapAppointmentModal.hide();
-            setTimeout(() => uploadModal.show(), 200);  // Add delay for smooth transition
-        });
+    // Handle step transitions with formSubmitted check
+    const nextStepButton = document.getElementById('nextStepButton');
+    const previousStepButton = document.getElementById('previousStepButton');
+    const appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+    const uploadModal = new bootstrap.Modal(document.getElementById('electricalInspectionModal'), {
+        backdrop: 'static',
+        keyboard: false
     });
+
+    nextStepButton.addEventListener('click', function() {
+        // Prevent further steps if form is submitted
+        if (formSubmitted) return;
+
+        const stepProgress = document.querySelector('.step-progress');
+        const steps = stepProgress.querySelectorAll('.step');
+        steps[0].classList.add('completed');
+        steps[1].classList.add('completed');
+
+        const bootstrapUploadModal = bootstrap.Modal.getInstance(document.getElementById('electricalInspectionModal'));
+        bootstrapUploadModal.hide();
+        setTimeout(() => appointmentModal.show(), 200);
+    });
+
+    previousStepButton.addEventListener('click', function() {
+        if (formSubmitted) return;
+
+        const stepProgress = document.querySelector('.step-progress');
+        const steps = stepProgress.querySelectorAll('.step');
+        steps[1].classList.remove('completed');
+
+        const bootstrapAppointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
+        bootstrapAppointmentModal.hide();
+        setTimeout(() => uploadModal.show(), 200);
+    });
+});
 
 
 
