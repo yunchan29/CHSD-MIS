@@ -26,6 +26,32 @@
         max-width: 100% !important;
     }
 }
+       /* Highlight effect */
+       .highlight {
+    background-color: #d3f9d8; /* light green */
+    transition: background-color 1s ease-out; /* fades out smoothly */
+}
+.btn-upload {
+        padding: 8px 16px;
+        background-color: #4CAF50 !important;
+        color: white !important;
+        border: none;
+        cursor: pointer !important;
+    }
+    .btn-upload:hover {
+        background-color: #45a049;
+    }
+    .file-item {
+        display: flex;
+        align-items: center;
+    }
+    .file-name {
+        margin-right: 10px;
+    }
+    .btn-delete {
+        color: red;
+        cursor: pointer;
+    }
    
     </style>
 </head>
@@ -85,7 +111,7 @@
                 <h5>Profile</h5>
                 <div class="row mt-4">
                     <div class="col">
-                        <a class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#buildingPermitModal"><i class="fa-solid fa-plus"></i> Add Profile</a>
+                        <a class="btn btn-dark text-white" data-bs-toggle="modal" data-bs-target="#occupancyUploadModal"><i class="fa-solid fa-plus"></i> Add Profile</a>
                        
                     </div>
                 <div class="d-flex justify-content-end mb-3">
@@ -126,222 +152,406 @@
         </div>
     </div>
 
-
-
-
-    <!-- Generate Occupancy Modal -->
-<div class="modal fade" id="viewHSDFormModal" tabindex="-1" aria-labelledby="viewHSDFormModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewHSDFormModalLabel"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="printArea" id="printHSDContent">
-                    <div id="watermark" class="watermark"></div>
-                <!-- Display HSD form details organized in rows and columns -->
-                <div class="container p-3 border rounded">
-                    <div class="row mb-4">
-                        <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
-                            <!-- Left Logo -->
-                            <img src="/resources/pictures/calambaLogo.png" alt="Calamba Logo" style="height: 50px; width: 50px; margin-left: auto;">
-                            <!-- Center Title -->
-                            <div class="text-center" style="margin: 0 10px;">
-                                <h5 class="mb-0">CITY HOUSING AND SETTLEMENTS DEPARTMENT</h5>
-                                <p class="mb-0">City Government of Calamba</p>
-                            </div>
-                            <!-- Right Logo -->
-                            <img src="/resources/pictures/chsd.png" alt="CHSD Logo" style="height: 50px; width: 50px; margin-right: auto;">
-                        </div> <!-- Closing div for logo container -->
-                    </div>
-                    
-                   <h4 class="text-center mb-3 mt-3">Building Permit Under BP220</h4>
-                   <p>HSD Form No.1</p>
-
-                   <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Building Permit No.</strong> <span id="hsdFormBuildingPermitNo"></span></p>
-                    </div>
-                   </div>
-                    <!-- Row 1 -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <p><strong>Owner Name:</strong> <span id="hsdFormOwnerName"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Date Submitted:</strong> <span id="hsdFormDateSubmitted"></span></p>
-                        </div>
-                      
-                    </div>
-
-                    <!-- Row 2 -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <p><strong>Address:</strong> <span id="hsdFormAddress"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Phone Number:</strong> <span id="hsdPhoneNumber"></span></p>
-                        </div>
-                       
-                    </div>
-
-                    <!-- Row 3 -->
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <p><strong>Project Location:</strong> <span id="hsdFormProjectLocation"></span></p>
-                        </div>
-                        <div class="col-md-4">
-                            <p><strong>Scope of Work:</strong> <span id="hsdFormScopeOfWork"></span></p>
-                        </div>
-                        <div class="col-md-4">
-                            <p><strong>Project Justification:</strong> <span id="hsdFormProjectJustification"></span></p>
-                        </div>
-                    </div>
-                 
-
-                    <!-- Row 4 -->
-                    <div class="row mb-3">
-                       
-                        <div class="col-md-6">
-                            <p><strong>Block Number:</strong> <span id="hsdFormBlockNumber"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Lot Number:</strong> <span id="hsdFormLotNumber"></span></p>
-                        </div>
-                    </div>
-
-                
-
-                    <!-- Row 5 -->
-                    <div class="row mb-3">
-                       
-                        <div class="col-md-3">
-                            <p><strong>Number Of Units:</strong> <span id="hsdFormNOUnits"></span></p>
-                        </div>
-                        <div class="col-md-3">
-                            <p><strong>Floor Area Per Unit:</strong> <span id="hsdFormFloorArea"></span></p>
-                        </div>
-                        <div class="col-md-3">
-                            <p><strong>Total Floor Area:</strong> <span id="hsdFormTotalFloorArea"></span></p>
-                        </div>
-                        <div class="col-md-3">
-                            <p><strong>Total Estimated Cost:</strong> <span id="hsdFormTotalEstimatedCost"></span></p>
-                        </div>
-                    </div>
-
-
-                    <hr>
-
-                    <p class="text-center">Full Time Inspector And Supervisor of Construction Works(Representing the Owner)</p>
-                    
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
-                            <br>
-                            <br>
-                            <p class="text-center">Architect or Civil Engineer</p>
-                            <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
-                        </div>
-                    
-                        <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
-                            <br>
-                            <br>
-                            <p class="text-center">Architect or Civil Engineer</p>
-                            <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>PRC No.:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>Validity:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>PRC No.:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>Validity:</p>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>PTR No.:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>Date Issued:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>PTR No.:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>Date Issued:</p>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
-                            <br>
-                            <br>
-                            <p class="text-center">Architect or Civil Engineer</p>
-                            <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
-                        </div>
-                    
-                        <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
-                            <br>
-                            <br>
-                            <p class="text-center">Architect or Civil Engineer</p>
-                            <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>PRC No.:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>Validity:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>PRC No.:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>Validity:</p>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>PTR No.:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>Date Issued:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>PTR No.:</p>
-                        </div>
-                        <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                            <p>Date Issued:</p>
-                        </div>
-                    </div>
-                    </div>
+    <!-- Certificate of Occupancy Upload Modal -->
+    <div class="modal fade" id="occupancyUploadModal" tabindex="-1" aria-labelledby="occupancyUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="occupancyUploadModalLabel">Certificate of Occupancy Application</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="printHSDForm">
-                    <i class="fa-solid fa-print"></i> Print
-                  </button>
-                  
-                  
+                <div class="modal-body">
+                    <!-- Step Progress Bar -->
+                    <div class="step-progress mb-4">
+                        <div class="step completed">
+                            <div class="circle"></div>
+                            <div class="label">Upload Requirements</div>
+                        </div>
+                        <div class="step">
+                            <div class="circle"></div>
+                            <div class="label">Appointment</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="buildingPermitOption">Building Permit Option</label>
+                            
+                            <!-- Toggle Buttons for Selection -->
+                            <div class="btn-group d-flex" role="group">
+                                <input type="radio" class="btn-check" name="permitOption" id="typeOption" autocomplete="off" checked>
+                                <label class="btn btn-outline-secondary flex-fill" for="typeOption">Type Permit No.</label>
+                    
+                                <input type="radio" class="btn-check" name="permitOption" id="selectOption" autocomplete="off">
+                                <label class="btn btn-outline-secondary flex-fill" for="selectOption">Select Permit</label>
+                            </div>
+                    
+                            <!-- Dynamic Instructional Text -->
+                            <small id="instructionText" class="form-text text-muted mt-2">
+                                Please type the Building Permit Number.
+                            </small>
+                    
+                            <!-- Input for Typing Permit Number -->
+                            <div id="permitInputContainer" class="mt-2">
+                                <input type="text" id="buildingPermitNo" class="form-control" placeholder="ex. 2024-XXXX">
+                            </div>
+                    
+                            <!-- Button for Selecting Permit from Modal -->
+                            <div id="permitSelectContainer" class="mt-2 d-none">
+                                <button type="button" id="openPermitModalBtn" class="btn btn-outline-secondary w-100">Select Permit from List</button>
+                            </div>
+                    
+                            <!-- Readonly Display of Selected Permit Number -->
+                            <div id="selectedPermitDisplay" class="mt-2 d-none">
+                                <input type="text" id="selectedPermitNumber" class="form-control" readonly>
+                                <small class="form-text text-muted">Selected Permit Number</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="row">
+                        <label for="ownerName">Owner/Applicant Name:</label>
+                        <input type="text" class="form-control" id="ownerName" placeholder="Enter Name">
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="ownerAddress">Address of Owner</label>
+                            <input type="text" class="form-control" id="ownerAddress">
+                        </div>
+                            
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="projectLocation">Location of the Project</label>
+                        <input type="text" class="form-control" id="projectLocation">
+                        </div>
+                        
+                     </div>
+                     <div class="row">
+                        <div class="col-md-4">
+                            <label for="totalFloorArea">Total Floor Area</label>
+                            <input type="number" class="form-control" id="totalFloorArea">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="NOunits">Number of Units</label>
+                            <input type="text" class="form-control" id="NOUnits">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="NOStorey">Number of Storeys</label>
+                            <input type="text" class="form-control" id="NOStorey">
+                        </div>
+                     </div>
+                    <!-- Content -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Requirements</th>
+                                <th>File</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Duly Accomplished Certificate of Building Permit Completion Form</td>
+                                <td class="file-column">
+                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                             ondrop="handleDrop(event, 'buildingPermitCompletionFile')" ondragover="handleDragOver(event)">
+                                            <p>Drag & drop file</p>
+                                        </div>
+                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('buildingPermitCompletionFile').click()">Upload</button>
+                                        <input type="file" class="file-input" id="buildingPermitCompletionFile" style="display: none;" onchange="uploadFile(this)">
+                                        <div id="buildingPermitCompletionFileName" class="file-column"></div> <!-- Display file details here -->
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Photocopy of Approved Building Permit Form</td>
+                                <td class="file-column">
+                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                             ondrop="handleDrop(event, 'approvedBuildingPermitFile')" ondragover="handleDragOver(event)">
+                                            <p>Drag & drop file</p>
+                                        </div>
+                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('approvedBuildingPermitFile').click()">Upload</button>
+                                        <input type="file" class="file-input" id="approvedBuildingPermitFile" style="display: none;" onchange="uploadFile(this)">
+                                        <div id="approvedBuildingPermitFileName" class="file-column"></div> <!-- Display file details here -->
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Photocopy of Approved Plan</td>
+                                <td class="file-column">
+                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                             ondrop="handleDrop(event, 'approvedPlanFile')" ondragover="handleDragOver(event)">
+                                            <p>Drag & drop file</p>
+                                        </div>
+                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('approvedPlanFile').click()">Upload</button>
+                                        <input type="file" class="file-input" id="approvedPlanFile" style="display: none;" onchange="uploadFile(this)">
+                                        <div id="approvedPlanFileName" class="file-column"></div> <!-- Display file details here -->
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Photos of Structure (Front, Back, Left, Right, Lavatory, and CR)</td>
+                                <td class="file-column">
+                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                             ondrop="handleDrop(event, 'structurePhotosFile')" ondragover="handleDragOver(event)">
+                                            <p>Drag & drop file</p>
+                                        </div>
+                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('structurePhotosFile').click()">Upload</button>
+                                        <input type="file" class="file-input" id="structurePhotosFile" style="display: none;" onchange="uploadFile(this)">
+                                        <div id="structurePhotosFileName" class="file-column"></div> <!-- Display file details here -->
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Sketch of Location and Contact Number</td>
+                                <td class="file-column">
+                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
+                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
+                                             ondrop="handleDrop(event, 'sketchFile')" ondragover="handleDragOver(event)">
+                                            <p>Drag & drop file</p>
+                                        </div>
+                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('sketchFile').click()">Upload</button>
+                                        <input type="file" class="file-input" id="sketchFile" style="display: none;" onchange="uploadFile(this)">
+                                        <div id="sketchFileName" class="file-column"></div> <!-- Display file details here -->
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        
+                        
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitAppointment">Submit</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    
+    <div class="modal" id="permitSelectionModal" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Building Permit</h5>
+                    <button type="button" id="closePermitModalBtn" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="permitList" class="list-group">
+                        <!-- Building permits will be loaded here dynamically -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="closeModalFooterBtn" class="btn btn-secondary">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+
+
+    <!--Generate Occupancy Permit-->
+  
+  <div class="modal fade" id="occupancyPermitModal" tabindex="-1" aria-labelledby="occupancyPermitModalLabel" aria-hidden="true">
+    <div class="wide-modal modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Occupancy Permit</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
+                <!-- Left Logo -->
+                <img src="/resources/pictures/calambaLogo.png" alt="Calamba Logo" style="height: 50px; width: 50px; margin-left: auto;">
+                <!-- Center Title -->
+                <div class="text-center" style="margin: 0 10px;">
+                    <h5 class="mb-0">CITY HOUSING AND SETTLEMENTS DEPARTMENT</h5>
+                    <p class="mb-0">City Government of Calamba</p>
+                </div>
+                <!-- Right Logo -->
+                <img src="/resources/pictures/chsd.png" alt="CHSD Logo" style="height: 50px; width: 50px; margin-right: auto;">
+            </div> 
+            <br>
+            
+            <h6 class="text-center">CERTIFICATE OF BUILDING COMPLETION</h6>
+            <p class="">This is to certify that the construction of of the residential building covered by <strong>Building Permit No.<span id="aaaBuildingPermitNo"></span></strong> under BP220 issued on <strong><span id="aaaIssuedOn"></span> </strong> has been constructed and completed under out inspection and supervision pursuant to Section 306 and the National Building Code (PD 1096). Its IRR and conforms the architectural well being, structural stability, electrical, plumbing, interior design, and the fire-protective properties in accordance with the plans and specifications submitted and on file with the City Housing and Settlements Department.</p>
+            <div class="container">
+                
+                <div class="row">
+                       <div class="col-md-8">
+                        
+                        <p><strong>Name of Owner: </strong><span id="certOwnerName"></span></p>
+                       </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <p><strong>Address of Owner: </strong><span id="certOwnerAddress"></span></p>
+                    </div>
+                        
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                    
+                    <p><strong>Location Of The Project: </strong><span id="certProjectLocation"></span></p>
+                    </div>
+                    
+                 </div>
+                 <div class="row">
+                    <div class="col-md-4">
+                        <p><strong>Total Floor Area: </strong><span id="certTotalFloorArea"></span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Number of Storeys: </strong><span id="certNOStorey"></span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Number of Units: </strong><span id="certNOUnits"></span></p>
+                    </div>
+                 </div>
+                 
+        
+                 <hr>
+        
+                            <p class="text-center">Full Time Inspector And Supervisor of Construction Works(Representing the Owner)</p>
+                            
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
+                                    <br>
+                                    <br>
+                                    <p class="text-center">Architect or Civil Engineer</p>
+                                    <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
+                                </div>
+                            
+                                <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
+                                    <br>
+                                    <br>
+                                    <p class="text-center">Architect or Civil Engineer</p>
+                                    <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>PRC No.:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>Validity:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>PRC No.:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>Validity:</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>PTR No.:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>Date Issued:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>PTR No.:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>Date Issued:</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
+                                    <br>
+                                    <br>
+                                    <p class="text-center">Architect or Civil Engineer</p>
+                                    <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
+                                </div>
+                            
+                                <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
+                                    <br>
+                                    <br>
+                                    <p class="text-center">Architect or Civil Engineer</p>
+                                    <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>PRC No.:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>Validity:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>PRC No.:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>Validity:</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>PTR No.:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>Date Issued:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>PTR No.:</p>
+                                </div>
+                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
+                                    <p>Date Issued:</p>
+                                </div>
+                                <br>
+                                <p>HSD Form No.3</p>
+                                <h6 class="text-center">CERTIFICATE OF OCCUPANCY under BP220</h6>
+                                <div class="row">
+                                    <div class="col-md-4">
+                            
+                                         <p><strong>CO BP220 No.: </strong><span id="certBuildingPermitNo"></span></p>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label for="issuedOn">Issued On:
+                                        </label>
+                                        <input type="date" class="form-control" id="issuedOn">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                     <div class="col-md-12">
+                                        <label for="lotNumber">Lot and Block Number:</label>
+                                        <input type="text" class="form-control" id="lotNumber">
+                                     </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="NOUnits">No. of Units</label>
+                                        <input type="number" class="form-control" id="NOUnits">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="totalFloorArea">
+                                            Total Floor Area
+                                        </label>
+                                        <input type="number" class="form-control" id="totalFloorArea">
+                                    </div>
+                                </div>
+        
+                                <p><i>This certificate of occupancy is issued purusant to Section 1(b) of Executive Order No. 71, Series of 1993.</i></p>
+        </div></div></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
      <!-- View Uploads Modal -->
 <div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
@@ -468,6 +678,22 @@
             </div>
         </div>
     </div>
+    <script>
+        const instructionText = document.getElementById("instructionText");
+    document.getElementById("typeOption").addEventListener("change", function() {
+        document.getElementById("permitInputContainer").classList.remove("d-none");
+        document.getElementById("permitSelectContainer").classList.add("d-none");
+        instructionText.textContent = "Please type the Building Permit Number.";
+    });
+    
+    document.getElementById("selectOption").addEventListener("change", function() {
+        document.getElementById("permitInputContainer").classList.add("d-none");
+        document.getElementById("permitSelectContainer").classList.remove("d-none");
+        instructionText.textContent = "Please select a Building Permit from the list.";
+    });
+    
+    </script>
+    
 
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -476,9 +702,10 @@
     <script type="module">
       // Import Firebase SDK
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-      import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  
+      import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, doc, getDocs, setDoc, deleteDoc, limit, orderBy, onSnapshot, query, where, startAfter, getDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
       // Firebase configuration
       const firebaseConfig = {
           apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
@@ -489,112 +716,295 @@
           appId: "1:694967679357:web:65cffd50f13739f934f414",
           measurementId: "G-XBQTQFRLJ5"
       };
-  
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
+      const storage = getStorage(app);
+  
+      // Document Ready
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('submitAppointment').addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        const submitButton = document.getElementById('submitAppointment');
+        submitButton.disabled = true;
+
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+        }
+
+        // Collect input values
+
+        const ownerName = document.getElementById("ownerName").value;
+        const ownerAddress = document.getElementById("ownerAddress").value;
+        const projectLocation = document.getElementById("projectLocation").value;
+        const totalFloorArea = document.getElementById("totalFloorArea").value;
+        const NOUnits = document.getElementById("NOUnits").value;
+        const NOStorey = document.getElementById("NOStorey").value;
+        const buildingPermitNo = document.getElementById("buildingPermitNo").value;
+        // Required fields validation
+        const requiredFields = [
+           
+            { field: ownerName, name: 'Owner Name' }
+        ];
+
+        for (const { field, name } of requiredFields) {
+            if (!field) {
+                alert(`Please fill out the ${name} field.`);
+                submitButton.disabled = false;
+                return;
+            }
+        }
+
+        // File inputs and namePrefix mapping
+        const requiredFileInputs = [
+            { id: 'buildingPermitCompletionFile', namePrefix: 'buildingPermitCompletion', name: 'Building Permit Completion' },
+            { id: 'approvedBuildingPermitFile', namePrefix: 'approvedBuildingPermit', name: 'Approved Building Permit' },
+            { id: 'approvedPlanFile', namePrefix: 'approvedPlan', name: 'Approved Plan' },
+            { id: 'structurePhotosFile', namePrefix: 'structurePhotos', name: 'Structure Photos' },
+            { id: 'sketchFile', namePrefix: 'sketch', name: 'Sketch' }
+        ];
+
+        // Validate that all required files are uploaded
+        for (const fileInputObj of requiredFileInputs) {
+            const fileInput = document.getElementById(fileInputObj.id);
+            if (!fileInput || !fileInput.files[0]) {
+                alert(`Please upload the ${fileInputObj.name} file.`);
+                submitButton.disabled = false;
+                loadingScreen.style.display = 'none';
+                return;
+            }
+        }
+
+        try {
+            // Ensure the user is authenticated
+            const user = await new Promise((resolve, reject) => {
+                onAuthStateChanged(auth, user => {
+                    if (user) {
+                        resolve(user);
+                    } else {
+                        reject(new Error("No user is authenticated."));
+                    }
+                });
+            });
+
+            const userId = user.uid;
+
+            // Prepare permit data for Firestore
+            const permitData = {
+              
+                ownerUid: userId,
+                ownerName,
+                projectLocation,
+                ownerAddress,
+                totalFloorArea,
+                NOUnits,
+                NOStorey,
+                buildingPermitNo,
+                status: 'Pending',
+                createdAt: serverTimestamp(),
+            };
+
+            // Add a new document to Firestore and get the generated document ID
+            const permitDocRef = await addDoc(collection(db, "OccupancyPermits"), permitData);
+            const permitId = permitDocRef.id;
+            const storagePath = `OccupancyPermits/${permitId}`;
+
+            // Handle file uploads and storage
+            const uploadPromises = requiredFileInputs.map(async fileInputObj => {
+                const fileInput = document.getElementById(fileInputObj.id);
+                if (fileInput && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const fileRef = ref(storage, `${storagePath}/${fileInputObj.namePrefix}_${file.name}`);
+                    const snapshot = await uploadBytes(fileRef, file);
+                    return getDownloadURL(snapshot.ref);
+                } else {
+                    console.error(`File input missing or undefined for ${fileInputObj.namePrefix}`);
+                    return null;
+                }
+            });
+
+            // Wait for all uploads and store URLs
+            const fileURLs = await Promise.all(uploadPromises);
+
+            const fileURLMapping = {
+                buildingPermitCompletionURL: fileURLs[0],
+                approvedBuildingPermitURL: fileURLs[1],
+                approvedPlanURL: fileURLs[2],
+                structurePhotosURL: fileURLs[3],
+                sketchURL: fileURLs[4],
+            };
+
+            // Update Firestore document with file URLs
+            const permitDoc = doc(db, "OccupancyPermits", permitId);
+            await updateDoc(permitDoc, fileURLMapping);
+
+            // Success feedback
+            Swal.fire({
+  title: "Success!",
+  text: "Application Submitted",
+  icon: "success"
+});
        
-      // Function to Dynamically Append Buttons to the View Details Modal for Occupancy Permit
+
+        } catch (error) {
+            // Log and alert on error
+            console.error("Error during submission:", error);
+            alert(`Error submitting application: ${error.message}`);
+        } finally {
+            // Hide loading screen and re-enable submit button
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+            submitButton.disabled = false;
+        }
+    });
+});
+
+
+       
+    // Function to Dynamically Append Buttons to the View Details Modal for Occupancy Permit
 function appendButtons(data) {
     const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
     viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing buttons
 
-    // First Row of Buttons
+    // Row 1: View File Uploads
     const firstRow = document.createElement('div');
     firstRow.className = 'row mt-4';
 
-    // View File Uploads Button
     const col1 = document.createElement('div');
-    col1.className = 'col-md-6 mb-2';
+    col1.className = 'col-md-12';
     const btn1 = document.createElement('button');
     btn1.className = 'btn btn-primary w-100';
     btn1.textContent = 'View File Uploads';
     btn1.addEventListener('click', () => {
         const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-        if (viewDetailsModal) {
-            viewDetailsModal.hide(); // Hide View Details Modal
-        }
+        if (viewDetailsModal) viewDetailsModal.hide(); // Hide View Details Modal
         openViewUploadsModal(data); // Open View Uploads Modal
     });
     col1.appendChild(btn1);
+    firstRow.appendChild(col1);
 
-    // Generate Permit Button
+    // Row 2: Generate Occupancy Permit
+    const secondRow = document.createElement('div');
+    secondRow.className = 'row mt-2';
+
     const col2 = document.createElement('div');
-    col2.className = 'col-md-6 mb-2';
+    col2.className = 'col-md-12';
     const btn2 = document.createElement('button');
     btn2.className = 'btn btn-primary w-100';
-    btn2.textContent = 'Generate Permit';
+    btn2.textContent = 'Generate Occupancy Permit';
     btn2.addEventListener('click', () => {
         const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-        if (viewDetailsModal) {
-            viewDetailsModal.hide(); // Hide View Details Modal
-        }
+        if (viewDetailsModal) viewDetailsModal.hide(); // Hide View Details Modal
         openGenerateOccupancyPermitModal(data); // Open Generate Permit Modal
     });
     col2.appendChild(btn2);
+    secondRow.appendChild(col2);
 
-    firstRow.appendChild(col1);
-    firstRow.appendChild(col2);
-
-    // Second Row for Generate Order of Payment Button
-    const secondRow = document.createElement('div');
-    secondRow.className = 'row mt-2';
+    // Row 3: Generate Order of Payment
+    const thirdRow = document.createElement('div');
+    thirdRow.className = 'row mt-2';
 
     const col3 = document.createElement('div');
     col3.className = 'col-md-12';
     const btn3 = document.createElement('button');
-    btn3.className = 'btn btn-success w-100 generate-order-payment-btn';
+    btn3.className = 'btn btn-success w-100';
     btn3.textContent = 'Generate Order of Payment';
-
-    // Add event listener for generating Order of Payment
     btn3.addEventListener('click', () => {
-        generateOrderOfPayment(data); // Generate order of payment using the data
-        
-        // Hide the View Details modal
-        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-        if (viewDetailsModal) {
-            viewDetailsModal.hide(); // Hide View Details Modal
-        }
+        generateOrderOfPayment(data); // Generate order of payment
 
-        // Trigger Order of Payment Modal
+        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+        if (viewDetailsModal) viewDetailsModal.hide(); // Hide View Details Modal
+
         const orderOfPaymentModal = new bootstrap.Modal(document.getElementById('orderOfPaymentModal'));
         orderOfPaymentModal.show();
 
-        // Remove the backdrop manually after the modal closes to avoid the lingering backdrop
         document.getElementById('orderOfPaymentModal').addEventListener('hidden.bs.modal', function () {
             const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                backdrop.remove(); // Ensure the backdrop is removed
-            }
+            if (backdrop) backdrop.remove(); // Ensure the backdrop is removed
         });
     });
-
     col3.appendChild(btn3);
-    secondRow.appendChild(col3);
+    thirdRow.appendChild(col3);
 
-    // Third Row for Archive Button
-    const thirdRow = document.createElement('div');
-    thirdRow.className = 'row mt-2';
+    // Row 4: Archive Permit
+    const fourthRow = document.createElement('div');
+    fourthRow.className = 'row mt-2';
 
     const col4 = document.createElement('div');
     col4.className = 'col-md-12';
     const btn4 = document.createElement('button');
-    btn4.className = 'btn btn-danger w-100 archive-permit-btn';
+    btn4.className = 'btn btn-danger w-100';
     btn4.textContent = 'Archive Permit';
     btn4.setAttribute('data-id', data.id);
-
-    // Add event listener for archiving the occupancy permit
     btn4.addEventListener('click', (event) => handleArchiveOccupancyPermit(event));
-
+    
     col4.appendChild(btn4);
-    thirdRow.appendChild(col4);
+    fourthRow.appendChild(col4);
 
     // Append Rows to Button Group
     viewDetailsModalBtnGrp.appendChild(firstRow);
     viewDetailsModalBtnGrp.appendChild(secondRow);
     viewDetailsModalBtnGrp.appendChild(thirdRow);
+    viewDetailsModalBtnGrp.appendChild(fourthRow);
 }
+
+// Function to Open the Occupancy Permit Modal
+async function openGenerateOccupancyPermitModal(permitData) {
+    try {
+        console.log("Occupancy Permit Data received:", permitData); // Log permitData to ensure it's not empty
+
+        // Fetch the data from the OccupancyPermits collection based on the permitId
+        const occupancyFormData = await getDoc(doc(db, "OccupancyPermits", permitData.id));
+
+        if (!occupancyFormData.exists()) {
+            console.error("Occupancy Permit not found!");
+            alert("Occupancy Permit data is missing!");
+            return;
+        }
+
+        const data = occupancyFormData.data();
+        console.log("Occupancy Permit Data retrieved:", data); // Log the fetched data to ensure it's being retrieved correctly
+
+        // Populate Occupancy Permit Modal Fields
+        document.getElementById('certOwnerName').textContent = data.ownerName || "N/A";
+        document.getElementById('certOwnerAddress').textContent = data.ownerAddress || "N/A";
+        document.getElementById('certProjectLocation').textContent = data.projectLocation || "N/A";
+        document.getElementById('certTotalFloorArea').textContent = data.totalFloorArea || "N/A";
+        document.getElementById('certNOUnits').textContent = data.NOUnits || "N/A";
+        document.getElementById('certNOStorey').textContent = data.NOStorey || "N/A";
+        document.getElementById('certBuildingPermitNo').textContent = data.buildingPermitNo || "N/A";
+        document.getElementById("aaaBuildingPermitNo").textContent = data.buildingPermitNo || "N/A";
+      
+const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000) : null;
+
+if (createdAt && !isNaN(createdAt)) {
+    const formattedDate = createdAt.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+    document.getElementById("aaaIssuedOn").textContent = formattedDate;
+} else {
+    document.getElementById("aaaIssuedOn").textContent = "Date not available";
+}
+
+  
+        console.log("Occupancy Permit fields populated");
+
+        // Show the Occupancy Permit Modal
+        const occupancyPermitModal = new bootstrap.Modal(document.getElementById('occupancyPermitModal'));
+        occupancyPermitModal.show();
+    } catch (error) {
+        console.error("Error opening Occupancy Permit modal:", error);
+        alert("Failed to load Occupancy Permit data.");
+    }
+}
+
 
 
 
@@ -1130,9 +1540,190 @@ document.getElementById("nextPageBtn").addEventListener("click", () => {
 // Initial Load of Occupancy Profiles
 loadOccupancyProfiles();
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize and add event listeners for buttons
+    document.getElementById('openPermitModalBtn').addEventListener('click', openPermitSelectionModal);
+    document.getElementById('closePermitModalBtn').addEventListener('click', closePermitSelectionModal);
+    document.getElementById('closeModalFooterBtn').addEventListener('click', closePermitSelectionModal);
+
+    async function openPermitSelectionModal() {
+        const modal = document.getElementById('permitSelectionModal');
+        const permitList = document.getElementById('permitList');
+        permitList.innerHTML = '';  // Clear previous entries
+
+        // Show a loading indicator (optional)
+        permitList.innerHTML = '<li>Loading permits...</li>';
+
+        try {
+            // Fetch all building permits
+            const buildingPermitsRef = collection(db, "buildingPermits");
+            const querySnapshot = await getDocs(buildingPermitsRef);
+
+            permitList.innerHTML = ''; // Clear loading text
+
+            querySnapshot.forEach((doc) => {
+                const permit = doc.data();
+                const listItem = document.createElement('li');
+                listItem.textContent = `${permit.buildingPermitNo} - ${permit.ownerName || 'Unknown Owner'}`;
+                listItem.className = "list-group-item list-group-item-action";
+                listItem.addEventListener('click', () => selectPermit(doc.id)); // Pass document ID
+                permitList.appendChild(listItem);
+            });
+
+        } catch (error) {
+            console.error("Error fetching permits:", error);
+            permitList.innerHTML = '<li>Error loading permits</li>';
+        }
+
+        modal.style.display = 'block'; // Show the modal
+    }
+
+    function closePermitSelectionModal() {
+        document.getElementById('permitSelectionModal').style.display = 'none';
+    }
+
+    async function selectPermit(permitId) {
+        try {
+            const permitRef = doc(db, "buildingPermits", permitId);
+            const permitSnap = await getDoc(permitRef);
+
+            if (permitSnap.exists()) {
+                const permitData = permitSnap.data();
+
+                // Autofill form fields and apply highlight effect
+                autofillField('buildingPermitNo', permitData.buildingPermitNo);
+                autofillField('ownerName', permitData.ownerName);
+                autofillField('ownerAddress', permitData.addressTelNo);
+                autofillField('projectLocation', permitData.projectLocation);
+                autofillField('totalFloorArea', permitData.TotalFloorArea);
+                autofillField('NOUnits', permitData.NOUnits);
+                autofillField('NOStorey', permitData.NOStorey);
+
+                closePermitSelectionModal();
+            } else {
+                console.error("No such document!");
+            }
+        } catch (error) {
+            console.error("Error fetching permit details:", error);
+        }
+    }
+
+    function autofillField(fieldId, value) {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.value = value || ''; // Set field value
+            field.classList.add('highlight'); // Add highlight class
+
+            // Remove highlight effect after 2 seconds
+            setTimeout(() => {
+                field.classList.remove('highlight');
+            }, 2000);
+        }
+    }
+});
 
 
 </script>
+
+<script>
+    function uploadFile(input, file = null) {
+        const selectedFile = file || input.files[0];  // Use the file from input or passed as an argument
+
+        if (selectedFile) {
+            const maxSizeMB = 5;  // Set max file size (in MB)
+            const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];  // Allowed file types
+
+            // Validate file type
+            if (!allowedTypes.includes(selectedFile.type)) {
+                alert('Invalid file type. Please upload a JPG, PNG, or PDF file.');
+                input.value = ''; // Clear the input
+                return;
+            }
+
+            // Validate file size
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;  // Convert MB to bytes
+            if (selectedFile.size > maxSizeBytes) {
+                alert(`File is too large. Please upload a file smaller than ${maxSizeMB}MB.`);
+                input.value = '';  // Clear the input
+                return;
+            }
+
+            // FileReader to read file details
+            const reader = new FileReader();
+            reader.onload = function () {
+                const fileName = selectedFile.name;
+                const fileSize = formatBytes(selectedFile.size);
+                const fileItem = `
+                    <div class="file-item">
+                        <span class="file-name">${fileName} (${fileSize})</span>
+                        <span class="btn-delete" onclick="deleteFile(this, '${input.id}')">Delete</span>
+                    </div>`;
+
+                // Display file information
+                const fileColumn = input.closest('.file-column'); // Get the closest file-column
+                if (fileColumn) {
+                    fileColumn.insertAdjacentHTML('beforeend', fileItem);  // Append the file item
+                } else {
+                    console.error('File column not found.');
+                }
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+    }
+
+    function deleteFile(deleteBtn, inputId) {
+        const fileItem = deleteBtn.closest('.file-item');
+        if (fileItem) {
+            fileItem.remove();  // Remove the displayed file item
+            document.getElementById(inputId).value = '';  // Clear the input for re-upload
+        }
+    }
+
+    // Format file size to a readable string
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    // Drag-over handler to show drag-and-drop action
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.dataTransfer.dropEffect = 'copy';  // Change the cursor to indicate a drop is possible
+    }
+
+    // Drop handler to process the dropped files
+    function handleDrop(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const files = event.dataTransfer.files;  // Get the dropped files
+        const inputFileElement = event.target.closest('.upload-btn-wrapper').querySelector('.file-input');  // Find the corresponding file input
+
+        if (inputFileElement && files.length > 0) {
+            limitFiles(inputFileElement, 5, files);  // Limit the number of dropped files and handle each
+        }
+    }
+
+    // Limit the number of files
+    function limitFiles(input, maxFiles = 5, fileList = null) {
+        const files = fileList || input.files;
+        if (files.length > maxFiles) {
+            alert(`You can only upload up to ${maxFiles} files.`);
+            input.value = '';  // Clear the input
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            uploadFile(input, files[i]);  // Process each file
+        }
+    }
+</script>
+
 
 
 

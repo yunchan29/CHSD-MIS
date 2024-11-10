@@ -672,7 +672,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Collect input values
         const appointmentDate = document.getElementById('appointmentDate').value.trim();
         const ownerName = document.getElementById("ownerName").value;
-
+        const ownerAddress = document.getElementById("ownerAddress").value;
+        const projectLocation = document.getElementById("projectLocation").value;
+        const totalFloorArea = document.getElementById("totalFloorArea").value;
+        const NOUnits = document.getElementById("NOUnits").value;
+        const NOStorey = document.getElementById("NOStorey").value;
+        const buildingPermitNo = document.getElementById("buildingPermitNo").value;
         // Required fields validation
         const requiredFields = [
             { field: appointmentDate, name: 'Appointment Date' },
@@ -726,6 +731,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 appointmentDate: new Date(appointmentDate),
                 ownerUid: userId,
                 ownerName,
+                projectLocation,
+                buildingPermitNo,
+                ownerAddress,
+                totalFloorArea,
+                NOUnits,
+                NOStorey,
                 status: 'Pending',
                 createdAt: serverTimestamp(),
             };
