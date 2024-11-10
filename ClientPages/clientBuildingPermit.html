@@ -414,7 +414,7 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="NOUnits">Number of Units<span class="required-asterisk">*</span></label>
-                                    <input type="number" class="form-control" placeholder="No. of Units" id="NOUnits" required>
+                                    <input type="number" class="form-control" placeholder="Number of Unit/s" id="NOUnits" required>
                                 </div>
                                 <div class="col">
                                     <label for="FloorArea">Floor Area Per Unit<span class="required-asterisk">*</span></label>
@@ -423,6 +423,10 @@
                                 <div class="col">
                                     <label for="TotalFloorArea">Total Floor Area<span class="required-asterisk">*</span></label>
                                     <input type="number" class="form-control" placeholder="Total Floor Area" id="TotalFloorArea" required>
+                                </div>
+                                <div class="col">
+                                    <label for="NOStorey">Total Estimated Cost<span class="required-asterisk">*</span></label>
+                                    <input type="number" class="form-control" placeholder="Number of Storey/s" id="NOStorey" required>
                                 </div>
                                 <div class="col">
                                     <label for="TotalEstimatedCost">Total Estimated Cost<span class="required-asterisk">*</span></label>
@@ -1148,6 +1152,7 @@ window.onload = toggleOtherScopeInput;
         const lotNumber = document.getElementById("lotNumber").value;
         const NOUnits = document.getElementById("NOUnits").value;
         const FloorArea = document.getElementById("FloorArea").value;
+        const NOStorey = document.getElementById("NOStorey").value;
         const TotalFloorArea = document.getElementById("TotalFloorArea").value;
         const TotalEstimatedCost = document.getElementById("TotalEstimatedCost").value;
 
@@ -1241,6 +1246,7 @@ window.onload = toggleOtherScopeInput;
                 blockNumber,
                 lotNumber,
                 NOUnits,
+                NOStorey,
                 FloorArea,
                 TotalFloorArea,
                 TotalEstimatedCost,
@@ -1296,7 +1302,7 @@ window.onload = toggleOtherScopeInput;
   text: "Application Submitted",
   icon: "success"
 });
-            window.location.reload();
+           
 
         } catch (error) {
             console.error("Error during submission:", error);

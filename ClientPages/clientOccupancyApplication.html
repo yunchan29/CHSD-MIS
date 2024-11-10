@@ -44,6 +44,12 @@
         .d-flex .me-2 {
             margin-right: 1rem; /* Add margin to the right of the input */
         }
+        /* Highlight effect */
+.highlight {
+    background-color: #d3f9d8; /* light green */
+    transition: background-color 1s ease-out; /* fades out smoothly */
+}
+
     </style>
     <style>
         .btn-upload {
@@ -297,23 +303,38 @@
                 
                 <div class="row">
                     <label for="ownerName">Owner/Applicant Name:</label>
-                    <div class="col-md-3">
-                        <label for="ownerLastName">Last Name<span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="ownerFirstName">First Name<span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name*" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="ownerMiddleName">Middle Name</label>
-                        <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="ownerMaidenName">Maiden Name</label>
-                        <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
-                    </div>
+                    <input type="text" class="form-control" id="ownerName" placeholder="Enter Name">
                 </div>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <label for="ownerAddress">Address of Owner</label>
+                        <input type="text" class="form-control" id="ownerAddress">
+                    </div>
+                        
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <label for="projectLocation">Location of the Project</label>
+                    <input type="text" class="form-control" id="projectLocation">
+                    </div>
+                    
+                 </div>
+                 <div class="row">
+                    <div class="col-md-4">
+                        <label for="totalFloorArea">Total Floor Area</label>
+                        <input type="number" class="form-control" id="totalFloorArea">
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="NOunits">Number of Units</label>
+                        <input type="text" class="form-control" id="NOUnits">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="NOStorey">Number of Storeys</label>
+                        <input type="text" class="form-control" id="NOStorey">
+                    </div>
+                 </div>
                 <!-- Content -->
                 <table class="table">
                     <thead>
@@ -615,7 +636,7 @@ document.getElementById("selectOption").addEventListener("change", function() {
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, doc, getDocs, limit, orderBy, onSnapshot, query, where, startAfter} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, doc, getDocs, limit, orderBy, onSnapshot, query, where, startAfter, getDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // Firebase configuration object
@@ -650,11 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Collect input values
         const appointmentDate = document.getElementById('appointmentDate').value.trim();
-        const ownerLastName = document.getElementById('ownerLastName').value.trim();
-        const ownerFirstName = document.getElementById('ownerFirstName').value.trim();
-        const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
-        const ownerMaidenName = document.getElementById('ownerMaidenName').value.trim();
-        const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
+        const ownerName = document.getElementById("ownerName").value;
 
         // Required fields validation
         const requiredFields = [
@@ -983,7 +1000,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const listItem = document.createElement('li');
             listItem.textContent = `${permit.buildingPermitNo} - ${permit.ownerName || 'Unknown Owner'}`;
             listItem.className = "list-group-item list-group-item-action";
-            listItem.addEventListener('click', () => selectPermit(permit.buildingPermitNo));
+            listItem.addEventListener('click', () => selectPermit(doc.id)); // Pass document ID
             permitList.appendChild(listItem);
         });
 
@@ -995,9 +1012,44 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('permitSelectionModal').style.display = 'none';
     }
 
-    function selectPermit(permitNo) {
-        document.getElementById('buildingPermitNo').value = permitNo;
-        closePermitSelectionModal();
+    async function selectPermit(permitId) {
+        try {
+            const permitRef = doc(db, "buildingPermits", permitId);
+            const permitSnap = await getDoc(permitRef);
+
+            if (permitSnap.exists()) {
+                const permitData = permitSnap.data();
+
+                // Autofill form fields and apply highlight effect
+                autofillField('buildingPermitNo', permitData.buildingPermitNo);
+                autofillField('ownerName', permitData.ownerName);
+                autofillField('ownerAddress', permitData.addressTelNo);
+                autofillField('projectLocation', permitData.projectLocation);
+                autofillField('totalFloorArea', permitData.TotalFloorArea);
+                autofillField('NOUnits', permitData.NOUnits);
+                autofillField('NOStorey', permitData.NOStorey);
+                
+
+                closePermitSelectionModal();
+            } else {
+                console.error("No such document!");
+            }
+        } catch (error) {
+            console.error("Error fetching permit details:", error);
+        }
+    }
+
+    function autofillField(fieldId, value) {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.value = value || ''; // Set field value
+            field.classList.add('highlight'); // Add highlight class
+
+            // Remove highlight effect after 1 second
+            setTimeout(() => {
+                field.classList.remove('highlight');
+            }, 2000);
+        }
     }
 });
 
