@@ -304,6 +304,130 @@
 </div>
 
 
+  <!-- Generate Electrical Cert Modal -->
+  <div class="modal fade" id="generateElectricalCertModal" tabindex="-1" aria-labelledby="generateElectricalCertModalLabel" aria-hidden="true">
+    <div class="wide-modal modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="generateElectricalCertModalLabel">Certificate OF Final Electrical Inspection</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
+                <!-- Left Logo -->
+                <img src="/resources/pictures/calambaLogo.png" alt="Calamba Logo" style="height: 40px; width: 40px; margin-left: auto;">
+                <!-- Center Title -->
+                <div class="text-center" style="margin: 0 10px;">
+                    <h5 class="mb-0">CITY HOUSING AND SETTLEMENTS DEPARTMENT</h5>
+                    <p class="mb-0">City Government of Calamba</p>
+                </div>
+                <!-- Right Logo -->
+                <img src="/resources/pictures/chsd.png" alt="CHSD Logo" style="height: 40px; width: 40px; margin-right: auto;">
+            </div>
+            <h6 class="text-center">CERTIFICATE OF FINAL ELECTRICAL INSPECTION</h6>
+            <div class="row">
+                <div class="col-md-2">
+                    
+                    <p><strong>Date:</strong><span id="certIssuedOn"></span></p>
+                </div>
+            </div>
+            <p class="px-3">
+                THIS CERTIFIES that the electrical wiring systems and the electrical equipment enumerated here under located at 
+                <input type="text" id="aaaProjectLocation" class="form-control form-control-sm d-inline-block" style="width: 120px;" placeholder="Project Location">
+                Calamba City, Laguna, were inspected and/or tested on 
+                <input type="date" id="testingDate" class="form-control form-control-sm d-inline-block" style="width: 100px;">
+                and were found to be installed in compliance with the existing laws/ordinances and rules and regulations set forth in the Philippine Electric Code.
+            </p>
+            
+    
+            <h6 class="text-center">L O A D</h6>
+            <div class="row">
+                <div class="col-md-4">
+                   
+                    <p><strong>Light: </strong><span id="certLight"></span></p>
+                </div>
+                <div class="col-md-4">
+                   
+                    <p><strong>Switch: </strong><span id="certSwitch"></span></p>
+                </div>
+                <div class="col-md-4">
+                   
+                    <p><strong>Electrical Motor: </strong><span id="certElectricalMotor"></span></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                   
+                    <p><strong>Convenience Outlet: </strong><span id="certConvOutlet"</p>
+                </div>
+                <div class="col-md-6">
+                   
+                    <p><strong>Other Apparatus: </strong><span id="certOtherApparatus"></span></p>
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col-md-6">
+                
+                    <p><strong>Owner/Occupant: </strong><span id="certOwnerName"></span></p>
+                </div>
+                <div class="col-md-6">
+                   
+                    <p><strong>Total KVA: </strong><span id="certTotalKVA"></span></p>
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col-md-12">
+                  
+                    <p><strong>Nature of Work: </strong><span id="certNatureOfWork"></span></p>
+                </div>
+             </div>
+    
+             <h6>REMARKS: IN COMPLIANCE</h6>
+             <div class="row">
+                <div class="col-md-3">
+                   <label for="fee">
+                    Fee
+                   </label>
+                   <input type="number" class="form-control" id="fee">
+                </div>
+                <div class="col-md-3">
+                    <label for="ORNo">OR No.</label>
+                    <input type="input" class="form-control" id="ORNo">
+                </div>
+                <div class="col-md-3">
+                    <label for="dateRemarks">Date</label>
+                    <input type="date" class="form-control" id="dateRemarks">
+                </div>
+                <p>NOTE: This certification is valid only for Six(6) months from date if inspection hereof unless sooner revoked by the Electrical Ibnspector for legal reason. this certification is not valid without HSD dry seal.</p>
+                <br>
+                <div class="row">
+                    <div class="col-md-3">
+                        
+                        <label for="inspectedBy">Inspected By:</label>
+                        <input type="text"class="form-control" id="inspectedBy">
+                    </div>
+                    <div class="col-md-3">
+                        
+                    </div>
+                    <div class="col-md-3">
+                       
+                        <label for="issuedBy">Issued By:</label>
+                        <input type="text" class="form-control" id="issuedBy">
+                    </div>
+                </div>
+             </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
    <!-- Certificate of Electrical Inspection Upload Modal -->
    <div class="modal fade" id="electricalInspectionModal" tabindex="-1" aria-labelledby="electricalInspectionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
@@ -787,6 +911,56 @@ function appendButtons(data) {
     viewDetailsModalBtnGrp.appendChild(secondRow);
     viewDetailsModalBtnGrp.appendChild(thirdRow);
 }
+
+// Function to Open the Electrical Certificate Modal
+async function openGenerateElectricalCertModal(certData) {
+    try {
+        console.log("Electrical Certificate Data received:", certData); // Log certData to ensure it's not empty
+
+        // Fetch the data from the ElectricalCerts collection based on the certId
+        const electricalCertData = await getDoc(doc(db, "ElectricalCert", certData.id));
+
+        if (!electricalCertData.exists()) {
+            console.error("Electrical Certificate not found!");
+            alert("Electrical Certificate data is missing!");
+            return;
+        }
+
+        const data = electricalCertData.data();
+        console.log("Electrical Certificate Data retrieved:", data); // Log the fetched data to ensure it's being retrieved correctly
+        const certLight = document.getElementById("certLight").textContent = data.light;
+        const certSwitch = document.getElementById("certSwitch").textContent = data.switchType;
+        const certElectricalMotor = document.getElementById("certElectricalMotor").textContent = data.electricalMotor;
+        const certConvOutlet = document.getElementById("certConvOutlet").textContent = data.convOutlet;
+        const certApparatus = document.getElementById("certOtherApparatus").textContent = data.otherApparatus;
+        const certNatureOfWork = document.getElementById("certNatureOfWork").textContent = data.natureOfWork;
+        const certTotalKVA = document.getElementById("certTotalKVA").textContent = data.totalKVA;
+        const certOwnerName = document.getElementById("certOwnerName").textContent = data.ownerName;
+      
+        const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000) : null;
+
+        if (createdAt && !isNaN(createdAt)) {
+            const formattedDate = createdAt.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            document.getElementById("certIssuedOn").textContent = formattedDate;
+        } else {
+            document.getElementById("certIssuedOn").textContent = "Date not available";
+        }
+
+        console.log("Electrical Certificate fields populated");
+
+        // Show the Electrical Certificate Modal
+        const electricalCertModal = new bootstrap.Modal(document.getElementById('generateElectricalCertModal'));
+        electricalCertModal.show();
+    } catch (error) {
+        console.error("Error opening Electrical Certificate modal:", error);
+        alert("Failed to load Electrical Certificate data.");
+    }
+}
+
 
 
 
