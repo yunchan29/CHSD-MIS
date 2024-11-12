@@ -20,6 +20,16 @@
             overflow-y: auto; /* Enable vertical scrolling */
             padding: 20px; /* Add some padding */
         }
+
+    </style>
+    <style>
+        .toggle-password {
+            top: 60%;
+            right: 1rem;
+          
+            cursor: pointer;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -176,7 +186,27 @@
     </div>
     
     <script type="module" src="/Database/firebase.js"></script>
-
+    <script>
+        // Profile picture preview functionality
+        document.getElementById('avatar-upload').addEventListener('change', function(event) {
+            const preview = document.getElementById('profile-picture-preview');
+            const file = event.target.files[0];
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+            }
+        });
+    
+        // Password visibility toggle functionality
+        document.querySelectorAll('.toggle-password').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const targetInput = document.getElementById(this.dataset.target);
+                const isPassword = targetInput.getAttribute('type') === 'password';
+                targetInput.setAttribute('type', isPassword ? 'text' : 'password');
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
+            });
+        });
+    </script>
    
  <!--Navigation Bar-->
  <script>
@@ -213,93 +243,6 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    let notificationsPerPage = 5;
-    let currentPage = 1;
-    let totalPages = 1;
-    let lastVisibleDoc = null;
-
-    // Function to load client notifications with pagination
-    async function loadClientNotifications(userId) {
-        const notificationsRef = collection(db, "notifications");
-        const notificationContainer = document.getElementById("notification-container");
-        const pageInfo = document.getElementById("pageInfo");
-
-        try {
-            // Calculate total pages
-            const totalNotifications = (await getDocs(query(notificationsRef, where("userId", "==", userId)))).size;
-            totalPages = Math.ceil(totalNotifications / notificationsPerPage);
-
-            // Set up paginated query
-            let notificationsQuery = query(
-                notificationsRef,
-                where("userId", "==", userId),
-                orderBy("timestamp", "desc"),
-                limit(notificationsPerPage)
-            );
-
-            if (lastVisibleDoc && currentPage > 1) {
-                notificationsQuery = query(notificationsQuery, startAfter(lastVisibleDoc));
-            }
-
-            // Listen for snapshot updates
-            onSnapshot(notificationsQuery, (snapshot) => {
-                notificationContainer.innerHTML = '';
-                if (snapshot.empty) {
-                    notificationContainer.innerHTML = '<p>No notifications available.</p>';
-                    return;
-                }
-
-                snapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    const notification = document.createElement('div');
-                    notification.className = 'client-notification';
-                    notification.textContent = `${data.message} at ${new Date(data.timestamp.seconds * 1000).toLocaleString()}`;
-                    notificationContainer.appendChild(notification);
-                });
-
-                lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-                document.getElementById("prevPageBtn").disabled = currentPage === 1;
-                document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
-            });
-        } catch (error) {
-            console.error("Error loading notifications:", error);
-        }
-    }
-
-    // Authentication state handling
-    function handleAuthState() {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const userId = user.uid;
-
-                loadClientNotifications(userId);
-                setupPaginationListeners(userId);
-                setupProfileManagement(userId);
-                setupTwoFactorAuthentication(userId);
-            } else {
-                console.error("User is not signed in.");
-            }
-        });
-    }
-
-    // Setup Pagination Event Listeners
-    function setupPaginationListeners(userId) {
-        document.getElementById("prevPageBtn").addEventListener("click", () => {
-            if (currentPage > 1) {
-                currentPage--;
-                lastVisibleDoc = null;
-                loadClientNotifications(userId);
-            }
-        });
-
-        document.getElementById("nextPageBtn").addEventListener("click", () => {
-            if (currentPage < totalPages) {
-                currentPage++;
-                loadClientNotifications(userId);
-            }
-        });
-    }
 
     // Profile Management Functions
     function setupProfileManagement(userId) {
