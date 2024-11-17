@@ -1336,7 +1336,7 @@ document.getElementById('statusSelect').addEventListener('change', function () {
                         <script type="module">
                                import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getAuth, createUserWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, setDoc, deleteDoc, serverTimestamp, query, startAfter, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
       import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
       // Firebase configuration
       const firebaseConfig = {
@@ -1988,106 +1988,121 @@ checkIfAllFieldsFilled();
 
 
 
-    // Pagination Variables
-        let profilesPerPage = 50; // Profiles per page
-        let currentPage = 1; // Current page
-        let totalPages = 1; // Total pages
-        // Function to Load Building Permits and Display in the Table
-        async function loadProfiles() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "buildingPermits"));
-                const buildingPermitDiv = document.getElementById("buildingPermitDiv");
-                const prevPageBtn = document.getElementById("prevPageBtn");
-                const nextPageBtn = document.getElementById("nextPageBtn");
-                const pageInfo = document.getElementById("pageInfo");
+ 
+        let currentPage = 1;
+const profilesPerPage = 10; // Adjust this as needed
+let lastVisible = null;
+let totalPages = 0;
 
-                if (!buildingPermitDiv) {
-                    console.error("buildingPermitDiv not found in the DOM.");
-                    return;
-                }
+async function loadProfiles() {
+    const loadingScreen = document.getElementById("loading-screen"); // Reference to the loading screen element
 
-                const tableBody = buildingPermitDiv.querySelector("tbody");
-                if (!tableBody) {
-                    console.error("Table body not found in buildingPermitDiv.");
-                    return;
-                }
+    try {
+        // Show the loading screen
+        if (loadingScreen) loadingScreen.style.display = "flex";
 
-                tableBody.innerHTML = ""; // Clear existing rows
+        const buildingPermitDiv = document.getElementById("buildingPermitDiv");
+        const prevPageBtn = document.getElementById("prevPageBtn");
+        const nextPageBtn = document.getElementById("nextPageBtn");
+        const pageInfo = document.getElementById("pageInfo");
 
-                // Fetch and Process Permits Data
-                const permitsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                const uniquePermitsData = Array.from(new Set(permitsData.map(a => a.id)))
-                    .map(id => permitsData.find(a => a.id === id));
-
-                // Sort by createdAt (ascending)
-                uniquePermitsData.sort((a, b) => {
-                    const aTime = a.createdAt?.seconds || 0;
-                    const bTime = b.createdAt?.seconds || 0;
-                    return aTime - bTime;
-                });
-
-                // Calculate Total Pages
-                totalPages = Math.ceil(uniquePermitsData.length / profilesPerPage);
-
-                // Determine Profiles for Current Page
-                const start = (currentPage - 1) * profilesPerPage;
-                const end = start + profilesPerPage;
-                const currentProfiles = uniquePermitsData.slice(start, end);
-
-                // Loop Through Profiles and Populate Table
-                for (const data of currentProfiles) {
-                    const row = document.createElement("tr");
-
-                    // Fetch Representative User Data
-                    let representativeName = "";
-                    if (data.ownerUid) {
-                        try {
-                            const userRef = doc(db, "users", data.ownerUid);
-                            const userDoc = await getDoc(userRef);
-                            if (userDoc.exists()) {
-                                const userData = userDoc.data();
-                                representativeName = `${userData.firstName} ${userData.lastName}`;
-                            }
-                        } catch (error) {
-                            console.error("Error fetching user data:", error);
-                        }
-                    }
-
-                    const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
-
-                    row.innerHTML = `
-                        <td>${data.ownerName || "N/A"}</td>
-                        <td>${representativeName || "N/A"}</td>
-                        <td>${createdAt}</td>
-                        <td>${data.status || "N/A"}</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
-                        </td>
-                    `;
-
-                    tableBody.appendChild(row);
-
-                    // Add Event Listener for "View Details" Button
-                    const viewDetailsBtn = row.querySelector(".view-details-btn");
-                    if (viewDetailsBtn) {
-                        viewDetailsBtn.addEventListener("click", () => {
-                            openViewDetailsModal(data);
-                        });
-                    }
-                }
-
-                // Update Pagination Info
-                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-
-                // Enable/Disable Pagination Buttons
-                prevPageBtn.disabled = currentPage === 1;
-                nextPageBtn.disabled = currentPage === totalPages;
-
-            } catch (error) {
-                console.error("Error loading profiles:", error);
-                showNotification("Failed to load profiles.", "error");
-            }
+        if (!buildingPermitDiv) {
+            console.error("buildingPermitDiv not found in the DOM.");
+            return;
         }
+
+        const tableBody = buildingPermitDiv.querySelector("tbody");
+        if (!tableBody) {
+            console.error("Table body not found in buildingPermitDiv.");
+            return;
+        }
+
+        tableBody.innerHTML = ""; // Clear existing rows
+
+        // Firestore Query
+        let queryRef = collection(db, "buildingPermits");
+        queryRef = query(queryRef, orderBy("createdAt", "asc"), limit(profilesPerPage));
+
+        if (lastVisible && currentPage > 1) {
+            queryRef = query(queryRef, startAfter(lastVisible));
+        }
+
+        const querySnapshot = await getDocs(queryRef);
+        if (querySnapshot.docs.length > 0) {
+            lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1]; // Save last document for pagination
+        }
+
+        const permitsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Fetch Related User Data in Batch
+        const userUids = permitsData.map(data => data.ownerUid).filter(uid => uid);
+        const userDocsPromises = userUids.map(uid => getDoc(doc(db, "users", uid)));
+        const userDocs = await Promise.all(userDocsPromises);
+
+        const userDataMap = {};
+        userDocs.forEach(userDoc => {
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                userDataMap[userDoc.id] = `${data.firstName} ${data.lastName}`;
+            }
+        });
+
+        // Populate Table
+        const fragment = document.createDocumentFragment();
+        permitsData.forEach(data => {
+            const row = document.createElement("tr");
+
+            const representativeName = userDataMap[data.ownerUid] || "N/A";
+            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
+
+            row.innerHTML = `
+                <td>${data.ownerName || "N/A"}</td>
+                <td>${representativeName}</td>
+                <td>${createdAt}</td>
+                <td>${data.status || "N/A"}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
+                </td>
+            `;
+
+            const viewDetailsBtn = row.querySelector(".view-details-btn");
+            if (viewDetailsBtn) {
+                viewDetailsBtn.addEventListener("click", () => openViewDetailsModal(data));
+            }
+
+            fragment.appendChild(row);
+        });
+
+        tableBody.appendChild(fragment);
+
+        // Update Pagination Info
+        pageInfo.textContent = `Page ${currentPage}`;
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = querySnapshot.docs.length < profilesPerPage;
+
+        // Add Pagination Event Listeners
+        prevPageBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                loadProfiles();
+            }
+        };
+
+        nextPageBtn.onclick = () => {
+            if (querySnapshot.docs.length === profilesPerPage) {
+                currentPage++;
+                loadProfiles();
+            }
+        };
+
+    } catch (error) {
+        console.error("Error loading profiles:", error);
+        showNotification("Failed to load profiles.", "error");
+    } finally {
+        // Hide the loading screen
+        if (loadingScreen) loadingScreen.style.display = "none";
+    }
+}
 
     // Function to control progressive status selection and update the progress bar
 function updateStatusOptions(currentStatus) {
@@ -2281,7 +2296,7 @@ async function handleArchiveBuildingPermit(event) {
     // SweetAlert for confirmation
     Swal.fire({
         title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        text: "",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",

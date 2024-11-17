@@ -67,6 +67,12 @@
     </style>
 </head>
 <body>
+    
+    <div id="loading-screen" class="loading-screen" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center px-2 pt-3 pb-4">
@@ -256,154 +262,186 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
-        authDomain: "chsd-mis.firebaseapp.com",
-        projectId: "chsd-mis",
-        storageBucket: "chsd-mis.appspot.com",
-        messagingSenderId: "694967679357",
-        appId: "1:694967679357:web:65cffd50f13739f934f414",
-        measurementId: "G-XBQTQFRLJ5"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Retrieve function for each collection
-    async function retrieveBuildingPermits() {
-        const querySnapshot = await getDocs(collection(db, "buildingPermits"));
-        return querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-    }
-
-    async function retrieveOccupancyPermits() {
-        const querySnapshot = await getDocs(collection(db, "OccupancyPermits"));
-        return querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-    }
-
-    async function retrieveElectricalCerts() {
-        const querySnapshot = await getDocs(collection(db, "ElectricalCert"));
-        return querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-    }
-
-    // Function to convert Firestore Timestamp to readable date
-function formatTimestamp(timestamp) {
-    const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1e6);
-    return date.toLocaleString(); // You can customize the format as needed
-}
-
-
-    // Display function for archived documents with SweetAlert2 confirmation prompt
-    async function displayArchivedDocuments(collectionName, tableBodyId) {
-        const querySnapshot = await getDocs(collection(db, collectionName));
-        const tableBody = document.getElementById(tableBodyId);
-        tableBody.innerHTML = ""; // Clear existing content
-
-        querySnapshot.docs.forEach((doc) => {
-            const data = doc.data();
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${doc.id}</td>
-                <td>${data.ownerName || "N/A"}</td>
-                <td>${data.createdAt ? formatTimestamp(data.createdAt) : "N/A"}</td>
-
-                <td><button type="button" class="btn btn-success retrieve-btn">Retrieve</button></td>
-            `;
-            tableBody.appendChild(row);
-
-            // Add event listener to retrieve button with SweetAlert2 confirmation
-            row.querySelector(".retrieve-btn").addEventListener("click", async () => {
-                const result = await Swal.fire({
-                    title: 'Are you sure?',
-                    text: `Retrieve ${data.ownerName}'s document?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, retrieve it!',
-                    cancelButtonText: 'Cancel'
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
+            authDomain: "chsd-mis.firebaseapp.com",
+            projectId: "chsd-mis",
+            storageBucket: "chsd-mis.appspot.com",
+            messagingSenderId: "694967679357",
+            appId: "1:694967679357:web:65cffd50f13739f934f414",
+            measurementId: "G-XBQTQFRLJ5"
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    
+        // Show and hide loading screen
+        function showLoadingScreen() {
+            document.getElementById("loading-screen").style.display = "flex";
+        }
+    
+        function hideLoadingScreen() {
+            document.getElementById("loading-screen").style.display = "none";
+        }
+    
+        // Retrieve and display documents
+        async function displayArchivedDocuments(collectionName, tableBodyId) {
+            showLoadingScreen();
+            const querySnapshot = await getDocs(collection(db, collectionName));
+            const tableBody = document.getElementById(tableBodyId);
+            tableBody.innerHTML = ""; // Clear existing content
+    
+            querySnapshot.docs.forEach((docSnapshot) => {
+                const data = docSnapshot.data();
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${docSnapshot.id}</td>
+                    <td>${data.ownerName || "N/A"}</td>
+                    <td>${data.createdAt ? formatTimestamp(data.createdAt) : "N/A"}</td>
+                    <td><button type="button" class="btn btn-success retrieve-btn">Retrieve</button></td>
+                `;
+                tableBody.appendChild(row);
+    
+                // Add event listener to retrieve button
+                row.querySelector(".retrieve-btn").addEventListener("click", async () => {
+                    const result = await Swal.fire({
+                        title: 'Are you sure?',
+                        text: `Retrieve ${data.ownerName}'s document?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, retrieve it!',
+                        cancelButtonText: 'Cancel'
+                    });
+                    if (result.isConfirmed) {
+                        showLoadingScreen();
+                        try {
+                            const docRef = doc(db, "buildingPermits", docSnapshot.id);
+                            await setDoc(docRef, data); // Move to main collection
+                            const archivedDocRef = doc(db, collectionName, docSnapshot.id);
+                            await deleteDoc(archivedDocRef); // Remove from archive
+                            Swal.fire('Retrieved!', `${data.ownerName}'s document retrieved successfully!`, 'success');
+                            displayArchivedDocuments(collectionName, tableBodyId); // Reload updated data
+                        } catch (error) {
+                            Swal.fire('Error', 'Failed to retrieve the document.', 'error');
+                        } finally {
+                            hideLoadingScreen();
+                        }
+                    }
                 });
-                if (result.isConfirmed) {
-                    await setDoc(doc(db, "buildingPermits", doc.id), data);
-                    Swal.fire('Retrieved!', `Document ${doc.id} retrieved successfully!`, 'success');
-                }
             });
-        });
-    }
-
-    // Display function for unarchived documents
-    async function displayDocuments(retrieveFunction, tableBodyId) {
-        const permits = await retrieveFunction();
-        const tableBody = document.getElementById(tableBodyId);
-        tableBody.innerHTML = ""; // Clear existing content
-
-        permits.forEach((data) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${data.id}</td>
-                <td>${data.ownerName || "N/A"}</td>
-                <td>${data.createdAt ? formatTimestamp(data.createdAt) : "N/A"}</td>
-
-                <td><button type="button" class="btn btn-success retrieve-btn">Retrieve</button></td>
-            `;
-            tableBody.appendChild(row);
-
-            // Add event listener to retrieve button with SweetAlert2 confirmation
-            row.querySelector(".retrieve-btn").addEventListener("click", async () => {
-                const result = await Swal.fire({
-                    title: 'Are you sure?',
-                    text: `Retrieve ${data.ownerName}'s document?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, retrieve it!',
-                    cancelButtonText: 'Cancel'
+            hideLoadingScreen();
+        }
+    
+        async function displayDocuments(retrieveFunction, tableBodyId) {
+            showLoadingScreen();
+            const permits = await retrieveFunction();
+            const tableBody = document.getElementById(tableBodyId);
+            tableBody.innerHTML = ""; // Clear existing content
+    
+            permits.forEach((data) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.ownerName || "N/A"}</td>
+                    <td>${data.createdAt ? formatTimestamp(data.createdAt) : "N/A"}</td>
+                    <td><button type="button" class="btn btn-danger archive-btn">Archive</button></td>
+                `;
+                tableBody.appendChild(row);
+    
+                // Add event listener for archiving
+                row.querySelector(".archive-btn").addEventListener("click", async () => {
+                    const result = await Swal.fire({
+                        title: 'Are you sure?',
+                        text: `Archive ${data.ownerName}'s document?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, archive it!',
+                        cancelButtonText: 'Cancel'
+                    });
+                    if (result.isConfirmed) {
+                        showLoadingScreen();
+                        try {
+                            const archivedDocRef = doc(db, "archivedBuildingPermits", data.id);
+                            await setDoc(archivedDocRef, data); // Move to archive
+                            const docRef = doc(db, "buildingPermits", data.id);
+                            await deleteDoc(docRef); // Remove from main collection
+                            Swal.fire('Archived!', `${data.ownerName}'s document archived successfully!`, 'success');
+                            displayDocuments(retrieveFunction, tableBodyId); // Reload updated data
+                        } catch (error) {
+                            Swal.fire('Error', 'Failed to archive the document.', 'error');
+                        } finally {
+                            hideLoadingScreen();
+                        }
+                    }
                 });
-                if (result.isConfirmed) {
-                    await setDoc(doc(db, "buildingPermits", data.id), data);
-                    Swal.fire('Retrieved!', `Document ${data.id} retrieved successfully!`, 'success');
-                }
             });
+            hideLoadingScreen();
+        }
+    
+        // Format Firestore timestamp
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1e6);
+            return date.toLocaleString();
+        }
+    
+        // Retrieve functions
+        async function retrieveBuildingPermits() {
+            const querySnapshot = await getDocs(collection(db, "buildingPermits"));
+            return querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        }
+    
+        async function retrieveOccupancyPermits() {
+            const querySnapshot = await getDocs(collection(db, "OccupancyPermits"));
+            return querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        }
+    
+        async function retrieveElectricalCerts() {
+            const querySnapshot = await getDocs(collection(db, "ElectricalCert"));
+            return querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        }
+    
+        // Event listeners
+        document.getElementById("buildingPermitArchiveModal").addEventListener("show.bs.modal", () => {
+            displayArchivedDocuments("archivedBuildingPermits", "buildingPermitArchives");
         });
-    }
-
-    // Event listeners to show archived documents in their respective modals
-    document.getElementById("buildingPermitArchiveModal").addEventListener("show.bs.modal", () => {
-        displayArchivedDocuments("archivedBuildingPermits", "buildingPermitArchives");
-    });
-
-    document.getElementById("occupancyArchiveModal").addEventListener("show.bs.modal", () => {
-        displayArchivedDocuments("archivedOccupancyPermits", "occupancyModalBody");
-    });
-
-    document.getElementById("electricalCertArchiveModal").addEventListener("show.bs.modal", () => {
-        displayArchivedDocuments("archivedElectricalCerts", "electricalCertModalBody");
-    });
-
-    // Event listeners for retrieving unarchived documents
-    document.getElementById("retrieveBuildingPermitsBtn").addEventListener("click", () => {
-        displayDocuments(retrieveBuildingPermits, "buildingPermitArchives");
-    });
-
-    document.getElementById("retrieveOccupancyPermitsBtn").addEventListener("click", () => {
-        displayDocuments(retrieveOccupancyPermits, "occupancyModalBody");
-    });
-
-    document.getElementById("retrieveElectricalCertsBtn").addEventListener("click", () => {
-        displayDocuments(retrieveElectricalCerts, "electricalCertModalBody");
-    });
-</script>
+    
+        document.getElementById("occupancyArchiveModal").addEventListener("show.bs.modal", () => {
+            displayArchivedDocuments("archivedOccupancyPermits", "occupancyModalBody");
+        });
+    
+        document.getElementById("electricalCertArchiveModal").addEventListener("show.bs.modal", () => {
+            displayArchivedDocuments("archivedElectricalCerts", "electricalCertModalBody");
+        });
+    
+        document.getElementById("retrieveBuildingPermitsBtn").addEventListener("click", () => {
+            displayDocuments(retrieveBuildingPermits, "buildingPermitTableBody");
+        });
+    
+        document.getElementById("retrieveOccupancyPermitsBtn").addEventListener("click", () => {
+            displayDocuments(retrieveOccupancyPermits, "occupancyTableBody");
+        });
+    
+        document.getElementById("retrieveElectricalCertsBtn").addEventListener("click", () => {
+            displayDocuments(retrieveElectricalCerts, "electricalCertTableBody");
+        });
+    </script>
+    
+    
 
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
