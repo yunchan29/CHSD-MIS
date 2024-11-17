@@ -235,6 +235,7 @@ async function handleSignUp(event) {
 
                 // Redirect to login page
                 window.location.replace("/ClientPages/clientLogin.html");
+                logFirestoreChanges("yourCollectionName", "yourDocumentId");
             }
         }, 3000); // Check every 3 seconds
 
@@ -1171,3 +1172,39 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
         });
     }
 });
+
+
+//logs
+
+async function logFirestoreChanges(collectionName, documentId) {
+    // Reference to the specific document in the collection
+    const docRef = doc(db, collectionName, documentId);
+  
+    // Listen for real-time updates on the document
+    onSnapshot(docRef, async (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data();
+        
+        // Create a log entry with document data, collection name, timestamp, and type of operation
+        const logEntry = {
+          documentId: docSnapshot.id,
+          collection: collectionName,
+          data,
+          timestamp: new Date().toISOString(),
+          operation: "update" // Update this to reflect your operation type if needed
+        };
+        
+        // Write the log entry to the 'logs' collection
+        try {
+          await addDoc(collection(db, "logs"), logEntry);
+          console.log(`Logged change for document ${documentId} in collection ${collectionName}`);
+        } catch (error) {
+          console.error("Error writing log entry:", error);
+        }
+      } else {
+        console.log(`Document ${collectionName}/${documentId} does not exist.`);
+      }
+    });
+  }
+
+ 

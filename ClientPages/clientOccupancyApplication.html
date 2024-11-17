@@ -781,6 +781,8 @@ document.addEventListener('DOMContentLoaded', () => {
   text: "Application Submitted",
   icon: "success"
 });
+logFirestoreChanges("OccupancyPermits", permitId);
+
        
 
         } catch (error) {
@@ -1069,6 +1071,38 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('DOMContentLoaded', () => {
         handleAuthState();
     });
+
+
+    async function logFirestoreChanges(OccupancyPermits, permitId) {
+  // Reference to the specific document in the collection
+  const docRef = doc(db, OccupancyPermits, permitId);
+
+  // Listen for real-time updates on the document
+  onSnapshot(docRef, async (docSnapshot) => {
+    if (docSnapshot.exists()) {
+    
+      
+      // Create a log entry with document data, collection name, timestamp, and type of operation
+      const logEntry = {
+        documentId: docSnapshot.id,
+        collection: OccupancyPermits,
+        timestamp: new Date().toISOString(),
+        operation: "New Application" // Update this to reflect your operation type if needed
+      };
+      
+      // Write the log entry to the 'logs' collection
+      try {
+        await addDoc(collection(db, "logs"), logEntry);
+        console.log(`Logged change for document ${permitId} in collection ${OccupancyPermits}`);
+      } catch (error) {
+        console.error("Error writing log entry:", error);
+      }
+    } else {
+      console.log(`Document ${OccupancyPermits}/${permitId} does not exist.`);
+    }
+  });
+}
+
     
 </script>
     

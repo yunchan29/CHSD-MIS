@@ -137,21 +137,27 @@
                 </button>
             
                 <div class="input-group" style="width: auto;">
-                    <input type="text" class="form-control" id="searchBar" placeholder="Search..." oninput="filterProfiles()">
-                    
+                    <!-- Search Bar -->
+                    <input type="text" class="form-control" id="searchBar" placeholder="Search...">
+                
+                    <!-- Sort/Filter Dropdown -->
                     <div class="input-group-append">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="sortFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             Sort/Filter
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortFilterDropdown">
-                            <li><a class="dropdown-item" href="#" onclick="sortProfilesByName(); return false;">Sort by Name</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="sortProfilesByDate(); return false;">Sort by Date Profiled</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('Pending'); return false;">Filter by Pending</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('Approved'); return false;">Filter by Approved</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('Archived'); return false;">Filter by Archived</a></li>
+                            <!-- Sorting Options -->
+                            <li><a class="dropdown-item sort-by-name" href="#">Sort by Name</a></li>
+                            <li><a class="dropdown-item sort-by-date" href="#">Sort by Date Profiled</a></li>
+                            <!-- Filtering Options -->
+                            <li><a class="dropdown-item filter-pending" href="#">Filter by Pending</a></li>
+                            <li><a class="dropdown-item filter-approved" href="#">Filter by Approved</a></li>
+                            <li><a class="dropdown-item filter-archived" href="#">Filter by Archived</a></li>
                         </ul>
                     </div>
                 </div>
+                
+                
                 
                 
             </div>
@@ -1340,130 +1346,204 @@ function appendButtons(data) {
 }
 
 
+    // Loading Screen Controls
+function showLoading() {
+    const loadingScreen = document.getElementById("loading-screen");
+    if (loadingScreen) {
+        loadingScreen.style.display = "flex"; // Show the loading screen
+    }
+}
 
-        // Notification Function
-        function showNotification(message, type) {
-            const notificationContainer = document.getElementById('notification-container');
-            if (notificationContainer) {
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.textContent = message;
-                notificationContainer.appendChild(notification);
-    
-                // Automatically remove notification after 5 seconds
-                setTimeout(() => {
-                    notification.remove();
-                }, 5000);
-            } else {
-                console.error('Notification container not found.');
-            }
-        }
-// Define global variables for sorting and filtering
-let profilesPerPage = 10;
-let currentPage = 1;
-let totalPages = 1;
-let currentSortOption = null; 
-let currentFilterStatus = null;
-let searchTerm = '';
+function hideLoading() {
+    const loadingScreen = document.getElementById("loading-screen");
+    if (loadingScreen) {
+        loadingScreen.style.display = "none"; // Hide the loading screen
+    }
+}
 
-// Function to Load and Display Housing Profiles
+// Global Variables
+let paginationStack = []; // Tracks pagination state
+let searchTerm = ""; // Search input
+let currentFilterStatus = null; // Filter by status
+let currentSortOption = null; // Sorting option
+let profilesPerPage = 10; // Number of profiles per page
+let currentPage = 1; // Current page
+
+// Load Profiles from Firestore
 async function loadProfiles() {
     try {
+        showLoading();
+
+        // Base Firestore collection
+        let profilesQuery = collection(db, "Housing");
+
+        // Apply server-side filters
+        if (searchTerm) {
+            const lowerCaseSearchTerm = searchTerm.toLowerCase();
+            profilesQuery = query(
+                profilesQuery,
+                where("householdHeadName_lowercase", ">=", lowerCaseSearchTerm),
+                where("householdHeadName_lowercase", "<=", lowerCaseSearchTerm + "\uf8ff")
+            );
+        }
+        if (currentFilterStatus) {
+            profilesQuery = query(profilesQuery, where("status", "==", currentFilterStatus));
+        }
+
+        // Apply sorting
+        if (currentSortOption) {
+            profilesQuery = query(profilesQuery, orderBy(currentSortOption.field, currentSortOption.direction));
+        }
+
+        // Apply pagination
+        if (paginationStack.length && currentPage > paginationStack.length) {
+            profilesQuery = query(profilesQuery, startAfter(paginationStack[paginationStack.length - 1]), limit(profilesPerPage));
+        } else if (currentPage > 1 && paginationStack[currentPage - 2]) {
+            profilesQuery = query(profilesQuery, startAfter(paginationStack[currentPage - 2]), limit(profilesPerPage));
+        } else {
+            profilesQuery = query(profilesQuery, limit(profilesPerPage));
+        }
+
         // Fetch data from Firestore
-        const querySnapshot = await getDocs(collection(db, "Housing"));
-        let housingData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
-        // Apply filters and sorting
-        housingData = applyFilters(housingData);
-        housingData = applySorting(housingData);
+        const querySnapshot = await getDocs(profilesQuery);
+        const housingData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Paginate Data
-        totalPages = Math.ceil(housingData.length / profilesPerPage);
-        const start = (currentPage - 1) * profilesPerPage;
-        const currentProfiles = housingData.slice(start, start + profilesPerPage);
-        
-        // Populate Table
-        const housingDiv = document.querySelector("tbody");
-        housingDiv.innerHTML = ''; // Clear previous entries
+        // Update pagination stack
+        if (housingData.length > 0) {
+            paginationStack[currentPage - 1] = querySnapshot.docs[querySnapshot.docs.length - 1];
+        }
 
-        currentProfiles.forEach(data => {
-            const row = document.createElement("tr");
-            const representativeName = data.householdHeadName || "N/A";
-            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
-            
-            row.innerHTML = `
-                <td>${representativeName}</td>
-                <td>${createdAt}</td>
-                <td>${data.status || "N/A"}</td>
-                <td>
-                    <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
-                </td>
-            `;
-            housingDiv.appendChild(row);
+        // Render profiles in the DOM
+        renderProfiles(housingData);
 
-            // Add event listener to each View Details button
-            row.querySelector(".view-details-btn").addEventListener("click", () => {
-                openViewDetailsModal(data);
-            });
-        });
+        // Update pagination controls
+        const isLastPage = querySnapshot.size < profilesPerPage;
+        document.getElementById("pageInfo").textContent = `Page ${currentPage}`;
+        document.getElementById("nextPageBtn").disabled = isLastPage;
 
-        // Update pagination info and button states
-        document.getElementById("pageInfo").textContent = `Page ${currentPage} of ${totalPages}`;
-        document.getElementById("prevPageBtn").disabled = currentPage === 1;
-        document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
+        hideLoading();
     } catch (error) {
         console.error("Error loading profiles:", error);
         showNotification("Failed to load profiles.", "error");
+        hideLoading();
     }
 }
 
-// Functions for filtering and sorting
-function applyFilters(data) {
-    if (searchTerm) {
-        data = data.filter(item =>
-            (item.householdHeadName || '').toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }
-    if (currentFilterStatus) {
-        data = data.filter(item => item.status === currentFilterStatus);
-    }
-    return data;
+// Render Profiles in the DOM
+function renderProfiles(profiles) {
+    const profilesTableBody = document.querySelector("tbody");
+    profilesTableBody.innerHTML = ''; // Clear previous entries
+
+    profiles.forEach(data => {
+        const row = document.createElement("tr");
+        const representativeName = data.householdHeadName || "N/A";
+        const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
+
+        row.innerHTML = `
+            <td>${representativeName}</td>
+            <td>${createdAt}</td>
+            <td>${data.status || "N/A"}</td>
+            <td>
+                <button class="btn btn-primary btn-sm view-details-btn" data-id="${data.id}">View Details</button>
+            </td>
+        `;
+        profilesTableBody.appendChild(row);
+
+        // Add event listener for "View Details" button
+        row.querySelector(".view-details-btn").addEventListener("click", () => {
+            openViewDetailsModal(data);
+        });
+    });
 }
 
-function applySorting(data) {
-    if (currentSortOption === 'name') {
-        data.sort((a, b) => (a.householdHeadName || '').localeCompare(b.householdHeadName || ''));
-    } else if (currentSortOption === 'date') {
-        data.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
-    }
-    return data;
-}
+// Pagination Controls
+const prevPageBtn = document.getElementById("prevPageBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
 
-// Filter and Sort Actions
-function filterProfiles() {
-    searchTerm = document.getElementById("searchBar").value;
-    currentPage = 1;
+prevPageBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+        currentPage--;
+        loadProfiles();
+    }
+});
+
+nextPageBtn.addEventListener("click", () => {
+    currentPage++;
     loadProfiles();
+});
+
+// Search Input Handler
+const searchBar = document.getElementById("searchBar");
+searchBar.addEventListener("input", () => {
+    searchTerm = searchBar.value.trim(); // Get the input value
+    resetPaginationAndLoad();
+});
+
+// Sort Profiles by Name
+document.querySelector(".sort-by-name").addEventListener("click", (e) => {
+    e.preventDefault();
+    setSortOption("householdHeadName", "asc");
+});
+
+// Sort Profiles by Date
+document.querySelector(".sort-by-date").addEventListener("click", (e) => {
+    e.preventDefault();
+    setSortOption("createdAt", "desc");
+});
+
+// Filter Profiles by Status
+document.querySelectorAll(".filter-status").forEach(filterButton => {
+    filterButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        const status = filterButton.dataset.status; // Get status from data attribute
+        filterByStatus(status);
+    });
+});
+
+// Utility Function: Reset Pagination and Reload Profiles
+function resetPaginationAndLoad() {
+    currentPage = 1; // Reset to the first page
+    loadProfiles(); // Reload profiles with updated settings
 }
 
-function sortProfilesByName() {
-    currentSortOption = 'name';
-    currentPage = 1;
-    loadProfiles();
+// Utility Function: Set Sort Option
+function setSortOption(field, direction) {
+    currentSortOption = { field, direction }; // Dynamically set sort option
+    resetPaginationAndLoad();
 }
 
-function sortProfilesByDate() {
-    currentSortOption = 'date';
-    currentPage = 1;
-    loadProfiles();
-}
-
+// Utility Function: Filter Profiles
 function filterByStatus(status) {
-    currentFilterStatus = status;
-    currentPage = 1;
-    loadProfiles();
+    currentFilterStatus = status; // Set the filter status
+    resetPaginationAndLoad();
 }
 
+async function updateDocumentsToLowerCase() {
+    const querySnapshot = await getDocs(collection(db, "Housing"));
+    const updates = querySnapshot.docs.map(async (docSnapshot) => {
+        const data = docSnapshot.data();
+        const lowerCaseName = (data.householdHeadName || "").toLowerCase();
+
+        await updateDoc(doc(db, "Housing", docSnapshot.id), {
+            householdHeadName_lowercase: lowerCaseName
+        });
+    });
+
+    await Promise.all(updates);
+    console.log("All documents updated with lowercase names.");
+}
+
+updateDocumentsToLowerCase();
+
+// Notification Display
+function showNotification(message, type) {
+    const notificationDiv = document.createElement("div");
+    notificationDiv.className = `notification ${type}`;
+    notificationDiv.textContent = message;
+    document.body.appendChild(notificationDiv);
+
+    setTimeout(() => notificationDiv.remove(), 3000); // Auto-remove after 3 seconds
+}
         function openViewHousingApplicationModal(data) {
     // Get the modal elements
     const modalTitle = document.getElementById('housingApplicationModalTitle');

@@ -6,9 +6,18 @@
     <title>CHSD MIS</title>
     <link rel="stylesheet" href="/Stylesheets/style.css">
     <link rel="icon" href="/resources/pictures/chsd.png" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+
     <style>
+        .modal-backdrop {
+    z-index: 1040;
+}
+.modal {
+    z-index: 1050;
+}
+
         /* CSS for the content container */
         .content {
             flex: 1; /* Take remaining space */
@@ -24,6 +33,32 @@
         #resultCount {
     display: none;
 }
+/* Styles specific to the custom-range-fields class */
+.custom-range-fields .row.align-items-center {
+    display: flex;
+    align-items: center; /* Vertically aligns inputs and labels */
+}
+
+.custom-range-fields label.form-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.custom-range-fields .to-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #495057;
+    margin-top: 1.5rem;
+}
+
+.custom-range-fields .text-center label {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 1.5rem;
+    display: block;
+}
+
 
     </style>
 </head>
@@ -107,217 +142,234 @@
 
   <button type="button" class="btn btn-secondary"><i class="fa-solid fa-file-export"></i> Export</button> 
   
-  <!-- Advance SearchModal -->
-  <div class="modal fade" id="advanceSearchModal" tabindex="-1" aria-labelledby="advanceSearchModalLabel" aria-hidden="true">
+  <!-- Advance Search Modal -->
+<div class="modal fade" id="advanceSearchModal" tabindex="-1" aria-labelledby="advanceSearchModalLabel" aria-hidden="true">
     <div class="wide-modal modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="advanceSearchModalLabel">Advance Search</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="advanceSearchModalLabel">
+                    <i class="fa-solid fa-magnifying-glass"></i> Advanced Search
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <!-- Date and Age Range -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <strong><i class="fa-solid fa-calendar-alt me-2"></i> Filter by Date and Age Range</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="dateFrom" class="form-label me-2">From:</label>
+                                        <input type="date" class="form-control" id="dateFrom" placeholder="Start date">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="dateTo" class="form-label me-2">To:</label>
+                                        <input type="date" class="form-control" id="dateTo" placeholder="End date">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="ageFrom" class="form-label me-2">From Age:</label>
+                                        <input type="number" class="form-control" id="ageFrom" placeholder="Min age">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <label for="ageTo" class="form-label me-2">To Age:</label>
+                                        <input type="number" class="form-control" id="ageTo" placeholder="Max age">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Classification and Location -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <strong><i class="fa-solid fa-map-marker-alt me-2"></i> Location and Classification</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="householdHeadName" class="form-label">Name</label>
+                                    <input class="form-control" type="text" id="householdHeadName" placeholder="Enter name">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="classificationArea" class="form-label">Classification</label>
+                                    <select class="form-control" id="classificationArea">
+                                        <option value="">Select Classification</option>
+                                        <option>Danger Zone</option>
+                                        <option>Not Danger Zone</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="barangay" class="form-label">Barangay</label>
+                                    <select class="form-control" id="barangay">
+                                        <option value="">Select Barangay</option>
+                                        <option>Barangay Uno</option>
+                                        <option>Barangay Dos</option>
+                                        <option>Barangay Tres</option>
+                                        <option>Barangay Kwatro</option>
+                                        <option>Barangay Singko</option>
+                                        <option>Barangay Sais</option>
+                                        <option>Barangay Syete</option>
+                                        <option>Bagong Kalsada</option>
+                                        <option>Banadero</option>
+                                        <option>Banlic</option>
+                                        <option>Barandal</option>
+                                        <option>Batino</option>
+                                        <option>Bubuyan</option>
+                                        <option>Bucal</option>
+                                        <option>Bunggo</option>
+                                        <option>Burol</option>
+                                        <option>Camaligan</option>
+                                        <option>Canlubang</option>
+                                        <option>Halang</option>
+                                        <option>Hornalan</option>
+                                        <option>Kay-Anlog</option>
+                                        <option>Laguerta</option>
+                                        <option>Lamesa</option>
+                                        <option>Lawa</option>
+                                        <option>Lecheria</option>
+                                        <option>Lingga</option>
+                                        <option>Looc</option>
+                                        <option>Mabato</option>
+                                        <option>Makiling</option>
+                                        <option>Majada Out</option>
+                                        <option>Mapagong</option>
+                                        <option>Masili</option>
+                                        <option>Maunong</option>
+                                        <option>Mayapa</option>
+                                        <option>Milagrosa</option>
+                                        <option>Palingon</option>
+                                        <option>Paciano Rizal</option>
+                                        <option>Palo Alto</option>
+                                        <option>Pansol</option>
+                                        <option>Parian</option>
+                                        <option>Prinza</option>
+                                        <option>Punta</option>
+                                        <option>Puting Lupa</option>
+                                        <option>Real</option>
+                                        <option>Saimsim</option>
+                                        <option>Sampiruhan</option>
+                                        <option>San Cristobal</option>
+                                        <option>San Jose</option>
+                                        <option>San Juan</option>
+                                        <option>Sirang Lupa</option>
+                                        <option>Sucol</option>
+                                        <option>Turbina</option>
+                                        <option>Ulango</option>
+                                        <option>Uwisan</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="sitioPurok" class="form-label">Sitio/Purok</label>
+                                    <select class="form-control" id="sitioPurok">
+                                        <option value="">Select Sitio/Purok</option>
+                                        <option>Purok 1</option>
+                                        <option>Purok 2</option>
+                                        <option>Purok 3</option>
+                                        <option>Purok 4</option>
+                                        <option>Purok 5</option>
+                                        <option>Purok 6</option>
+                                        <option>Purok 7</option>
+                                        <option>Purok 8</option>
+                                        <option>Purok 9</option>
+                                        <option>Purok 10</option>
+                                        <option>Sitio Kapayapaan</option>
+                                        <option>Sitio Lumot</option>
+                                        <option>Sitio Putol</option>
+                                        <option>Sitio Hulo</option>
+                                        <option>Sitio Masaya</option>
+                                        <option>Sitio Sungi</option>
+                                        <option>Sitio Banlic</option>
+                                        <option>Sitio Ilaya</option>
+                                        <option>Sitio Calero</option>
+                                        <option>Sitio Masiit</option>
+                                        <option>Sitio Tubigan</option>
+                                        <option>Sitio Sibulo</option>
+                                        <option>Sitio Sto. Tomas</option>
+                                        <option>Sitio Ronggot</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Filters -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <strong><i class="fa-solid fa-info-circle me-2"></i> Additional Filters</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="gender" class="form-label">Gender</label>
+                                    <select class="form-control" id="gender">
+                                        <option value="any">Any</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="prefer-not">Prefer not to say</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="civilStatus" class="form-label">Civil Status</label>
+                                    <select class="form-control" id="civilStatus">
+                                        <option>Single</option>
+                                        <option>Married</option>
+                                        <option>Widowed</option>
+                                        <option>Live-in</option>
+                                        <option>Single Parent</option>
+                                        <option>Separated</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="utilities" class="form-label">Utilities</label>
+                                    <select class="form-control" id="utilities">
+                                        <option>Meralco</option>
+                                        <option>Connected To Other Subscriber</option>
+                                        <option>None</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="sourceOfWater" class="form-label">Source of Water</label>
+                                    <select class="form-control" id="sourceOfWater">
+                                        <option>None</option>
+                                        <option>Deepwell</option>
+                                        <option>MWSS</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="remarks" class="form-label">Remarks</label>
+                                    <input type="text" class="form-control" id="remarks" placeholder="Enter remarks">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="income" class="form-label">Monthly Income</label>
+                                    <input type="number" class="form-control" id="income" placeholder="Enter income">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="searchButton"><i class="fa-solid fa-search me-2"></i> Search</button>
+            </div>
         </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col-md-4">
-                    <label for="dateFrom">Date</label>
-                    <input class="form-control" type="date" id="dateFrom" placeholder="">
-                </div>
-                <div class="col-md-1 d-flex align-items-center justify-content-center">
-                    <span class="to-label">to</span>
-                </div>
-                <div class="col-md-4">
-                    <label for="dateTo"></label>
-                    <input class="form-control" type="date" id="dateTo" placeholder="">
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-md-4">
-                    <label for="ageFrom">Age</label>
-                    <input type="number" class="form-control" id="ageFrom" placeholder="">
-                </div>
-                <div class="col-md-1 d-flex align-items-center justify-content-center">
-                    <span class="to-label">to</span>
-                </div>
-                <div class="col-md-4">
-                    <label for="ageTo"></label>
-                    <input type="number" class="form-control" id="ageTo" placeholder="">
-                </div>
-            </div>
+    </div>
+</div>
+
         
-
-   <div class="row">
-      <div class="col">
-        <label for="householdHeadName>Name</label>
-        <input class="form-control" type="text" title="name" id="householdHeadName" placeholder="">
-      </div>
-      <div class="col">
-        <label for="classificationArea">Classification</label>
-        <select class="form-control" type="text" title="classification" id="classificationArea" placeholder="">
-            <option>Danger Zone</option>
-                <option>Not Danger Zone</option>
-                </select>
-        </div>
-   </div>
-
-   <div class="row">
-    <div class="col">
-      <label for="barangay">Barangay</label>
-      <select class="form-control" id="barangay">
-        <option value="">Select Barangay</option>
-        <option>Barangay Uno</option>
-        <option>Barangay Dos</option>
-        <option>Barangay Tres</option>
-        <option>Barangay Kwatro</option>
-        <option>Barangay Singko</option>
-        <option>Barangay Sais</option>
-        <option>Barangay Syete</option>
-        <option>Bagong Kalsada</option>
-        <option>Banadero</option>
-        <option>Banlic</option>
-        <option>Barandal</option>
-        <option>Batino</option>
-        <option>Bubuyan</option>
-        <option>Bucal</option>
-        <option>Bunggo</option>
-        <option>Burol</option>
-        <option>Camaligan</option>
-        <option>Canlubang</option>
-        <option>Halang</option>
-        <option>Hornalan</option>
-        <option>Kay-Anlog</option>
-        <option>Laguerta</option>
-        <option>Lamesa</option>
-        <option>Lawa</option>
-        <option>Lecheria</option>
-        <option>Lingga</option>
-        <option>Looc</option>
-        <option>Mabato</option>
-        <option>Makiling</option>
-        <option>Majada Out</option>
-        <option>Mapagong</option>
-        <option>Masili</option>
-        <option>Maunong</option>
-        <option>Mayapa</option>
-        <option>Milagrosa</option>
-        <option>Palingon</option>
-        <option>Paciano Rizal</option>
-        <option>Palo Alto</option>
-        <option>Pansol</option>
-        <option>Parian</option>
-        <option>Prinza</option>
-        <option>Punta</option>
-        <option>Puting Lupa</option>
-        <option>Real</option>
-        <option>Saimsim</option>
-        <option>Sampiruhan</option>
-        <option>San Cristobal</option>
-        <option>San Jose</option>
-        <option>San Juan</option>
-        <option>Sirang Lupa</option>
-        <option>Sucol</option>
-        <option>Turbina</option>
-        <option>Ulango</option>
-        <option>Uwisan</option>
-        </select>
-    </div>
-    <div class="col">
-      <label for="sitioPurok">Sitio/Purok</label>
-      <select class="form-control" type="text" id="sitioPurok" placeholder="">
-        <option value="">Select Purok/Sitio</option>
-        <option>Purok 1</option>
-        <option>Purok 2</option>
-        <option>Purok 3</option>
-        <option>Purok 4</option>
-        <option>Purok 5</option>
-        <option>Purok 6</option>
-        <option>Purok 7</option>
-        <option>Purok 8</option>
-        <option>Purok 9</option>
-        <option>Purok 10</option>
-        <option>Sitio Kapayapaan</option>
-        <option>Sitio Lumot</option>
-        <option>Sitio Putol</option>
-        <option>Sitio Hulo</option>
-        <option>Sitio Masaya</option>
-        <option>Sitio Sungi</option>
-        <option>Sitio Banlic</option>
-        <option>Sitio Ilaya</option>
-        <option>Sitio Calero</option>
-        <option>Sitio Masiit</option>
-        <option>Sitio Tubigan</option>
-        <option>Sitio Sibulo</option>
-        <option>Sitio Sto. Tomas</option>
-        <option>Sitio Ronggot</option> 
-    </select>
-    </div>
- </div>
- <div class="row">
-    <div class="col-md-3">
-        <label for="gender">Gender</label>
-        <select class="form-control" id="gender" name="">
-          <option value="any">Any</option>
-          <option value="">Male</option>
-          <option value="">Female</option>
-          <option value="">Prefer not to say</option>
-          
-        </select>
-      </div>
-      <div class="col-md-3">
-        <label for="">Civil Status</label>
         
-        <select class="form-control" id="" name="">
-          <option value="">Single</option>
-          <option value="">Married</option>
-          <option value="">Widowed</option>
-          <option value="">Live in</option>
-          <option value="">Single Parent</option>
-          <option value="">Separated</option>
-        </select>
-      </div>
-
-
-    <div class="row">
-        <div class="col-md-6">
-          <label for="name">Address</label>
-          <input class="form-control" type="text" title="name" placeholder="">
-        </div>
-        <div class="col-md-3">
-          <label for="utilities">Utilities</label>
-          <select class="form-control" id="utilities" title="classification" placeholder="">
-            <option>Meralco</option>
-            <option>Connected To Other Subscriber</option>
-            <option>None</option>
-        </select>
-        </div>
-        <div class="col-md-3">
-            <label for="sourceOfWater">Source of Water</label>
-          <select class="form-control" id="sourceOfWater" title="classification" placeholder="">
-            <option value="">Select Source of Water</option>
-            <option value="local_water_district">Local Water District</option>
-            <option value="deep_well">Deep Well</option>
-            <option value="shallow_well">Shallow Well</option>
-            <option value="water_delivery">Water Delivery (Private Supplier)</option>
-            <option value="communal_faucet">Communal Faucet System (Barangay/Community)</option>
-            <option value="rainwater">Rainwater Collection</option>
-        </select>
-        </div>
- </div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <a class="btn btn-primary text-white"><i class="fa-solid fa-magnifying-glass"></i> Search</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-            
-            
-
-          
-            
-            </div>
-        </div>
+    
         <table class="table mt-3">
             <thead>
                 <tr>
@@ -345,7 +397,7 @@
             <span id="pageInfo"></span>
             <button id="nextPageBtn" class="btn btn-secondary" disabled>Next</button>
         </div>
-    </div>
+    
 
    
 
@@ -362,7 +414,25 @@
     });
   </script>
 
+<script>
+    document.addEventListener('show.bs.modal', (event) => {
+    // Close any open modals before showing a new one
+    const openModals = document.querySelectorAll('.modal.show');
+    openModals.forEach(modal => bootstrap.Modal.getInstance(modal).hide());
+});
 
+</script>
+
+
+<script>
+    const advanceSearchModal = document.getElementById('advanceSearchModal');
+advanceSearchModal.addEventListener('hidden.bs.modal', () => {
+    // Manually remove any leftover backdrops
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+    document.body.classList.remove('modal-open'); // Ensure body scroll is restored
+});
+
+</script>
 
 
 <script type="module">
@@ -389,7 +459,7 @@
     // Elements
     const loadingScreen = document.getElementById("loadingScreen");
     const modalElement = document.getElementById("advanceSearchModal");
-    const searchButton = document.querySelector(".btn-primary.text-white");
+    const searchButton = document.getElementById("searchButton");
     const exportButton = document.querySelector(".btn-secondary");
     const resultCount = document.getElementById("resultCount");
 
@@ -443,7 +513,9 @@
                     resultCount.textContent = `${results.length} result(s) found`;
                     resultCount.style.display = "block";
                 }
-                closeModal();
+                closeModal(); // Close the modal after search results are displayed
+
+                
             } catch (error) {
                 console.error("Error retrieving documents:", error);
             } finally {
@@ -535,27 +607,58 @@
     }
 
     function exportData() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
 
-    const tableBody = document.querySelector(".table tbody");
-    const rows = Array.from(tableBody.querySelectorAll("tr"));
+        const tableBody = document.querySelector(".table tbody");
+        const rows = Array.from(tableBody.querySelectorAll("tr"));
 
-    // Table headers
-    doc.text("Application Report", 10, 10);
-    doc.setFontSize(10);
-    const headers = ["Household Head Name", "Birthday", "Age", "Barangay", "Sitio/Purok", "Classification Area"];
-    doc.autoTable({
-        head: [headers],
-        body: rows.map(row => Array.from(row.querySelectorAll("td")).map(td => td.textContent)),
-        startY: 20, // Position below title
-        margin: { left: 10, right: 10 }
-    });
+        if (rows.length === 0) {
+            alert("No data available to export.");
+            return;
+        }
 
-    doc.save("Application_Report.pdf");
-}
+        let reportTitle = "Application Report";
 
+        const dateFrom = document.getElementById("dateFrom").value;
+        const dateTo = document.getElementById("dateTo").value;
+        const barangay = document.getElementById("barangay").value;
+        const ageFrom = document.getElementById("ageFrom").value;
+        const ageTo = document.getElementById("ageTo").value;
+
+        if (dateFrom && dateTo) {
+            reportTitle += ` From ${new Date(dateFrom).toLocaleDateString()} To ${new Date(dateTo).toLocaleDateString()}`;
+        }
+
+        if (barangay) {
+            reportTitle += ` For Barangay ${barangay}`;
+        }
+
+        if (ageFrom && ageTo) {
+            reportTitle += ` From Ages ${ageFrom} To ${ageTo}`;
+        }
+
+        if (!dateFrom && !dateTo && !barangay && !ageFrom && !ageTo) {
+            const currentDate = new Date();
+            reportTitle += ` For ${currentDate.toLocaleDateString()}`;
+        }
+
+        doc.text(reportTitle, 10, 10);
+        doc.setFontSize(10);
+
+        const headers = ["Household Head Name", "Birthday", "Age", "Barangay", "Sitio/Purok", "Classification Area"];
+        doc.autoTable({
+            head: [headers],
+            body: rows.map(row => Array.from(row.querySelectorAll("td")).map(td => td.textContent)),
+            startY: 20,
+            margin: { left: 10, right: 10 }
+        });
+
+        const safeTitle = reportTitle.replace(/[^a-zA-Z0-9]/g, "_");
+        doc.save(`${safeTitle}.pdf`);
+    }
 </script>
+
 
 
 
@@ -564,8 +667,8 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-8h4HcQkHVhz8MDe6f8W2uZ+P9f3L3/k4JcJURqxO0F+aGepEj0vDSeBbdQnKP9Oh" crossorigin="anonymous"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
