@@ -1856,18 +1856,18 @@ async function saveValidation() {
         console.log('Notification added to Firestore');
 
         // Send email notification using EmailJS
-        emailjs.send("service_hy9w8j7", "template_dh7hos5", {
-            permit_id: permitId,
-            file_row_id: fileRowId,
-            status: selectedOption.value.toUpperCase(),
-            comments: comments || "No comments",
-            user_email: userEmail // Send to owner's email
-        })
-        .then((response) => {
-            console.log('Email sent successfully:', response.status, response.text);
-        }, (error) => {
-            console.error('Failed to send email:', error);
-        });
+       // emailjs.send("service_hy9w8j7", "template_dh7hos5", {
+       //     permit_id: permitId,
+        //    file_row_id: fileRowId,
+         //   status: selectedOption.value.toUpperCase(),
+         //   comments: comments || "No comments",
+         //   user_email: userEmail // Send to owner's email
+       // })
+       // .then((response) => {
+        //    console.log('Email sent successfully:', response.status, response.text);
+       // }, (error) => {
+         //   console.error('Failed to send email:', error);
+       // });
 
         // Optionally, show the notification in the UI
         showNotification(notificationMessage, 'success');
@@ -2197,17 +2197,17 @@ function openViewDetailsModal(permitData) {
                 });
 
                 // Send Email Notification using EmailJS
-                emailjs.send("service_hy9w8j7", "template_eaugq7e", {
-                    permit_owner_name: permitData.ownerName,
-                    permit_id: permitData.id,
-                    new_status: newStatus,
-                    to_email: ownerEmail  // Pass the fetched email to the template
-                })
-                .then((response) => {
-                    console.log('Status update email sent successfully:', response.status, response.text);
-                }, (error) => {
-                    console.error('Failed to send status update email:', error);
-                });
+                //emailjs.send("service_hy9w8j7", "template_eaugq7e", {
+                  //  permit_owner_name: permitData.ownerName,
+                    //permit_id: permitData.id,
+                   // new_status: newStatus,
+                  //  to_email: ownerEmail  // Pass the fetched email to the template
+               // })
+               // .then((response) => {
+                //    console.log('Status update email sent successfully:', response.status, response.text);
+               // }, (error) => {
+               //     console.error('Failed to send status update email:', error);
+               // });
 
                 // Show success alert
                 Swal.fire({
