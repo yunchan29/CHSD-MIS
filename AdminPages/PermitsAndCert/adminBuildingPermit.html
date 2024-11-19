@@ -958,35 +958,26 @@
                     </div>
                  
 
-                    <!-- Row 4 -->
-                    <div class="row mb-3">
-                       
-                        <div class="col-md-6">
-                            <p><strong>Block Number:</strong> <span id="hsdFormBlockNumber"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Lot Number:</strong> <span id="hsdFormLotNumber"></span></p>
-                        </div>
-                    </div>
-
+                    
                 
 
-                    <!-- Row 5 -->
-                    <div class="row mb-3">
-                       
-                        <div class="col-md-3">
-                            <p><strong>Number Of Units:</strong> <span id="hsdFormNOUnits"></span></p>
-                        </div>
-                        <div class="col-md-3">
-                            <p><strong>Floor Area Per Unit:</strong> <span id="hsdFormFloorArea"></span></p>
-                        </div>
-                        <div class="col-md-3">
-                            <p><strong>Total Floor Area:</strong> <span id="hsdFormTotalFloorArea"></span></p>
-                        </div>
-                        <div class="col-md-3">
-                            <p><strong>Total Estimated Cost:</strong> <span id="hsdFormTotalEstimatedCost"></span></p>
-                        </div>
-                    </div>
+                  <!-- Dynamic Units Section -->
+<div id="hsdFormUnitsContainer">
+    <h5>Unit Details</h5>
+    <div id="hsdFormUnitDetails">
+        <!-- Dynamically populated -->
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <p><strong>Total Estimated Cost: </strong><span id="hsdFormTotalEstimatedCost"></span></p>
+    </div>
+    <div class="col-md-6">
+        <p><strong>Total Floor Area: </strong><span id="hsdFormTotalFloorArea"></span></p>
+    </div>
+</div>
+
 
 
                     <hr>
@@ -2265,6 +2256,7 @@ function openViewDetailsModal(permitData) {
 
       // Function to Open the View HSD Form Modal with Debugging
 // Function to Open the View HSD Form Modal
+// Function to Open the View HSD Form Modal
 async function openViewHSDFormModal(permitData) {
     try {
         console.log("Permit Data received:", permitData); // Log permitData to ensure it's not empty
@@ -2282,21 +2274,41 @@ async function openViewHSDFormModal(permitData) {
         console.log("HSD Form Data retrieved:", data); // Log the fetched data to ensure it's being retrieved correctly
 
         // Populate HSD Form Modal Fields
-        
         document.getElementById('hsdFormOwnerName').textContent = data.ownerName;
-        document.getElementById('hsdFormAddress').textContent = data.projectLocation || "N/A";
+        document.getElementById('hsdFormAddress').textContent = data.addressTelNo || "N/A";
         document.getElementById('hsdFormDateSubmitted').textContent = data.issuedOn;
         document.getElementById("hsdPhoneNumber").textContent = data.phoneNumber;
-        document.getElementById("hsdFormProjectLocation").textContent= data.projectLocation;
+        document.getElementById("hsdFormProjectLocation").textContent = data.projectLocation;
         document.getElementById("hsdFormScopeOfWork").textContent = data.scopeOfWork;
         document.getElementById("hsdFormProjectJustification").textContent = data.projectJustification;
-        document.getElementById("hsdFormBlockNumber").textContent = data.blockNumber || "N/A";
-        document.getElementById("hsdFormLotNumber").textContent = data.lotNumber || "N/A";
-        document.getElementById("hsdFormNOUnits").textContent = data.NOUnits || "N/A";
-        document.getElementById("hsdFormFloorArea").textContent = data.FloorArea || "N/A";
-        document.getElementById("hsdFormTotalFloorArea").textContent = data.TotalFloorArea || "N/A";
-        document.getElementById("hsdFormTotalEstimatedCost").textContent = data.TotalEstimatedCost || "N/A";
+        document.getElementById("hsdFormTotalFloorArea").textContent = data.totalFloorArea || "N/A";
+        document.getElementById("hsdFormTotalEstimatedCost").textContent = data.totalEstimatedCost || "N/A";
         document.getElementById("hsdFormBuildingPermitNo").textContent = data.buildingPermitNo;
+
+        // Clear existing unit details
+        const unitDetailsContainer = document.getElementById("hsdFormUnitDetails");
+        unitDetailsContainer.innerHTML = "";
+
+        // Check if `unitsData` exists and iterate over it
+        if (Array.isArray(data.unitsData) && data.unitsData.length > 0) {
+            data.unitsData.forEach((unit, index) => {
+                const unitElement = document.createElement("div");
+                unitElement.className = "unit-details mb-3";
+
+                unitElement.innerHTML = `
+                <div class="row align-items-center">
+            <div class="col-md-2"><h6>Unit ${index + 1}</h6></div>
+            <div class="col-md-2"><p><strong>Block No.:</strong> ${unit.blockNumber || "N/A"}</p></div>
+            <div class="col-md-2"><p><strong>Lot No.:</strong> ${unit.lotNumber || "N/A"}</p></div>
+            <div class="col-md-3"><p><strong>No. of Storeys:</strong> ${unit.NOStorey || "N/A"}</p></div>
+            <div class="col-md-3"><p><strong>Floor Area:</strong> ${unit.floorArea || "N/A"} sqm</p></div>
+        </div>
+                `;
+                unitDetailsContainer.appendChild(unitElement);
+            });
+        } else {
+            unitDetailsContainer.innerHTML = "<p>No unit details available.</p>";
+        }
 
         console.log("HSD Form fields populated");
 
