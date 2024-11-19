@@ -1072,6 +1072,59 @@ function appendButtons(data) {
     viewDetailsModalBtnGrp.appendChild(fourthRow);
 }
 
+// Function to Open the Occupancy Permit Modal
+async function openGenerateOccupancyPermitModal(permitData) {
+    try {
+        console.log("Occupancy Permit Data received:", permitData); // Log permitData to ensure it's not empty
+
+        // Fetch the data from the OccupancyPermits collection based on the permitId
+        const occupancyFormData = await getDoc(doc(db, "OccupancyPermits", permitData.id));
+
+        if (!occupancyFormData.exists()) {
+            console.error("Occupancy Permit not found!");
+            alert("Occupancy Permit data is missing!");
+            return;
+        }
+
+        const data = occupancyFormData.data();
+        console.log("Occupancy Permit Data retrieved:", data); // Log the fetched data to ensure it's being retrieved correctly
+
+        // Populate Occupancy Permit Modal Fields
+        document.getElementById('certOwnerName').textContent = data.ownerName || "N/A";
+        document.getElementById('certOwnerAddress').textContent = data.ownerAddress || "N/A";
+        document.getElementById('certProjectLocation').textContent = data.projectLocation || "N/A";
+        document.getElementById('certTotalFloorArea').textContent = data.totalFloorArea || "N/A";
+        document.getElementById('certNOUnits').textContent = data.NOUnits || "N/A";
+        document.getElementById('certNOStorey').textContent = data.NOStorey || "N/A";
+        document.getElementById('certBuildingPermitNo').textContent = data.buildingPermitNo || "N/A";
+        document.getElementById("aaaBuildingPermitNo").textContent = data.buildingPermitNo || "N/A";
+      
+const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000) : null;
+
+if (createdAt && !isNaN(createdAt)) {
+    const formattedDate = createdAt.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+    document.getElementById("aaaIssuedOn").textContent = formattedDate;
+} else {
+    document.getElementById("aaaIssuedOn").textContent = "Date not available";
+}
+
+  
+        console.log("Occupancy Permit fields populated");
+
+        // Show the Occupancy Permit Modal
+        const occupancyPermitModal = new bootstrap.Modal(document.getElementById('occupancyPermitModal'));
+        occupancyPermitModal.show();
+    } catch (error) {
+        console.error("Error opening Occupancy Permit modal:", error);
+        alert("Failed to load Occupancy Permit data.");
+    }
+}
+
+
 
 async function generateOrderOfPayment(data) {
     try {
