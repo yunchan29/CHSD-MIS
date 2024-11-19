@@ -321,7 +321,86 @@
         </div>
     </div>
 </div>
+  <!-- Order of Payment Modal -->
+  <div class="modal fade" id="orderOfPaymentModal" tabindex="-1" aria-labelledby="OrderOfPaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="OrderOfPaymentModalLabel">
+                    <i class="fa-solid fa-file-invoice"></i> Occupancy Permit - Order of Payment
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Step Progress Bar -->
+                <div class="step-progress mb-4">
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Form</div>
+                    </div>
+                    <div class="step completed">
+                        <div class="circle"></div>
+                        <div class="label">Order of Payment</div>
+                    </div>
+                    <div class="step">
+                        <div class="circle"></div>
+                        <div class="label">Occupancy Certificate</div>
+                    </div>
+                </div>
+                <div class="printArea" id="printOrderContent">
+                    <div class="row mb-4">
+                        <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
+                            <!-- Left Logo -->
+                            <img src="/resources/pictures/calambaLogo.png" alt="Calamba Logo" style="height: 50px; width: 50px; margin-left: auto;">
+                            <!-- Center Title -->
+                            <div class="text-center" style="margin: 0 10px;">
+                                <h5 class="mb-0">CITY HOUSING AND SETTLEMENTS DEPARTMENT</h5>
+                                <p class="mb-0">City Government of Calamba</p>
+                            </div>
+                            <!-- Right Logo -->
+                            <img src="/resources/pictures/chsd.png" alt="CHSD Logo" style="height: 50px; width: 50px; margin-right: auto;">
+                        </div>
+                    </div>
+                    <!-- Order of Payment Form -->
+                    <div class="container">
+                        <h4 class="text-center">ORDER OF PAYMENT</h4>
+                        <p class="text-center"><i>Payee: Treasurer/Cashier-City Treasury Office, City of Calamba</i></p>
 
+                        <!-- Owner/Applicant Input -->
+                        <div class="row mb-3">
+                            <label for="OPOwnerApplicant">Owner/Applicant:</label>
+                            <input type="text" class="form-control" id="paymentOwnerName" readonly>
+                        </div>
+
+                        <!-- Location Input -->
+                        <div class="row mb-3">
+                            <label for="OPLocation">Location</label>
+                            <input type="text" class="form-control" id="paymentLocation" readonly>
+                        </div>
+
+                        <!-- Fee Breakdown -->
+                      
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="totalFee">Fee</label>
+                                <input type="number" class="form-control" id="paymentFee" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="exportOrderButton" disabled>
+                    <i class="fa-solid fa-file-excel"></i> Export
+                </button>
+                <button type="button" class="btn btn-primary" id="printOrderOfPayment">
+                    <i class="fa-solid fa-print"></i> Print Order of Payment
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
   <!-- Generate Electrical Cert Modal -->
   <div class="modal fade" id="generateElectricalCertModal" tabindex="-1" aria-labelledby="generateElectricalCertModalLabel" aria-hidden="true">
@@ -930,6 +1009,43 @@ function appendButtons(data) {
     viewDetailsModalBtnGrp.appendChild(secondRow);
     viewDetailsModalBtnGrp.appendChild(thirdRow);
 }
+
+async function generateOrderOfPayment(data) {
+    try {
+        console.log("Generating Order of Payment for:", data); // Debugging
+
+        // Fetch the Occupancy Permit data from Firestore
+        const electricalDoc = await getDoc(doc(db, "ElectricalCert", data.id));
+        if (!electricalDoc.exists()) {
+            console.error("Electrical Permit not found!");
+            Swal.fire('Error', 'Electrical Permit data is missing!', 'error');
+            return;
+        }
+
+        const permitData = electricalDoc.data();
+
+        // Extract relevant fields
+        const ownerName = permitData.ownerName || "N/A";
+        const location = permitData.projectLocation || "N/A";
+        const fee = 200.00;
+      
+
+        // Populate modal fields
+        const modal = document.getElementById('orderOfPaymentModal');
+        modal.querySelector('#paymentOwnerName').value = ownerName;
+        modal.querySelector('#paymentLocation').value = location;
+        modal.querySelector('#paymentFee').value = fee;
+
+        // Show the Order of Payment Modal
+        const orderOfPaymentModal = new bootstrap.Modal(modal);
+        orderOfPaymentModal.show();
+
+    } catch (error) {
+        console.error("Error generating Order of Payment:", error);
+        Swal.fire('Error', 'Failed to generate Order of Payment. Please try again.', 'error');
+    }
+}
+
 
 // Function to Open the Electrical Certificate Modal
 async function openGenerateElectricalCertModal(certData) {
