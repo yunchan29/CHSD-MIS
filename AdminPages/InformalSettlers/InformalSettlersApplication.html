@@ -462,10 +462,7 @@
                             <option>Sharer</option>
                            </select>
                         </div>
-                        <div class="col-md-2">
-                            <label for="householdAmount">Amount<span class="required-asterisk">*</span></label>
-                            <input type="number" class="form-control" id="householdAmount" required>
-                        </div>
+                       
                         <div class="col-md-6">
                             <label for="structureOwner">Structure Owner<span class="required-asterisk">*</span></label>
                             <input type="text" class="form-control" id="structureOwner" required>
@@ -1214,7 +1211,7 @@ setTimeout(async () => {
 
     // Additional Step 1 details
     const classificationOfSurveyHousehold = document.getElementById('classificationOfSurveyHousehold').value;
-    const householdAmount = document.getElementById('householdAmount').value;
+    
     const structureOwner = document.getElementById('structureOwner').value;
     const provinceOfOrigin = document.getElementById('provinceOfOrigin').value;
     const householdSize = document.getElementById('householdSize').value;
@@ -1258,7 +1255,6 @@ setTimeout(async () => {
             spouseName: `${spouseLastName} ${spouseFirstName} ${spouseMiddleName} ${spouseMaidenName}`,
             spouseBirthday,
             classificationOfSurveyHousehold,
-            householdAmount,
             structureOwner,
             provinceOfOrigin,
             householdSize,
