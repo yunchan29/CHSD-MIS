@@ -624,7 +624,7 @@
     
 
                       <!-- View Details Modal -->
-<div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
+<div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -2081,13 +2081,22 @@ async function loadProfiles() {
                 <td>${createdAt}</td>
                 <td>${data.status || "N/A"}</td>
                 <td>
+                     <button class="btn btn-success btn-sm process-btn" data-permit-id="${data.id}">Process</button>
                     <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
+                   
                 </td>
             `;
 
+            // Attach View Details Button Event
             const viewDetailsBtn = row.querySelector(".view-details-btn");
             if (viewDetailsBtn) {
                 viewDetailsBtn.addEventListener("click", () => openViewDetailsModal(data));
+            }
+
+            // Attach Process Button Event
+            const processBtn = row.querySelector(".process-btn");
+            if (processBtn) {
+                processBtn.addEventListener("click", () => openProcessModal(data));
             }
 
             fragment.appendChild(row);
@@ -2123,6 +2132,7 @@ async function loadProfiles() {
         if (loadingScreen) loadingScreen.style.display = "none";
     }
 }
+
 
     // Function to control progressive status selection and update the progress bar
 function updateStatusOptions(currentStatus) {
