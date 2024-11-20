@@ -1373,6 +1373,7 @@ async function autofillHouseholdNameFields() {
     const householdLastNameInput = document.getElementById('householdLastName');
     const householdFirstNameInput = document.getElementById('householdFirstName');
     const householdMiddleNameInput = document.getElementById('householdMiddleName');
+    const householdAddressInput = document.getElementById("householdAddress");
 
     const user = auth.currentUser;
     if (user) {
@@ -1381,11 +1382,12 @@ async function autofillHouseholdNameFields() {
             const docSnap = await getDoc(userRef);
             
             if (docSnap.exists()) {
-                const { firstName, lastName, middleName } = docSnap.data();
+                const { firstName, lastName, middleName, clientAddress } = docSnap.data();
 
                 if (householdFirstNameInput) householdFirstNameInput.value = firstName || '';
                 if (householdLastNameInput) householdLastNameInput.value = lastName || '';
                 if (householdMiddleNameInput) householdMiddleNameInput.value = middleName || '';
+                if (householdAddressInput) householdAddressInput.value = clientAddress || '';
             } else {
                 console.error("User document does not exist!");
             }

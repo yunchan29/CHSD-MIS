@@ -159,6 +159,7 @@ async function handleSignUp(event) {
     const email = document.getElementById('client-signup-email').value;
     const password = document.getElementById('client-signup-password').value;
     const confirmPassword = document.getElementById('client-confirm-password').value;
+    const clientAddress = document.getElementById("client-address").value;
 
     const selectedAvatar = document.querySelector('input[name="avatar"]:checked');
     const uploadedImageFile = document.getElementById('client-upload-image').files[0];
@@ -210,6 +211,7 @@ async function handleSignUp(event) {
             middleName: middleName,
             lastName: lastName,
             email: email,
+            clientAddress: clientAddress,
             avatarUrl: avatarUrl,
             emailVerified: false, // Set email verification status to false
             createdAt: serverTimestamp() // Add server timestamp here
@@ -1105,11 +1107,11 @@ async function loadUserPermitStatus() {
 }
 
 
-// Event listener for remarks modal display
 document.getElementById('viewRemarks').addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
     const commentsSummary = JSON.parse(button.getAttribute('data-comments-summary'));
     const modalBody = document.querySelector('#viewRemarks .modal-body');
+
     modalBody.innerHTML = '';
 
     if (commentsSummary.length === 0) {
@@ -1132,39 +1134,74 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
             `;
 
             if (commentObj.status.toLowerCase() === 'disapproved') {
-                const reuploadBtn = document.createElement('div');
-                reuploadBtn.innerHTML = `
-                    <input type="file" id="reupload-${commentObj.fileName}" accept="application/pdf,image/*" style="display:none">
+                const reuploadContainer = document.createElement('div');
+                const inputId = `reupload-${commentObj.fileName}`;
+                reuploadContainer.innerHTML = `
+                    <input type="file" id="${inputId}" accept="application/pdf,image/*" style="display:none">
                     <button class="btn btn-warning reupload-btn" data-file="${commentObj.fileName}" data-permit-id="${button.getAttribute('data-id')}">Reupload</button>
                 `;
-                commentRow.appendChild(reuploadBtn);
+                commentRow.appendChild(reuploadContainer);
+
+                const fileInput = reuploadContainer.querySelector(`#${inputId}`);
+                const reuploadButton = reuploadContainer.querySelector('.reupload-btn');
 
                 // Reupload functionality
-                reuploadBtn.querySelector('.reupload-btn').addEventListener('click', async (e) => {
-                    const fileInput = document.getElementById(`reupload-${commentObj.fileName}`);
+                reuploadButton.addEventListener('click', () => {
                     fileInput.click();
+                });
 
-                    fileInput.addEventListener('change', async (e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                            try {
-                                const permitId = e.target.getAttribute('data-permit-id');
-                                const storageRef = ref(storage, `reuploads/${auth.currentUser.uid}/buildingPermits/${commentObj.fileName}`);
-                                const snapshot = await uploadBytes(storageRef, file);
-                                const downloadURL = await getDownloadURL(snapshot.ref);
+              
 
-                                const permitDoc = doc(db, "buildingPermits", permitId);
-                                await updateDoc(permitDoc, {
-                                    [`${commentObj.fileName}URL`]: downloadURL
-                                });
+                fileInput.addEventListener('change', async (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        try {
+                            const confirmation = await Swal.fire({
+                                title: 'Confirm Reupload',
+                                text: `Are you sure you want to reupload the file "${commentObj.fileName}"?`,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, reupload it!',
+                            });
 
-                                alert('File reuploaded successfully!');
-                            } catch (error) {
-                                console.error('Error uploading file:', error);
-                                alert('Error reuploading file.');
-                            }
+                            if (!confirmation.isConfirmed) return;
+
+                            
+
+                            const permitId = reuploadButton.getAttribute('data-permit-id');
+                            const fileName = reuploadButton.getAttribute('data-file');
+
+                            const storageRef = ref(storage, `reuploads/${auth.currentUser.uid}/buildingPermits/${fileName}`);
+                            const snapshot = await uploadBytes(storageRef, file);
+                            const downloadURL = await getDownloadURL(snapshot.ref);
+
+                            const permitDoc = doc(db, "buildingPermits", permitId);
+                            await updateDoc(permitDoc, {
+                                [`${fileName}URL`]: downloadURL
+                            });
+
+                            await Swal.fire({
+                                title: 'Success!',
+                                text: 'File reuploaded successfully!',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                            });
+                        } catch (error) {
+                            console.error('Error uploading file:', error);
+                            await Swal.fire({
+                                title: 'Error',
+                                text: 'Error reuploading file.',
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                            });
+                        } finally {
+                    
                         }
-                    }, { once: true });
+                    } else {
+                     
+                    }
                 });
             }
 
@@ -1172,6 +1209,8 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
         });
     }
 });
+
+
 
 
 //logs
