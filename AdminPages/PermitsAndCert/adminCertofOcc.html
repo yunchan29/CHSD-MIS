@@ -1277,19 +1277,43 @@ async function loadOccupancyProfiles() {
             const representativeName = userDataMap[data.ownerUid] || "N/A";
             const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
 
+            // Set the 'Process' button based on status
+            const isPending = data.status === "Pending";
+
             row.innerHTML = `
                 <td>${data.ownerName || "N/A"}</td>
                 <td>${representativeName}</td>
                 <td>${createdAt}</td>
                 <td>${data.status || "N/A"}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
+                    <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">${isPending ? "Process" : "View Details"}</button>
                 </td>
             `;
 
             const viewDetailsBtn = row.querySelector(".view-details-btn");
             if (viewDetailsBtn) {
-                viewDetailsBtn.addEventListener("click", () => openViewDetailsModal(data));
+                viewDetailsBtn.addEventListener("click", async () => {
+                    if (isPending) {
+                        // If the permit is pending, trigger the status change
+                        const confirmProcessing = await Swal.fire({
+                            title: "Do you want to process this permit?",
+                            icon: "question",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes",
+                            cancelButtonText: "No"
+                        });
+
+                        if (confirmProcessing.isConfirmed) {
+                            // Update the status to "Processing" and reload the page
+                            await updateDoc(doc(db, "OccupancyPermits", data.id), { status: "Processing" });
+                            showNotification("Permit is now processing.", "success");
+                            loadOccupancyProfiles(); // Reload the page to reflect status change
+                        }
+                    } else {
+                        // If not pending, simply open the details modal
+                        openViewDetailsModal(data);
+                    }
+                });
             }
 
             fragment.appendChild(row);

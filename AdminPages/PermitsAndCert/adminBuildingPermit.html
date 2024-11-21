@@ -2009,16 +2009,15 @@ checkIfAllFieldsFilled();
 
 
  
-        let currentPage = 1;
+let currentPage = 1;
 const profilesPerPage = 10; // Adjust this as needed
 let lastVisible = null;
-let totalPages = 0;
 
 async function loadProfiles() {
-    const loadingScreen = document.getElementById("loading-screen"); // Reference to the loading screen element
+    const loadingScreen = document.getElementById("loading-screen");
 
     try {
-        // Show the loading screen
+        // Show loading screen
         if (loadingScreen) loadingScreen.style.display = "flex";
 
         const buildingPermitDiv = document.getElementById("buildingPermitDiv");
@@ -2054,7 +2053,7 @@ async function loadProfiles() {
 
         const permitsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Fetch Related User Data in Batch
+        // Fetch related user data in batch
         const userUids = permitsData.map(data => data.ownerUid).filter(uid => uid);
         const userDocsPromises = userUids.map(uid => getDoc(doc(db, "users", uid)));
         const userDocs = await Promise.all(userDocsPromises);
@@ -2067,7 +2066,7 @@ async function loadProfiles() {
             }
         });
 
-        // Populate Table
+        // Populate table
         const fragment = document.createDocumentFragment();
         permitsData.forEach(data => {
             const row = document.createElement("tr");
@@ -2081,22 +2080,22 @@ async function loadProfiles() {
                 <td>${createdAt}</td>
                 <td>${data.status || "N/A"}</td>
                 <td>
-                     <button class="btn btn-success btn-sm process-btn" data-permit-id="${data.id}">Process</button>
-                    <button class="btn btn-primary btn-sm view-details-btn" data-permit-id="${data.id}">View Details</button>
-                   
+                    <button class="btn btn-primary btn-sm process-btn" data-permit-id="${data.id}">
+                        ${data.status === "Pending" ? "Process" : "View Details"}
+                    </button>
                 </td>
             `;
 
-            // Attach View Details Button Event
-            const viewDetailsBtn = row.querySelector(".view-details-btn");
-            if (viewDetailsBtn) {
-                viewDetailsBtn.addEventListener("click", () => openViewDetailsModal(data));
-            }
-
-            // Attach Process Button Event
+            // Attach click event to the button
             const processBtn = row.querySelector(".process-btn");
             if (processBtn) {
-                processBtn.addEventListener("click", () => openProcessModal(data));
+                processBtn.addEventListener("click", () => {
+                    if (data.status === "Pending") {
+                        confirmProcessPermit(data); // Confirm before processing
+                    } else {
+                        openViewDetailsModal(data); // Open the details modal
+                    }
+                });
             }
 
             fragment.appendChild(row);
@@ -2104,12 +2103,12 @@ async function loadProfiles() {
 
         tableBody.appendChild(fragment);
 
-        // Update Pagination Info
+        // Update pagination info
         pageInfo.textContent = `Page ${currentPage}`;
         prevPageBtn.disabled = currentPage === 1;
         nextPageBtn.disabled = querySnapshot.docs.length < profilesPerPage;
 
-        // Add Pagination Event Listeners
+        // Add pagination event listeners
         prevPageBtn.onclick = () => {
             if (currentPage > 1) {
                 currentPage--;
@@ -2128,8 +2127,40 @@ async function loadProfiles() {
         console.error("Error loading profiles:", error);
         showNotification("Failed to load profiles.", "error");
     } finally {
-        // Hide the loading screen
+        // Hide loading screen
         if (loadingScreen) loadingScreen.style.display = "none";
+    }
+}
+
+// Function to confirm processing of the permit using SweetAlert2
+async function confirmProcessPermit(permitData) {
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to process this permit?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Process it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    });
+
+    if (result.isConfirmed) {
+        processPermit(permitData); // Proceed to process the permit
+    }
+}
+
+// Function to process the permit (change status to "Processing")
+async function processPermit(permitData) {
+    try {
+        // Update the status to 'Processing' in Firestore
+        await updateDoc(doc(db, 'buildingPermits', permitData.id), { status: "Processing" });
+
+        showNotification(`${permitData.ownerName}'s building permit is now Processing.`, 'info');
+        loadProfiles(); // Reload profiles to reflect the updated status
+
+    } catch (error) {
+        console.error("Error processing permit:", error);
+        showNotification("Failed to update permit status.", "error");
     }
 }
 

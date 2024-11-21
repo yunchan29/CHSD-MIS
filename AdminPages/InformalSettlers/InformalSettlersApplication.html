@@ -1440,16 +1440,54 @@ function renderProfiles(profiles) {
             <td>${createdAt}</td>
             <td>${data.status || "N/A"}</td>
             <td>
-                <button class="btn btn-primary btn-sm view-details-btn" data-id="${data.id}">View Details</button>
+                <button class="btn btn-primary btn-sm process-btn" data-id="${data.id}">
+                    ${data.status === "Pending" ? "Process" : "View Details"}
+                </button>
             </td>
         `;
         profilesTableBody.appendChild(row);
 
-        // Add event listener for "View Details" button
-        row.querySelector(".view-details-btn").addEventListener("click", () => {
-            openViewDetailsModal(data);
+        // Add event listener for "Process" button (only for Pending status)
+        row.querySelector(".process-btn").addEventListener("click", () => {
+            if (data.status === "Pending") {
+                confirmProcessHousing(data); // Confirm before processing
+            } else {
+                openViewDetailsModal(data); // Open the details modal
+            }
         });
     });
+}
+
+// Function to confirm processing of the housing profile using SweetAlert2
+async function confirmProcessHousing(housingData) {
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to process this housing application?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Process it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    });
+
+    if (result.isConfirmed) {
+        processHousing(housingData); // Proceed to process the housing profile
+    }
+}
+
+// Function to process the housing profile (change status to "Processing")
+async function processHousing(housingData) {
+    try {
+        // Update the status to 'Processing' in Firestore
+        await updateDoc(doc(db, 'Housing', housingData.id), { status: "Processing" });
+
+        showNotification(`${housingData.householdHeadName}'s housing application is now Processing.`, 'info');
+        loadProfiles(); // Reload profiles to reflect the updated status
+
+    } catch (error) {
+        console.error("Error processing housing profile:", error);
+        showNotification("Failed to update housing profile status.", "error");
+    }
 }
 
 // Pagination Controls
@@ -1530,6 +1568,7 @@ async function updateDocumentsToLowerCase() {
 }
 
 updateDocumentsToLowerCase();
+
 
 // Notification Display
 function showNotification(message, type) {
