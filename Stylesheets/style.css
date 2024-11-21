@@ -112,11 +112,25 @@ a{
     color: rgb(0, 0, 0) !important;
 }
 
-.sideNav li:hover{
-border-radius:12px !important;
-border-bottom: 3px solid#139bff;
+.sideNav li {
+  position: relative;
+}
 
+.sideNav li::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #139bff;
+  transition: all 0.3s ease;
+  border-radius: 20px;
+}
 
+.sideNav li:hover::after {
+  width: 90%;
+  left: 10px; /* Adjust how much you want the border to shift right */
 }
 
 .sideNav .active{

@@ -423,33 +423,32 @@
                             </div>
                         </div>
                     
-                    
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="blockNumber">Block Number<span class="required-asterisk">*</span></label>
-                                <input type="number" class="form-control" placeholder="Block number" id="blockNumber" required>
-                            </div>
-                            <div class="col">
-                                <label for="lotNumber">Lot Number<span class="required-asterisk">*</span></label>
-                                <input type="number" class="form-control" placeholder="Lot number"  id="lotNumber" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
+                        <div class="container">
+                            <!-- Number of Units Field -->
+                            <div class="form-group">
                                 <label for="NOUnits">Number of Units<span class="required-asterisk">*</span></label>
-                                <input type="number" class="form-control" placeholder="No. of Units" id="NOUnits" required>
+                                <select class="form-control" id="NOUnits">
+                                    <option value="1" selected>1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
                             </div>
-                            <div class="col">
-                                <label for="FloorArea">Floor Area Per Unit<span class="required-asterisk">*</span></label>
-                                <input type="number" class="form-control" placeholder="Floor Area Per Unit" id="FloorArea" required>
-                            </div>
-                            <div class="col">
-                                <label for="TotalFloorArea">Total Floor Area<span class="required-asterisk">*</span></label>
-                                <input type="number" class="form-control" placeholder="Total Floor Area" id="TotalFloorArea" required>
-                            </div>
-                            <div class="col">
-                                <label for="TotalEstimatedCost">Total Estimated Cost<span class="required-asterisk">*</span></label>
-                                <input type="number" class="form-control" placeholder="Total Estimated Cost" id="TotalEstimatedCost" required>
+                        
+                            <!-- Placeholder for dynamically added unit fields -->
+                            <div id="unitFieldsContainer"></div>
+                        
+                            <!-- Total Floor Area and Estimated Cost -->
+                            <div class="row">
+                                <div class="col">
+                                    <label for="TotalFloorArea">Total Floor Area</label>
+                                    <input type="number" class="form-control" id="TotalFloorArea" readonly>
+                                </div>
+                                <div class="col">
+                                    <label for="TotalEstimatedCost">Total Estimated Cost</label>
+                                    <input type="number" class="form-control" id="TotalEstimatedCost" disabled>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1169,6 +1168,84 @@
 </div>
 
 <script>
+    const NOUnitsInput = document.getElementById("NOUnits");
+    const unitFieldsContainer = document.getElementById("unitFieldsContainer");
+    const totalFloorAreaInput = document.getElementById("TotalFloorArea");
+    const totalEstimatedCostInput = document.getElementById("TotalEstimatedCost");
+
+    // Initialize with 1 unit field displayed by default
+    function initializeUnitFields() {
+        const initialNumUnits = parseInt(NOUnitsInput.value) || 1;
+        generateUnitFields(initialNumUnits);
+        updateTotals();
+    }
+
+    // Function to generate fields based on selected number of units
+    function generateUnitFields(numUnits) {
+        // Clear any existing unit fields
+        unitFieldsContainer.innerHTML = "";
+
+        for (let i = 1; i <= numUnits; i++) {
+            const unitDiv = document.createElement("div");
+            unitDiv.className = "row mb-3";
+
+            unitDiv.innerHTML = `
+                <div class="col">
+                    <label for="BlockNumber${i}">Block Number for Unit ${i}</label>
+                    <input type="text" class="form-control" id="BlockNumber${i}" placeholder="Block Number">
+                </div>
+                <div class="col">
+                    <label for="LotNumber${i}">Lot Number for Unit ${i}</label>
+                    <input type="text" class="form-control" id="LotNumber${i}" placeholder="Lot Number">
+                </div>
+                <div class="col">
+                    <label for="NOStorey${i}">Number of Storeys for Unit ${i}</label>
+                    <input type="number" class="form-control" id="NOStorey${i}" placeholder="Number of Storeys">
+                </div>
+                <div class="col">
+                    <label for="UnitFloorArea${i}">Floor Area for Unit ${i}</label>
+                    <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area" required>
+                </div>
+            `;
+            unitFieldsContainer.appendChild(unitDiv);
+        }
+    }
+
+    // Listen for changes to the Number of Units field
+    NOUnitsInput.addEventListener("change", function () {
+        const numUnits = parseInt(NOUnitsInput.value) || 0;
+        generateUnitFields(numUnits);
+        updateTotals();
+    });
+
+    // Function to calculate totals
+    function updateTotals() {
+        const floorAreaInputs = document.querySelectorAll(".unit-floor-area");
+        let totalFloorArea = 0;
+
+        // Sum all floor area inputs
+        floorAreaInputs.forEach(input => {
+            const floorArea = parseFloat(input.value) || 0;
+            totalFloorArea += floorArea;
+        });
+
+        // Set total floor area and total estimated cost
+        totalFloorAreaInput.value = totalFloorArea;
+        totalEstimatedCostInput.value = totalFloorArea * 10000;
+    }
+
+    // Listen for changes to floor area inputs
+    unitFieldsContainer.addEventListener("input", function (event) {
+        if (event.target.classList.contains("unit-floor-area")) {
+            updateTotals();
+        }
+    });
+
+    // Initialize form with 1 unit field
+    initializeUnitFields();
+</script>
+
+<script>
     // Toggle email and password fields based on checkbox
     document.getElementById('enableCredentials').addEventListener('change', function () {
         const emailField = document.getElementById('applicantEmail');
@@ -1264,7 +1341,7 @@ document.getElementById('statusSelect').addEventListener('change', function () {
                 const printContent = document.querySelector("#printHSDContent").cloneNode(true);
 
                 // Get the building permit number from the form
-                const buildingPermitNo = document.getElementById("hsdFormBuildingPermitNo").textContent.trim();
+                const buildingPermitNo = document.getElementById("hsdFormOwnerName").textContent.trim();
 
                 // Create watermark
                 const watermark = document.createElement("div");
