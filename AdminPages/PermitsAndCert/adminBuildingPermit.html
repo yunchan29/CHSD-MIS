@@ -149,6 +149,15 @@
         opacity: 0.2;
     }
 
+    .file-approved {
+    background-color: #d4edda !important; /* Light green */
+}
+
+.file-disapproved {
+    background-color: #f8d7da !important; /* Light red */
+}
+
+
     
 
 
@@ -708,21 +717,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Step Progress Bar -->
-                <div class="step-progress mb-4">
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Form</div>
-                    </div>
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Order of Payment</div>
-                    </div>
-                    <div class="step">
-                        <div class="circle"></div>
-                        <div class="label">Certificate</div>
-                    </div>
-                </div>
+                
                <div class="printArea" id="printOrderContent">
                 <div class="row mb-4">
                     <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
@@ -1110,11 +1105,16 @@
                     </div>
                 </div>
                 <!-- Comment Summary Section -->
+
                 <div id="commentSummaryContainer" class="mt-3">
+                  
+
                     <h6>File Validation Comments</h6>
                     <ul id="commentSummaryList" class="list-group">
                         <!-- Comments will be summarized here -->
                     </ul>
+
+                    <div id="validationSummary" class="mt-3">0/0 files validated</div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1725,9 +1725,10 @@ function appendButtons(data) {
 }
 
 
+
 let fileValidationStatus = {}; // For tracking file validation status and comments
 
-async function openViewUploadsModal(permitData) { 
+async function openViewUploadsModal(permitData) {
     try {
         console.log("Fetching uploaded files and validation status for permit:", permitData.id);
 
@@ -1737,7 +1738,7 @@ async function openViewUploadsModal(permitData) {
 
         const uploadedFilesList = document.getElementById('uploadedFilesList');
         const commentSummaryList = document.getElementById('commentSummaryList');
-        uploadedFilesList.innerHTML = '';  // Clear existing files
+        uploadedFilesList.innerHTML = ''; // Clear existing files
         commentSummaryList.innerHTML = ''; // Clear previous comments
 
         if (!permitSnapshot.exists()) {
@@ -1756,84 +1757,76 @@ async function openViewUploadsModal(permitData) {
                 prcURL,
                 certExemptionURL,
                 structuralAnalysisURL,
-                fileValidationStatus = {}
+                fileValidationStatus: fileValidationFromDB = {}
             } = permitData;
 
-            if (!buildingPlanURL && !proofOwnershipURL && !taxReceiptURL && !brgyClearanceURL && !billMaterialsURL &&
-                !prcURL && !certExemptionURL && !structuralAnalysisURL) {
-                const noFilesItem = document.createElement('li');
-                noFilesItem.className = 'list-group-item';
-                noFilesItem.textContent = 'No files uploaded.';
-                uploadedFilesList.appendChild(noFilesItem);
-            } else {
-                const createFileItem = (fileLabel, fileURL, fileRowId) => {
-                    const fileItem = document.createElement('li');
-                    fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                    fileItem.dataset.rowid = fileRowId;
+            fileValidationStatus = fileValidationFromDB;
 
-                    fileItem.innerHTML = `
-                        <span>${fileLabel}</span>
-                        <div>
-                            <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-eye"></i></a>
-                            <button class="btn btn-sm btn-outline-success validation-btn" data-fileurl="${fileURL}" data-filelabel="${fileLabel}" data-rowid="${fileRowId}"><i class="fa-solid fa-list-check"></i></button>
-                        </div>`;
+            let totalUploadedFiles = 0;
+            let validatedFilesCount = 0;
 
-                    // Attach validation event to open the validation modal
-                    const validationButton = fileItem.querySelector('.validation-btn');
-                    validationButton.addEventListener('click', (event) => {
-                        const fileRow = document.querySelector(`[data-rowid="${event.currentTarget.dataset.rowid}"]`);
-                        openValidationModal(event.currentTarget.dataset.fileurl, event.currentTarget.dataset.filelabel, fileRow);
-                    });
+            const createFileItem = (fileLabel, fileURL, fileRowId) => {
+                totalUploadedFiles++; // Increment uploaded files count for each file
 
-                    uploadedFilesList.appendChild(fileItem);
-                };
+                const fileItem = document.createElement('li');
+                fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                fileItem.dataset.rowid = fileRowId;
 
-                // Display each uploaded file
-                if (buildingPlanURL) createFileItem('Building Plan', buildingPlanURL, 'buildingPlan');
-                if (proofOwnershipURL) createFileItem('Proof of Ownership', proofOwnershipURL, 'proofOwnership');
-                if (taxReceiptURL) createFileItem('Photocopy of Tax Declaration & Current Tax Receipt', taxReceiptURL, 'taxReceipt');
-                if (brgyClearanceURL) createFileItem('Brgy. Clearance of Building Permit', brgyClearanceURL, 'brgyClearance');
-                if (billMaterialsURL) createFileItem('Bill of Materials & Specification', billMaterialsURL, 'billMaterials');
-                if (prcURL) createFileItem('Photocopy of PRC IC/PTR of all signing engineers', prcURL, 'prc');
-                if (certExemptionURL) createFileItem('Certification of Exemption Location Clearance from CPDO', certExemptionURL, 'certExemption');
-                if (structuralAnalysisURL) createFileItem('Structural Analysis (2-Storey and up)', structuralAnalysisURL, 'structuralAnalysis');
+                fileItem.innerHTML = `
+                    <span>${fileLabel}</span>
+                    <div>
+                        <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-eye"></i></a>
+                        <button class="btn btn-sm btn-outline-success validation-btn" data-fileurl="${fileURL}" data-filelabel="${fileLabel}" data-rowid="${fileRowId}"><i class="fa-solid fa-list-check"></i></button>
+                    </div>`;
 
-                // Check for validation comments and status
-                for (const fileRowId in fileValidationStatus) {
-                    const { status, comments } = fileValidationStatus[fileRowId];
-                    const statusText = status.charAt(0).toUpperCase() + status.slice(1); // Capitalize first letter
-                    const commentPrefix = `${fileRowId.replace(/([A-Z])/g, ' $1').trim()} - ${statusText} - `;
+                // Attach validation event to open the validation modal
+                const validationButton = fileItem.querySelector('.validation-btn');
+                validationButton.addEventListener('click', (event) => {
+                    const fileRow = document.querySelector(`[data-rowid="${event.currentTarget.dataset.rowid}"]`);
+                    openValidationModal(event.currentTarget.dataset.fileurl, event.currentTarget.dataset.filelabel, fileRow);
+                });
 
-                    const commentSummaryItem = document.createElement('li');
-                    commentSummaryItem.className = 'list-group-item';
-                    commentSummaryItem.dataset.commentid = fileRowId;
-                    commentSummaryItem.innerHTML = `<strong>${commentPrefix}</strong> ${comments ? comments : 'No comments'}`;
-
-                    commentSummaryList.appendChild(commentSummaryItem);
+                // Check if the file is already validated
+                if (fileValidationStatus[fileRowId] && fileValidationStatus[fileRowId].status) {
+                    validatedFilesCount++; // Increment validated files count
+                } else {
+                    fileValidationStatus[fileRowId] = { status: null, comments: '' }; // Default state
                 }
+
+                uploadedFilesList.appendChild(fileItem);
+            };
+
+            // Display each uploaded file
+            if (buildingPlanURL) createFileItem('Building Plan', buildingPlanURL, 'buildingPlan');
+            if (proofOwnershipURL) createFileItem('Proof of Ownership', proofOwnershipURL, 'proofOwnership');
+            if (taxReceiptURL) createFileItem('Photocopy of Tax Declaration & Current Tax Receipt', taxReceiptURL, 'taxReceipt');
+            if (brgyClearanceURL) createFileItem('Brgy. Clearance of Building Permit', brgyClearanceURL, 'brgyClearance');
+            if (billMaterialsURL) createFileItem('Bill of Materials & Specification', billMaterialsURL, 'billMaterials');
+            if (prcURL) createFileItem('Photocopy of PRC IC/PTR of all signing engineers', prcURL, 'prc');
+            if (certExemptionURL) createFileItem('Certification of Exemption Location Clearance from CPDO', certExemptionURL, 'certExemption');
+            if (structuralAnalysisURL) createFileItem('Structural Analysis (2-Storey and up)', structuralAnalysisURL, 'structuralAnalysis');
+
+            // Check for validation comments and status
+            for (const fileRowId in fileValidationStatus) {
+                const { status, comments } = fileValidationStatus[fileRowId];
+                const fileLabel = getFileLabelFromId(fileRowId); // Use helper to convert ID to label
+                const statusText = status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Pending';
+                const commentPrefix = `${fileLabel} - ${statusText} - `;
+
+                const commentSummaryItem = document.createElement('li');
+                commentSummaryItem.className = 'list-group-item';
+                commentSummaryItem.dataset.commentid = fileRowId;
+                commentSummaryItem.innerHTML = `<strong>${commentPrefix}</strong> ${comments || 'No comments'}`;
+
+                commentSummaryList.appendChild(commentSummaryItem);
             }
+
+            // Update the validation summary
+            updateValidationSummary(validatedFilesCount, totalUploadedFiles);
         }
 
         // Show the View Uploads Modal
         const viewUploadsModal = new bootstrap.Modal(document.getElementById('viewUploadsModal'));
-        const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
-
-        // Set up the Back button functionality
-        const backButton = document.getElementById('backToViewUploadsBtn');
-        if (backButton) {
-            backButton.addEventListener('click', function () {
-                // Ensure validationModal is fully hidden before showing viewUploadsModal
-                document.getElementById('validationModal').addEventListener('hidden.bs.modal', function () {
-                    viewUploadsModal.show();
-                }, { once: true });
-                
-                validationModal.hide();
-            });
-        } else {
-            console.error("Back button not found: check that 'backToViewUploadsBtn' ID is correct.");
-        }
-
-        // Finally, show the viewUploadsModal
         viewUploadsModal.show();
 
     } catch (error) {
@@ -1842,46 +1835,51 @@ async function openViewUploadsModal(permitData) {
     }
 }
 
-
 function openValidationModal(fileURL, fileLabel, fileRow) {
-    // Hide view uploads modal
     const viewUploadsModal = bootstrap.Modal.getInstance(document.getElementById('viewUploadsModal'));
-    viewUploadsModal.hide();
+    if (viewUploadsModal) viewUploadsModal.hide();
 
     const validationModalLabel = document.getElementById('validationModalLabel');
     const commentsInput = document.getElementById('validationComments');
     const previewContainer = document.getElementById('filePreviewContainer');
     const filePreview = document.getElementById('filePreview');
 
-    validationModalLabel.textContent = `Validation for ${fileLabel}`;
-    commentsInput.value = ''; // Clear previous comments
-
-    // Reset preview
-    previewContainer.style.display = 'none';
-    filePreview.src = ''; // Clear previous preview
-
-    // Check file type for preview
-    if (fileURL.endsWith('.pdf')) {
-        filePreview.src = fileURL; // Set PDF URL for preview
-        previewContainer.style.display = 'block'; // Show the preview container for PDFs
-        filePreview.type = "application/pdf"; // Ensure it's treated as PDF
-    } else {
-        // For images and other types, show image preview
-        filePreview.src = fileURL;
-        previewContainer.style.display = 'block'; // Show preview for images
-        filePreview.type = "image"; // Treat as image for other formats
+    if (!validationModalLabel || !commentsInput || !previewContainer || !filePreview) {
+        console.error("Required elements for the modal are missing.");
+        return;
     }
 
-    // Store fileRow ID in save button for later validation
+    validationModalLabel.textContent = `Validation for ${fileLabel}`;
+    commentsInput.value = '';
+
+    previewContainer.style.display = 'none';
+    filePreview.src = '';
+
+    if (fileURL.endsWith('.pdf')) {
+        filePreview.src = fileURL;
+        previewContainer.style.display = 'block';
+    } else {
+        filePreview.src = fileURL;
+        previewContainer.style.display = 'block';
+    }
+
     const saveBtn = document.getElementById('saveValidationBtn');
-    saveBtn.dataset.filerow = fileRow.dataset.rowid;
+    if (saveBtn) {
+        saveBtn.dataset.filerow = fileRow?.dataset?.rowid || '';
+        saveBtn.removeEventListener('click', saveValidation);
+        saveBtn.addEventListener('click', saveValidation);
+    }
 
-    saveBtn.removeEventListener('click', saveValidation);  // Remove previous listener
-    saveBtn.addEventListener('click', saveValidation);      // Add new listener
+    const validationModalElement = document.getElementById('validationModal');
+    if (validationModalElement) {
+        const validationModal = new bootstrap.Modal(validationModalElement);
+        validationModal.show();
+    }
+}
 
-    // Show the validation modal
-    const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
-    validationModal.show();
+function updateValidationSummary(validatedFiles, totalFiles) {
+    const validationSummary = document.getElementById('validationSummary');
+    validationSummary.textContent = `${validatedFiles}/${totalFiles} files validated`;
 }
 
 async function saveValidation() {
@@ -1902,110 +1900,91 @@ async function saveValidation() {
         return;
     }
 
-    // Update file validation status in Firestore
+    const status = selectedOption.value;
+
     fileValidationStatus[fileRowId] = {
-        status: selectedOption.value,
+        status: status,
         comments: comments
     };
 
     const permitDocRef = doc(db, "buildingPermits", permitId);
 
     try {
-        // Retrieve permit document to get ownerUID
-        const permitDocSnap = await getDoc(permitDocRef);
-        if (!permitDocSnap.exists()) {
-            console.error("Permit document does not exist.");
-            return;
-        }
-
-        const ownerUid = permitDocSnap.data().ownerUid;
-        
-        // Fetch the email of the owner using ownerUID from the 'users' collection
-        const userDocRef = doc(db, "users", ownerUid);
-        const userDocSnap = await getDoc(userDocRef);
-        if (!userDocSnap.exists()) {
-            console.error("User document not found.");
-            return;
-        }
-
-        const userEmail = userDocSnap.data().email;
-
-        // Update the validation status in Firestore
         await updateDoc(permitDocRef, {
             [`fileValidationStatus.${fileRowId}`]: {
-                status: selectedOption.value,
+                status: status,
                 comments: comments
             }
         });
+
         console.log('Validation saved to Firestore');
-
-        // Create a notification object for Firestore
-        const notificationMessage = `Validation updated for ${fileRowId}: ${selectedOption.value.toUpperCase()}. Comment: ${comments || 'No comments'}`;
-        const notificationData = {
-            permitId,
-            fileRowId,
-            message: notificationMessage,
-            timestamp: new Date(),
-            read: false // Initially set to unread
-        };
-
-        // Add the notification to Firestore
-        await addDoc(collection(db, "notifications"), notificationData);
-        console.log('Notification added to Firestore');
-
-        // Send email notification using EmailJS
-       // emailjs.send("service_hy9w8j7", "template_dh7hos5", {
-       //     permit_id: permitId,
-        //    file_row_id: fileRowId,
-         //   status: selectedOption.value.toUpperCase(),
-         //   comments: comments || "No comments",
-         //   user_email: userEmail // Send to owner's email
-       // })
-       // .then((response) => {
-        //    console.log('Email sent successfully:', response.status, response.text);
-       // }, (error) => {
-         //   console.error('Failed to send email:', error);
-       // });
-
-        // Optionally, show the notification in the UI
-        showNotification(notificationMessage, 'success');
         Swal.fire({
             title: "Success!",
             text: "File Validated",
             icon: "success"
         });
 
+        // Update the background color dynamically using Bootstrap-compatible classes
+        if (fileRow) {
+            fileRow.classList.remove('file-approved', 'file-disapproved'); // Reset any previous state
+            if (status === 'approve') {
+                fileRow.classList.add('file-approved'); // Light green for approved
+            } else if (status === 'disapprove') {
+                fileRow.classList.add('file-disapproved'); // Light red for disapproved
+            }
+        }
+
+        // Refresh the comment summary list
+        const commentSummaryList = document.getElementById('commentSummaryList');
+        const statusText = status.charAt(0).toUpperCase() + status.slice(1);
+        const commentPrefix = `${fileRow.querySelector('span').textContent} - ${statusText} - `;
+
+        let existingComment = commentSummaryList.querySelector(`[data-commentid="${fileRowId}"]`);
+        if (existingComment) {
+            existingComment.innerHTML = `<strong>${commentPrefix}</strong> ${comments || 'No comments'}`;
+        } else {
+            const commentSummaryItem = document.createElement('li');
+            commentSummaryItem.className = 'list-group-item';
+            commentSummaryItem.dataset.commentid = fileRowId;
+            commentSummaryItem.innerHTML = `<strong>${commentPrefix}</strong> ${comments || 'No comments'}`;
+            commentSummaryList.appendChild(commentSummaryItem);
+        }
+
+        const validatedFilesCount = Object.values(fileValidationStatus).filter(file => file.status && file.status !== 'pending').length;
+        const totalFilesCount = Object.keys(fileValidationStatus).length;
+
+        updateValidationSummary(validatedFilesCount, totalFilesCount);
+
     } catch (error) {
         console.error("Error saving validation to Firestore:", error);
         alert("Failed to save validation.");
     }
 
-    // Close the validation modal and reopen the view uploads modal
     const validationModal = bootstrap.Modal.getInstance(document.getElementById('validationModal'));
     validationModal.hide();
 
     const viewUploadsModal = new bootstrap.Modal(document.getElementById('viewUploadsModal'));
     viewUploadsModal.show();
-
-    // Update the comment summary section in the UI
-    const commentSummaryList = document.getElementById('commentSummaryList');
-    let existingComment = commentSummaryList.querySelector(`[data-commentid="${fileRowId}"]`);
-
-    const statusText = selectedOption.value.charAt(0).toUpperCase() + selectedOption.value.slice(1);
-    const commentPrefix = `${fileRow.querySelector('span').textContent} - ${statusText} - `;
-
-    if (existingComment) {
-        // Update the existing comment in the list
-        existingComment.innerHTML = `<strong>${commentPrefix}</strong> ${comments ? comments : 'No comments'}`;
-    } else {
-        // Create a new comment entry if one does not already exist
-        const commentSummaryItem = document.createElement('li');
-        commentSummaryItem.className = 'list-group-item';
-        commentSummaryItem.dataset.commentid = fileRowId;
-        commentSummaryItem.innerHTML = `<strong>${commentPrefix}</strong> ${comments ? comments : 'No comments'}`;
-        commentSummaryList.appendChild(commentSummaryItem);
-    }
 }
+
+
+// Helper Function to Map File Row IDs to Labels
+function getFileLabelFromId(fileRowId) {
+    const fileLabels = {
+        buildingPlan: 'Building Plan',
+        proofOwnership: 'Proof of Ownership',
+        taxReceipt: 'Photocopy of Tax Declaration & Current Tax Receipt',
+        brgyClearance: 'Brgy. Clearance of Building Permit',
+        billMaterials: 'Bill of Materials & Specification',
+        prc: 'Photocopy of PRC IC/PTR of all signing engineers',
+        certExemption: 'Certification of Exemption Location Clearance from CPDO',
+        structuralAnalysis: 'Structural Analysis (2-Storey and up)'
+    };
+
+    return fileLabels[fileRowId] || 'Unknown File';
+}
+
+
 
 // Function to check if all required fields are filled
 function checkIfAllFieldsFilled() {
