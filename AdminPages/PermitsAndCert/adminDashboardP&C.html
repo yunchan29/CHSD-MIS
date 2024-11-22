@@ -64,6 +64,15 @@
             margin: auto;
             max-width: 90%;
         }
+        .badge {
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 8px;
+        font-size: 12px;
+        vertical-align: super;
+        margin-left: 5px;
+    }
     </style>
 </head>
 <body>
@@ -98,6 +107,12 @@
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminBuildingPermit.html" class="text-decoration-none"><i class="fa-solid fa-building-circle-check"></i> Building Permit</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofOcc.html" class="text-decoration-none"><i class="fa-solid fa-person-shelter"></i> Occupancy Permit</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminCertofElec.html" class="text-decoration-none"><i class="fa-solid fa-bolt"></i> Electrical Inspection</a></li>
+                <li class="sideNav">
+                    <a href="/AdminPages/PermitsAndCert/adminPCLogs.html" class="text-decoration-none">
+                        <i class="fa-solid fa-envelope"></i> Notifications
+                        <span id="notification-badge" class="badge" style="display:none;">0</span>
+                    </a>
+                </li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCNotif.html" class="text-decoration-none"><i class="fa-solid fa-gear"></i> Settings</a></li>
                 <li class="sideNav"><a href="/AdminPages/PermitsAndCert/adminPCArchive.html" class="text-decoration-none"><i class="fa-solid fa-box-archive"></i> Archive</a></li>
                 <li class="sideNav"><a id="admin-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
@@ -184,6 +199,7 @@
             </div>
         </div>
     </div>
+  
 
     <script type="module">
         import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -344,5 +360,6 @@ const events = appointmentsSnap.map(doc => {
         }
     </script>
     <script type="module" src="/Database/firebase.js"></script>
+    <script type="module" src="/AdminPages/PermitsAndCert/notificationBadge.js"></script>
 </body>
 </html>
