@@ -93,13 +93,13 @@
         </div>
     </div>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="/Database/firebase.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+        import { getFirestore, collection, getDocs, query, where, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
         const firebaseConfig = {
             apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
             authDomain: "chsd-mis.firebaseapp.com",
@@ -109,59 +109,121 @@
             appId: "1:694967679357:web:65cffd50f13739f934f414",
             measurementId: "G-XBQTQFRLJ5"
         };
-
+    
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
+    
         // Load follow-up requests
         async function loadFollowUpRequests() {
             try {
                 const today = new Date();
-                const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 0)); //TESTING PURPOSE GAWIN ULIT 30 
-
+                const zeroo = new Date(today.setDate(today.getDate() - 0)); 
+    
                 const q = query(
                     collection(db, "Housing"),
                     where("status", "==", "Pending"),
-                    where("createdAt", "<=", thirtyDaysAgo),
+                    where("createdAt", "<=", zeroo),
                     where("followup", "==", true)
                 );
-
+    
                 const querySnapshot = await getDocs(q);
                 const housingDiv = document.querySelector("tbody");
-
+    
                 if (!housingDiv) {
                     console.error("housingDiv not found in the DOM.");
                     return;
                 }
-
+    
                 housingDiv.innerHTML = ""; // Clear existing rows
-
+    
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
                     const row = document.createElement("tr");
-
+    
                     let householdName = data.householdHeadName || "N/A";
                     let createdAt = data.createdAt?.toDate().toLocaleDateString() || "N/A";
                     let status = data.status || "N/A";
-
+                    let docId = doc.id; // Get document ID for updating
+    
                     row.innerHTML = `
                         <td>${householdName}</td>
                         <td>${createdAt}</td>
                         <td>${status}</td>
-                        <td><button class="btn btn-success"><i class="fa-solid fa-check"></i></button></td>
+                        <td><button class="btn btn-success process-btn" data-id="${docId}">Process</td>
                     `;
-
+    
                     housingDiv.appendChild(row);
                 });
-
+    
+                // Add event listeners to "Process" buttons
+                const processButtons = document.querySelectorAll(".process-btn");
+                processButtons.forEach(button => {
+                    button.addEventListener("click", async (e) => {
+                        const docId = e.target.getAttribute("data-id");
+                        await processRequest(docId);
+                    });
+                });
+    
             } catch (error) {
                 console.error("Error loading follow-up requests:", error);
             }
         }
-
+    
+        // Function to process the request
+        async function processRequest(docId) {
+            if (!docId) {
+                console.error("No document ID provided.");
+                return;
+            }
+    
+            const profileRef = doc(db, "Housing", docId);
+            const timestamp = serverTimestamp();
+    
+            try {
+                // Confirm action with the user
+                const { isConfirmed } = await Swal.fire({
+                    title: "Process Request?",
+                    text: "Are you sure you want to change the status to 'Processing'?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, process it!"
+                });
+    
+                if (!isConfirmed) return;
+    
+                // Update the status in Firestore
+                await updateDoc(profileRef, {
+                    status: "Processing",
+                    updatedAt: timestamp
+                });
+    
+                // Success notification
+                Swal.fire({
+                    title: "Success!",
+                    text: "Request processed successfully!",
+                    icon: "success",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+    
+                // Reload the follow-up requests
+                loadFollowUpRequests();
+            } catch (error) {
+                console.error("Error processing request:", error);
+                Swal.fire({
+                    title: "Error",
+                    text: "Failed to process the request.",
+                    icon: "error"
+                });
+            }
+        }
+    
         // Load follow-up requests on page load
         window.onload = loadFollowUpRequests;
     </script>
+    
 
     
   <!--Navigation Bar-->
