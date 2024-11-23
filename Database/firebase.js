@@ -1147,7 +1147,7 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
         billMaterials: 'Bill of Materials and Specifications',
         prc: 'Photocopy of PRC ID/PTR of Signing Engineers',
         certExemption: 'Certificate of Exemption/Location Clearance from CPDO',
-        structuralAnalysis: 'Structural Analysis (2-Storey and Up)',
+        structuralAnalysis: 'Structural Analysis',
     };
 
     if (commentsSummary.length === 0) {
