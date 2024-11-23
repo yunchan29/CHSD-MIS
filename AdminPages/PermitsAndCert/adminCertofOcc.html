@@ -52,6 +52,42 @@
         color: red;
         cursor: pointer;
     }
+       /* General print styles */
+@media print {
+  /* Hide everything except the content we want to print */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make the printable area visible */
+  .printArea, .printArea * {
+    visibility: visible;
+  }
+
+  /* Remove custom margins and allow browser defaults */
+  #printOrderContent {
+    position: static; /* Let the content position normally */
+    width: auto;      /* Allow width to auto-adjust */
+    margin: 0 !important; /* Remove any custom margin */
+    padding: 0 !important; /* Remove any custom padding */
+  }
+  /* Ensure the printed content appears at the top */
+  .printArea {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Adjust for A4 paper */
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}
+
    
     </style>
 </head>
@@ -585,21 +621,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Step Progress Bar -->
-                <div class="step-progress mb-4">
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Form</div>
-                    </div>
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Order of Payment</div>
-                    </div>
-                    <div class="step">
-                        <div class="circle"></div>
-                        <div class="label">Occupancy Certificate</div>
-                    </div>
-                </div>
+                
                 <div class="printArea" id="printOrderContent">
                     <div class="row mb-4">
                         <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
@@ -802,7 +824,67 @@
     });
     
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const printHSDButton = document.getElementById("printHSDForm");
+            if (printHSDButton) {
+                printHSDButton.addEventListener("click", function() {
+                    const printContent = document.querySelector("#printHSDContent").cloneNode(true);
     
+                    // Get the building permit number from the form
+                    const buildingPermitNo = document.getElementById("hsdFormOwnerName").textContent.trim();
+    
+                    // Create watermark
+                    const watermark = document.createElement("div");
+                    watermark.id = "watermark";
+                    
+                    // Repeat the watermark text across the page
+                    for (let i = 0; i < 10; i++) {
+                        const watermarkText = document.createElement("span");
+                        watermarkText.textContent = buildingPermitNo;
+                        watermark.appendChild(watermarkText);
+                    }
+                    
+                    printContent.appendChild(watermark);
+    
+                    // Clone the page content for printing
+                    const originalContent = document.body.innerHTML;
+                    document.body.innerHTML = printContent.outerHTML;
+    
+                    // Trigger print
+                    window.print();
+    
+                    // Restore original content
+                    document.body.innerHTML = originalContent;
+                    window.location.reload();
+                });
+            }
+    
+            const printOrderButton = document.getElementById("printOrderOfPayment");
+            if (printOrderButton) {
+                printOrderButton.addEventListener("click", function() {
+                    const printContent = document.querySelector("#printOrderContent").cloneNode(true);
+    
+                    const inputs = printContent.querySelectorAll('input');
+                    inputs.forEach(function(input) {
+                        const value = input.value || '';
+                        const span = document.createElement('span');
+                        span.textContent = value;
+                        span.style.fontWeight = 'bold';
+                        input.replaceWith(span);
+                    });
+    
+                    const originalContent = document.body.innerHTML;
+                    document.body.innerHTML = printContent.outerHTML;
+    
+                    window.print();
+    
+                    document.body.innerHTML = originalContent;
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
 
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

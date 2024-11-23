@@ -88,41 +88,57 @@
 
 
 
-   /* General print styles */
-@media print {
-  /* Hide everything except the content we want to print */
+    @media print {
+  /* Hide all elements except the printable content */
   body * {
     visibility: hidden;
   }
 
-  /* Make the printable area visible */
+  /* Make the printable content visible */
   .printArea, .printArea * {
     visibility: visible;
   }
 
-  /* Remove custom margins and allow browser defaults */
-  #printOrderContent {
-    position: static; /* Let the content position normally */
-    width: auto;      /* Allow width to auto-adjust */
-    margin: 0 !important; /* Remove any custom margin */
-    padding: 0 !important; /* Remove any custom padding */
-  }
-  /* Ensure the printed content appears at the top */
+  /* Ensure the print content adapts properly */
   .printArea {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative; /* Allow normal flow */
     width: 100%;
+    height: auto;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10mm; /* Minimal padding for readability */
+    box-sizing: border-box; /* Include padding in dimensions */
   }
 
-  /* Adjust for A4 paper */
+  /* Specific styles for the Order of Payment content */
+  #printOrderContent {
+    position: static; /* Reset positioning */
+    width: 100%; /* Take full width of the page */
+    height: 50%; /* Restrict to half the page height */
+    margin: 0 auto; /* Center horizontally */
+    padding: 10mm; /* Padding for spacing */
+    box-sizing: border-box;
+    background: white; /* Ensure clean background for printing */
+    overflow: hidden; /* Prevent overflow beyond half the page */
+  }
+
+  /* Define the A4 page size and margins */
   @page {
-    size: A4;
-    margin: 10mm;
+    size: A4; /* Set page size to A4 */
+    margin: 10mm; /* Standard print margin */
+  }
+
+  /* Optional: Add clear separation for half-page print areas */
+  #printOrderContent::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background-color: #000; /* Optional divider line */
+    margin-top: 10px; /* Space below the half-page content */
   }
 }
+
+
+
 
 #watermark {
         position: fixed;
@@ -156,6 +172,8 @@
 .file-disapproved {
     background-color: #f8d7da !important; /* Light red */
 }
+
+
 
 
     
@@ -1337,62 +1355,127 @@ document.getElementById('statusSelect').addEventListener('change', function () {
 
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
+        const A4_HEIGHT_PX = 1123; // Approximate A4 height in pixels at 96 DPI
+        const A4_WIDTH_PX = 794;  // Approximate A4 width in pixels at 96 DPI
+
+        /**
+         * Scales content to fit within A4 dimensions and prevents bottom cutoff.
+         * @param {HTMLElement} content The content to scale and adjust.
+         */
+        function scaleAndCenterContent(content) {
+            const actualHeight = content.offsetHeight;
+            const actualWidth = content.offsetWidth;
+
+            const heightScale = A4_HEIGHT_PX / actualHeight;
+            const widthScale = A4_WIDTH_PX / actualWidth;
+            const scale = Math.min(heightScale, widthScale);
+
+            // Apply scaling if necessary
+            if (scale < 1) {
+                content.style.transform = `scale(${scale})`;
+                content.style.transformOrigin = 'top left';
+            }
+
+            // Center the content vertically within the A4 page
+            const scaledHeight = actualHeight * scale;
+            const verticalOffset = Math.max((A4_HEIGHT_PX - scaledHeight) / 2, 0);
+            content.style.marginTop = `${verticalOffset}px`;
+
+            // Prevent cutoff by adding bottom padding to fit content
+            const bottomPadding = Math.max((A4_HEIGHT_PX - scaledHeight - verticalOffset), 0);
+            content.style.paddingBottom = `${bottomPadding}px`;
+        }
+
+        /**
+         * Handles the print functionality.
+         * @param {string} contentSelector The selector for the content to print.
+         * @param {function} [preProcess] Optional callback for additional processing.
+         * @param {boolean} [isHalfPage] Set to true to print content on half of the page.
+         */
+        function handlePrint(contentSelector, preProcess, isHalfPage = false) {
+            const printContent = document.querySelector(contentSelector).cloneNode(true);
+
+            if (preProcess) {
+                preProcess(printContent);
+            }
+
+            // Determine container height based on isHalfPage flag
+            const containerHeight = isHalfPage ? A4_HEIGHT_PX / 2 : A4_HEIGHT_PX;
+
+            // Wrap content in a container for consistent printing
+            const container = document.createElement("div");
+            container.style.width = `${A4_WIDTH_PX}px`;
+            container.style.height = `${containerHeight}px`;
+            container.style.overflow = "hidden"; // Prevent overflow issues
+            container.style.display = "flex";
+            container.style.flexDirection = "column";
+            container.style.justifyContent = "center"; // Center content vertically
+            container.style.background = "white"; // Clean white background for printing
+
+            // Apply specific height and overflow settings for half-page prints
+            if (isHalfPage) {
+                printContent.style.height = `${containerHeight}px`;
+                printContent.style.overflow = "hidden";
+            }
+
+            container.appendChild(printContent);
+
+            // Clone and print the content
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = container.outerHTML;
+
+            // Trigger print
+            window.print();
+
+            // Restore original content
+            document.body.innerHTML = originalContent;
+            window.location.reload();
+        }
+
+        // Print HSD Form
         const printHSDButton = document.getElementById("printHSDForm");
         if (printHSDButton) {
-            printHSDButton.addEventListener("click", function() {
-                const printContent = document.querySelector("#printHSDContent").cloneNode(true);
+            printHSDButton.addEventListener("click", function () {
+                handlePrint("#printHSDContent", (content) => {
+                    const buildingPermitNo = document.getElementById("hsdFormOwnerName").textContent.trim();
+                    const watermark = document.createElement("div");
+                    watermark.id = "watermark";
+                    watermark.style.position = "absolute";
+                    watermark.style.top = "50%";
+                    watermark.style.left = "50%";
+                    watermark.style.transform = "translate(-50%, -50%)";
+                    watermark.style.opacity = "0.1";
+                    watermark.style.fontSize = "4rem";
+                    watermark.style.pointerEvents = "none";
 
-                // Get the building permit number from the form
-                const buildingPermitNo = document.getElementById("hsdFormOwnerName").textContent.trim();
+                    for (let i = 0; i < 10; i++) {
+                        const watermarkText = document.createElement("div");
+                        watermarkText.textContent = buildingPermitNo;
+                        watermarkText.style.marginBottom = "10px";
+                        watermark.appendChild(watermarkText);
+                    }
 
-                // Create watermark
-                const watermark = document.createElement("div");
-                watermark.id = "watermark";
-                
-                // Repeat the watermark text across the page
-                for (let i = 0; i < 10; i++) {
-                    const watermarkText = document.createElement("span");
-                    watermarkText.textContent = buildingPermitNo;
-                    watermark.appendChild(watermarkText);
-                }
-                
-                printContent.appendChild(watermark);
-
-                // Clone the page content for printing
-                const originalContent = document.body.innerHTML;
-                document.body.innerHTML = printContent.outerHTML;
-
-                // Trigger print
-                window.print();
-
-                // Restore original content
-                document.body.innerHTML = originalContent;
-                window.location.reload();
+                    content.appendChild(watermark);
+                });
             });
         }
 
+        // Print Order of Payment
         const printOrderButton = document.getElementById("printOrderOfPayment");
         if (printOrderButton) {
-            printOrderButton.addEventListener("click", function() {
-                const printContent = document.querySelector("#printOrderContent").cloneNode(true);
-
-                const inputs = printContent.querySelectorAll('input');
-                inputs.forEach(function(input) {
-                    const value = input.value || '';
-                    const span = document.createElement('span');
-                    span.textContent = value;
-                    span.style.fontWeight = 'bold';
-                    input.replaceWith(span);
-                });
-
-                const originalContent = document.body.innerHTML;
-                document.body.innerHTML = printContent.outerHTML;
-
-                window.print();
-
-                document.body.innerHTML = originalContent;
-                window.location.reload();
+            printOrderButton.addEventListener("click", function () {
+                handlePrint("#printOrderContent", (content) => {
+                    // Replace inputs with spans for static printing
+                    const inputs = content.querySelectorAll('input');
+                    inputs.forEach(function (input) {
+                        const value = input.value || '';
+                        const span = document.createElement('span');
+                        span.textContent = value;
+                        span.style.fontWeight = 'bold';
+                        input.replaceWith(span);
+                    });
+                }, true); // Pass true for half-page printing
             });
         }
     });
