@@ -56,10 +56,7 @@
     left: 10px;
 }
 
-#calendarModal .modal-dialog {
-    max-width: 90%;
-    width: auto;
-}
+
 
 #calendar {
     width: 100%;
@@ -340,7 +337,7 @@
     
    <!-- Remarks Modal -->
 <div class="modal fade" id="viewRemarks" tabindex="-1" aria-labelledby="remarksModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="wide-modal modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="remarksModalLabel">Remarks</h5>
@@ -353,19 +350,21 @@
     </div>
   </div>
 
-  <div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+  <div class="modal" id="calendarModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="calendarModalLabel">Reschedule Appointment</h5>
+                <h5 class="modal-title">Reschedule Appointment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="calendar"></div>
+                <label for="datePicker">Select a new date:</label>
+                <input type="date" id="datePicker" class="form-control">
             </div>
         </div>
     </div>
 </div>
+
 
 
 <div class="modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">

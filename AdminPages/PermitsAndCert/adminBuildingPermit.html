@@ -1089,7 +1089,7 @@
 
  <!-- View Uploads Modal -->
 <div class="modal fade" id="viewUploadsModal" tabindex="-1" aria-labelledby="viewUploadsModalLabel" aria-hidden="true">
-    <div class="wide-modal modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="viewUploadsModalLabel">Uploaded Files</h5>
@@ -1105,16 +1105,14 @@
                     </div>
                 </div>
                 <!-- Comment Summary Section -->
-
-                <div id="commentSummaryContainer" class="mt-3">
-                  
-
+                <div id="commentSummaryContainer" class="mt-4">
                     <h6>File Validation Comments</h6>
                     <ul id="commentSummaryList" class="list-group">
-                        <!-- Comments will be summarized here -->
+                        <!-- Comments will be dynamically appended here -->
                     </ul>
-
-                    <div id="validationSummary" class="mt-3">0/0 files validated</div>
+                    <div id="validationSummary" class="mt-3 text-muted">
+                        <strong>0/0</strong> files validated
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1124,41 +1122,45 @@
     </div>
 </div>
 
+<!-- Validation Modal -->
 <div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="validationModalLabel">Validation</h5>
+                <h5 class="modal-title" id="validationModalLabel">Validate File</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="filePreviewContainer" style="display: none;"> <!-- Hidden by default -->
+                <div id="filePreviewContainer" class="mb-3" style="display: none;">
+                    <!-- Preview Container for PDF or Image -->
                     <iframe id="filePreview" style="width: 100%; height: 400px;" frameborder="0"></iframe>
                 </div>
-                <div class="mt-3">
-                    <label>Validation:</label><br>
-                    <input type="radio" name="validationOptions" value="approved" id="approvedOption">
-                    <label for="approvedOption">Approve</label><br>
-                    <input type="radio" name="validationOptions" value="disapproved" id="disapprovedOption">
-                    <label for="disapprovedOption">Disapprove</label>
+                <!-- Validation Options -->
+                <div>
+                    <label class="form-label">Validation Options:</label>
+                    <div class="btn-group w-100" role="group" aria-label="Validation Options">
+                        <input type="radio" class="btn-check" name="validationOptions" value="approved" id="approvedOption" autocomplete="off">
+                        <label class="btn btn-outline-success d-flex align-items-center justify-content-center" for="approvedOption">
+                            <i class="fas fa-check-circle me-2"></i> Approve
+                        </label>
+                        
+                        <input type="radio" class="btn-check" name="validationOptions" value="disapproved" id="disapprovedOption" autocomplete="off">
+                        <label class="btn btn-outline-danger d-flex align-items-center justify-content-center" for="disapprovedOption">
+                            <i class="fas fa-times-circle me-2"></i> Disapprove
+                        </label>
+                    </div>
                 </div>
+                <!-- Comments Section -->
                 <div class="mt-3">
-                    <label for="validationComments">Comments:</label>
-                    <textarea class="form-control" id="validationComments" rows="3"></textarea>
+                    <label for="validationComments" class="form-label">Comments:</label>
+                    <textarea class="form-control" id="validationComments" rows="3" placeholder="Add your comments here..."></textarea>
                 </div>
             </div>
-            
-            
-        
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="saveValidationBtn">Save</button>
-                
-                <!-- Back button to show the previous modal -->
-                <button type="button" class="btn btn-secondary" id="backToViewUploadsBtn">Back</button>
-                
+                <button type="button" class="btn btn-secondary" id="backToViewUploadsBtn">Back to Uploads</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
-            
         </div>
     </div>
 </div>
@@ -1725,27 +1727,23 @@ function appendButtons(data) {
 }
 
 
-
-let fileValidationStatus = {}; // For tracking file validation status and comments
-
+// JavaScript Code for Managing File Validations
+let fileValidationStatus = {}; // Tracks file validation status, comments, and approval
 async function openViewUploadsModal(permitData) {
     try {
         console.log("Fetching uploaded files and validation status for permit:", permitData.id);
 
-        // Fetch the building permit document from Firestore
         const permitDocRef = doc(db, "buildingPermits", permitData.id);
         const permitSnapshot = await getDoc(permitDocRef);
 
         const uploadedFilesList = document.getElementById('uploadedFilesList');
         const commentSummaryList = document.getElementById('commentSummaryList');
-        uploadedFilesList.innerHTML = ''; // Clear existing files
-        commentSummaryList.innerHTML = ''; // Clear previous comments
+        uploadedFilesList.innerHTML = '';
+        commentSummaryList.innerHTML = '';
 
         if (!permitSnapshot.exists()) {
-            const noFilesItem = document.createElement('li');
-            noFilesItem.className = 'list-group-item';
-            noFilesItem.textContent = 'No files uploaded.';
-            uploadedFilesList.appendChild(noFilesItem);
+            uploadedFilesList.innerHTML = '<li class="list-group-item">No files uploaded.</li>';
+            commentSummaryList.innerHTML = '<li class="list-group-item">No comments available.</li>';
         } else {
             const permitData = permitSnapshot.data();
             const {
@@ -1757,75 +1755,95 @@ async function openViewUploadsModal(permitData) {
                 prcURL,
                 certExemptionURL,
                 structuralAnalysisURL,
-                fileValidationStatus: fileValidationFromDB = {}
+                fileValidationStatus: fileValidationFromDB = {} // Fetch latest validation status
             } = permitData;
 
+            // Assign the fetched validation data to the local object
             fileValidationStatus = fileValidationFromDB;
 
             let totalUploadedFiles = 0;
             let validatedFilesCount = 0;
 
-            const createFileItem = (fileLabel, fileURL, fileRowId) => {
-                totalUploadedFiles++; // Increment uploaded files count for each file
+            const createFileItem = (index, fileLabel, fileURL, fileRowId) => {
+                totalUploadedFiles++;
+
+                // Retrieve the validation and approval statuses
+                const fileValidation = fileValidationStatus[fileRowId] || {};
+                const { status, approved } = fileValidation;
+
+                // Approval Badge Logic
+                const approvalBadge = 
+                    approved === 'approved'
+                        ? `<span class="badge bg-success ms-2">Approved</span>` 
+                        : approved === 'disapproved'
+                            ? `<span class="badge bg-danger ms-2">Disapproved</span>` 
+                            : (status ? `<span class="badge bg-success ms-2">Validated</span>` 
+                                      : `<span class="badge bg-warning text-dark ms-2">Pending</span>`);
 
                 const fileItem = document.createElement('li');
-                fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                fileItem.className = 'list-group-item';
                 fileItem.dataset.rowid = fileRowId;
 
+                // Create row with file label, status badges, and action buttons
                 fileItem.innerHTML = `
-                    <span>${fileLabel}</span>
-                    <div>
-                        <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-eye"></i></a>
-                        <button class="btn btn-sm btn-outline-success validation-btn" data-fileurl="${fileURL}" data-filelabel="${fileLabel}" data-rowid="${fileRowId}"><i class="fa-solid fa-list-check"></i></button>
+                    <div class="row align-items-center">
+                        <!-- File Label and Status -->
+                        <div class="col-md-8 col-12 d-flex align-items-center">
+                            <span class="me-2">${index}. ${fileLabel}</span>
+                            ${approvalBadge}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="col-md-4 col-12 text-end">
+                            <a href="${fileURL}" target="_blank" class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <button class="btn btn-sm btn-outline-success validation-btn" 
+                                    data-fileurl="${fileURL}" 
+                                    data-filelabel="${fileLabel}" 
+                                    data-rowid="${fileRowId}">
+                                <i class="fa-solid fa-list-check"></i>
+                            </button>
+                        </div>
                     </div>`;
 
-                // Attach validation event to open the validation modal
+                // Add event listener to the validation button
                 const validationButton = fileItem.querySelector('.validation-btn');
                 validationButton.addEventListener('click', (event) => {
                     const fileRow = document.querySelector(`[data-rowid="${event.currentTarget.dataset.rowid}"]`);
                     openValidationModal(event.currentTarget.dataset.fileurl, event.currentTarget.dataset.filelabel, fileRow);
                 });
 
-                // Check if the file is already validated
-                if (fileValidationStatus[fileRowId] && fileValidationStatus[fileRowId].status) {
-                    validatedFilesCount++; // Increment validated files count
-                } else {
-                    fileValidationStatus[fileRowId] = { status: null, comments: '' }; // Default state
+                // Track validated and approved files count
+                if (approved === 'approved' || approved === 'disapproved' || status) {
+                    validatedFilesCount++;
                 }
 
+                // Append file item to the uploaded files list
                 uploadedFilesList.appendChild(fileItem);
+
+                // Add comments to the comment summary list
+                const commentText = fileValidation?.comments || 'No comments provided.';
+                const commentItem = document.createElement('li');
+                commentItem.className = 'list-group-item';
+                commentItem.innerHTML = `<strong>${index}. ${fileLabel}</strong>: ${commentText}`;
+                commentSummaryList.appendChild(commentItem);
             };
 
-            // Display each uploaded file
-            if (buildingPlanURL) createFileItem('Building Plan', buildingPlanURL, 'buildingPlan');
-            if (proofOwnershipURL) createFileItem('Proof of Ownership', proofOwnershipURL, 'proofOwnership');
-            if (taxReceiptURL) createFileItem('Photocopy of Tax Declaration & Current Tax Receipt', taxReceiptURL, 'taxReceipt');
-            if (brgyClearanceURL) createFileItem('Brgy. Clearance of Building Permit', brgyClearanceURL, 'brgyClearance');
-            if (billMaterialsURL) createFileItem('Bill of Materials & Specification', billMaterialsURL, 'billMaterials');
-            if (prcURL) createFileItem('Photocopy of PRC IC/PTR of all signing engineers', prcURL, 'prc');
-            if (certExemptionURL) createFileItem('Certification of Exemption Location Clearance from CPDO', certExemptionURL, 'certExemption');
-            if (structuralAnalysisURL) createFileItem('Structural Analysis (2-Storey and up)', structuralAnalysisURL, 'structuralAnalysis');
+            // Add files to the list with numbering
+            let fileIndex = 1;
+            if (buildingPlanURL) createFileItem(fileIndex++, 'Building Plan', buildingPlanURL, 'buildingPlan');
+            if (proofOwnershipURL) createFileItem(fileIndex++, 'Proof of Ownership', proofOwnershipURL, 'proofOwnership');
+            if (taxReceiptURL) createFileItem(fileIndex++, 'Photocopy of Tax Declaration & Current Tax Receipt', taxReceiptURL, 'taxReceipt');
+            if (brgyClearanceURL) createFileItem(fileIndex++, 'Brgy. Clearance of Building Permit', brgyClearanceURL, 'brgyClearance');
+            if (billMaterialsURL) createFileItem(fileIndex++, 'Bill of Materials & Specification', billMaterialsURL, 'billMaterials');
+            if (prcURL) createFileItem(fileIndex++, 'Photocopy of PRC IC/PTR of all signing engineers', prcURL, 'prc');
+            if (certExemptionURL) createFileItem(fileIndex++, 'Certification of Exemption Location Clearance from CPDO', certExemptionURL, 'certExemption');
+            if (structuralAnalysisURL) createFileItem(fileIndex++, 'Structural Analysis (2-Storey and up)', structuralAnalysisURL, 'structuralAnalysis');
 
-            // Check for validation comments and status
-            for (const fileRowId in fileValidationStatus) {
-                const { status, comments } = fileValidationStatus[fileRowId];
-                const fileLabel = getFileLabelFromId(fileRowId); // Use helper to convert ID to label
-                const statusText = status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Pending';
-                const commentPrefix = `${fileLabel} - ${statusText} - `;
-
-                const commentSummaryItem = document.createElement('li');
-                commentSummaryItem.className = 'list-group-item';
-                commentSummaryItem.dataset.commentid = fileRowId;
-                commentSummaryItem.innerHTML = `<strong>${commentPrefix}</strong> ${comments || 'No comments'}`;
-
-                commentSummaryList.appendChild(commentSummaryItem);
-            }
-
-            // Update the validation summary
             updateValidationSummary(validatedFilesCount, totalUploadedFiles);
         }
 
-        // Show the View Uploads Modal
         const viewUploadsModal = new bootstrap.Modal(document.getElementById('viewUploadsModal'));
         viewUploadsModal.show();
 
@@ -1835,6 +1853,38 @@ async function openViewUploadsModal(permitData) {
     }
 }
 
+// Updates the validation summary displayed in the modal
+function updateValidationSummary(validatedFiles, totalFiles) {
+    const validationSummary = document.getElementById('validationSummary');
+    validationSummary.textContent = `${validatedFiles}/${totalFiles} files validated`;
+}
+
+
+// Function to load comment summary dynamically
+function loadCommentSummary() {
+    const commentSummaryList = document.getElementById('commentSummaryList');
+    commentSummaryList.innerHTML = ''; // Clear previous data
+
+    Object.entries(fileValidationStatus).forEach(([fileRowId, validation]) => {
+        const fileLabel = getFileLabelFromId(fileRowId);
+        const statusText = validation.status ? validation.status.charAt(0).toUpperCase() + validation.status.slice(1) : 'Pending';
+
+        const commentSummaryItem = document.createElement('li');
+        commentSummaryItem.className = 'list-group-item';
+        commentSummaryItem.dataset.commentid = fileRowId;
+
+        commentSummaryItem.innerHTML = `
+            <strong>${fileLabel} - ${statusText}</strong>
+            <p>${validation.comments || 'No comments'}</p>
+        `;
+
+        commentSummaryList.appendChild(commentSummaryItem);
+    });
+}
+
+
+
+// Opens the validation modal
 function openValidationModal(fileURL, fileLabel, fileRow) {
     const viewUploadsModal = bootstrap.Modal.getInstance(document.getElementById('viewUploadsModal'));
     if (viewUploadsModal) viewUploadsModal.hide();
@@ -1844,133 +1894,80 @@ function openValidationModal(fileURL, fileLabel, fileRow) {
     const previewContainer = document.getElementById('filePreviewContainer');
     const filePreview = document.getElementById('filePreview');
 
-    if (!validationModalLabel || !commentsInput || !previewContainer || !filePreview) {
-        console.error("Required elements for the modal are missing.");
-        return;
-    }
-
     validationModalLabel.textContent = `Validation for ${fileLabel}`;
     commentsInput.value = '';
 
-    previewContainer.style.display = 'none';
-    filePreview.src = '';
-
-    if (fileURL.endsWith('.pdf')) {
-        filePreview.src = fileURL;
-        previewContainer.style.display = 'block';
-    } else {
-        filePreview.src = fileURL;
-        previewContainer.style.display = 'block';
-    }
+    previewContainer.style.display = 'block';
+    filePreview.src = fileURL;
 
     const saveBtn = document.getElementById('saveValidationBtn');
-    if (saveBtn) {
-        saveBtn.dataset.filerow = fileRow?.dataset?.rowid || '';
-        saveBtn.removeEventListener('click', saveValidation);
-        saveBtn.addEventListener('click', saveValidation);
-    }
+    saveBtn.dataset.filerow = fileRow.dataset.rowid;
+    saveBtn.removeEventListener('click', saveValidation);
+    saveBtn.addEventListener('click', saveValidation);
 
-    const validationModalElement = document.getElementById('validationModal');
-    if (validationModalElement) {
-        const validationModal = new bootstrap.Modal(validationModalElement);
-        validationModal.show();
-    }
+    const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+    validationModal.show();
 }
 
-function updateValidationSummary(validatedFiles, totalFiles) {
-    const validationSummary = document.getElementById('validationSummary');
-    validationSummary.textContent = `${validatedFiles}/${totalFiles} files validated`;
-}
-
+// Saves validation and updates Firestore
 async function saveValidation() {
     const selectedOption = document.querySelector('input[name="validationOptions"]:checked');
-    if (!selectedOption) {
-        alert('Please select an option (approve/disapprove).');
+    const commentsInput = document.getElementById('validationComments').value.trim();
+
+    if (!selectedOption || !commentsInput) {
+        Swal.fire({
+            title: 'Incomplete Validation',
+            text: 'Please select a status and provide comments.',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
         return;
     }
 
-    const comments = document.getElementById('validationComments').value;
     const fileRowId = document.getElementById('saveValidationBtn').dataset.filerow;
-    const fileRow = document.querySelector(`[data-rowid="${fileRowId}"]`);
     const permitId = document.getElementById('hiddenPermitId').value;
-
-    if (!permitId) {
-        console.error('Permit ID is not available.');
-        alert('Error: Permit data is missing.');
-        return;
-    }
-
     const status = selectedOption.value;
 
-    fileValidationStatus[fileRowId] = {
-        status: status,
-        comments: comments
-    };
-
-    const permitDocRef = doc(db, "buildingPermits", permitId);
+    fileValidationStatus[fileRowId] = { status, comments: commentsInput };
 
     try {
-        await updateDoc(permitDocRef, {
-            [`fileValidationStatus.${fileRowId}`]: {
-                status: status,
-                comments: comments
-            }
+        await updateDoc(doc(db, "buildingPermits", permitId), {
+            [`fileValidationStatus.${fileRowId}`]: fileValidationStatus[fileRowId]
         });
 
-        console.log('Validation saved to Firestore');
         Swal.fire({
-            title: "Success!",
-            text: "File Validated",
-            icon: "success"
+            title: 'Validation Saved',
+            text: 'The validation status and comments have been updated.',
+            icon: 'success',
+            confirmButtonText: 'OK'
         });
 
-        // Update the background color dynamically using Bootstrap-compatible classes
-        if (fileRow) {
-            fileRow.classList.remove('file-approved', 'file-disapproved'); // Reset any previous state
-            if (status === 'approve') {
-                fileRow.classList.add('file-approved'); // Light green for approved
-            } else if (status === 'disapprove') {
-                fileRow.classList.add('file-disapproved'); // Light red for disapproved
-            }
-        }
+        loadCommentSummary();
+        updateValidationSummary(
+            Object.values(fileValidationStatus).filter(file => file.status).length,
+            Object.keys(fileValidationStatus).length
+        );
 
-        // Refresh the comment summary list
-        const commentSummaryList = document.getElementById('commentSummaryList');
-        const statusText = status.charAt(0).toUpperCase() + status.slice(1);
-        const commentPrefix = `${fileRow.querySelector('span').textContent} - ${statusText} - `;
+        const validationModal = bootstrap.Modal.getInstance(document.getElementById('validationModal'));
+        validationModal.hide();
 
-        let existingComment = commentSummaryList.querySelector(`[data-commentid="${fileRowId}"]`);
-        if (existingComment) {
-            existingComment.innerHTML = `<strong>${commentPrefix}</strong> ${comments || 'No comments'}`;
-        } else {
-            const commentSummaryItem = document.createElement('li');
-            commentSummaryItem.className = 'list-group-item';
-            commentSummaryItem.dataset.commentid = fileRowId;
-            commentSummaryItem.innerHTML = `<strong>${commentPrefix}</strong> ${comments || 'No comments'}`;
-            commentSummaryList.appendChild(commentSummaryItem);
-        }
-
-        const validatedFilesCount = Object.values(fileValidationStatus).filter(file => file.status && file.status !== 'pending').length;
-        const totalFilesCount = Object.keys(fileValidationStatus).length;
-
-        updateValidationSummary(validatedFilesCount, totalFilesCount);
+        const viewUploadsModal = new bootstrap.Modal(document.getElementById('viewUploadsModal'));
+        viewUploadsModal.show();
 
     } catch (error) {
-        console.error("Error saving validation to Firestore:", error);
-        alert("Failed to save validation.");
+        console.error("Error saving validation:", error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Could not save validation. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     }
-
-    const validationModal = bootstrap.Modal.getInstance(document.getElementById('validationModal'));
-    validationModal.hide();
-
-    const viewUploadsModal = new bootstrap.Modal(document.getElementById('viewUploadsModal'));
-    viewUploadsModal.show();
 }
 
-
-// Helper Function to Map File Row IDs to Labels
+// Maps file row IDs to readable labels
 function getFileLabelFromId(fileRowId) {
-    const fileLabels = {
+    const labels = {
         buildingPlan: 'Building Plan',
         proofOwnership: 'Proof of Ownership',
         taxReceipt: 'Photocopy of Tax Declaration & Current Tax Receipt',
@@ -1980,10 +1977,8 @@ function getFileLabelFromId(fileRowId) {
         certExemption: 'Certification of Exemption Location Clearance from CPDO',
         structuralAnalysis: 'Structural Analysis (2-Storey and up)'
     };
-
-    return fileLabels[fileRowId] || 'Unknown File';
+    return labels[fileRowId] || 'Unknown File';
 }
-
 
 
 // Function to check if all required fields are filled

@@ -311,7 +311,7 @@
             // Check if mediaDevices API is supported
             if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
                 console.error('MediaDevices API not supported in this browser.');
-                alert('Camera access is not supported on this device or browser.');
+               console.log('Camera access is not supported on this device or browser.');
                 return;
             }
         

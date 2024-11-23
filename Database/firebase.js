@@ -254,49 +254,51 @@ function monitorAuthState() {
     onAuthStateChanged(auth, async (user) => {
         const userInfo = document.getElementById('user-info');
         const userNameElement = document.getElementById('user-name');
-        const permitStatusTable = document.getElementById('permit-status-table'); // Add this line
+        const avatarElement = document.getElementById('client-avatar');
+        const permitStatusTable = document.getElementById('permit-status-table');
 
-        if (user) {
-            console.log("User is logged in:", user.uid);
-
-            // Fetch and display user info
-            if (userNameElement) {
-                const userRef = doc(db, 'users', user.uid);
-                const docSnap = await getDoc(userRef);
-                if (docSnap.exists()) {
-                    const { firstName, lastName, avatarUrl } = docSnap.data();
-                    userNameElement.textContent = `${firstName} ${lastName}`;
-
-                    const avatarElement = document.getElementById('client-avatar');
-                    if (avatarUrl) {
-                        avatarElement.src = avatarUrl;
-                        avatarElement.alt = `${firstName} ${lastName}'s Avatar`;
-                    } else {
-                        avatarElement.src = '/resources/pictures/avatar3.png'; // Default avatar
-                        avatarElement.alt = 'Default Avatar';
-                    }
-                } else {
-                    console.error("No such document!");
-                }
-            }
-
-            if (userInfo) {
-                userInfo.innerHTML = `Logged in as: ${user.email}`;
-            }
-
-            // Fetch and display user permit status
-            if (permitStatusTable) {
-                await loadUserPermitStatus(); // Ensure permits are loaded
-            }
-
-        } else {
+        if (!user) {
             console.log("No user is logged in.");
-            if (userInfo) {
-                userInfo.innerHTML = "Not logged in";
-            }
+            if (userInfo) userInfo.innerHTML = "Not logged in";
+            return;
+        }
+
+        console.log("User is logged in:", user.uid);
+
+        // Display basic user info
+        if (userInfo) userInfo.innerHTML = `Logged in as: ${user.email}`;
+
+        // Fetch user document and permit status in parallel
+        try {
+            const [userDoc, permitStatus] = await Promise.all([
+                fetchUserInfo(user.uid, userNameElement, avatarElement),
+                loadUserPermitStatus(permitStatusTable)
+            ]);
+
+            console.log("User info and permits loaded successfully.");
+        } catch (error) {
+            console.error("Error loading user info or permits:", error);
         }
     });
 }
+
+// Helper function to fetch and display user info
+async function fetchUserInfo(userId, userNameElement, avatarElement) {
+    if (!userNameElement || !avatarElement) return;
+
+    const userRef = doc(db, 'users', userId);
+    const docSnap = await getDoc(userRef);
+
+    if (docSnap.exists()) {
+        const { firstName, lastName, avatarUrl } = docSnap.data();
+        userNameElement.textContent = `${firstName} ${lastName}`;
+        avatarElement.src = avatarUrl || '/resources/pictures/avatar3.png';
+        avatarElement.alt = `${firstName || 'Default'}'s Avatar`;
+    } else {
+        console.error("No such document!");
+    }
+}
+
 
 // Function to handle logout
 async function handleLogout(event) {
@@ -982,54 +984,76 @@ async function loadUserPermitStatus() {
             tableBody.appendChild(row);
 
             const rescheduleBtn = row.querySelector('.reschedule-btn');
-            rescheduleBtn.addEventListener('click', (event) => {
-                const docId = event.target.getAttribute('data-id');
-                const permitType = event.target.getAttribute('data-permit-type');
-                const calendarModal = new bootstrap.Modal(document.getElementById('calendarModal'));
-                calendarModal.show();
+rescheduleBtn.addEventListener('click', async (event) => {
+    const docId = event.target.getAttribute('data-id');
+    const permitType = event.target.getAttribute('data-permit-type');
+    const calendarModal = new bootstrap.Modal(document.getElementById('calendarModal'));
+    calendarModal.show();
 
-                const calendarEl = document.getElementById('calendar');
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    selectable: true,
-                    dateClick: async function(info) {
-                        const selectedDate = info.date;
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
+    const dateInput = document.getElementById('datePicker');
+    dateInput.value = ''; // Reset the date input
+    dateInput.setAttribute('min', new Date().toISOString().split('T')[0]); // Disable past dates
 
-                        if (selectedDate <= today || [0, 6].includes(selectedDate.getDay())) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Invalid Selection',
-                                text: 'Rescheduling on weekends or past dates is not allowed.',
-                            });
-                            return;
-                        }
+    // Add event listener for date selection
+    dateInput.addEventListener('change', async function handleDateChange(event) {
+        const selectedDate = new Date(event.target.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-                        const confirmation = await Swal.fire({
-                            icon: 'question',
-                            title: 'Confirm Reschedule',
-                            text: `Do you want to reschedule the appointment to ${selectedDate.toLocaleDateString()}?`,
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes, Reschedule',
-                        });
-
-                        if (confirmation.isConfirmed) {
-                            try {
-                                const permitDoc = doc(db, permitType === "Building Permit" ? "buildingPermits" : permitType === "Certificate of Occupancy" ? "OccupancyPermits" : permitType === "Housing Application" ? "Housing" : "ElectricalCert", docId);
-                                await updateDoc(permitDoc, { appointmentDate: Timestamp.fromDate(selectedDate) });
-
-                                Swal.fire({ icon: 'success', title: 'Rescheduled!', text: 'Appointment rescheduled successfully!' });
-                                calendarModal.hide();
-                            } catch (error) {
-                                console.error("Error rescheduling appointment:", error);
-                                Swal.fire({ icon: 'error', title: 'Error', text: 'Error rescheduling appointment. Please try again.' });
-                            }
-                        }
-                    }
-                });
-                calendar.render();
+        if (selectedDate <= today || [0, 6].includes(selectedDate.getDay())) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Selection',
+                text: 'Rescheduling on weekends or past dates is not allowed.',
             });
+            dateInput.value = ''; // Reset invalid selection
+            return;
+        }
+
+        const confirmation = await Swal.fire({
+            icon: 'question',
+            title: 'Confirm Reschedule',
+            text: `Do you want to reschedule the appointment to ${selectedDate.toLocaleDateString()}?`,
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Reschedule',
+        });
+
+        if (confirmation.isConfirmed) {
+            try {
+                const permitDoc = doc(
+                    db,
+                    permitType === "Building Permit" 
+                        ? "buildingPermits" 
+                        : permitType === "Certificate of Occupancy" 
+                        ? "OccupancyPermits" 
+                        : permitType === "Housing Application" 
+                        ? "Housing" 
+                        : "ElectricalCert", 
+                    docId
+                );
+                await updateDoc(permitDoc, { appointmentDate: Timestamp.fromDate(selectedDate) });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Rescheduled!',
+                    text: 'Appointment rescheduled successfully!',
+                });
+                calendarModal.hide();
+            } catch (error) {
+                console.error("Error rescheduling appointment:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error rescheduling appointment. Please try again.',
+                });
+            }
+        }
+        
+        // Remove event listener after handling
+        dateInput.removeEventListener('change', handleDateChange);
+    });
+});
+
         };
 
         const extractCommentsSummary = (fileValidationStatus) => {
@@ -1114,43 +1138,71 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
 
     modalBody.innerHTML = '';
 
+    // Mapping file keys to descriptive names
+    const fileMapping = {
+        buildingPlan: 'Building Plan',
+        proofOwnership: 'Proof of Ownership',
+        taxReceipt: 'Photocopy of Tax Declaration & Current Tax Receipt',
+        brgyClearance: 'Barangay Clearance for Building Permit',
+        billMaterials: 'Bill of Materials and Specifications',
+        prc: 'Photocopy of PRC ID/PTR of Signing Engineers',
+        certExemption: 'Certificate of Exemption/Location Clearance from CPDO',
+        structuralAnalysis: 'Structural Analysis (2-Storey and Up)',
+    };
+
     if (commentsSummary.length === 0) {
         modalBody.textContent = 'No remarks available.';
     } else {
-        commentsSummary.forEach(commentObj => {
-            const commentRow = document.createElement('div');
-            commentRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'p-3', 'mb-3', 'border', 'rounded', 'shadow-sm');
-            const statusColor = commentObj.status.toLowerCase() === 'approved' ? 'green' : commentObj.status.toLowerCase() === 'disapproved' ? 'red' : 'gray';
+        // Create table structure
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-hover', 'align-middle', 'table-striped', 'mt-3');
 
-            commentRow.innerHTML = `
-                <div>
-                    <strong>File:</strong> ${commentObj.fileName}<br>
-                    <strong>Status:</strong> ${commentObj.status}<br>
-                    <strong>Comment:</strong> ${commentObj.comment}
-                </div>
-                <div class="ms-2">
-                    <span class="badge" style="background-color: ${statusColor}; width: 16px; height: 16px; border-radius: 50%; display: inline-block; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);"></span>
-                </div>
+        // Table header
+        table.innerHTML = `
+            <thead class="table-light">
+                <tr>
+                    <th>File</th>
+                    <th>Status</th>
+                    <th>Comment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        `;
+
+        const tbody = document.createElement('tbody');
+
+        commentsSummary.forEach(commentObj => {
+            const statusColor = commentObj.status.toLowerCase() === 'approved' ? 'success'
+                : commentObj.status.toLowerCase() === 'disapproved' ? 'danger'
+                : 'secondary';
+
+            // Use mapped names or fallback to raw key
+            const displayFileName = fileMapping[commentObj.fileName] || commentObj.fileName;
+
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${displayFileName}</td>
+                <td>
+                    <span class="badge bg-${statusColor}">${commentObj.status}</span>
+                </td>
+                <td class="text-truncate" style="max-width: 200px;">${commentObj.comment || 'No comment provided.'}</td>
+                <td>
+                    ${commentObj.status.toLowerCase() === 'disapproved' ? `
+                        <button class="btn btn-warning btn-sm reupload-btn" data-file="${commentObj.fileName}" data-permit-id="${button.getAttribute('data-id')}">Reupload</button>
+                        <input type="file" class="d-none" id="reupload-${commentObj.fileName}" accept="application/pdf,image/*">
+                    ` : ''}
+                </td>
             `;
 
+            // Add reupload functionality for disapproved files
             if (commentObj.status.toLowerCase() === 'disapproved') {
-                const reuploadContainer = document.createElement('div');
-                const inputId = `reupload-${commentObj.fileName}`;
-                reuploadContainer.innerHTML = `
-                    <input type="file" id="${inputId}" accept="application/pdf,image/*" style="display:none">
-                    <button class="btn btn-warning reupload-btn" data-file="${commentObj.fileName}" data-permit-id="${button.getAttribute('data-id')}">Reupload</button>
-                `;
-                commentRow.appendChild(reuploadContainer);
+                const reuploadButton = row.querySelector('.reupload-btn');
+                const fileInput = row.querySelector(`#reupload-${commentObj.fileName}`);
 
-                const fileInput = reuploadContainer.querySelector(`#${inputId}`);
-                const reuploadButton = reuploadContainer.querySelector('.reupload-btn');
-
-                // Reupload functionality
                 reuploadButton.addEventListener('click', () => {
                     fileInput.click();
                 });
-
-              
 
                 fileInput.addEventListener('change', async (event) => {
                     const file = event.target.files[0];
@@ -1158,57 +1210,50 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
                         try {
                             const confirmation = await Swal.fire({
                                 title: 'Confirm Reupload',
-                                text: `Are you sure you want to reupload the file "${commentObj.fileName}"?`,
+                                text: `Are you sure you want to reupload the file "${displayFileName}"?`,
                                 icon: 'warning',
                                 showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
                                 confirmButtonText: 'Yes, reupload it!',
                             });
 
                             if (!confirmation.isConfirmed) return;
 
-                            
-
                             const permitId = reuploadButton.getAttribute('data-permit-id');
-                            const fileName = reuploadButton.getAttribute('data-file');
 
-                            const storageRef = ref(storage, `reuploads/${auth.currentUser.uid}/buildingPermits/${fileName}`);
+                            const storageRef = ref(storage, `reuploads/${auth.currentUser.uid}/buildingPermits/${commentObj.fileName}`);
                             const snapshot = await uploadBytes(storageRef, file);
                             const downloadURL = await getDownloadURL(snapshot.ref);
 
                             const permitDoc = doc(db, "buildingPermits", permitId);
                             await updateDoc(permitDoc, {
-                                [`${fileName}URL`]: downloadURL
+                                [`${commentObj.fileName}URL`]: downloadURL,
                             });
 
                             await Swal.fire({
                                 title: 'Success!',
                                 text: 'File reuploaded successfully!',
                                 icon: 'success',
-                                confirmButtonText: 'OK',
                             });
                         } catch (error) {
                             console.error('Error uploading file:', error);
                             await Swal.fire({
                                 title: 'Error',
-                                text: 'Error reuploading file.',
+                                text: 'Error reuploading file. Please try again.',
                                 icon: 'error',
-                                confirmButtonText: 'OK',
                             });
-                        } finally {
-                    
                         }
-                    } else {
-                     
                     }
                 });
             }
 
-            modalBody.appendChild(commentRow);
+            tbody.appendChild(row);
         });
+
+        table.appendChild(tbody);
+        modalBody.appendChild(table);
     }
 });
+
 
 
 

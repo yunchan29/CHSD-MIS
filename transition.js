@@ -5,25 +5,31 @@ document.addEventListener("DOMContentLoaded", () => {
         link.addEventListener("click", e => {
             const targetUrl = link.getAttribute("href");
 
-            // Check if the target is an internal link
-            if (!targetUrl.startsWith("http") && targetUrl !== "#") {
+            // Process only internal links, ignoring external links and "#" placeholders
+            if (targetUrl && !targetUrl.startsWith("http") && targetUrl !== "#") {
                 e.preventDefault(); // Prevent default navigation
 
-                // Create a semi-transparent loading indicator
+                // Create and style the loading indicator
                 const loadingIndicator = document.createElement("div");
-                loadingIndicator.style.position = "fixed";
-                loadingIndicator.style.top = "50%";
-                loadingIndicator.style.left = "50%";
-                loadingIndicator.style.transform = "translate(-50%, -50%)";
-                loadingIndicator.style.zIndex = "9999";
-                loadingIndicator.style.width = "120px"; // Adjusted container width
-                loadingIndicator.style.height = "150px"; // Adjusted container height
-                loadingIndicator.style.backgroundColor = "rgba(0, 0, 0, 0.6)"; // Semi-transparent background
-                loadingIndicator.style.borderRadius = "10px"; // Rounded edges
-                loadingIndicator.style.display = "flex";
-                loadingIndicator.style.flexDirection = "column"; // Stack spinner and text vertically
-                loadingIndicator.style.alignItems = "center";
-                loadingIndicator.style.justifyContent = "center";
+                Object.assign(loadingIndicator.style, {
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    zIndex: "9999",
+                    width: "120px",
+                    height: "150px",
+                    backgroundColor: "rgba(0, 0, 0, 0.6)",
+                    borderRadius: "10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#fff",
+                    fontSize: "14px",
+                    textAlign: "center",
+                });
+
                 loadingIndicator.innerHTML = `
                     <div class="spinner-container">
                         <div class="spinner"></div>
@@ -34,14 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 document.body.appendChild(loadingIndicator);
 
-                // Animate fade-out with smoother and semi-transparent transition
+                // Fade-out animation using GSAP
                 gsap.to("body", {
-                    opacity: 0.5, // Increased transparency for body fade-out
-                    backgroundColor: "rgba(0, 0, 0, 0.4)", // Lighter and more transparent background
-                    duration: 0.8, // Adjusted animation speed
-                    ease: "power2.inOut", // Smooth easing
+                    opacity: 0.5,
+                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                    duration: 0.8,
+                    ease: "power2.inOut",
                     onComplete: () => {
-                        window.location = targetUrl; // Navigate after animation
+                        window.location = targetUrl; // Navigate to the target URL
                     },
                 });
             }
