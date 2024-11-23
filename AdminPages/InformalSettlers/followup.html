@@ -194,7 +194,7 @@
             const timestamp = serverTimestamp();
     
             try {
-                toggleLoadingScreen(true); // Show loading screen
+                
                 // Confirm action with the user
                 const { isConfirmed } = await Swal.fire({
                     title: "Process Request?",
@@ -233,7 +233,7 @@
                     icon: "error"
                 });
             } finally {
-                toggleLoadingScreen(false); // Hide loading screen
+           
             }
         }
     
