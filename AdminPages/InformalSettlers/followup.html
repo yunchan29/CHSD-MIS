@@ -23,6 +23,11 @@
     </style>
 </head>
 <body>
+    <div id="loading-screen" class="loading-screen" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center">
@@ -113,8 +118,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
     
+        // Utility function to toggle the loading screen
+        function toggleLoadingScreen(show) {
+            const loadingScreen = document.getElementById("loading-screen");
+            loadingScreen.style.display = show ? "flex" : "none";
+        }
+    
         // Load follow-up requests
         async function loadFollowUpRequests() {
+            toggleLoadingScreen(true); // Show loading screen
             try {
                 const today = new Date();
                 const zeroo = new Date(today.setDate(today.getDate() - 0)); 
@@ -149,7 +161,7 @@
                         <td>${householdName}</td>
                         <td>${createdAt}</td>
                         <td>${status}</td>
-                        <td><button class="btn btn-success process-btn" data-id="${docId}">Process</td>
+                        <td><button class="btn btn-primary process-btn" data-id="${docId}">Process</button></td>
                     `;
     
                     housingDiv.appendChild(row);
@@ -166,6 +178,8 @@
     
             } catch (error) {
                 console.error("Error loading follow-up requests:", error);
+            } finally {
+                toggleLoadingScreen(false); // Hide loading screen
             }
         }
     
@@ -180,6 +194,7 @@
             const timestamp = serverTimestamp();
     
             try {
+                toggleLoadingScreen(true); // Show loading screen
                 // Confirm action with the user
                 const { isConfirmed } = await Swal.fire({
                     title: "Process Request?",
@@ -217,6 +232,8 @@
                     text: "Failed to process the request.",
                     icon: "error"
                 });
+            } finally {
+                toggleLoadingScreen(false); // Hide loading screen
             }
         }
     
