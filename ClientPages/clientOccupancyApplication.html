@@ -320,21 +320,30 @@
                     </div>
                     
                  </div>
-                 <div class="row">
-                    <div class="col-md-4">
-                        <label for="totalFloorArea">Total Floor Area</label>
-                        <input type="number" class="form-control" id="totalFloorArea">
+                 <div class="container">
+                    <div class="form-group">
+                        <label for="NOUnits">Number of Units<span class="required-asterisk">*</span></label>
+                        <select class="form-control" id="NOUnits">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
                     </div>
-                    
-                    <div class="col-md-4">
-                        <label for="NOunits">Number of Units</label>
-                        <input type="text" class="form-control" id="NOUnits">
+                    <div id="unitFieldsContainer"></div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="TotalFloorArea">Total Floor Area</label>
+                            <input type="number" class="form-control" id="TotalFloorArea" readonly>
+                        </div>
+                        <div class="col">
+                            <label for="TotalEstimatedCost">Total Estimated Cost</label>
+                            <input type="number" class="form-control" id="TotalEstimatedCost" disabled>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="NOStorey">Number of Storeys</label>
-                        <input type="text" class="form-control" id="NOStorey">
-                    </div>
-                 </div>
+                </div>
+                
                 <!-- Content -->
                 <table class="table">
                     <thead>
@@ -532,6 +541,85 @@
 </div>
 
 <script>
+    // Select form elements
+const NOUnitsInput = document.getElementById("NOUnits");
+const unitFieldsContainer = document.getElementById("unitFieldsContainer");
+const totalFloorAreaInput = document.getElementById("TotalFloorArea");
+const totalEstimatedCostInput = document.getElementById("TotalEstimatedCost");
+
+// Initialize the form with 1 unit field displayed by default
+function initializeUnitFields() {
+    const initialNumUnits = parseInt(NOUnitsInput.value) || 1;
+    generateUnitFields(initialNumUnits);
+    updateTotals();
+}
+
+// Function to generate dynamic fields for each unit
+function generateUnitFields(numUnits) {
+    // Clear existing unit fields
+    unitFieldsContainer.innerHTML = "";
+
+    for (let i = 1; i <= numUnits; i++) {
+        const unitDiv = document.createElement("div");
+        unitDiv.className = "row mb-3";
+
+        unitDiv.innerHTML = `
+            <div class="col">
+                <label for="BlockNumber${i}">Block Number for Unit ${i}</label>
+                <input type="text" class="form-control" id="BlockNumber${i}" placeholder="Block Number">
+            </div>
+            <div class="col">
+                <label for="LotNumber${i}">Lot Number for Unit ${i}</label>
+                <input type="text" class="form-control" id="LotNumber${i}" placeholder="Lot Number">
+            </div>
+            <div class="col">
+                <label for="NOStorey${i}">Number of Storeys for Unit ${i}</label>
+                <input type="number" class="form-control" id="NOStorey${i}" placeholder="Number of Storeys">
+            </div>
+            <div class="col">
+                <label for="UnitFloorArea${i}">Floor Area for Unit ${i} (sqm)</label>
+                <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area" required>
+            </div>
+        `;
+        unitFieldsContainer.appendChild(unitDiv);
+    }
+}
+
+// Event listener for changes in the Number of Units dropdown
+NOUnitsInput.addEventListener("change", function () {
+    const numUnits = parseInt(NOUnitsInput.value) || 0;
+    generateUnitFields(numUnits);
+    updateTotals();
+});
+
+// Function to calculate total floor area and estimated cost
+function updateTotals() {
+    const floorAreaInputs = document.querySelectorAll(".unit-floor-area");
+    let totalFloorArea = 0;
+
+    // Sum up all floor areas
+    floorAreaInputs.forEach(input => {
+        const floorArea = parseFloat(input.value) || 0;
+        totalFloorArea += floorArea;
+    });
+
+    // Update total floor area and estimated cost
+    totalFloorAreaInput.value = totalFloorArea.toFixed(2); // Optional: Fix to 2 decimal places
+    totalEstimatedCostInput.value = (totalFloorArea * 10000).toFixed(2); // Assuming cost = floor area * 10,000
+}
+
+// Event listener for changes in any floor area input
+unitFieldsContainer.addEventListener("input", function (event) {
+    if (event.target.classList.contains("unit-floor-area")) {
+        updateTotals();
+    }
+});
+
+// Initialize the form on page load
+initializeUnitFields();
+
+</script>
+<script>
     // Disable the "Proceed" button until the user scrolls to the bottom and checks the checkbox
     const modalContent = document.getElementById('privacyPolicyContent');
     const acceptPolicyButton = document.getElementById('acceptPolicyButton');
@@ -669,30 +757,56 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingScreen.style.display = 'flex';
         }
 
-        // Collect input values
+        // Collect static input values
         const appointmentDate = document.getElementById('appointmentDate').value.trim();
         const ownerName = document.getElementById("ownerName").value;
         const ownerAddress = document.getElementById("ownerAddress").value;
         const projectLocation = document.getElementById("projectLocation").value;
-        const totalFloorArea = document.getElementById("totalFloorArea").value;
-        const NOUnits = document.getElementById("NOUnits").value;
-        const NOStorey = document.getElementById("NOStorey").value;
         const buildingPermitNo = document.getElementById("buildingPermitNo").value;
-        // Required fields validation
+
+        // Collect dynamic fields (Units Data)
+        const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
+        const unitsData = [];
+        for (let i = 1; i <= numUnits; i++) {
+            const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
+            const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
+            const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
+            const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
+
+            // Validate fields for each unit
+            if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
+                alert(`Please fill out all fields for Unit ${i}.`);
+                submitButton.disabled = false;
+                loadingScreen.style.display = 'none';
+                return;
+            }
+
+            unitsData.push({
+                blockNumber,
+                lotNumber,
+                NOStorey: parseInt(NOStorey),
+                floorArea: parseFloat(floorArea)
+            });
+        }
+
+        // Calculate total floor area
+        const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
+
+        // Required static fields validation
         const requiredFields = [
             { field: appointmentDate, name: 'Appointment Date' },
             { field: ownerName, name: 'Owner Name' }
         ];
-
         for (const { field, name } of requiredFields) {
             if (!field) {
                 alert(`Please fill out the ${name} field.`);
                 submitButton.disabled = false;
+                loadingScreen.style.display = 'none';
                 return;
             }
         }
 
-        // File inputs and namePrefix mapping
+        // Validate file uploads
         const requiredFileInputs = [
             { id: 'buildingPermitCompletionFile', namePrefix: 'buildingPermitCompletion', name: 'Building Permit Completion' },
             { id: 'approvedBuildingPermitFile', namePrefix: 'approvedBuildingPermit', name: 'Approved Building Permit' },
@@ -700,8 +814,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'structurePhotosFile', namePrefix: 'structurePhotos', name: 'Structure Photos' },
             { id: 'sketchFile', namePrefix: 'sketch', name: 'Sketch' }
         ];
-
-        // Validate that all required files are uploaded
         for (const fileInputObj of requiredFileInputs) {
             const fileInput = document.getElementById(fileInputObj.id);
             if (!fileInput || !fileInput.files[0]) {
@@ -713,14 +825,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // Ensure the user is authenticated
+            // Ensure user is authenticated
             const user = await new Promise((resolve, reject) => {
                 onAuthStateChanged(auth, user => {
-                    if (user) {
-                        resolve(user);
-                    } else {
-                        reject(new Error("No user is authenticated."));
-                    }
+                    if (user) resolve(user);
+                    else reject(new Error("No user is authenticated."));
                 });
             });
 
@@ -735,8 +844,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 buildingPermitNo,
                 ownerAddress,
                 totalFloorArea,
-                NOUnits,
-                NOStorey,
+                numUnits,
+                unitsData, // Save the dynamic data
                 status: 'Pending',
                 createdAt: serverTimestamp(),
             };
@@ -746,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const permitId = permitDocRef.id;
             const storagePath = `OccupancyPermits/${permitId}`;
 
-            // Handle file uploads and storage
+            // Handle file uploads
             const uploadPromises = requiredFileInputs.map(async fileInputObj => {
                 const fileInput = document.getElementById(fileInputObj.id);
                 if (fileInput && fileInput.files[0]) {
@@ -777,20 +886,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Success feedback
             Swal.fire({
-  title: "Success!",
-  text: "Application Submitted",
-  icon: "success"
-});
-logFirestoreChanges("OccupancyPermits", permitId);
-
-       
+                title: "Success!",
+                text: "Application Submitted",
+                icon: "success"
+            });
+            logFirestoreChanges("OccupancyPermits", permitId);
 
         } catch (error) {
-            // Log and alert on error
+            // Handle errors
             console.error("Error during submission:", error);
             alert(`Error submitting application: ${error.message}`);
         } finally {
-            // Hide loading screen and re-enable submit button
+            // Reset loading and submit button
             if (loadingScreen) {
                 loadingScreen.style.display = 'none';
             }
@@ -1026,44 +1133,116 @@ logFirestoreChanges("OccupancyPermits", permitId);
     }
 
     async function selectPermit(permitId) {
-        try {
-            const permitRef = doc(db, "buildingPermits", permitId);
-            const permitSnap = await getDoc(permitRef);
+    try {
+        const permitRef = doc(db, "buildingPermits", permitId);
+        const permitSnap = await getDoc(permitRef);
 
-            if (permitSnap.exists()) {
-                const permitData = permitSnap.data();
+        if (permitSnap.exists()) {
+            const permitData = permitSnap.data();
 
-                // Autofill form fields and apply highlight effect
-                autofillField('buildingPermitNo', permitData.buildingPermitNo);
-                autofillField('ownerName', permitData.ownerName);
-                autofillField('ownerAddress', permitData.addressTelNo);
-                autofillField('projectLocation', permitData.projectLocation);
-                autofillField('totalFloorArea', permitData.TotalFloorArea);
-                autofillField('NOUnits', permitData.NOUnits);
-                autofillField('NOStorey', permitData.NOStorey);
-                
+            // Autofill static form fields and apply highlight effect
+            autofillField('buildingPermitNo', permitData.buildingPermitNo);
+            autofillField('ownerName', permitData.ownerName);
+            autofillField('ownerAddress', permitData.addressTelNo);
+            autofillField('projectLocation', permitData.projectLocation);
+            autofillField('totalFloorArea', permitData.TotalFloorArea);
+            autofillField('NOStorey', permitData.NOStorey);
 
-                closePermitSelectionModal();
-            } else {
-                console.error("No such document!");
+            // Autofill dropdown for NOUnits
+            const noUnitsDropdown = document.getElementById("NOUnitsDropdown");
+            if (noUnitsDropdown) {
+                noUnitsDropdown.value = permitData.NOUnits || ''; // Set the dropdown value
+                noUnitsDropdown.classList.add('highlight'); // Add highlight class
+                setTimeout(() => noUnitsDropdown.classList.remove('highlight'), 2000); // Remove highlight
+                noUnitsDropdown.dispatchEvent(new Event('change')); // Trigger change event if needed
             }
-        } catch (error) {
-            console.error("Error fetching permit details:", error);
-        }
-    }
 
-    function autofillField(fieldId, value) {
-        const field = document.getElementById(fieldId);
-        if (field) {
-            field.value = value || ''; // Set field value
-            field.classList.add('highlight'); // Add highlight class
+            // Handle dynamic unit data
+            const unitFieldsContainer = document.getElementById("unitFieldsContainer");
+            const unitsData = permitData.unitsData || []; // Ensure unitsData exists
 
-            // Remove highlight effect after 1 second
-            setTimeout(() => {
-                field.classList.remove('highlight');
-            }, 2000);
+            // Generate dynamic fields based on unitsData
+            unitFieldsContainer.innerHTML = ""; // Clear existing dynamic fields
+            unitsData.forEach((unit, index) => {
+                const unitIndex = index + 1;
+
+                const unitDiv = document.createElement("div");
+                unitDiv.className = "row mb-3";
+
+                unitDiv.innerHTML = `
+                    <div class="col">
+                        <label for="BlockNumber${unitIndex}">Block Number for Unit ${unitIndex}</label>
+                        <input type="text" class="form-control" id="BlockNumber${unitIndex}" placeholder="Block Number">
+                    </div>
+                    <div class="col">
+                        <label for="LotNumber${unitIndex}">Lot Number for Unit ${unitIndex}</label>
+                        <input type="text" class="form-control" id="LotNumber${unitIndex}" placeholder="Lot Number">
+                    </div>
+                    <div class="col">
+                        <label for="NOStorey${unitIndex}">Number of Storeys for Unit ${unitIndex}</label>
+                        <input type="number" class="form-control" id="NOStorey${unitIndex}" placeholder="Number of Storeys">
+                    </div>
+                    <div class="col">
+                        <label for="UnitFloorArea${unitIndex}">Floor Area for Unit ${unitIndex}</label>
+                        <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${unitIndex}" placeholder="Floor Area" required>
+                    </div>
+                `;
+
+                unitFieldsContainer.appendChild(unitDiv);
+
+                // Apply autofill and highlight effect for dynamic fields
+                autofillField(`BlockNumber${unitIndex}`, unit.blockNumber);
+                autofillField(`LotNumber${unitIndex}`, unit.lotNumber);
+                autofillField(`NOStorey${unitIndex}`, unit.NOStorey);
+                autofillField(`UnitFloorArea${unitIndex}`, unit.floorArea);
+            });
+
+            // Update totals after autofill
+            updateTotals();
+
+            // Show SweetAlert2 notification after autofilling all fields
+            Swal.fire({
+                title: 'Fields Populated',
+                text: 'All relevant fields have been successfully populated.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+
+            closePermitSelectionModal();
+        } else {
+            console.error("No such document!");
+            Swal.fire({
+                title: 'Error',
+                text: 'Permit data not found!',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
+    } catch (error) {
+        console.error("Error fetching permit details:", error);
+        Swal.fire({
+            title: 'Error',
+            text: 'An error occurred while fetching permit details.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     }
+}
+
+// Function to autofill a field and apply highlight effect
+function autofillField(fieldId, value) {
+    const field = document.getElementById(fieldId);
+    if (field) {
+        field.value = value || ''; // Set field value
+        field.classList.add('highlight'); // Add highlight class
+
+        // Remove highlight effect after 2 seconds
+        setTimeout(() => {
+            field.classList.remove('highlight');
+        }, 2000);
+    }
+}
+
 });
 
 
@@ -1303,6 +1482,10 @@ logFirestoreChanges("OccupancyPermits", permitId);
         }
     }
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+        <script src="/transition.js"></script>
 
     
 </body>
