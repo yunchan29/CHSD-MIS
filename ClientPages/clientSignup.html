@@ -244,12 +244,27 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
+                                                <!-- Step-by-Step Instructions Section -->
+                                                <div class="mb-4">
+                                                    <h6>Step-by-Step Guide:</h6>
+                                                    <ol>
+                                                        <li>Select a clear image of your ID that shows your address.</li>
+                                                        <li>Click on the "Choose File" button to upload your image.</li>
+                                                        <li>Make sure you have good lighting to help the system detect the ID properly.</li>
+                                                        <li>Ensure the preview below shows the correct document before proceeding.</li>
+                                                    </ol>
+                                                </div>
+                                
+                                                <!-- Sample Image for Guidance -->
+                                                <div class="mb-3 text-center">
+                                                    <img src="/resources/pictures/sampleID.png" alt="Sample ID" class="img-thumbnail" style="max-width: 250px;">
+                                                    <small class="d-block text-muted">Sample ID with address for reference</small>
+                                                </div>
+                                
                                                 <!-- Upload File Section -->
                                                 <label class="form-label">Upload your ID file with address:</label>
-                                                <input type="file" id="fileInput" accept="image/*" class="form-control">
-                                               
-                                               
-                                            
+                                                <input type="file" id="fileInput" accept="image/*" class="form-control mb-3">
+                                                
                                                 <!-- Image Preview -->
                                                 <div id="scanningStatus" style="display: none;">Scanning document...</div>
                                                 <img id="imagePreview" class="img-fluid mb-3" alt="Image Preview" style="display: none;">
@@ -257,15 +272,12 @@
                                                 <pre id="ocrOutput" class="text-start border p-3 bg-light" style="display: none;"></pre>
                                             </div>
                                             
+                                            <!-- Approval Status and Footer -->
                                             <div id="approvalStatus" class="alert" role="alert" style="display: none;"></div>
                                             <div class="modal-footer">
-                                                
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 <button type="button" id="nextBtnYo" class="btn btn-primary" disabled>Next</button>
-
                                             </div>
-                                            
-                                            
                                         </div>
                                     </div>
                                 </div>
