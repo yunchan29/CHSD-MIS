@@ -1234,6 +1234,13 @@ document.getElementById('viewRemarks').addEventListener('show.bs.modal', functio
                                 text: 'File reuploaded successfully!',
                                 icon: 'success',
                             });
+
+                            // Change button text and disable it
+                            reuploadButton.textContent = 'Reuploaded';
+                            reuploadButton.disabled = true;
+                            reuploadButton.classList.remove('btn-warning');
+                            reuploadButton.classList.add('btn-success');
+
                         } catch (error) {
                             console.error('Error uploading file:', error);
                             await Swal.fire({

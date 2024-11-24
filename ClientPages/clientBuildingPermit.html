@@ -295,7 +295,16 @@
                     <form>
                         <p>Note: Fill up all the fields to proceed to the next step.</p>
                         <p><i>Required fields are marked with <span class="required-asterisk">*</span></i></p>
-                       
+                        <div class="row">
+                            <div class="col">
+                                <label for="applicationMethod">Application Method:</label>
+                                <select class="form-control" id="applicationMethod" disabled>
+                                    <option value="online">Online Application</option>
+                                    <option value="walk-in">Walk-in</option>
+                                </select>
+                            </div>
+                        </div>
+                        
                         <div class="row g-3">
                             <div class="col-md-6">
                                 
@@ -333,12 +342,22 @@
 
 
 <div class="mb-3">
-   <div class="col-md-4">
-    <label for="phoneNumber" class="form-label">Cellphone/Telephone Number<span class="required-asterisk">*</span></label>
-    <input type="text" class="form-control" id="phoneNumber" placeholder="09XXXXXXXXX" required>
-   </div>
-</div>
-
+    <div class="col-md-4">
+       <label for="phoneNumber" class="form-label">
+          Cellphone/Telephone Number<span class="required-asterisk">*</span>
+       </label>
+       <input 
+          type="text" 
+          class="form-control" 
+          id="phoneNumber" 
+          placeholder="09XXXXXXXXX" 
+          maxlength="11" 
+          pattern="\d{11}" 
+          title="Please enter exactly 11 digits." 
+          required>
+    </div>
+ </div>
+ 
 
 
                         <div class="row g-3">
@@ -1173,6 +1192,7 @@
     event.preventDefault();
 
     // Gather form inputs
+    const applicationMethod = document.getElementById('applicationMethod').value;
     const issuedOn = document.getElementById('basic-url').value.trim();
     const addressTelNo = document.getElementById('addressTelNo').value.trim();
     const projectLocation = document.getElementById('projectLocation').value.trim();
@@ -1287,6 +1307,7 @@
         const permitData = {
             buildingPermitNo,
             appointmentDate: new Date(appointmentDate),
+            applicationMethod,
             issuedOn,
             ownerName,
             phoneNumber,
@@ -1622,8 +1643,15 @@
             
             // Check if the selected day is Saturday (6) or Sunday (0)
             if (day === 6 || day === 0) {
-                alert('Please select a weekday (Monday-Friday).');
-                this.value = ''; // Clear the input if it's a weekend
+                // SweetAlert2 for user-friendly alert
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Date',
+                    text: 'Please select a weekday (Monday-Friday).',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    this.value = ''; // Clear the input after alert
+                });
             }
         });
     }
@@ -1631,7 +1659,7 @@
     setMinDate();
     disableWeekends();
 </script>
-  
+
 
 <script>
     document.getElementById('applicationAppliedModal').addEventListener('hidden.bs.modal', function () {

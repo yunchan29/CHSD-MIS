@@ -289,6 +289,7 @@
                                     <tr>
                                         <th>Owner</th>
                                         <th>Representative</th>
+                                        <th>Application Type</th>
                                         <th>Submitted at</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -2201,6 +2202,11 @@ async function loadProfiles() {
             }
         });
 
+
+        const applicationMethodMap = {
+    online: "Online Application",
+    "walk-in": "Walk-in"
+}; 
         // Populate table
         const fragment = document.createDocumentFragment();
         permitsData.forEach(data => {
@@ -2208,10 +2214,11 @@ async function loadProfiles() {
 
             const representativeName = userDataMap[data.ownerUid] || "N/A";
             const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
-
+            const applicationMethod = applicationMethodMap[data.applicationMethod] || "N/A";
             row.innerHTML = `
                 <td>${data.ownerName || "N/A"}</td>
                 <td>${representativeName}</td>
+                <td>${applicationMethod}</td>
                 <td>${createdAt}</td>
                 <td>${data.status || "N/A"}</td>
                 <td>

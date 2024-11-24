@@ -24,12 +24,32 @@
     </style>
 </head>
 <body>
+    <div id="fetching-loading-screen" class="fetching-loading-screen">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Fetching from database...</span>
+        </div>
+        <p class="loading-text">Fetching from database...</p>
+    </div>
     <div class="main-container d-flex">
         <div class="sideNav" id="side_nav">
             <div class="header-box text-center px-2 pt-3 pb-4">
                
                 
                 <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"><i class="fa-solid fa-bars-staggered"></i></button>
+            </div>
+            <div class="container">
+                <div class="header-box text-center px-2 pt-3 pb-4 ">
+                    <button class="btn d-md-none d-block close-btn px-1 py-0 text-black"><i class="fa-solid fa-bars-staggered"></i></button>
+                    <div class="avatar-placeholder">
+                        <img id="client-avatar" src="" alt="loading..." width="100" height="100">
+
+                    </div>
+                    <div class="avatar-text">
+                        <!-- Client ID and Name -->
+                        <div id="user-name">loading...</div>
+                    </div>
+                    
+                </div>
             </div>
             <ul class="sideBarList list-unstyled px-2">
                 <li class="sideNav">
@@ -71,23 +91,90 @@
   </div>
 </nav>
 
-        
-            <div class="contentContainer">
-           
-<h3 class="text-center">Logs</h3>
-<table class="table table-striped">
-    <thead>
-        <th>Date</th>
-        <th>Action</th>
-        <th>ID</th>
-        <th>Database</th>
-    </thead>
-    <tbody id="logsAppend">
-     
-    </tbody>
-</table>
+<div class="contentContainer">
+    <h3 class="text-center mb-4">Admin Logs</h3>
 
+    <!-- Filters and Search Bar -->
+    <div class="row align-items-center mb-4">
+        <!-- Search Bar -->
+        <div class="col-md-5 d-flex align-items-center">
+            <div class="input-group">
+                <input type="text" id="searchLogs" class="form-control" placeholder="Search logs by keyword..." />
+                <button class="btn btn-outline-secondary" id="applySearch">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Options -->
+        <div class="col-md-7">
+            <div class="row g-2">
+                <div class="col-sm-6 col-md-3">
+                    <select id="filterOperation" class="form-select">
+                        <option value="">Operation</option>
+                        <option value="Create">Create</option>
+                        <option value="Update">Update</option>
+                        <option value="Delete">Delete</option>
+                    </select>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <select id="filterCollection" class="form-select">
+                        <option value="">Collection</option>
+                        <option value="Users">Users</option>
+                        <option value="Logs">Logs</option>
+                        <option value="Settings">Settings</option>
+                    </select>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <input type="date" id="filterStartDate" class="form-control" placeholder="Start Date">
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <input type="date" id="filterEndDate" class="form-control" placeholder="End Date">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Apply Filters Button -->
+    <div class="d-flex justify-content-end mb-3">
+        <button id="applyFilters" class="btn btn-primary">Apply Filters</button>
+    </div>
+
+    <!-- Export and Backup Buttons -->
+    <div class="d-flex justify-content-end mb-4">
+        <button id="exportCSV" class="btn btn-primary me-2">
+            <i class="fas fa-file-csv"></i> Export to CSV
+        </button>
+        <button id="exportPDF" class="btn btn-danger me-2">
+            <i class="fas fa-file-pdf"></i> Export to PDF
+        </button>
+        <button id="backupLogs" class="btn btn-success">
+            <i class="fas fa-database"></i> Backup Logs
+        </button>
+    </div>
+
+    <!-- Logs Table -->
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th>
+                <th scope="col">ID</th>
+                <th scope="col">Database</th>
+            </tr>
+        </thead>
+        <tbody id="logsAppend">
+            <!-- Logs will be dynamically appended here -->
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div id="pagination" class="d-flex justify-content-center mt-3"></div>
 </div>
+
+
+
+
 
         </div>
     </div>
@@ -105,12 +192,15 @@
       document.getElementById('side_nav').classList.remove('active');
   });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
@@ -125,71 +215,110 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Function to fetch logs and display them with the buildingPermitNo as ID
-    async function fetchAndDisplayLogs() {
+    let logs = []; // Store all fetched logs
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    // Helper function to render logs for the current page
+    function renderLogs(page) {
         const logsTableBody = document.getElementById("logsAppend");
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedLogs = logs.slice(start, end);
+
+        const rowsHTML = paginatedLogs.map(log => {
+            const date = new Date(log.timestamp);
+            const formattedDate = date.toLocaleString("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true,
+            });
+
+            return `
+                <tr>
+                    <td>${formattedDate}</td>
+                    <td>${log.operation}</td>
+                    <td>${log.documentId || "N/A"}</td>
+                    <td>${log.collection}</td>
+                </tr>`;
+        }).join("");
+
+        logsTableBody.innerHTML = rowsHTML;
+        renderPagination();
+    }
+
+    // Helper function to render pagination buttons
+    function renderPagination() {
+        const paginationContainer = document.getElementById("pagination");
+        const totalPages = Math.ceil(logs.length / rowsPerPage);
+        paginationContainer.innerHTML = "";
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement("button");
+            button.textContent = i;
+            button.className = `btn ${i === currentPage ? "btn-primary" : "btn-secondary"}`;
+            button.addEventListener("click", () => {
+                currentPage = i;
+                renderLogs(currentPage);
+            });
+            paginationContainer.appendChild(button);
+        }
+    }
+
+    // Fetch and filter logs
+    async function fetchAndDisplayLogs(filter = null) {
         const logsCollection = collection(db, "logs");
-
+        const loadingScreen = document.getElementById("fetching-loading-screen");
         try {
+            loadingScreen.style.display = "flex";
+
             const querySnapshot = await getDocs(logsCollection);
+            logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            for (const logDoc of querySnapshot.docs) {
-                const logData = logDoc.data();
+            // Sort logs by timestamp in descending order (latest first)
+            logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-                // Format timestamp
-                const date = new Date(logData.timestamp);
-                const formattedDate = date.toLocaleString("en-US", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: true,
+            // Apply filters if provided
+            if (filter) {
+                logs = logs.filter(log => {
+                    if (filter.operation && log.operation !== filter.operation) return false;
+                    if (filter.collection && log.collection !== filter.collection) return false;
+                    if (filter.startDate || filter.endDate) {
+                        const logDate = new Date(log.timestamp);
+                        if (filter.startDate && logDate < new Date(filter.startDate)) return false;
+                        if (filter.endDate && logDate > new Date(filter.endDate)) return false;
+                    }
+                    return true;
                 });
-
-                // Fetch the buildingPermitNo from OccupancyPermits based on permitId (documentId)
-                const occupancyDocRef = doc(db, "OccupancyPermits", logData.documentId);
-                const occupancyDoc = await getDoc(occupancyDocRef);
-
-                let buildingPermitNo = "N/A"; // Default value in case document or field does not exist
-                if (occupancyDoc.exists() && occupancyDoc.data().buildingPermitNo) {
-                    buildingPermitNo = occupancyDoc.data().buildingPermitNo;
-                }
-
-                // Create a new row
-                const row = document.createElement("tr");
-
-                // Create cells for Date, Action, ID, and Database
-                const dateCell = document.createElement("td");
-                dateCell.textContent = formattedDate;
-
-                const actionCell = document.createElement("td");
-                actionCell.textContent = logData.operation;
-
-                const idCell = document.createElement("td");
-                idCell.textContent = buildingPermitNo;
-
-                const databaseCell = document.createElement("td");
-                databaseCell.textContent = logData.collection;
-
-                // Append cells to the row
-                row.appendChild(dateCell);
-                row.appendChild(actionCell);
-                row.appendChild(idCell);
-                row.appendChild(databaseCell);
-
-                // Append the row to the table body
-                logsTableBody.appendChild(row);
             }
+
+            currentPage = 1; // Reset to the first page
+            renderLogs(currentPage);
+            loadingScreen.style.display = "none";
         } catch (error) {
+            loadingScreen.style.display = "none";
             console.error("Error fetching logs:", error);
         }
     }
 
-    // Call the function to fetch and display logs
+    // Event listeners for filters
+    document.getElementById("applyFilters").addEventListener("click", () => {
+        const operation = document.getElementById("filterOperation").value;
+        const collection = document.getElementById("filterCollection").value;
+        const startDate = document.getElementById("filterStartDate").value;
+        const endDate = document.getElementById("filterEndDate").value;
+
+        fetchAndDisplayLogs({ operation, collection, startDate, endDate });
+    });
+
+    // Initial fetch
     fetchAndDisplayLogs();
 </script>
+
 
 
 
