@@ -87,6 +87,21 @@
     margin: 10mm;
   }
 }
+.confirm-label {
+            padding: 0.2rem 0.5rem;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .confirm-label:hover {
+            background-color: #0056b3;
+        }
+
 
    
     </style>
@@ -323,6 +338,7 @@
                             <tr>
                                 <th>Requirements</th>
                                 <th>File</th>
+                                <th><button id="checkAllButton" class="btn btn-primary btn-sm">Check All</button></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -802,6 +818,23 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkAllButton = document.getElementById('checkAllButton');
+            const checkboxes = document.querySelectorAll('input[name="requirements"]');
+    
+            if (checkAllButton) {
+                checkAllButton.addEventListener('click', () => {
+                    const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = !allChecked;
+                    });
+                });
+            }
+        });
+    </script>
     <script>
         const instructionText = document.getElementById("instructionText");
     document.getElementById("typeOption").addEventListener("change", function() {
@@ -1001,11 +1034,11 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
         const ownerName = document.getElementById("ownerName").value.trim();
         const ownerAddress = document.getElementById("ownerAddress").value.trim();
         const projectLocation = document.getElementById("projectLocation").value.trim();
-      
         const buildingPermitNo = document.getElementById("buildingPermitNo").value.trim();
-        const applicantMethod = document.getElementById("applicantMethod").value;
-           // Collect dynamic fields (Units Data)
-           const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
+        const applicantMethod = document.getElementById("applicantMethod").value.trim();
+
+        // Collect dynamic fields (Units Data)
+        const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
         const unitsData = [];
         for (let i = 1; i <= numUnits; i++) {
             const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
@@ -1037,9 +1070,6 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
             { field: ownerName, name: 'Owner Name' },
             { field: ownerAddress, name: 'Owner Address' },
             { field: projectLocation, name: 'Project Location' },
-            { field: totalFloorArea, name: 'Total Floor Area' },
-            { field: NOUnits, name: 'Number of Units' },
-            { field: NOStorey, name: 'Number of Storeys' },
             { field: buildingPermitNo, name: 'Building Permit Number' },
         ];
 
@@ -1047,6 +1077,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
             if (!field) {
                 alert(`Please fill out the ${name} field.`);
                 submitButton.disabled = false;
+                loadingScreen.style.display = 'none';
                 return;
             }
         }
@@ -1095,8 +1126,8 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
                 projectLocation,
                 ownerAddress,
                 totalFloorArea,
-                NOUnits,
-                NOStorey,
+                numUnits,
+                unitsData, // Include dynamic fields
                 buildingPermitNo,
                 applicantMethod,
                 checklist: checkedItems,
@@ -1938,7 +1969,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function openPermitSelectionModal() {
         const modal = document.getElementById('permitSelectionModal');
         const permitList = document.getElementById('permitList');
-        permitList.innerHTML = '';  // Clear previous entries
+        permitList.innerHTML = ''; // Clear previous entries
 
         // Show a loading indicator (optional)
         permitList.innerHTML = '<li>Loading permits...</li>';
@@ -1979,24 +2010,96 @@ document.addEventListener('DOMContentLoaded', () => {
             if (permitSnap.exists()) {
                 const permitData = permitSnap.data();
 
-                // Autofill form fields and apply highlight effect
+                // Autofill static form fields
                 autofillField('buildingPermitNo', permitData.buildingPermitNo);
                 autofillField('ownerName', permitData.ownerName);
                 autofillField('ownerAddress', permitData.addressTelNo);
                 autofillField('projectLocation', permitData.projectLocation);
                 autofillField('totalFloorArea', permitData.TotalFloorArea);
-                autofillField('NOUnits', permitData.NOUnits);
                 autofillField('NOStorey', permitData.NOStorey);
+
+                // Autofill dropdown for NOUnits
+                const noUnitsDropdown = document.getElementById("NOUnitsDropdown");
+                if (noUnitsDropdown) {
+                    noUnitsDropdown.value = permitData.NOUnits || ''; // Set the dropdown value
+                    noUnitsDropdown.classList.add('highlight'); // Add highlight class
+                    setTimeout(() => noUnitsDropdown.classList.remove('highlight'), 2000); // Remove highlight
+                    noUnitsDropdown.dispatchEvent(new Event('change')); // Trigger change event if needed
+                }
+
+                // Handle dynamic unit data
+                const unitFieldsContainer = document.getElementById("unitFieldsContainer");
+                const unitsData = permitData.unitsData || []; // Ensure unitsData exists
+
+                // Generate dynamic fields based on unitsData
+                unitFieldsContainer.innerHTML = ""; // Clear existing dynamic fields
+                unitsData.forEach((unit, index) => {
+                    const unitIndex = index + 1;
+
+                    const unitDiv = document.createElement("div");
+                    unitDiv.className = "row mb-3";
+
+                    unitDiv.innerHTML = `
+                        <div class="col">
+                            <label for="BlockNumber${unitIndex}">Block Number for Unit ${unitIndex}</label>
+                            <input type="text" class="form-control" id="BlockNumber${unitIndex}" placeholder="Block Number">
+                        </div>
+                        <div class="col">
+                            <label for="LotNumber${unitIndex}">Lot Number for Unit ${unitIndex}</label>
+                            <input type="text" class="form-control" id="LotNumber${unitIndex}" placeholder="Lot Number">
+                        </div>
+                        <div class="col">
+                            <label for="NOStorey${unitIndex}">Number of Storeys for Unit ${unitIndex}</label>
+                            <input type="number" class="form-control" id="NOStorey${unitIndex}" placeholder="Number of Storeys">
+                        </div>
+                        <div class="col">
+                            <label for="UnitFloorArea${unitIndex}">Floor Area for Unit ${unitIndex}</label>
+                            <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${unitIndex}" placeholder="Floor Area" required>
+                        </div>
+                    `;
+
+                    unitFieldsContainer.appendChild(unitDiv);
+
+                    // Apply autofill and highlight effect for dynamic fields
+                    autofillField(`BlockNumber${unitIndex}`, unit.blockNumber);
+                    autofillField(`LotNumber${unitIndex}`, unit.lotNumber);
+                    autofillField(`NOStorey${unitIndex}`, unit.NOStorey);
+                    autofillField(`UnitFloorArea${unitIndex}`, unit.floorArea);
+                });
+
+                // Update totals after autofill
+                updateTotals();
+
+                // Show SweetAlert2 notification after autofilling all fields
+                Swal.fire({
+                    title: 'Fields Populated',
+                    text: 'All relevant fields have been successfully populated.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
 
                 closePermitSelectionModal();
             } else {
                 console.error("No such document!");
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Permit data not found!',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
         } catch (error) {
             console.error("Error fetching permit details:", error);
+            Swal.fire({
+                title: 'Error',
+                text: 'An error occurred while fetching permit details.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
     }
 
+    // Function to autofill a field and apply highlight effect
     function autofillField(fieldId, value) {
         const field = document.getElementById(fieldId);
         if (field) {
@@ -2009,6 +2112,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 2000);
         }
     }
+
+    
 });
 
 

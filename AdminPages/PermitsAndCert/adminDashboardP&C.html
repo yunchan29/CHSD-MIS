@@ -313,7 +313,7 @@
         </div></div>
     </div>
   
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module">
         import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { initializeFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -345,7 +345,7 @@
                 sizeBytes: 40 * 1024 * 1024,
                 synchronizeTabs: true,
             }
-        }); 
+        });
     
         // Check if user is logged in
         onAuthStateChanged(auth, (user) => {
@@ -359,138 +359,170 @@
         });
     
         async function fetchData() {
-    try {
-        document.getElementById("fetching-loading-screen").style.display = "flex";
-
-        // Initialize maps to track counts
-        const applicantsCountByDate = {};
-        const totalCountByType = { BP: 0, OP: 0, EI: 0 };
-
-        // Helper function to aggregate applicants by type and date
-        const aggregateApplicantsByType = (snap, type) => {
-            snap.forEach(doc => {
-                const createdAt = doc.data().createdAt;
-                if (createdAt) {
-                    const date = createdAt.toDate().toISOString().split('T')[0];
-                    if (!applicantsCountByDate[date]) {
-                        applicantsCountByDate[date] = { BP: 0, OP: 0, EI: 0 };
-                    }
-                    applicantsCountByDate[date][type]++;
-                    totalCountByType[type]++;
+            try {
+                document.getElementById("fetching-loading-screen").style.display = "flex";
+    
+                // Initialize maps to track counts
+                const applicantsCountByDate = {};
+                const totalCountByType = { BP: 0, OP: 0, EI: 0 };
+                const events = [];
+    
+                // Helper function to aggregate counts using createdAt
+                const aggregateCountsByCreatedAt = (snap, type) => {
+                    snap.forEach(doc => {
+                        const createdAt = doc.data().createdAt;
+                        if (createdAt) {
+                            const date = createdAt.toDate().toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+                            if (!applicantsCountByDate[date]) {
+                                applicantsCountByDate[date] = { BP: 0, OP: 0, EI: 0 };
+                            }
+                            applicantsCountByDate[date][type]++;
+                            totalCountByType[type]++;
+                        } else {
+                            console.warn("Missing createdAt in document", doc.id);
+                        }
+                    });
+                };
+    
+                // Helper function to prepare calendar events using appointmentDate
+                const addEventsByAppointmentDate = (snap, type) => {
+                    snap.forEach(doc => {
+                        const appointmentDate = doc.data().appointmentDate;
+                        const ownerName = doc.data().ownerName || "Unknown";
+                        if (appointmentDate) {
+                            const date = appointmentDate.toDate().toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+                            events.push({
+                                title: `${type}: 1`,
+                                start: date,
+                                extendedProps: {
+                                    ownerName: ownerName
+                                }
+                            });
+                        } else {
+                            console.warn("Missing appointmentDate in document", doc.id);
+                        }
+                    });
+                };
+    
+                // Fetch data and process counts/events
+                const [buildingPermitsSnap, occupancyPermitsSnap, electricalCertSnap] = await Promise.all([
+                    getDocs(collection(db, 'buildingPermits')),
+                    getDocs(collection(db, 'OccupancyPermits')),
+                    getDocs(collection(db, 'ElectricalCert'))
+                ]);
+    
+                // Aggregate counts for chart
+                aggregateCountsByCreatedAt(buildingPermitsSnap, 'BP');
+                aggregateCountsByCreatedAt(occupancyPermitsSnap, 'OP');
+                aggregateCountsByCreatedAt(electricalCertSnap, 'EI');
+    
+                // Prepare calendar events
+                addEventsByAppointmentDate(buildingPermitsSnap, 'BP');
+                addEventsByAppointmentDate(occupancyPermitsSnap, 'OP');
+                addEventsByAppointmentDate(electricalCertSnap, 'EI');
+    
+                // Prepare data for the chart
+                const chartLabels = Object.keys(applicantsCountByDate);
+                const chartDataBP = chartLabels.map(date => applicantsCountByDate[date]?.BP || 0);
+                const chartDataOP = chartLabels.map(date => applicantsCountByDate[date]?.OP || 0);
+                const chartDataEI = chartLabels.map(date => applicantsCountByDate[date]?.EI || 0);
+                const chartTotalData = chartLabels.map(date => {
+                    const counts = applicantsCountByDate[date] || {};
+                    return (counts.BP || 0) + (counts.OP || 0) + (counts.EI || 0);
+                });
+    
+                // Render chart
+                if (chartLabels.length > 0) {
+                    const ctx = document.getElementById('applicantsChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [
+                                {
+                                    label: 'Building Permits (BP)',
+                                    data: chartDataBP,
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    tension: 0.3
+                                },
+                                {
+                                    label: 'Occupancy Permits (OP)',
+                                    data: chartDataOP,
+                                    borderColor: 'rgba(255, 159, 64, 1)',
+                                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                                    tension: 0.3
+                                },
+                                {
+                                    label: 'Electrical Certificates (EI)',
+                                    data: chartDataEI,
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    tension: 0.3
+                                },
+                                {
+                                    label: 'Total Applicants',
+                                    data: chartTotalData,
+                                    borderColor: 'rgba(153, 102, 255, 1)',
+                                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                    tension: 0.3
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top'
+                                }
+                            }
+                        }
+                    });
                 } else {
-                    console.warn("Missing createdAt in document", doc.id);
+                    console.log("No data available for the chart.");
                 }
-            });
-        };
+    
+                // Initialize FullCalendar
+                if (events.length > 0) {
+                    const calendarEl = document.getElementById('calendar');
+                    const calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        events: events,
+                        eventClick: (info) => {
+                            const { ownerName } = info.event.extendedProps;
+                            Swal.fire({
+  title: 'Permit Information',
+  html: `
+    <div style="text-align: left;">
+      <p><strong>Appointment From:</strong> ${ownerName}</p>
+      <p style="margin-top: 10px;"><strong>Permit Type:</strong> ${info.event.title}</p>
+    </div>
+  `,
+  icon: 'info', // You can change this to 'success', 'error', 'warning', etc.
+  confirmButtonText: 'OK',
+});
 
-        // Fetch data and aggregate counts
-        const [buildingPermitsSnap, occupancyPermitsSnap, electricalCertSnap] = await Promise.all([
-            getDocs(collection(db, 'buildingPermits')),
-            getDocs(collection(db, 'OccupancyPermits')),
-            getDocs(collection(db, 'ElectricalCert'))
-        ]);
 
-        aggregateApplicantsByType(buildingPermitsSnap, 'BP');
-        aggregateApplicantsByType(occupancyPermitsSnap, 'OP');
-        aggregateApplicantsByType(electricalCertSnap, 'EI');
-
-        // Prepare data for the chart
-        const chartLabels = Object.keys(applicantsCountByDate);
-        const chartDataBP = chartLabels.map(date => applicantsCountByDate[date]?.BP || 0);
-        const chartDataOP = chartLabels.map(date => applicantsCountByDate[date]?.OP || 0);
-        const chartDataEI = chartLabels.map(date => applicantsCountByDate[date]?.EI || 0);
-        const chartTotalData = chartLabels.map(date => {
-            const counts = applicantsCountByDate[date] || {};
-            return (counts.BP || 0) + (counts.OP || 0) + (counts.EI || 0);
-        });
-
-        if (chartLabels.length > 0) {
-            const ctx = document.getElementById('applicantsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: chartLabels,
-                    datasets: [
-                        {
-                            label: 'Building Permits (BP)',
-                            data: chartDataBP,
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Occupancy Permits (OP)',
-                            data: chartDataOP,
-                            borderColor: 'rgba(255, 159, 64, 1)',
-                            backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Electrical Certificates (EI)',
-                            data: chartDataEI,
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Total Applicants',
-                            data: chartTotalData,
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                            tension: 0.3
                         }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top'
-                        }
-                    }
+                    });
+                    calendar.render();
+                } else {
+                    console.log("No events available for the calendar.");
                 }
-            });
-        } else {
-            console.log("No data available for the chart.");
+    
+                // Display totals in the UI
+                document.getElementById('total-bp').textContent = `Total BP Applicants: ${totalCountByType.BP}`;
+                document.getElementById('total-op').textContent = `Total OP Applicants: ${totalCountByType.OP}`;
+                document.getElementById('total-ei').textContent = `Total EI Applicants: ${totalCountByType.EI}`;
+                document.getElementById('total-all').textContent = `Total Applicants: ${totalCountByType.BP + totalCountByType.OP + totalCountByType.EI}`;
+    
+                document.getElementById("fetching-loading-screen").style.display = "none";
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+                document.getElementById("fetching-loading-screen").style.display = "none";
+            }
         }
-
-        // Prepare events for the calendar
-        const events = [];
-        Object.entries(applicantsCountByDate).forEach(([date, counts]) => {
-            if (counts.BP > 0) events.push({ title: `BP: ${counts.BP}`, start: date });
-            if (counts.OP > 0) events.push({ title: `OP: ${counts.OP}`, start: date });
-            if (counts.EI > 0) events.push({ title: `EI: ${counts.EI}`, start: date });
-
-            const totalForDay = (counts.BP || 0) + (counts.OP || 0) + (counts.EI || 0);
-            events.push({ title: `Total: ${totalForDay}`, start: date });
-        });
-
-        // Display totals in the UI
-        document.getElementById('total-bp').textContent = `Total BP Applicants: ${totalCountByType.BP}`;
-        document.getElementById('total-op').textContent = `Total OP Applicants: ${totalCountByType.OP}`;
-        document.getElementById('total-ei').textContent = `Total EI Applicants: ${totalCountByType.EI}`;
-        document.getElementById('total-all').textContent = `Total Applicants: ${totalCountByType.BP + totalCountByType.OP + totalCountByType.EI}`;
-
-        // Initialize FullCalendar
-        if (events.length > 0) {
-            const calendarEl = document.getElementById('calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: events
-            });
-            calendar.render();
-        } else {
-            console.log("No events available for the calendar.");
-        }
-
-        document.getElementById("fetching-loading-screen").style.display = "none";
-    } catch (error) {
-        console.error("Error fetching data: ", error);
-        document.getElementById("fetching-loading-screen").style.display = "none";
-    }
-}
-
     </script>
     
     <script type="module" src="/Database/firebase.js"></script>

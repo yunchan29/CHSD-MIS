@@ -2362,10 +2362,11 @@ function openViewDetailsModal(permitData) {
     const viewDetailsModal = new bootstrap.Modal(viewDetailsModalElement);
     const validIdModal = new bootstrap.Modal(validIdModalElement);
 
-    // Populate Modal Fields
-    const appointmentDate = permitData.appointmentDate
-        ? new Date(permitData.appointmentDate.seconds * 1000).toLocaleString()
-        : "N/A";
+   // Populate Modal Fields
+const appointmentDate = permitData.appointmentDate
+    ? new Date(permitData.appointmentDate.seconds * 1000).toLocaleDateString()
+    : "N/A";
+
 
     document.getElementById("permitOwnerName").textContent = permitData.ownerName || "N/A";
     document.getElementById("OwnerName").textContent = permitData.ownerName || "N/A";
@@ -2507,15 +2508,16 @@ document.addEventListener("DOMContentLoaded", () => {
             approvalStatusElement.classList.toggle("text-success", isApproved);
             approvalStatusElement.classList.toggle("text-danger", !isApproved);
 
-            // Show feedback using SweetAlert
-            await Swal.fire({
-                icon: isApproved ? "success" : "error",
-                title: isApproved ? "Approved!" : "Disapproved!",
-                text: isApproved
-                    ? "Permit approved successfully."
-                    : "Permit disapproved successfully.",
-                confirmButtonText: "OK",
-            });
+           // Show feedback using SweetAlert
+await Swal.fire({
+    icon: isApproved ? "success" : "error",
+    title: isApproved ? "Approved!" : "Disapproved!",
+    text: isApproved
+        ? "The ID has been successfully verified."
+        : "The ID verification has been disapproved.",
+    confirmButtonText: "OK",
+});
+
 
             // Close Valid ID Modal
             validIdModal.hide();
