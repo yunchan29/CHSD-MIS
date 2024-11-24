@@ -1596,7 +1596,7 @@ document.getElementById('statusSelect').addEventListener('change', function () {
       document.addEventListener('DOMContentLoaded', () => {
     const submitProfileButton = document.getElementById('submitProfile');
     const loadingScreen = document.getElementById('loading-screen');
-    const buildingPermitModal = document.getElementById('buildingPermitModal'); // Add the modal element reference
+    const buildingPermitModal = document.getElementById('buildingPermitModal');
 
     if (submitProfileButton) {
         submitProfileButton.addEventListener('click', async (event) => {
@@ -1613,38 +1613,38 @@ document.getElementById('statusSelect').addEventListener('change', function () {
             const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName}`.trim();
             const applicationMethod = document.getElementById('applicationMethod').value;
 
-            const checklistItems = [
-                { id: 'buildingPlanCheckbox', name: 'Building Plan' },
-                { id: 'proofOwnershipCheckbox', name: 'Proof of Ownership' },
-                { id: 'taxReceiptCheckbox', name: 'Tax Declaration & Current Tax Receipt' },
-                { id: 'brgyClearanceCheckbox', name: 'Brgy. Clearance of Building Permit' },
-                { id: 'billMaterialsCheckbox', name: 'Bill of Materials & Specification' },
-                { id: 'prcCheckbox', name: 'PRC IC/PTR of all signing engineers' },
-                { id: 'certExemptionCheckbox', name: 'Certification of Exemption Location Clearance from CPDO' },
-                { id: 'structuralAnalysisCheckbox', name: 'Structural Analysis (2-Storey and up)' },
-                { id: 'fireClearanceCheckbox', name: 'Fire Clearance' },
-                { id: 'boringTestCheckbox', name: 'Boring Test' }
-            ];
+            const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
+            const unitsData = [];
 
-            const checkedItems = {};
-            for (const item of checklistItems) {
-                const checkbox = document.getElementById(item.id);
-                if (!checkbox || !checkbox.checked) {
-                    alert(`Please confirm the ${item.name} checklist item.`);
+            // Gather dynamically generated unit fields
+            for (let i = 1; i <= numUnits; i++) {
+                const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
+                const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
+                const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
+                const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
+
+                if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
+                    alert(`Please fill out all fields for Unit ${i}.`);
                     return;
                 }
-                checkedItems[item.name] = true;
+
+                unitsData.push({
+                    blockNumber,
+                    lotNumber,
+                    NOStorey: parseInt(NOStorey),
+                    floorArea: parseFloat(floorArea)
+                });
             }
 
-            const totalFloorArea = 0; // Adjust if floor area is used for walk-ins
-            const totalEstimatedCost = 0; // Adjust if cost calculation is needed
+            const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
+            const totalEstimatedCost = totalFloorArea * 10000;
 
             if (loadingScreen) {
                 loadingScreen.style.display = 'flex';
             }
 
             try {
-                // Step 1: Generate building permit number
+                // Generate building permit number
                 const currentYear = new Date().getFullYear();
                 const permitCounterRef = doc(db, "permitCounters", currentYear.toString());
                 const permitCounterDoc = await getDoc(permitCounterRef);
@@ -1653,7 +1653,7 @@ document.getElementById('statusSelect').addEventListener('change', function () {
                 const buildingPermitNo = `${currentYear}-${newPermitNumber.toString().padStart(4, '0')}`;
                 await setDoc(permitCounterRef, { lastNumber: newPermitNumber });
 
-                // Step 2: Prepare and save the permit data
+                // Prepare and save the permit data
                 const permitData = {
                     buildingPermitNo,
                     issuedOn,
@@ -1662,29 +1662,26 @@ document.getElementById('statusSelect').addEventListener('change', function () {
                     addressTelNo,
                     projectLocation,
                     status: 'Pending',
-                    checklist: checkedItems,
+                    unitsData, // Include the unitsData here
                     totalFloorArea,
-                    applicationMethod,
                     totalEstimatedCost,
+                    applicationMethod,
                     createdAt: serverTimestamp(),
                 };
 
                 await addDoc(collection(db, "buildingPermits"), permitData);
 
                 Swal.fire({
-    title: "Success",
-    text: "Application Submitted",
-    icon: "success"
-}).then(() => {
-    // Close the modal
-    if (buildingPermitModal) {
-        const modalInstance = bootstrap.Modal.getInstance(buildingPermitModal);
-        modalInstance.hide();
-    }
-    // Reload the page
-    window.location.reload();
-});
-
+                    title: "Success",
+                    text: "Application Submitted",
+                    icon: "success"
+                }).then(() => {
+                    if (buildingPermitModal) {
+                        const modalInstance = bootstrap.Modal.getInstance(buildingPermitModal);
+                        modalInstance.hide();
+                    }
+                    window.location.reload();
+                });
 
             } catch (error) {
                 console.error("Error during submission:", error);

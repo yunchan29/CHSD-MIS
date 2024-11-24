@@ -231,6 +231,15 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4">
+                            <label for="applicantMethod">Applicant Type:</label>
+                            <select class="form-control" id="applicantMethod" disabled>
+                                <option value="walk-in">Walk-in</option>
+                                <option value="online">Online Application</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
                             <label for="buildingPermitOption">Building Permit Option</label>
                             
                             <!-- Toggle Buttons for Selection -->
@@ -285,21 +294,29 @@
                         </div>
                         
                      </div>
-                     <div class="row">
-                        <div class="col-md-4">
-                            <label for="totalFloorArea">Total Floor Area</label>
-                            <input type="number" class="form-control" id="totalFloorArea">
+                      <div class="container">
+                    <div class="form-group">
+                        <label for="NOUnits">Number of Units<span class="required-asterisk">*</span></label>
+                        <select class="form-control" id="NOUnits">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div id="unitFieldsContainer"></div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="TotalFloorArea">Total Floor Area</label>
+                            <input type="number" class="form-control" id="TotalFloorArea" readonly>
                         </div>
-                        
-                        <div class="col-md-4">
-                            <label for="NOunits">Number of Units</label>
-                            <input type="text" class="form-control" id="NOUnits">
+                        <div class="col">
+                            <label for="TotalEstimatedCost">Total Estimated Cost</label>
+                            <input type="number" class="form-control" id="TotalEstimatedCost" disabled>
                         </div>
-                        <div class="col-md-4">
-                            <label for="NOStorey">Number of Storeys</label>
-                            <input type="text" class="form-control" id="NOStorey">
-                        </div>
-                     </div>
+                    </div>
+                    </div>
                     <!-- Content -->
                     <table class="table">
                         <thead>
@@ -310,76 +327,52 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Duly Accomplished Certificate of Building Permit Completion Form</td>
-                                <td class="file-column">
-                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                             ondrop="handleDrop(event, 'buildingPermitCompletionFile')" ondragover="handleDragOver(event)">
-                                            <p>Drag & drop file</p>
-                                        </div>
-                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('buildingPermitCompletionFile').click()">Upload</button>
-                                        <input type="file" class="file-input" id="buildingPermitCompletionFile" style="display: none;" onchange="uploadFile(this)">
-                                        <div id="buildingPermitCompletionFileName" class="file-column"></div> <!-- Display file details here -->
+                                <td>Building Permit Completion</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="buildingPermitCompletionCheckbox" name="requirements" value="Building Permit Completion">
+                                        <label class="form-check-label confirm-label" for="buildingPermitCompletionCheckbox">Confirm</label>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Photocopy of Approved Building Permit Form</td>
-                                <td class="file-column">
-                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                             ondrop="handleDrop(event, 'approvedBuildingPermitFile')" ondragover="handleDragOver(event)">
-                                            <p>Drag & drop file</p>
-                                        </div>
-                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('approvedBuildingPermitFile').click()">Upload</button>
-                                        <input type="file" class="file-input" id="approvedBuildingPermitFile" style="display: none;" onchange="uploadFile(this)">
-                                        <div id="approvedBuildingPermitFileName" class="file-column"></div> <!-- Display file details here -->
+                                <td>Approved Building Permit</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="approvedBuildingPermitCheckbox" name="requirements" value="Approved Building Permit">
+                                        <label class="form-check-label confirm-label" for="approvedBuildingPermitCheckbox">Confirm</label>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Photocopy of Approved Plan</td>
-                                <td class="file-column">
-                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                             ondrop="handleDrop(event, 'approvedPlanFile')" ondragover="handleDragOver(event)">
-                                            <p>Drag & drop file</p>
-                                        </div>
-                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('approvedPlanFile').click()">Upload</button>
-                                        <input type="file" class="file-input" id="approvedPlanFile" style="display: none;" onchange="uploadFile(this)">
-                                        <div id="approvedPlanFileName" class="file-column"></div> <!-- Display file details here -->
+                                <td>Approved Plan</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="approvedPlanCheckbox" name="requirements" value="Approved Plan">
+                                        <label class="form-check-label confirm-label" for="approvedPlanCheckbox">Confirm</label>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Photos of Structure (Front, Back, Left, Right, Lavatory, and CR)</td>
-                                <td class="file-column">
-                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                             ondrop="handleDrop(event, 'structurePhotosFile')" ondragover="handleDragOver(event)">
-                                            <p>Drag & drop file</p>
-                                        </div>
-                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('structurePhotosFile').click()">Upload</button>
-                                        <input type="file" class="file-input" id="structurePhotosFile" style="display: none;" onchange="uploadFile(this)">
-                                        <div id="structurePhotosFileName" class="file-column"></div> <!-- Display file details here -->
+                                <td>Structure Photos</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="structurePhotosCheckbox" name="requirements" value="Structure Photos">
+                                        <label class="form-check-label confirm-label" for="structurePhotosCheckbox">Confirm</label>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Sketch of Location and Contact Number</td>
-                                <td class="file-column">
-                                    <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                        <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                             ondrop="handleDrop(event, 'sketchFile')" ondragover="handleDragOver(event)">
-                                            <p>Drag & drop file</p>
-                                        </div>
-                                        <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('sketchFile').click()">Upload</button>
-                                        <input type="file" class="file-input" id="sketchFile" style="display: none;" onchange="uploadFile(this)">
-                                        <div id="sketchFileName" class="file-column"></div> <!-- Display file details here -->
+                                <td>Sketch</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="sketchCheckbox" name="requirements" value="Sketch">
+                                        <label class="form-check-label confirm-label" for="sketchCheckbox">Confirm</label>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
+                        
                         
                         
                     </table>
@@ -885,7 +878,85 @@
             }
         });
     </script>
+<script>
+    // Select form elements
+const NOUnitsInput = document.getElementById("NOUnits");
+const unitFieldsContainer = document.getElementById("unitFieldsContainer");
+const totalFloorAreaInput = document.getElementById("TotalFloorArea");
+const totalEstimatedCostInput = document.getElementById("TotalEstimatedCost");
 
+// Initialize the form with 1 unit field displayed by default
+function initializeUnitFields() {
+    const initialNumUnits = parseInt(NOUnitsInput.value) || 1;
+    generateUnitFields(initialNumUnits);
+    updateTotals();
+}
+
+// Function to generate dynamic fields for each unit
+function generateUnitFields(numUnits) {
+    // Clear existing unit fields
+    unitFieldsContainer.innerHTML = "";
+
+    for (let i = 1; i <= numUnits; i++) {
+        const unitDiv = document.createElement("div");
+        unitDiv.className = "row mb-3";
+
+        unitDiv.innerHTML = `
+            <div class="col">
+                <label for="BlockNumber${i}">Block Number for Unit ${i}</label>
+                <input type="text" class="form-control" id="BlockNumber${i}" placeholder="Block Number">
+            </div>
+            <div class="col">
+                <label for="LotNumber${i}">Lot Number for Unit ${i}</label>
+                <input type="text" class="form-control" id="LotNumber${i}" placeholder="Lot Number">
+            </div>
+            <div class="col">
+                <label for="NOStorey${i}">Number of Storeys for Unit ${i}</label>
+                <input type="number" class="form-control" id="NOStorey${i}" placeholder="Number of Storeys">
+            </div>
+            <div class="col">
+                <label for="UnitFloorArea${i}">Floor Area for Unit ${i} (sqm)</label>
+                <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area" required>
+            </div>
+        `;
+        unitFieldsContainer.appendChild(unitDiv);
+    }
+}
+
+// Event listener for changes in the Number of Units dropdown
+NOUnitsInput.addEventListener("change", function () {
+    const numUnits = parseInt(NOUnitsInput.value) || 0;
+    generateUnitFields(numUnits);
+    updateTotals();
+});
+
+// Function to calculate total floor area and estimated cost
+function updateTotals() {
+    const floorAreaInputs = document.querySelectorAll(".unit-floor-area");
+    let totalFloorArea = 0;
+
+    // Sum up all floor areas
+    floorAreaInputs.forEach(input => {
+        const floorArea = parseFloat(input.value) || 0;
+        totalFloorArea += floorArea;
+    });
+
+    // Update total floor area and estimated cost
+    totalFloorAreaInput.value = totalFloorArea.toFixed(2); // Optional: Fix to 2 decimal places
+    totalEstimatedCostInput.value = (totalFloorArea * 10000).toFixed(2); // Assuming cost = floor area * 10,000
+}
+
+// Event listener for changes in any floor area input
+unitFieldsContainer.addEventListener("input", function (event) {
+    if (event.target.classList.contains("unit-floor-area")) {
+        updateTotals();
+    }
+});
+
+// Initialize the form on page load
+initializeUnitFields();
+
+</script>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -914,8 +985,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
       const db = getFirestore(app);
       const storage = getStorage(app);
   
-      // Document Ready
-document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('submitAppointment').addEventListener('click', async (event) => {
         event.preventDefault();
 
@@ -928,18 +998,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Collect input values
+        const ownerName = document.getElementById("ownerName").value.trim();
+        const ownerAddress = document.getElementById("ownerAddress").value.trim();
+        const projectLocation = document.getElementById("projectLocation").value.trim();
+      
+        const buildingPermitNo = document.getElementById("buildingPermitNo").value.trim();
+        const applicantMethod = document.getElementById("applicantMethod").value;
+           // Collect dynamic fields (Units Data)
+           const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
+        const unitsData = [];
+        for (let i = 1; i <= numUnits; i++) {
+            const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
+            const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
+            const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
+            const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
 
-        const ownerName = document.getElementById("ownerName").value;
-        const ownerAddress = document.getElementById("ownerAddress").value;
-        const projectLocation = document.getElementById("projectLocation").value;
-        const totalFloorArea = document.getElementById("totalFloorArea").value;
-        const NOUnits = document.getElementById("NOUnits").value;
-        const NOStorey = document.getElementById("NOStorey").value;
-        const buildingPermitNo = document.getElementById("buildingPermitNo").value;
+            // Validate fields for each unit
+            if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
+                alert(`Please fill out all fields for Unit ${i}.`);
+                submitButton.disabled = false;
+                loadingScreen.style.display = 'none';
+                return;
+            }
+
+            unitsData.push({
+                blockNumber,
+                lotNumber,
+                NOStorey: parseInt(NOStorey),
+                floorArea: parseFloat(floorArea)
+            });
+        }
+
+        // Calculate total floor area
+        const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
+
         // Required fields validation
         const requiredFields = [
-           
-            { field: ownerName, name: 'Owner Name' }
+            { field: ownerName, name: 'Owner Name' },
+            { field: ownerAddress, name: 'Owner Address' },
+            { field: projectLocation, name: 'Project Location' },
+            { field: totalFloorArea, name: 'Total Floor Area' },
+            { field: NOUnits, name: 'Number of Units' },
+            { field: NOStorey, name: 'Number of Storeys' },
+            { field: buildingPermitNo, name: 'Building Permit Number' },
         ];
 
         for (const { field, name } of requiredFields) {
@@ -950,24 +1051,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // File inputs and namePrefix mapping
-        const requiredFileInputs = [
-            { id: 'buildingPermitCompletionFile', namePrefix: 'buildingPermitCompletion', name: 'Building Permit Completion' },
-            { id: 'approvedBuildingPermitFile', namePrefix: 'approvedBuildingPermit', name: 'Approved Building Permit' },
-            { id: 'approvedPlanFile', namePrefix: 'approvedPlan', name: 'Approved Plan' },
-            { id: 'structurePhotosFile', namePrefix: 'structurePhotos', name: 'Structure Photos' },
-            { id: 'sketchFile', namePrefix: 'sketch', name: 'Sketch' }
+        // Checklist validation
+        const checklistItems = [
+            { id: 'buildingPermitCompletionCheckbox', name: 'Building Permit Completion' },
+            { id: 'approvedBuildingPermitCheckbox', name: 'Approved Building Permit' },
+            { id: 'approvedPlanCheckbox', name: 'Approved Plan' },
+            { id: 'structurePhotosCheckbox', name: 'Structure Photos' },
+            { id: 'sketchCheckbox', name: 'Sketch' },
         ];
 
-        // Validate that all required files are uploaded
-        for (const fileInputObj of requiredFileInputs) {
-            const fileInput = document.getElementById(fileInputObj.id);
-            if (!fileInput || !fileInput.files[0]) {
-                alert(`Please upload the ${fileInputObj.name} file.`);
+        const checkedItems = {};
+        for (const item of checklistItems) {
+            const checkbox = document.getElementById(item.id);
+            if (!checkbox || !checkbox.checked) {
+                alert(`Please confirm the ${item.name} checklist item.`);
                 submitButton.disabled = false;
-                loadingScreen.style.display = 'none';
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
+                }
                 return;
             }
+            checkedItems[item.name] = true;
         }
 
         try {
@@ -986,7 +1090,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Prepare permit data for Firestore
             const permitData = {
-              
                 ownerUid: userId,
                 ownerName,
                 projectLocation,
@@ -995,58 +1098,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 NOUnits,
                 NOStorey,
                 buildingPermitNo,
+                applicantMethod,
+                checklist: checkedItems,
                 status: 'Pending',
                 createdAt: serverTimestamp(),
             };
 
-            // Add a new document to Firestore and get the generated document ID
-            const permitDocRef = await addDoc(collection(db, "OccupancyPermits"), permitData);
-            const permitId = permitDocRef.id;
-            const storagePath = `OccupancyPermits/${permitId}`;
-
-            // Handle file uploads and storage
-            const uploadPromises = requiredFileInputs.map(async fileInputObj => {
-                const fileInput = document.getElementById(fileInputObj.id);
-                if (fileInput && fileInput.files[0]) {
-                    const file = fileInput.files[0];
-                    const fileRef = ref(storage, `${storagePath}/${fileInputObj.namePrefix}_${file.name}`);
-                    const snapshot = await uploadBytes(fileRef, file);
-                    return getDownloadURL(snapshot.ref);
-                } else {
-                    console.error(`File input missing or undefined for ${fileInputObj.namePrefix}`);
-                    return null;
-                }
-            });
-
-            // Wait for all uploads and store URLs
-            const fileURLs = await Promise.all(uploadPromises);
-
-            const fileURLMapping = {
-                buildingPermitCompletionURL: fileURLs[0],
-                approvedBuildingPermitURL: fileURLs[1],
-                approvedPlanURL: fileURLs[2],
-                structurePhotosURL: fileURLs[3],
-                sketchURL: fileURLs[4],
-            };
-
-            // Update Firestore document with file URLs
-            const permitDoc = doc(db, "OccupancyPermits", permitId);
-            await updateDoc(permitDoc, fileURLMapping);
+            // Add a new document to Firestore
+            await addDoc(collection(db, "OccupancyPermits"), permitData);
 
             // Success feedback
             Swal.fire({
-  title: "Success!",
-  text: "Application Submitted",
-  icon: "success"
-});
-       
-
+                title: "Success!",
+                text: "Application Submitted",
+                icon: "success"
+            }).then(() => {
+                // Reload the page
+                window.location.reload();
+            });
         } catch (error) {
-            // Log and alert on error
             console.error("Error during submission:", error);
             alert(`Error submitting application: ${error.message}`);
         } finally {
-            // Hide loading screen and re-enable submit button
             if (loadingScreen) {
                 loadingScreen.style.display = 'none';
             }
@@ -1054,7 +1127,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
 
        
 // Function to Dynamically Append Buttons to the View Details Modal for Occupancy Permit
