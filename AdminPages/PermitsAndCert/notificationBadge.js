@@ -61,16 +61,12 @@ export async function updateNotificationsBadge() {
         return;
     }
 
-    if (unreadCount > 0) {
+    if (unreadCount >= 1) {
         badge.textContent = unreadCount;
         badge.style.display = "inline-block"; // Show badge
         badge.classList.add("visible"); // Optional: Add a CSS class for visibility
         console.log("Notification badge updated:", unreadCount);
-    } else {
-        badge.style.display = "none"; // Hide badge
-        badge.classList.remove("visible"); // Optional: Remove visibility class
-        console.log("No new notifications.");
-    }
+    } 
 }
 
 // Mark notifications as read when the badge is clicked
@@ -82,8 +78,8 @@ export function markNotificationsAsRead() {
     // Hide the badge
     const badge = document.getElementById("notification-badge");
     if (badge) {
-        badge.style.display = "none";
-        badge.classList.remove("visible");
+        badge.style.display = "inline-block";
+       
     }
 }
 

@@ -326,7 +326,15 @@
                 <form>
                    
                     <p><i>Required fields are marked with <span class="required-asterisk">*</span></i></p>
-                   
+                   <div class="row">
+                     <div class="col-md-6">
+                        <label for="applicationMethod">Application Type:</label>
+                        <select class="form-control" id="applicationMethod">
+                            <option value="walk-in">Walk-in</option>
+                            <option value="online">Online Application</option>
+                        </select>
+                     </div>
+                   </div>
                     <div class="row">
                         <div class="col-md-4">
                             <label for="buildingPermitNo">Building Permit Number:</label>
@@ -1592,18 +1600,10 @@ document.getElementById('statusSelect').addEventListener('change', function () {
         const projectJustification = document.querySelector('input[name="projectJustification"]:checked') ?
             document.querySelector('input[name="projectJustification"]:checked').nextElementSibling.textContent : '';
     
-
-        const blockNumber = document.getElementById("blockNumber").value;
-        const lotNumber = document.getElementById("lotNumber").value;
-        const NOUnits = document.getElementById("NOUnits").value;
-        const FloorArea = document.getElementById("FloorArea").value;
-        const TotalFloorArea = document.getElementById("TotalFloorArea").value;
-        const TotalEstimatedCost = document.getElementById("TotalEstimatedCost").value;
-
         const applicantEmail = document.getElementById('applicantEmail').value.trim();
         const applicantPassword = document.getElementById('applicantPassword').value.trim();
         const enableCredentials = document.getElementById('enableCredentials').checked;
-
+        const applicationMethod = document.getElementById("applicationMethod").value;
         // Required field validation
         const requiredFields = [
             { field: issuedOn, name: 'Issued On' },
@@ -1647,6 +1647,31 @@ document.getElementById('statusSelect').addEventListener('change', function () {
             }
         }
 
+         // Gather dynamically generated unit fields
+         const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
+        const unitsData = [];
+
+        for (let i = 1; i <= numUnits; i++) {
+            const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
+            const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
+            const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
+            const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
+
+            if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
+                alert(`Please fill out all fields for Unit ${i}.`);
+                return;
+            }
+
+            unitsData.push({
+                blockNumber,
+                lotNumber,
+                NOStorey: parseInt(NOStorey),
+                floorArea: parseFloat(floorArea)
+            });
+        }
+
+        const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
+        const totalEstimatedCost = totalFloorArea * 10000;
         if (loadingScreen) {
             loadingScreen.style.display = 'flex';
         }
