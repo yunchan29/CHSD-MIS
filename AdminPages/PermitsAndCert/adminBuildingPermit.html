@@ -137,6 +137,20 @@
   }
 }
 
+.confirm-label {
+            padding: 0.2rem 0.5rem;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .confirm-label:hover {
+            background-color: #0056b3;
+        }
 
 
 
@@ -329,7 +343,7 @@
                    <div class="row">
                      <div class="col-md-6">
                         <label for="applicationMethod">Application Type:</label>
-                        <select class="form-control" id="applicationMethod">
+                        <select class="form-control" id="applicationMethod" disabled>
                             <option value="walk-in">Walk-in</option>
                             <option value="online">Online Application</option>
                         </select>
@@ -394,11 +408,22 @@
 
 
 <div class="mb-3">
-<div class="col-md-4">
-<label for="phoneNumber" class="form-label">Cellphone/Telephone Number<span class="required-asterisk">*</span></label>
-<input type="text" class="form-control" id="phoneNumber" required>
-</div>
-</div>
+    <div class="col-md-4">
+       <label for="phoneNumber" class="form-label">
+          Cellphone/Telephone Number<span class="required-asterisk">*</span>
+       </label>
+       <input 
+          type="text" 
+          class="form-control" 
+          id="phoneNumber" 
+          placeholder="09XXXXXXXXX" 
+          maxlength="11" 
+          pattern="\d{11}" 
+          title="Please enter exactly 11 digits." 
+          required>
+    </div>
+ </div>
+ 
 
 
 
@@ -496,145 +521,105 @@
             <thead>
                 <tr>
                     <th>Requirements</th>
-                    <th>File</th>
                     
+                    <th>File</th>
+                    <th>
+                        <button id="checkAllButton" class="btn btn-primary btn-sm">Check All</button>
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>Building Plan</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                 ondrop="handleDrop(event, 'buildingPlanFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('buildingPlanFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="buildingPlanFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="buildingPlanFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="buildingPlanCheckbox" name="requirements" value="Building Plan">
+                            <label class="form-check-label confirm-label" for="buildingPlanCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Proof of Ownership</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                 ondrop="handleDrop(event, 'proofOwnershipFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('proofOwnershipFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="proofOwnershipFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="proofOwnershipFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="proofOwnershipCheckbox" name="requirements" value="Proof of Ownership">
+                            <label class="form-check-label confirm-label" for="proofOwnershipCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Photocopy of Tax Declaration & Current Tax Receipt</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'taxReceiptFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('taxReceiptFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="taxReceiptFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="taxReceiptFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="taxReceiptCheckbox" name="requirements" value="Photocopy of Tax Declaration & Current Tax Receipt">
+                            <label class="form-check-label confirm-label" for="taxReceiptCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Brgy. Clearance of Building Permit</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'brgyClearanceFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('brgyClearanceFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="brgyClearanceFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="brgyClearanceFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="brgyClearanceCheckbox" name="requirements" value="Brgy. Clearance of Building Permit">
+                            <label class="form-check-label confirm-label" for="brgyClearanceCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Bill of Materials & Specification</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'billMaterialsFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('billMaterialsFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="billMaterialsFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="billMaterialsFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="billMaterialsCheckbox" name="requirements" value="Bill of Materials & Specification">
+                            <label class="form-check-label confirm-label" for="billMaterialsCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Photocopy of PRC IC/PTR of all signing engineers</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'prcFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('prcFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="prcFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="prcFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="prcCheckbox" name="requirements" value="Photocopy of PRC IC/PTR of all signing engineers">
+                            <label class="form-check-label confirm-label" for="prcCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Certification of Exemption Location Clearance from CPDO</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'certExemptionFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('certExemptionFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="certExemptionFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="certExemptionFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="certExemptionCheckbox" name="requirements" value="Certification of Exemption Location Clearance from CPDO">
+                            <label class="form-check-label confirm-label" for="certExemptionCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Structural Analysis (2-Storey and up)</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'structuralAnalysisFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('structuralAnalysisFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="structuralAnalysisFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="structuralAnalysisFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="structuralAnalysisCheckbox" name="requirements" value="Structural Analysis (2-Storey and up)">
+                            <label class="form-check-label confirm-label" for="structuralAnalysisCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Fire Clearance</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'fireClearanceFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('fireClearanceFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="fireClearanceFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="fireClearanceFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="fireClearanceCheckbox" name="requirements" value="Fire Clearance">
+                            <label class="form-check-label confirm-label" for="fireClearanceCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>Boring Test</td>
-                    <td class="file-column">
-                        <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                            <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" ondrop="handleDrop(event, 'boringTestFile')" ondragover="handleDragOver(event)">
-                                <p>Drag & drop file</p>
-                            </div>
-                            <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('boringTestFile').click()">Upload</button>
-                            <input type="file" class="file-input" id="boringTestFile" style="display: none;" onchange="uploadFile(this)">
-                            <div id="boringTestFileName" class="file-column"></div>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="boringTestCheckbox" name="requirements" value="Boring Test">
+                            <label class="form-check-label confirm-label" for="boringTestCheckbox">Confirm</label>
                         </div>
                     </td>
                 </tr>
             </tbody>
-            
             
         </table>
                 </div>
@@ -678,6 +663,7 @@
                                     <p><strong>Owner Name:</strong> <span id="permitOwnerName" class="text-primary"></span></p>
                                     <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
                                     <p><strong>Appointment Date:</strong> <span id="appointmentDateSched"></span></p>
+                                    <p><strong>Applicant Type: </strong> <span id="applicantType"></span></p>
                                     <p><strong>Building Permit No.:</strong> <span id="permitIdDisplay" class="text-danger"></span></p>
                                  </div>                              </div> 
                              
@@ -1245,7 +1231,37 @@
 <div id="notificationContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050; display: none;">
     <!-- Notifications will be dynamically added here -->
 </div>
+<script>
+    // Function to format the date as YYYY-MM-DD
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
+    // Get today's date and set it as the default value
+    const today = new Date();
+    const dateInput = document.getElementById('basic-url');
+    dateInput.value = formatDate(today);
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkAllButton = document.getElementById('checkAllButton');
+        const checkboxes = document.querySelectorAll('input[name="requirements"]');
+
+        if (checkAllButton) {
+            checkAllButton.addEventListener('click', () => {
+                const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = !allChecked;
+                });
+            });
+        }
+    });
+</script>
 <script>
     const NOUnitsInput = document.getElementById("NOUnits");
     const unitFieldsContainer = document.getElementById("unitFieldsContainer");
@@ -1580,198 +1596,107 @@ document.getElementById('statusSelect').addEventListener('change', function () {
       document.addEventListener('DOMContentLoaded', () => {
     const submitProfileButton = document.getElementById('submitProfile');
     const loadingScreen = document.getElementById('loading-screen');
+    const buildingPermitModal = document.getElementById('buildingPermitModal'); // Add the modal element reference
 
     if (submitProfileButton) {
-    submitProfileButton.addEventListener('click', async (event) => {
-        event.preventDefault();
+        submitProfileButton.addEventListener('click', async (event) => {
+            event.preventDefault();
 
-        // Collect input values
-        const issuedOn = document.getElementById('basic-url').value.trim();
-        const addressTelNo = document.getElementById('addressTelNo').value.trim();
-        const projectLocation = document.getElementById('projectLocation').value.trim();
-        const phoneNumber = document.getElementById('phoneNumber').value.trim();
-        const ownerLastName = document.getElementById('ownerLastName').value.trim();
-        const ownerFirstName = document.getElementById('ownerFirstName').value.trim();
-        const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
-        const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName}`.trim();
+            // Collect input values
+            const issuedOn = document.getElementById('basic-url').value.trim();
+            const addressTelNo = document.getElementById('addressTelNo').value.trim();
+            const projectLocation = document.getElementById('projectLocation').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const ownerLastName = document.getElementById('ownerLastName').value.trim();
+            const ownerFirstName = document.getElementById('ownerFirstName').value.trim();
+            const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
+            const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName}`.trim();
+            const applicationMethod = document.getElementById('applicationMethod').value;
 
-        const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked') ?
-            document.querySelector('input[name="scopeOfWork"]:checked').nextElementSibling.textContent : '';
-        const projectJustification = document.querySelector('input[name="projectJustification"]:checked') ?
-            document.querySelector('input[name="projectJustification"]:checked').nextElementSibling.textContent : '';
-    
-        const applicantEmail = document.getElementById('applicantEmail').value.trim();
-        const applicantPassword = document.getElementById('applicantPassword').value.trim();
-        const enableCredentials = document.getElementById('enableCredentials').checked;
-        const applicationMethod = document.getElementById("applicationMethod").value;
-        // Required field validation
-        const requiredFields = [
-            { field: issuedOn, name: 'Issued On' },
-            { field: addressTelNo, name: 'Address/Tel No' },
-            { field: projectLocation, name: 'Project Location' },
-            { field: phoneNumber, name: 'Phone Number' },
-            { field: ownerName, name: 'Owner Name' }
-        ];
+            const checklistItems = [
+                { id: 'buildingPlanCheckbox', name: 'Building Plan' },
+                { id: 'proofOwnershipCheckbox', name: 'Proof of Ownership' },
+                { id: 'taxReceiptCheckbox', name: 'Tax Declaration & Current Tax Receipt' },
+                { id: 'brgyClearanceCheckbox', name: 'Brgy. Clearance of Building Permit' },
+                { id: 'billMaterialsCheckbox', name: 'Bill of Materials & Specification' },
+                { id: 'prcCheckbox', name: 'PRC IC/PTR of all signing engineers' },
+                { id: 'certExemptionCheckbox', name: 'Certification of Exemption Location Clearance from CPDO' },
+                { id: 'structuralAnalysisCheckbox', name: 'Structural Analysis (2-Storey and up)' },
+                { id: 'fireClearanceCheckbox', name: 'Fire Clearance' },
+                { id: 'boringTestCheckbox', name: 'Boring Test' }
+            ];
 
-        if (enableCredentials) {
-            requiredFields.push(
-                { field: applicantEmail, name: 'Applicant Email' },
-                { field: applicantPassword, name: 'Applicant Password' }
-            );
-        }
-
-        for (const { field, name } of requiredFields) {
-            if (!field) {
-                alert(`Please fill out the ${name} field.`);
-                return;
-            }
-        }
-
-        // Required file inputs validation
-        const requiredFileInputs = [
-            { id: 'buildingPlanFile', name: 'Building Plan' },
-            { id: 'proofOwnershipFile', name: 'Proof of Ownership' },
-            { id: 'taxReceiptFile', name: 'Photocopy of Tax Declaration & Current Tax Receipt' },
-            { id: 'brgyClearanceFile', name: 'Brgy. Clearance of Building Permit' },
-            { id: 'billMaterialsFile', name: 'Bill of Materials & Specification' },
-            { id: 'prcFile', name: 'Photocopy of PRC IC/PTR of all signing engineers' },
-            { id: 'certExemptionFile', name: 'Certification of Exemption Location Clearance from CPDO' },
-            { id: 'structuralAnalysisFile', name: 'Structural Analysis (2-Storey and up)' }
-        ];
-
-        for (const { id, name } of requiredFileInputs) {
-            const fileInput = document.getElementById(id);
-            if (!fileInput || !fileInput.files[0]) {
-                alert(`Please upload the ${name} file.`);
-                return;
-            }
-        }
-
-         // Gather dynamically generated unit fields
-         const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
-        const unitsData = [];
-
-        for (let i = 1; i <= numUnits; i++) {
-            const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
-            const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
-            const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
-            const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
-
-            if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
-                alert(`Please fill out all fields for Unit ${i}.`);
-                return;
+            const checkedItems = {};
+            for (const item of checklistItems) {
+                const checkbox = document.getElementById(item.id);
+                if (!checkbox || !checkbox.checked) {
+                    alert(`Please confirm the ${item.name} checklist item.`);
+                    return;
+                }
+                checkedItems[item.name] = true;
             }
 
-            unitsData.push({
-                blockNumber,
-                lotNumber,
-                NOStorey: parseInt(NOStorey),
-                floorArea: parseFloat(floorArea)
-            });
-        }
+            const totalFloorArea = 0; // Adjust if floor area is used for walk-ins
+            const totalEstimatedCost = 0; // Adjust if cost calculation is needed
 
-        const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
-        const totalEstimatedCost = totalFloorArea * 10000;
-        if (loadingScreen) {
-            loadingScreen.style.display = 'flex';
-        }
-
-        try {
-            let userId = null;
-
-            // Step 1: Create a new user account for the applicant if checkbox is checked
-            if (enableCredentials) {
-                const userCredential = await createUserWithEmailAndPassword(auth, applicantEmail, applicantPassword);
-                userId = userCredential.user.uid;
-
-                // Save user information in the "users" collection
-                await setDoc(doc(db, "users", userId), {
-                    firstName: ownerFirstName,
-                    middleName: ownerMiddleName,
-                    lastName: ownerLastName,
-                    email: applicantEmail,
-                    createdAt: serverTimestamp()
-                });
-            }
-
-            // Step 2: Generate building permit number
-            const currentYear = new Date().getFullYear();
-            const permitCounterRef = doc(db, "permitCounters", currentYear.toString());
-            const permitCounterDoc = await getDoc(permitCounterRef);
-
-            let newPermitNumber = permitCounterDoc.exists() ? permitCounterDoc.data().lastNumber + 1 : 1;
-            const buildingPermitNo = `${currentYear}-${newPermitNumber.toString().padStart(4, '0')}`;
-            await setDoc(permitCounterRef, { lastNumber: newPermitNumber });
-
-            // Step 3: Prepare and save the permit data
-            const permitData = {
-                buildingPermitNo,
-                issuedOn,
-                ownerName,
-                phoneNumber,
-                addressTelNo,
-                projectLocation,
-                scopeOfWork: finalScopeOfWork,
-                projectJustification,
-                ownerUid: userId,
-                status: 'Pending',
-                blockNumber,
-                lotNumber,
-                NOUnits,
-                FloorArea,
-                TotalFloorArea,
-                TotalEstimatedCost,
-                createdAt: serverTimestamp(),
-            };
-
-            const permitDocRef = await addDoc(collection(db, "buildingPermits"), permitData);
-            const permitId = permitDocRef.id;
-
-            // Step 4: Upload files to Firebase Storage
-            const storagePath = `buildingPermits/${permitId}`;
-            const uploadPromises = requiredFileInputs.map(async file => {
-                const fileInput = document.getElementById(file.id);
-                const fileRef = ref(storage, `${storagePath}/${file.name.replace(/\s+/g, '')}_${fileInput.files[0].name}`);
-                const snapshot = await uploadBytes(fileRef, fileInput.files[0]);
-                return getDownloadURL(snapshot.ref);
-            });
-
-            const fileURLs = await Promise.all(uploadPromises);
-            const fileURLMapping = {
-                buildingPlanURL: fileURLs[0],
-                proofOwnershipURL: fileURLs[1],
-                taxReceiptURL: fileURLs[2],
-                brgyClearanceURL: fileURLs[3],
-                billMaterialsURL: fileURLs[4],
-                prcURL: fileURLs[5],
-                certExemptionURL: fileURLs[6],
-                structuralAnalysisURL: fileURLs[7]
-            };
-
-            await updateDoc(doc(db, "buildingPermits", permitId), fileURLMapping);
-
-            Swal.fire({
-                title: "Success",
-                text: "Application Submitted",
-                icon: "success"
-            });
-
-        } catch (error) {
-            console.error("Error during submission:", error);
-            alert(`Error submitting application: ${error.message}`);
-        } finally {
             if (loadingScreen) {
-                loadingScreen.style.display = 'none';
+                loadingScreen.style.display = 'flex';
             }
-        }
-    });
-}
 
+            try {
+                // Step 1: Generate building permit number
+                const currentYear = new Date().getFullYear();
+                const permitCounterRef = doc(db, "permitCounters", currentYear.toString());
+                const permitCounterDoc = await getDoc(permitCounterRef);
 
+                let newPermitNumber = permitCounterDoc.exists() ? permitCounterDoc.data().lastNumber + 1 : 1;
+                const buildingPermitNo = `${currentYear}-${newPermitNumber.toString().padStart(4, '0')}`;
+                await setDoc(permitCounterRef, { lastNumber: newPermitNumber });
+
+                // Step 2: Prepare and save the permit data
+                const permitData = {
+                    buildingPermitNo,
+                    issuedOn,
+                    ownerName,
+                    phoneNumber,
+                    addressTelNo,
+                    projectLocation,
+                    status: 'Pending',
+                    checklist: checkedItems,
+                    totalFloorArea,
+                    applicationMethod,
+                    totalEstimatedCost,
+                    createdAt: serverTimestamp(),
+                };
+
+                await addDoc(collection(db, "buildingPermits"), permitData);
+
+                Swal.fire({
+    title: "Success",
+    text: "Application Submitted",
+    icon: "success"
+}).then(() => {
+    // Close the modal
+    if (buildingPermitModal) {
+        const modalInstance = bootstrap.Modal.getInstance(buildingPermitModal);
+        modalInstance.hide();
+    }
+    // Reload the page
+    window.location.reload();
 });
 
 
-
+            } catch (error) {
+                console.error("Error during submission:", error);
+                alert(`Error submitting application: ${error.message}`);
+            } finally {
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
+                }
+            }
+        });
+    }
+});
 
       // Notification Function
         function showNotification(message, type) {
@@ -2288,11 +2213,11 @@ async function loadProfiles() {
             
             const representativeName = userDataMap[data.ownerUid] || "N/A";
             const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
-            const applicationMethod = applicationMethodMap[data.applicationMethod] || "N/A";
+            const applicationMethodM = applicationMethodMap[data.applicationMethod] || "N/A";
             row.innerHTML = `
                 <td>${data.ownerName || "N/A"}</td>
                 <td>${representativeName}</td>
-                <td>${applicationMethod}</td>
+                <td>${applicationMethodM}</td>
                 <td>${createdAt}</td>
                 <td>${data.status || "N/A"}</td>
                 <td>
@@ -2445,6 +2370,13 @@ function openViewDetailsModal(permitData) {
     document.getElementById("issuedOnDate").textContent = permitData.issuedOn || "N/A";
     document.getElementById("appointmentDateSched").textContent = appointmentDate || "N/A";
     document.getElementById("permitIdDisplay").textContent = permitData.buildingPermitNo || "N/A";
+    const applicationMethodMap = {
+  online: "Online Application",
+  "walk-in": "Walk-in",
+};
+
+document.getElementById('applicantType').textContent = applicationMethodMap[permitData.applicationMethod];
+
     document.getElementById("hiddenPermitId").value = permitData.id || "";
 
     // Handle valid ID button
