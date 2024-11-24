@@ -2439,6 +2439,7 @@ function openViewDetailsModal(permitData) {
 
     // Add Event Listener for the Save Button (Ensure it's not duplicated)
     const saveStatusBtn = document.getElementById("saveStatusBtn");
+    saveStatusBtn.onclick = null; // Clear any existing listener
     saveStatusBtn.onclick = async () => {
         const newStatus = document.getElementById("statusSelect").value;
         const permitId = permitData.id || "";
@@ -2501,6 +2502,12 @@ function openViewDetailsModal(permitData) {
             },
             { once: true } // Ensure listener is added only once
         );
+    });
+
+    // Cleanup on Modal Close
+    viewDetailsModalElement.addEventListener("hidden.bs.modal", () => {
+        const backdrop = document.querySelector(".modal-backdrop");
+        if (backdrop) backdrop.remove(); // Ensure backdrop is removed
     });
 }
 
