@@ -1722,8 +1722,7 @@ document.getElementById('statusSelect').addEventListener('change', function () {
         }
 
     
-// Function to Dynamically Append Buttons to the View Details Modal as a Multi-Step Form
-function appendButtons(data) {
+        function appendButtons(data) {
     const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
     viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing content
 
@@ -1741,11 +1740,16 @@ function appendButtons(data) {
     const btn1 = document.createElement('button');
     btn1.className = 'btn btn-primary w-100';
     btn1.textContent = 'View File Uploads';
-    btn1.addEventListener('click', () => {
-        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-        if (viewDetailsModal) viewDetailsModal.hide();
-        openViewUploadsModal(data);
-    });
+    if (data.applicationMethod === 'walk-in') {
+        btn1.disabled = true; // Disable the button for walk-in applications
+        btn1.title = 'File uploads are not available for walk-in applications'; // Add tooltip
+    } else {
+        btn1.addEventListener('click', () => {
+            const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+            if (viewDetailsModal) viewDetailsModal.hide();
+            openViewUploadsModal(data);
+        });
+    }
     col1.appendChild(btn1);
 
     // Column 2: Generate BP Certificate
@@ -1809,6 +1813,7 @@ function appendButtons(data) {
     // Add Container to Button Group
     viewDetailsModalBtnGrp.appendChild(container);
 }
+
 
 // JavaScript Code for Managing File Validations
 let fileValidationStatus = {}; // Tracks file validation status, comments, and approval
@@ -2211,7 +2216,7 @@ async function loadProfiles() {
         permitsData.forEach(data => {
             const row = document.createElement("tr");
             
-            const representativeName = userDataMap[data.ownerUid] || "N/A";
+            const representativeName = userDataMap[data.ownerUid] || "Permit Officer";
             const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
             const applicationMethodM = applicationMethodMap[data.applicationMethod] || "N/A";
             row.innerHTML = `
