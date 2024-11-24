@@ -8,63 +8,68 @@
     <link rel="icon" href="/resources/pictures/chsd.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* CSS for the content container */
-        .content {
-            flex: 1; /* Take remaining space */
-            overflow: hidden; /* Hide overflow content */
-            display: flex; /* Use flexbox */
-            flex-direction: column; /* Column layout */
-        }
+ <style>
+    /* General container styles */
+.content-container {
+    overflow-y: auto;
+    padding: 20px;
+}
 
-        .content-container {
-            overflow-y: auto; /* Enable vertical scrolling */
-            padding: 20px; /* Add some padding */
-        }
+/* Flexbox for responsive layout */
+.card-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-around;
+    padding-top: 20px;
+    flex-wrap: wrap;
+}
 
-        /* Card styles */
-        .card-container {
-            display: flex;
-            gap: 20px;
-            justify-content: space-around;
-            padding-top: 20px;
-            flex-wrap: wrap;
-        }
+/* Individual card styles */
+.permit-card {
+    width: 300px;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    color: #333;
+    background-color: #f9f9f9;
+}
 
-        .archive-card {
-            width: 300px;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
+.permit-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
 
-        .archive-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
+/* Icon size and margin */
+.card-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
 
-        .card-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-        }
+/* Card-specific styles */
+.building-card {
+    background-color: #e6f4ea;
+    color: #256228;
+}
 
-        .building-card {
-            background-color: #f0f9ff;
-            color: #0171b6;
-        }
+.occupancy-card {
+    background-color: #fff7e6;
+    color: #a97402;
+}
 
-        .occupancy-card {
-            background-color: #fff7e6;
-            color: #ffa500;
-        }
+.electrical-card {
+    background-color: #e3f2fd;
+    color: #104f97;
+}
 
-        .electrical-card {
-            background-color: #fef6f8;
-            color: #ff0000;
-        }
-    </style>
+/* Button alignment */
+button {
+    margin-top: 15px;
+}
+
+ </style>
+
 </head>
 <body>
     
@@ -129,38 +134,38 @@
 
             <div class="content-container">
                 <div class="contentContainer">
-                <!---Archive Cards Section -->
-                <div class="card-container">
-                    <div class="archive-card building-card">
-                        <i class="fa-solid fa-building-circle-check card-icon"></i>
-                        <h5>Building Permit Archive</h5>
-                        <p>View and manage archived building permits.</p>
-                           <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buildingPermitArchiveModal">
-    View
-  </button>
-                    </div>
-                    <div class="archive-card occupancy-card">
-                        <i class="fa-solid fa-person-shelter card-icon"></i>
-                        <h5>Occupancy Archive</h5>
-                        <p>View and manage archived occupancy certificates.</p>
-                         <!-- Button trigger modal -->
-<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#occupancyArchiveModal">
-   View
-  </button>
-  
-                    </div>
-                    <div class="archive-card electrical-card">
-                        <i class="fa-solid fa-bolt card-icon"></i>
-                        <h5>Electrical Inspection Archive</h5>
-                        <p>View and manage archived electrical inspections.</p>
-                        <!-- Button trigger modal -->
-<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#electricalCertArchiveModal">
-    View
-  </button>
+                    <!-- Archive Cards Section -->
+                    <div class="card-container">
+                        <div class="permit-card building-card">
+                            <i class="fa-solid fa-building-circle-check card-icon"></i>
+                            <h5>Building Permit Archive</h5>
+                            <p>View and manage archived building permits.</p>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#buildingPermitArchiveModal">
+                                View
+                            </button>
+                        </div>
+                        <div class="permit-card occupancy-card">
+                            <i class="fa-solid fa-person-shelter card-icon"></i>
+                            <h5>Occupancy Archive</h5>
+                            <p>View and manage archived occupancy certificates.</p>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#occupancyArchiveModal">
+                                View
+                            </button>
+                        </div>
+                        <div class="permit-card electrical-card">
+                            <i class="fa-solid fa-bolt card-icon"></i>
+                            <h5>Electrical Inspection Archive</h5>
+                            <p>View and manage archived electrical inspections.</p>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#electricalCertArchiveModal">
+                                View
+                            </button>
+                        </div>
                     </div>
                 </div>
-                </div>
+                
             </div>
         </div>
     </div>

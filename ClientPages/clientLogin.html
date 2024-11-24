@@ -58,10 +58,52 @@
     color: #666;
 }
 
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Overlay won't block user interactions */
+    z-index: 2;
+}
+
+.particle {
+    position: absolute;
+    background-color: rgba(255, 255, 0, 0.2); /* Yellow particles */
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: moveParticles 20s linear infinite;
+    opacity: 0;
+}
+
+.particle:nth-child(odd) {
+    background-color: rgba(0, 123, 255, 0.309); /* Blue particles */
+}
+
+@keyframes moveParticles {
+    0% {
+        transform: translateY(100vh) translateX(0) scale(0.5);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(20vw) scale(1.2);
+        opacity: 0;
+    }
+}
+
 
     </style>
 </head>
 <body>
+    <div id="overlay"></div>
     <div id="loading-screen" class="loading-screen" style="display: none;">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
@@ -244,6 +286,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
     </script>
+    <script>const overlay = document.getElementById("overlay");
+
+        // Create 100 particles dynamically for a denser effect
+        for (let i = 0; i < 100; i++) {
+            const particle = document.createElement("div");
+            particle.className = "particle";
+            particle.style.left = Math.random() * 100 + "vw"; // Random horizontal position
+            particle.style.animationDelay = Math.random() * 20 + "s"; // Random delay within the animation duration
+            particle.style.animationDuration = 20 + Math.random() * 10 + "s"; // Slight variation in duration for more natural flow
+            overlay.appendChild(particle);
+        }
+        
+        </script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
      <script src="/transition.js"></script>
