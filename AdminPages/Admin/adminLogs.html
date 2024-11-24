@@ -200,7 +200,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBhvoPidRWGeJmnN2E11SBS5n8oyxVLJ0M",
@@ -305,6 +305,57 @@
         }
     }
 
+    // Export logs to CSV
+    function exportToCSV() {
+        const csvContent = "data:text/csv;charset=utf-8," +
+            ["Date,Operation,Document ID,Collection"]
+                .concat(logs.map(log => {
+                    const date = new Date(log.timestamp).toLocaleString("en-US");
+                    return `${date},${log.operation},${log.documentId || "N/A"},${log.collection}`;
+                }))
+                .join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "logs.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Export logs to PDF
+    function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const rows = logs.map(log => [
+            new Date(log.timestamp).toLocaleString("en-US"),
+            log.operation,
+            log.documentId || "N/A",
+            log.collection
+        ]);
+
+        doc.text("Logs", 10, 10);
+        doc.autoTable({
+            head: [["Date", "Operation", "Document ID", "Collection"]],
+            body: rows,
+        });
+
+        doc.save("logs.pdf");
+    }
+
+    // Backup logs to JSON
+    function backupLogs() {
+        const jsonContent = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs, null, 2));
+        const link = document.createElement("a");
+        link.setAttribute("href", jsonContent);
+        link.setAttribute("download", "logs_backup.json");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     // Event listeners for filters
     document.getElementById("applyFilters").addEventListener("click", () => {
         const operation = document.getElementById("filterOperation").value;
@@ -314,6 +365,11 @@
 
         fetchAndDisplayLogs({ operation, collection, startDate, endDate });
     });
+
+    // Event listeners for buttons
+    document.getElementById("exportCSV").addEventListener("click", exportToCSV);
+    document.getElementById("exportPDF").addEventListener("click", exportToPDF);
+    document.getElementById("backupLogs").addEventListener("click", backupLogs);
 
     // Initial fetch
     fetchAndDisplayLogs();
