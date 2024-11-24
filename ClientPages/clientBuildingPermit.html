@@ -1187,190 +1187,198 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
- document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('submitProfile').addEventListener('click', async (event) => {
-    event.preventDefault();
+        event.preventDefault();
 
-    // Gather form inputs
-    const applicationMethod = document.getElementById('applicationMethod').value;
-    const issuedOn = document.getElementById('basic-url').value.trim();
-    const addressTelNo = document.getElementById('addressTelNo').value.trim();
-    const projectLocation = document.getElementById('projectLocation').value.trim();
-    const phoneNumber = document.getElementById('phoneNumber').value.trim();
-    const ownerLastName = document.getElementById('ownerLastName').value.trim();
-    const ownerFirstName = document.getElementById('ownerFirstName').value.trim();
-    const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
-    const ownerMaidenName = document.getElementById('ownerMaidenName').value.trim();
-    const appointmentDate = document.getElementById('appointmentDate').value;
+        // Gather form inputs
+        const applicationMethod = document.getElementById('applicationMethod').value;
+        const issuedOn = document.getElementById('basic-url').value.trim();
+        const addressTelNo = document.getElementById('addressTelNo').value.trim();
+        const projectLocation = document.getElementById('projectLocation').value.trim();
+        const phoneNumber = document.getElementById('phoneNumber').value.trim();
+        const ownerLastName = document.getElementById('ownerLastName').value.trim();
+        const ownerFirstName = document.getElementById('ownerFirstName').value.trim();
+        const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
+        const ownerMaidenName = document.getElementById('ownerMaidenName').value.trim();
+        const appointmentDate = document.getElementById('appointmentDate').value;
 
-    const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
-    const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked')?.nextElementSibling?.textContent || '';
-    const projectJustification = document.querySelector('input[name="projectJustification"]:checked')?.nextElementSibling?.textContent || '';
+        const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
+        const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked')?.nextElementSibling?.textContent || '';
+        const projectJustification = document.querySelector('input[name="projectJustification"]:checked')?.nextElementSibling?.textContent || '';
 
-    // Validate required fields
-    const requiredFields = [
-        { field: issuedOn, name: 'Issued On' },
-        { field: addressTelNo, name: 'Address/Tel No' },
-        { field: projectLocation, name: 'Project Location' },
-        { field: phoneNumber, name: 'Phone Number' },
-        { field: ownerName, name: 'Owner Name' },
-        { field: appointmentDate, name: 'Appointment Date' }
-    ];
+        // Validate required fields
+        const requiredFields = [
+            { field: issuedOn, name: 'Issued On' },
+            { field: addressTelNo, name: 'Address/Tel No' },
+            { field: projectLocation, name: 'Project Location' },
+            { field: phoneNumber, name: 'Phone Number' },
+            { field: ownerName, name: 'Owner Name' },
+            { field: appointmentDate, name: 'Appointment Date' }
+        ];
 
-    for (const { field, name } of requiredFields) {
-        if (!field) {
-            alert(`Please fill out the ${name} field.`);
-            return;
-        }
-    }
-
-    const requiredFileInputs = [
-        { id: 'buildingPlanFile', name: 'Building Plan' },
-        { id: 'proofOwnershipFile', name: 'Proof of Ownership' },
-        { id: 'taxReceiptFile', name: 'Photocopy of Tax Declaration & Current Tax Receipt' },
-        { id: 'brgyClearanceFile', name: 'Brgy. Clearance of Building Permit' },
-        { id: 'billMaterialsFile', name: 'Bill of Materials & Specification' },
-        { id: 'prcFile', name: 'Photocopy of PRC IC/PTR of all signing engineers' },
-        { id: 'certExemptionFile', name: 'Certification of Exemption Location Clearance from CPDO' },
-        { id: 'structuralAnalysisFile', name: 'Structural Analysis (2-Storey and up)' }
-    ];
-
-    for (const { id, name } of requiredFileInputs) {
-        const fileInput = document.getElementById(id);
-        if (!fileInput || !fileInput.files[0]) {
-            alert(`Please upload the ${name} file.`);
-            return;
-        }
-    }
-
-    // Gather dynamically generated unit fields
-    const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
-    const unitsData = [];
-
-    for (let i = 1; i <= numUnits; i++) {
-        const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
-        const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
-        const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
-        const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
-
-        if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
-            alert(`Please fill out all fields for Unit ${i}.`);
-            return;
-        }
-
-        unitsData.push({
-            blockNumber,
-            lotNumber,
-            NOStorey: parseInt(NOStorey),
-            floorArea: parseFloat(floorArea)
-        });
-    }
-
-    const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
-    const totalEstimatedCost = totalFloorArea * 10000;
-
-    const loadingScreen = document.getElementById('loading-screen');
-    if (loadingScreen) {
-        loadingScreen.style.display = 'flex';
-    }
-
-    try {
-        // Authenticate user
-        const user = await new Promise((resolve, reject) => {
-            onAuthStateChanged(auth, user => {
-                if (user) {
-                    resolve(user);
-                } else {
-                    reject(new Error("No user is authenticated."));
-                }
-            }, reject);
-        });
-
-        const userId = user.uid;
-
-        // Generate building permit number
-        const currentYear = new Date().getFullYear();
-        const permitCounterRef = doc(db, "permitCounters", currentYear.toString());
-        const permitCounterDoc = await getDoc(permitCounterRef);
-
-        let newPermitNumber;
-        if (permitCounterDoc.exists()) {
-            newPermitNumber = permitCounterDoc.data().lastNumber + 1;
-        } else {
-            newPermitNumber = 1;
-        }
-
-        const buildingPermitNo = `${currentYear}-${newPermitNumber.toString().padStart(4, '0')}`;
-        await setDoc(permitCounterRef, { lastNumber: newPermitNumber });
-
-        // Prepare data to save
-        const permitData = {
-            buildingPermitNo,
-            appointmentDate: new Date(appointmentDate),
-            applicationMethod,
-            issuedOn,
-            ownerName,
-            phoneNumber,
-            addressTelNo,
-            projectLocation,
-            scopeOfWork,
-            projectJustification,
-            ownerUid: userId,
-            status: 'Pending',
-            unitsData,
-            totalFloorArea,
-            totalEstimatedCost,
-            createdAt: serverTimestamp()
-        };
-
-        // Save to Firestore
-        const permitDocRef = await addDoc(collection(db, "buildingPermits"), permitData);
-        const permitId = permitDocRef.id;
-
-        // Upload files
-        const storagePath = `buildingPermits/${permitId}`;
-        const uploadPromises = requiredFileInputs.map(async file => {
-            const fileInput = document.getElementById(file.id);
-            if (fileInput && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const fileRef = ref(storage, `${storagePath}/${file.namePrefix}_${file.name}`);
-                const snapshot = await uploadBytes(fileRef, file);
-                return getDownloadURL(snapshot.ref);
+        for (const { field, name } of requiredFields) {
+            if (!field) {
+                alert(`Please fill out the ${name} field.`);
+                return;
             }
-            return null;
-        });
-
-        const fileURLs = await Promise.all(uploadPromises);
-
-        const fileURLMapping = {
-            buildingPlanURL: fileURLs[0],
-            proofOwnershipURL: fileURLs[1],
-            taxReceiptURL: fileURLs[2],
-            brgyClearanceURL: fileURLs[3],
-            billMaterialsURL: fileURLs[4],
-            prcURL: fileURLs[5],
-            certExemptionURL: fileURLs[6],
-            structuralAnalysisURL: fileURLs[7]
-        };
-
-        await updateDoc(doc(db, "buildingPermits", permitId), fileURLMapping);
-
-        Swal.fire({
-            title: "Success",
-            text: "Application Submitted",
-            icon: "success"
-        });
-
-    } catch (error) {
-        console.error("Error during submission:", error);
-        alert(`Error submitting application: ${error.message}`);
-    } finally {
-        if (loadingScreen) {
-            loadingScreen.style.display = 'none';
         }
-    }
-});
 
+        const requiredFileInputs = [
+            { id: 'buildingPlanFile', name: 'Building Plan' },
+            { id: 'proofOwnershipFile', name: 'Proof of Ownership' },
+            { id: 'taxReceiptFile', name: 'Photocopy of Tax Declaration & Current Tax Receipt' },
+            { id: 'brgyClearanceFile', name: 'Brgy. Clearance of Building Permit' },
+            { id: 'billMaterialsFile', name: 'Bill of Materials & Specification' },
+            { id: 'prcFile', name: 'Photocopy of PRC IC/PTR of all signing engineers' },
+            { id: 'certExemptionFile', name: 'Certification of Exemption Location Clearance from CPDO' },
+            { id: 'structuralAnalysisFile', name: 'Structural Analysis (2-Storey and up)' }
+        ];
+
+        for (const { id, name } of requiredFileInputs) {
+            const fileInput = document.getElementById(id);
+            if (!fileInput || !fileInput.files[0]) {
+                alert(`Please upload the ${name} file.`);
+                return;
+            }
+        }
+
+        // Gather dynamically generated unit fields
+        const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
+        const unitsData = [];
+
+        for (let i = 1; i <= numUnits; i++) {
+            const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
+            const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
+            const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
+            const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
+
+            if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
+                alert(`Please fill out all fields for Unit ${i}.`);
+                return;
+            }
+
+            unitsData.push({
+                blockNumber,
+                lotNumber,
+                NOStorey: parseInt(NOStorey),
+                floorArea: parseFloat(floorArea)
+            });
+        }
+
+        const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
+        const totalEstimatedCost = totalFloorArea * 10000;
+
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+        }
+
+        try {
+            // Authenticate user
+            const user = await new Promise((resolve, reject) => {
+                onAuthStateChanged(auth, user => {
+                    if (user) {
+                        resolve(user);
+                    } else {
+                        reject(new Error("No user is authenticated."));
+                    }
+                }, reject);
+            });
+
+            const userId = user.uid;
+
+            // Retrieve the user's idUrl from the "users" collection
+            const userDoc = await getDoc(doc(db, "users", userId));
+            if (!userDoc.exists()) {
+                throw new Error("User document not found.");
+            }
+
+            const validId = userDoc.data().idUrl; // Retrieve the idUrl field
+
+            // Generate building permit number
+            const currentYear = new Date().getFullYear();
+            const permitCounterRef = doc(db, "permitCounters", currentYear.toString());
+            const permitCounterDoc = await getDoc(permitCounterRef);
+
+            let newPermitNumber;
+            if (permitCounterDoc.exists()) {
+                newPermitNumber = permitCounterDoc.data().lastNumber + 1;
+            } else {
+                newPermitNumber = 1;
+            }
+
+            const buildingPermitNo = `${currentYear}-${newPermitNumber.toString().padStart(4, '0')}`;
+            await setDoc(permitCounterRef, { lastNumber: newPermitNumber });
+
+            // Prepare data to save
+            const permitData = {
+                buildingPermitNo,
+                appointmentDate: new Date(appointmentDate),
+                applicationMethod,
+                issuedOn,
+                ownerName,
+                phoneNumber,
+                addressTelNo,
+                projectLocation,
+                validId,
+                scopeOfWork,
+                projectJustification,
+                ownerUid: userId,
+                status: 'Pending',
+                unitsData,
+                totalFloorArea,
+                totalEstimatedCost,
+                createdAt: serverTimestamp()
+            };
+
+            // Save to Firestore
+            const permitDocRef = await addDoc(collection(db, "buildingPermits"), permitData);
+            const permitId = permitDocRef.id;
+
+            // Upload files
+            const storagePath = `buildingPermits/${permitId}`;
+            const uploadPromises = requiredFileInputs.map(async file => {
+                const fileInput = document.getElementById(file.id);
+                if (fileInput && fileInput.files[0]) {
+                    const fileToUpload = fileInput.files[0];
+                    const fileRef = ref(storage, `${storagePath}/${file.name}_${fileToUpload.name}`);
+                    const snapshot = await uploadBytes(fileRef, fileToUpload);
+                    return getDownloadURL(snapshot.ref);
+                }
+                return null;
+            });
+
+            const fileURLs = await Promise.all(uploadPromises);
+
+            const fileURLMapping = {
+                buildingPlanURL: fileURLs[0],
+                proofOwnershipURL: fileURLs[1],
+                taxReceiptURL: fileURLs[2],
+                brgyClearanceURL: fileURLs[3],
+                billMaterialsURL: fileURLs[4],
+                prcURL: fileURLs[5],
+                certExemptionURL: fileURLs[6],
+                structuralAnalysisURL: fileURLs[7]
+            };
+
+            await updateDoc(doc(db, "buildingPermits", permitId), fileURLMapping);
+
+            Swal.fire({
+                title: "Success",
+                text: "Application Submitted",
+                icon: "success"
+            });
+
+        } catch (error) {
+            console.error("Error during submission:", error);
+            alert(`Error submitting application: ${error.message}`);
+        } finally {
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        }
+    });
 });
 
     

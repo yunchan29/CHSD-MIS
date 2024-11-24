@@ -163,6 +163,7 @@ async function handleSignUp(event) {
 
     const selectedAvatar = document.querySelector('input[name="avatar"]:checked');
     const uploadedImageFile = document.getElementById('client-upload-image').files[0];
+    const uploadedIDFile = document.getElementById('fileInput').files[0]; // Added for ID upload
 
     if (password !== confirmPassword) {
         alert("Passwords do not match.");
@@ -178,13 +179,14 @@ async function handleSignUp(event) {
         const userId = user.uid;
 
         let avatarUrl = null;
+        let idUrl = null; // URL for the uploaded ID file
 
         // If the user selected an avatar, use that
         if (selectedAvatar) {
             avatarUrl = `/resources/pictures/${selectedAvatar.value}`;
         }
 
-        // If the user uploaded an image, upload it to Firebase Storage
+        // If the user uploaded an avatar image, upload it to Firebase Storage
         if (uploadedImageFile) {
             const storageRef = ref(storage, `userAvatars/${userId}/${uploadedImageFile.name}`);
             await uploadBytes(storageRef, uploadedImageFile);
@@ -192,11 +194,18 @@ async function handleSignUp(event) {
             console.log("Uploaded avatar and obtained URL:", avatarUrl);
         }
 
+        // If the user uploaded an ID, upload it to Firebase Storage
+        if (uploadedIDFile) {
+            const idStorageRef = ref(storage, `userIDs/${userId}/${uploadedIDFile.name}`);
+            await uploadBytes(idStorageRef, uploadedIDFile);
+            idUrl = await getDownloadURL(idStorageRef);
+            console.log("Uploaded ID and obtained URL:", idUrl);
+        }
+
         // Send email verification
         await sendEmailVerification(user);
         console.log("Verification email sent to:", email);
-          // Hide the loading screen in case of an error
-          
+
         Swal.fire({
             title: 'Verification Email Sent!',
             text: 'A verification email has been sent to your email address. Please verify your email before logging in.',
@@ -213,6 +222,7 @@ async function handleSignUp(event) {
             email: email,
             clientAddress: clientAddress,
             avatarUrl: avatarUrl,
+            idUrl: idUrl, // Save the ID file URL in Firestore
             emailVerified: false, // Set email verification status to false
             createdAt: serverTimestamp() // Add server timestamp here
         });
@@ -249,6 +259,7 @@ async function handleSignUp(event) {
         document.getElementById('loading-screen').style.display = 'none';
     }
 }
+
 // Function to monitor authentication state and display user info
 function monitorAuthState() {
     onAuthStateChanged(auth, async (user) => {
