@@ -21,6 +21,35 @@
             padding: 20px;
         }
     </style>
+    <style>
+        #applications-container {
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    
+        .application-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+        }
+    
+        .application-item h4 {
+            margin: 0 0 5px;
+            color: #333;
+        }
+    
+        .application-item p {
+            margin: 5px 0;
+        }
+    
+        .application-item small {
+            color: #666;
+        }
+    </style>
 </head>
 <body>
     <div class="main-container d-flex">
@@ -46,7 +75,13 @@
                 <li class="sideNav"><a href="/AdminPages/InformalSettlers/adminDashboardInformalSettlers.html" class="text-decoration-none"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                 <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersApplication.html" class="text-decoration-none"><i class="fa-solid fa-folder"></i> Housing Application</a></li>
                 <li class="sideNav"><a href="/AdminPages/InformalSettlers/InformalSettlersReport.html" class="text-decoration-none"><i class="fa-solid fa-chart-column"></i> Application Report</a></li>
-                <li class="sideNav active"><a href="/AdminPages/InformalSettlers/followup.html" class="text-decoration-none"><i class="fa-solid fa-envelope"></i> Notifications</a></li>
+                <li class="sideNav active">
+                    <a href="/AdminPages/InformalSettlers/adminISNotif.html" class="text-decoration-none">
+                        <i class="fa-solid fa-envelope"></i> Notifications
+                        <span id="notification-badge" class="badge bg-danger text-white ms-2" style="display: none;">0</span>
+                    </a>
+                </li>
+                
                 <li class="sideNav"><a href="/AdminPages/InformalSettlers/followup.html" class="text-decoration-none"><i class="fa-solid fa-bullhorn"></i> Follow up</a></li>
                 <li class="sideNav"><a id="admin-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
             </ul>
@@ -79,6 +114,7 @@
 
             <div class="contentContainer">
                 <h4 class="text-center">Notifications</h4>
+                <div id="applications-container"></div> 
                 
             </div>
         </div>
@@ -112,7 +148,7 @@
                 ? Timestamp.fromMillis(Number(localStorage.getItem("lastChecked")))
                 : Timestamp.fromDate(new Date(0)); // Default to a very old date if no timestamp is stored
     
-            const collections = ["buildingPermits", "OccupancyPermits", "ElectricalCert"];
+            const collections = ["buildingPermits", "OccupancyPermits", "ElectricalCert", "Housing"];
             const promises = collections.map((col) => {
                 const colRef = collection(db, col);
                 const q = query(colRef, where("createdAt", ">", lastChecked), orderBy("createdAt", "asc"));
@@ -156,7 +192,8 @@
                 const typeMap = {
                     buildingPermits: "Building Permit",
                     OccupancyPermits: "Occupancy Permit",
-                    ElectricalCert: "Electrical Certificate"
+                    ElectricalCert: "Electrical Certificate",
+                    Housing: "Housing Application"
                 };
     
                 const type = typeMap[app.collection] || "Application";
@@ -189,6 +226,7 @@
         // Fetch and display applications on page load
         fetchAndDisplayApplications();
     </script>
+    
     
   <!--Navigation Bar-->
   <script>
