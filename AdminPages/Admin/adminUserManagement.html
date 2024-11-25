@@ -24,7 +24,7 @@
         /* Adjust eye icon alignment */
         .eye-icon {
             right: 20px;
-            top: 50%;
+            top: 45%;
             
           
             cursor: pointer;
@@ -101,61 +101,64 @@
            <div class="contentContainer">
             <div class="content-container">
                 <form id="userForm">
-                    <div class="row g-3">
-                        <!-- First and Last Name -->
-                        <div class="col-md-6">
-                            <label for="firstName" class="form-label">First Name</label>
+                    <div class="row mt-3 col-md-6">
+                        <div class="col">
+                            <label for="firstName">First Name</label>
                             <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
                         </div>
-                        <div class="col-md-6">
-                            <label for="lastName" class="form-label">Last Name</label>
+                        <div class="col">
+                            <label for="lastName">Last Name</label>
                             <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
                         </div>
+                    </div>
                 
-                        <!-- Email -->
-                        <div class="col-12">
-                            <label for="userName" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="userName" placeholder="Email Address" required>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <label for="userName">Email</label>
+                            <input type="email" class="form-control" id="userName" placeholder="User Name" required>
                         </div>
+                    </div>
                 
-                        <!-- Password and Confirm Password -->
-                        <div class="col-md-6 position-relative">
-                            <label for="password" class="form-label">Password</label>
+                    <div class="row mt-3">
+                        <div class="col position-relative">
+                            <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" placeholder="Password" required>
-                            <i class="fa fa-eye-slash position-absolute eye-icon" id="togglePassword"  aria-label="Toggle Password Visibility"></i>
-                        </div>
-                        <div class="col-md-6 position-relative">
-                            <label for="confirmPassword" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required>
-                            <i class="fa fa-eye-slash position-absolute eye-icon" id="toggleConfirmPassword"  aria-label="Toggle Confirm Password Visibility"></i>
+                            <i class="fa fa-eye-slash position-absolute eye-icon" id="togglePassword"></i>
                         </div>
                 
-                        <!-- Account Type -->
-                        <div class="col-md-6">
-                            <label for="accountType" class="form-label">Account Type</label>
-                            <select class="form-select" id="accountType" required>
+                        <div class="col position-relative">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required>
+                            <i class="fa fa-eye-slash position-absolute eye-icon" id="toggleConfirmPassword"></i>
+                        </div>
+                    </div>
+                
+                    <div class="row mt-3">
+                        <div class="col">
+                            <label for="accountType">Account Type</label>
+                            <select class="form-control" id="accountType" required>
                                 <option value="AdminPC">Permits Officer</option>
                                 <option value="AdminIS">Housing Officer</option>
                                 <option value="MainAdmin">IT Admin</option>
+                          
                             </select>
                         </div>
                 
-                        <!-- Hidden Field -->
-                        <div class="col-md-6">
+                        <div class="col">
                             <input type="hidden" id="enabled" value="true">
                         </div>
                     </div>
                 
-                    <!-- Submit Button -->
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <a href="#" id="addUserBtn" class="btn btn-primary w-100 text-white">
-                                <i class="fa-solid fa-circle-plus"></i> Add User
-                            </a>
-                        </div>
-                    </div>
+                   
                 </form>
-                
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="#" id="addUserBtn" class="btn btn-primary mt-3 text-white">
+                            <i class="fa-solid fa-circle-plus"></i> Add User
+                        </a>
+                    </div>
+                </div>
                 
 
                 <div class="row mt-3">
@@ -573,6 +576,10 @@ document.addEventListener("click", async (event) => {
             fetchUsers();
         });
     </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script src="/transition.js"></script>
     
 </body>
 </html>
