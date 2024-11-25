@@ -757,38 +757,71 @@
 </div>
 
 
-    <!-- View Details Modal -->
-    <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewDetailsModalLabel">Permit Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Occupancy View Details Modal -->
+<div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="wide-modal modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header bg-light text-black">
+                <h5 class="modal-title" id="viewDetailsModalLabel">
+                    <span id="displayOwnerName"></span>'s Occupancy Permit Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Owner and Verification Section -->
+                <div class="row mb-4 g-3">
+                    <!-- Owner Details -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-header p-3 border rounded bg-primary text-white">
+                                <strong>Owner Information</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <p><strong>Owner Name:</strong> <span id="permitOwnerName" class="text-primary"></span></p>
+                                    <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
+                                    <p><strong>Appointment Date:</strong> <span id="appointmentDateSched"></span></p>
+                                    <p><strong>Applicant Type:</strong> <span id="applicantType"></span></p>
+                                    <p><strong>Building Permit No.:</strong> <span id="permitIdDisplay" class="text-danger"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Applicant Verification -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <strong>Applicant Verification</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Valid ID and Status -->
+                                    <div class="col-md-6 d-flex align-items-center mb-3">
+                                        <p class="mb-0 me-2"><strong>Valid ID:</strong></p>
+                                        <button id="viewValidIdBtn" class="btn btn-sm btn-primary">Validate</button>
+                                        <span id="ownerValidId" style="display: none;"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Verification Status:</strong> 
+                                            <span id="approvalStatus" class="text-muted">Pending</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <!-- Text information at the top -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Owner Name:</strong> <span id="permitOwnerName"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
-                        </div>
-                    </div>
-                
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Appointment Date:</strong> <span id="appointmentDateSched"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Permit ID:</strong> <span id="permitIdDisplay"></span></p>
-                        </div>
-                    </div>
-                
-                    <!-- Status selection in a row -->
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="statusSelect" class="form-label">Status</label>
+
+                <!-- Permit Status and Progress Section -->
+                <div class="row mb-4 g-3">
+                    <!-- Permit Status -->
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded bg-light">
+                            <label for="statusSelect" class="form-label fw-bold">Permit Status</label>
                             <select id="statusSelect" class="form-select">
                                 <option value="Pending">Pending</option>
                                 <option value="Processing">Processing</option>
@@ -799,25 +832,36 @@
                             </select>
                         </div>
                     </div>
-                
-                   
-                    <div id="viewDetailsModalBtnGrp">
-    
+
+                    <!-- Progress -->
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded bg-light">
+                            <label class="form-label fw-bold">Progress</label>
+                            <div class="progress" style="height: 20px;">
+                                <div id="statusProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+                                    role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    Step 1 of 6
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                
-                    <!-- Hidden input field to store the permit ID -->
-                    <input type="hidden" id="hiddenPermitId">
                 </div>
-                
-                
-                <div class="modal-footer">
-                   
-                    <button type="button" id="saveStatusBtn" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+
+                <!-- Dynamic Buttons -->
+                <div id="viewDetailsModalBtnGrp" class="d-flex flex-wrap gap-2 justify-content-between mt-4"></div>
+
+                <!-- Hidden Input Field -->
+                <input type="hidden" id="hiddenPermitId">
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer bg-light">
+                <button type="button" id="saveStatusBtn" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
 
 
     <script>
@@ -1163,100 +1207,94 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
 // Function to Dynamically Append Buttons to the View Details Modal for Occupancy Permit
 function appendButtons(data) {
     const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
-    viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing buttons
+    viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing content
 
-    // Row 1: View File Uploads
+    // Container for the buttons
+    const container = document.createElement('div');
+    container.className = 'container-fluid';
+
+    // Row 1: View File Uploads and Generate Occupancy Permit (Side by Side)
     const firstRow = document.createElement('div');
     firstRow.className = 'row mt-4';
 
+    // Column 1: View File Uploads
     const col1 = document.createElement('div');
-    col1.className = 'col-md-12';
+    col1.className = 'col-md-6 mb-2'; // Half-width column
     const btn1 = document.createElement('button');
     btn1.className = 'btn btn-primary w-100';
     btn1.textContent = 'View File Uploads';
-    btn1.addEventListener('click', () => {
-        // Hide View Details Modal
-        const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-        if (viewDetailsModal) viewDetailsModal.hide();
-
-        // Pass data to View Uploads Modal
-        openViewUploadsModal(data);
-    });
+    if (data.applicationMethod === 'walk-in') {
+        btn1.disabled = true; // Disable the button for walk-in applications
+        btn1.title = 'File uploads are not available for walk-in applications'; // Add tooltip
+    } else {
+        btn1.addEventListener('click', () => {
+            const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
+            if (viewDetailsModal) viewDetailsModal.hide();
+            openViewUploadsModal(data);
+        });
+    }
     col1.appendChild(btn1);
-    firstRow.appendChild(col1);
 
-    // Row 2: Generate Occupancy Permit
-    const secondRow = document.createElement('div');
-    secondRow.className = 'row mt-2';
-
+    // Column 2: Generate Occupancy Permit
     const col2 = document.createElement('div');
-    col2.className = 'col-md-12';
+    col2.className = 'col-md-6 mb-2'; // Half-width column
     const btn2 = document.createElement('button');
     btn2.className = 'btn btn-primary w-100';
     btn2.textContent = 'Generate Occupancy Permit';
     btn2.addEventListener('click', () => {
-        // Hide View Details Modal
         const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
         if (viewDetailsModal) viewDetailsModal.hide();
-
-        // Open Generate Occupancy Permit Modal with data
         openGenerateOccupancyPermitModal(data);
     });
     col2.appendChild(btn2);
-    secondRow.appendChild(col2);
 
-    // Row 3: Generate Order of Payment
-    const thirdRow = document.createElement('div');
-    thirdRow.className = 'row mt-2';
+    firstRow.appendChild(col1);
+    firstRow.appendChild(col2);
 
+    // Row 2: Generate Order of Payment and Archive Permit (Side by Side)
+    const secondRow = document.createElement('div');
+    secondRow.className = 'row mt-2';
+
+    // Column 1: Generate Order of Payment
     const col3 = document.createElement('div');
-    col3.className = 'col-md-12';
+    col3.className = 'col-md-6 mb-2'; // Half-width column
     const btn3 = document.createElement('button');
     btn3.className = 'btn btn-success w-100';
     btn3.textContent = 'Generate Order of Payment';
     btn3.addEventListener('click', () => {
-        // Pass data to the Order of Payment function
         generateOrderOfPayment(data);
-
-        // Hide View Details Modal
         const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
         if (viewDetailsModal) viewDetailsModal.hide();
 
-        // Show Order of Payment Modal
         const orderOfPaymentModal = new bootstrap.Modal(document.getElementById('orderOfPaymentModal'));
         orderOfPaymentModal.show();
 
-        // Ensure the modal backdrop is cleaned up on close
         document.getElementById('orderOfPaymentModal').addEventListener('hidden.bs.modal', function () {
             const backdrop = document.querySelector('.modal-backdrop');
             if (backdrop) backdrop.remove();
         });
     });
     col3.appendChild(btn3);
-    thirdRow.appendChild(col3);
 
-    // Row 4: Archive Permit
-    const fourthRow = document.createElement('div');
-    fourthRow.className = 'row mt-2';
-
+    // Column 2: Archive Permit
     const col4 = document.createElement('div');
-    col4.className = 'col-md-12';
+    col4.className = 'col-md-6 mb-2'; // Half-width column
     const btn4 = document.createElement('button');
     btn4.className = 'btn btn-danger w-100';
     btn4.textContent = 'Archive Permit';
     btn4.setAttribute('data-id', data.id);
-    btn4.addEventListener('click', (event) => {
-        // Pass data-id for archive handling
-        handleArchiveOccupancyPermit(event);
-    });
+    btn4.addEventListener('click', (event) => handleArchiveOccupancyPermit(event));
     col4.appendChild(btn4);
-    fourthRow.appendChild(col4);
 
-    // Append Rows to Button Group
-    viewDetailsModalBtnGrp.appendChild(firstRow);
-    viewDetailsModalBtnGrp.appendChild(secondRow);
-    viewDetailsModalBtnGrp.appendChild(thirdRow);
-    viewDetailsModalBtnGrp.appendChild(fourthRow);
+    secondRow.appendChild(col3);
+    secondRow.appendChild(col4);
+
+    // Append Rows to the Container
+    container.appendChild(firstRow);
+    container.appendChild(secondRow);
+
+    // Add Container to Button Group
+    viewDetailsModalBtnGrp.appendChild(container);
 }
 
 // Function to Open the Occupancy Permit Modal
@@ -1573,8 +1611,9 @@ function openViewDetailsModal(permitData) {
     document.getElementById("permitOwnerName").textContent = permitData.ownerName || "N/A";
     document.getElementById("issuedOnDate").textContent = permitData.issuedOn || "N/A";
     document.getElementById("appointmentDateSched").textContent = appointmentDate || "N/A";
-    document.getElementById("permitIdDisplay").textContent = permitData.id || "N/A";
+    document.getElementById("permitIdDisplay").textContent = permitData.buildingPermitNo || "N/A";
     document.getElementById("hiddenPermitId").value = permitData.id || "";
+    document.getElementById("displayOwnerName").textContent = permitData.ownerName;
 
     // Update Status Options
     updateStatusOptions(permitData.status || "Pending");

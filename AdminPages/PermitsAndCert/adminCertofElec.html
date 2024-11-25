@@ -226,68 +226,109 @@
 </div>
 
   
-  <!-- View Details Modal -->
-  <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="viewDetailsModalLabel">Permit Details</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  <!-- Text information at the top -->
-                  <div class="row">
-                      <div class="col-md-6">
-                          <p><strong>Owner Name:</strong> <span id="permitOwnerName"></span></p>
-                      </div>
-                      <div class="col-md-6">
-                          <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
-                      </div>
-                  </div>
-              
-                  <div class="row">
-                      <div class="col-md-6">
-                          <p><strong>Appointment Date:</strong> <span id="appointmentDateSched"></span></p>
-                      </div>
-                      <div class="col-md-6">
-                          <p><strong>Permit ID:</strong> <span id="permitIdDisplay"></span></p>
-                      </div>
-                  </div>
-              
-                  <!-- Status selection in a row -->
-                  <div class="row mb-3">
-                      <div class="col-md-12">
-                          <label for="statusSelect" class="form-label">Status</label>
-                          <select id="statusSelect" class="form-select">
-                              <option value="Pending">Pending</option>
-                              <option value="Processing">Processing</option>
-                              <option value="To Pay">To Pay</option>
-                              <option value="For Approval">For Approval</option>
-                              <option value="For Release">For Release</option>
-                              <option value="Claimed">Claimed</option>
-                          </select>
-                      </div>
-                  </div>
-              
-                  
-              
-                  <div id="viewDetailsModalBtnGrp">
-  
-                  </div>
-              
-                  <!-- Hidden input field to store the permit ID -->
-                  <input type="hidden" id="hiddenPermitId">
-              </div>
-              
-              
-              <div class="modal-footer">
-                 
-                  <button type="button" id="saveStatusBtn" class="btn btn-primary">Save</button>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              </div>
-          </div>
-      </div>
-  </div>
+<!-- View Details Modal -->
+<div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="wide-modal modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header bg-light text-black">
+                <h5 class="modal-title" id="viewDetailsModalLabel">
+                    <span id="OwnerName"></span>'s Permit Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Owner and Verification Section -->
+                <div class="row mb-4 g-3">
+                    <!-- Owner Details -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-header p-3 border rounded bg-primary text-white">
+                                <strong>Owner Information</strong>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Owner Name:</strong> <span id="permitOwnerName" class="text-primary"></span></p>
+                                <p><strong>Issued On:</strong> <span id="issuedOnDate"></span></p>
+                                <p><strong>Appointment Date:</strong> <span id="appointmentDateSched"></span></p>
+                                <p><strong>Applicant Type:</strong> <span id="applicantType"></span></p>
+                                <p><strong>Permit ID:</strong> <span id="permitIdDisplay" class="text-danger"></span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Applicant Verification -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <strong>Applicant Verification</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 d-flex align-items-center mb-3">
+                                        <p class="mb-0 me-2"><strong>Valid ID:</strong></p>
+                                        <button id="viewValidIdBtn" class="btn btn-sm btn-primary">Validate</button>
+                                        <span id="ownerValidId" style="display: none;"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Verification Status:</strong> 
+                                            <span id="approvalStatus" class="text-muted">Pending</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permit Status and Progress Section -->
+                <div class="row mb-4 g-3">
+                    <!-- Permit Status -->
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded bg-light">
+                            <label for="statusSelect" class="form-label fw-bold">Permit Status</label>
+                            <select id="statusSelect" class="form-select">
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="To Pay">To Pay</option>
+                                <option value="For Approval">For Approval</option>
+                                <option value="For Release">For Release</option>
+                                <option value="Claimed">Claimed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded bg-light">
+                            <label class="form-label fw-bold">Progress</label>
+                            <div class="progress" style="height: 20px;">
+                                <div id="statusProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+                                    role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    Step 1 of 6
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Buttons -->
+                <div id="viewDetailsModalBtnGrp" class="d-flex flex-wrap gap-2 justify-content-between mt-4"></div>
+
+                <!-- Hidden Input Field -->
+                <input type="hidden" id="hiddenPermitId">
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer bg-light">
+                <button type="button" id="saveStatusBtn" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
   <div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
@@ -905,16 +946,20 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
 
 
 
-    // Function to Dynamically Append Buttons to the View Details Modal for Electrical Certificates
+ // Function to Dynamically Append Buttons to the View Details Modal for Electrical Certificates
 function appendButtons(data) {
     const viewDetailsModalBtnGrp = document.getElementById('viewDetailsModalBtnGrp');
     viewDetailsModalBtnGrp.innerHTML = ''; // Clear existing buttons
 
-    // First Row for View File Uploads and Generate Electrical Certificate
+    // Container for the buttons
+    const container = document.createElement('div');
+    container.className = 'container-fluid';
+
+    // First Row: View File Uploads and Generate Electrical Certificate
     const firstRow = document.createElement('div');
     firstRow.className = 'row mt-4';
 
-    // View Electrical Certificate Uploads Button
+    // Column 1: View File Uploads
     const col1 = document.createElement('div');
     col1.className = 'col-md-6 mb-2';
     const btn1 = document.createElement('button');
@@ -922,14 +967,12 @@ function appendButtons(data) {
     btn1.textContent = 'View File Uploads';
     btn1.addEventListener('click', () => {
         const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-        if (viewDetailsModal) {
-            viewDetailsModal.hide(); // Hide View Details Modal
-        }
-        openViewUploadsModal(data); // Open View Uploads Modal for Electrical Certificates
+        if (viewDetailsModal) viewDetailsModal.hide();
+        openViewUploadsModal(data); // Open View Uploads Modal
     });
     col1.appendChild(btn1);
 
-    // Generate Electrical Certificate Button
+    // Column 2: Generate Electrical Certificate
     const col2 = document.createElement('div');
     col2.className = 'col-md-6 mb-2';
     const btn2 = document.createElement('button');
@@ -937,9 +980,7 @@ function appendButtons(data) {
     btn2.textContent = 'Generate Certificate';
     btn2.addEventListener('click', () => {
         const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-        if (viewDetailsModal) {
-            viewDetailsModal.hide(); // Hide View Details Modal
-        }
+        if (viewDetailsModal) viewDetailsModal.hide();
         openGenerateElectricalCertModal(data); // Open Generate Electrical Certificate Modal
     });
     col2.appendChild(btn2);
@@ -947,63 +988,60 @@ function appendButtons(data) {
     firstRow.appendChild(col1);
     firstRow.appendChild(col2);
 
-    // Second Row for Generate Order of Payment Button
+    // Second Row: Generate Order of Payment
     const secondRow = document.createElement('div');
     secondRow.className = 'row mt-2';
 
     const col3 = document.createElement('div');
     col3.className = 'col-md-12';
     const btn3 = document.createElement('button');
-    btn3.className = 'btn btn-success w-100 generate-order-payment-btn';
+    btn3.className = 'btn btn-success w-100';
     btn3.textContent = 'Generate Order of Payment';
 
-    // Add event listener for generating Order of Payment
     btn3.addEventListener('click', () => {
-        generateOrderOfPayment(data); // Generate order of payment using the data
-        
-        // Hide the View Details modal
+        generateOrderOfPayment(data); // Generate Order of Payment
+
+        // Hide View Details Modal
         const viewDetailsModal = bootstrap.Modal.getInstance(document.getElementById('viewDetailsModal'));
-        if (viewDetailsModal) {
-            viewDetailsModal.hide(); // Hide View Details Modal
-        }
+        if (viewDetailsModal) viewDetailsModal.hide();
 
         // Trigger Order of Payment Modal
         const orderOfPaymentModal = new bootstrap.Modal(document.getElementById('orderOfPaymentModal'));
         orderOfPaymentModal.show();
 
-        // Remove the backdrop manually after the modal closes to avoid the lingering backdrop
-        document.getElementById('orderOfPaymentModal').addEventListener('hidden.bs.modal', function () {
+        // Remove lingering backdrop after modal closes
+        document.getElementById('orderOfPaymentModal').addEventListener('hidden.bs.modal', () => {
             const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                backdrop.remove(); // Ensure the backdrop is removed
-            }
+            if (backdrop) backdrop.remove();
         });
     });
 
     col3.appendChild(btn3);
     secondRow.appendChild(col3);
 
-    // Third Row for Archive Button
+    // Third Row: Archive Electrical Certificate
     const thirdRow = document.createElement('div');
     thirdRow.className = 'row mt-2';
 
     const col4 = document.createElement('div');
     col4.className = 'col-md-12';
     const btn4 = document.createElement('button');
-    btn4.className = 'btn btn-danger w-100 archive-electrical-cert-btn';
+    btn4.className = 'btn btn-danger w-100';
     btn4.textContent = 'Archive Electrical Certificate';
     btn4.setAttribute('data-id', data.id);
 
-    // Add event listener for archiving the electrical certificate
     btn4.addEventListener('click', (event) => handleArchiveElectricalCert(event));
 
     col4.appendChild(btn4);
     thirdRow.appendChild(col4);
 
-    // Append Rows to Button Group
-    viewDetailsModalBtnGrp.appendChild(firstRow);
-    viewDetailsModalBtnGrp.appendChild(secondRow);
-    viewDetailsModalBtnGrp.appendChild(thirdRow);
+    // Append Rows to Container
+    container.appendChild(firstRow);
+    container.appendChild(secondRow);
+    container.appendChild(thirdRow);
+
+    // Add Container to Button Group
+    viewDetailsModalBtnGrp.appendChild(container);
 }
 
 async function generateOrderOfPayment(data) {

@@ -307,7 +307,7 @@ button {
                 const data = docSnapshot.data();
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${docSnapshot.id}</td>
+                    <td>${data.buildingPermitNo}</td>
                     <td>${data.ownerName || "N/A"}</td>
                     <td>${data.createdAt ? formatTimestamp(data.createdAt) : "N/A"}</td>
                     <td><button type="button" class="btn btn-success retrieve-btn">Retrieve</button></td>
@@ -353,7 +353,7 @@ button {
             permits.forEach((data) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${data.id}</td>
+                    <td>${data.buildingPermitNo}</td>
                     <td>${data.ownerName || "N/A"}</td>
                     <td>${data.createdAt ? formatTimestamp(data.createdAt) : "N/A"}</td>
                     <td><button type="button" class="btn btn-danger archive-btn">Archive</button></td>
