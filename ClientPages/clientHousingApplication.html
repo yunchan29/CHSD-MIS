@@ -218,7 +218,7 @@
         <p>Note: Fill up all the fields to proceed to the next step.</p>
                         <p><i>Required fields are marked with <span class="required-asterisk">*</span></i></p>
         <h5>Household Head Details</h5>
-        <div class="row">
+        <div class="row" style="display:none;">
             <div class="col">
                 <label for="surveyNo">Survey No.</label>
                 <input type="text" id="surveyNo" class="form-control" disabled>
@@ -784,7 +784,6 @@
                             <div class="col-md-6">
                                 <label for="sourceOfWater">Source of Water</label>
                                 <select class="form-control" id="sourceOfWater">
-                                    <option value="">Select Source of Water</option>
                                     <option value="local_water_district">Local Water District</option>
                                     <option value="deep_well">Deep Well</option>
                                     <option value="shallow_well">Shallow Well</option>
@@ -796,8 +795,17 @@
                             
                             <div class="col-md-6">
                                 <label for="telephone">Cellphone Number:</label>
-                                <input type="number" class="form-control" id="telephone">
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    placeholder="09XXXXXXXXX" 
+                                    maxlength="11" 
+                                    pattern="\d{11}" 
+                                    title="Please enter exactly 11 digits." 
+                                    id="telephone"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);">
                             </div>
+                            
                         </div>
     
                         <div class="row">

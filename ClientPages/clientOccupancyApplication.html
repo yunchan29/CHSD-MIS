@@ -264,9 +264,11 @@
                         <div class="label">Appointment</div>
                     </div>
                 </div>
+                <p>Note: Fill up all the fields to proceed to the next step.</p>
+                        <p><i>Required fields are marked with <span class="required-asterisk">*</span></i></p>
                 <div class="row">
                     <div class="col-md-4">
-                        <label for="buildingPermitOption">Building Permit Option</label>
+                        <label for="buildingPermitOption">Building Permit Option<span class="required-asterisk">*</span></label>
                         
                         <!-- Toggle Buttons for Selection -->
                         <div class="btn-group d-flex" role="group">
@@ -284,7 +286,7 @@
                 
                         <!-- Input for Typing Permit Number -->
                         <div id="permitInputContainer" class="mt-2">
-                            <input type="text" id="buildingPermitNo" class="form-control" placeholder="ex. 2024-XXXX">
+                            <input type="text" id="buildingPermitNo" class="form-control" placeholder="ex. 2024-XXXX" required>
                         </div>
                 
                         <!-- Button for Selecting Permit from Modal -->
@@ -302,28 +304,28 @@
                 
                 
                 <div class="row">
-                    <label for="ownerName">Owner/Applicant Name:</label>
-                    <input type="text" class="form-control" id="ownerName" placeholder="Enter Name">
+                    <label for="ownerName">Owner/Applicant Name:<span class="required-asterisk">*</span></label>
+                    <input type="text" class="form-control" id="ownerName" placeholder="Enter Name" required>
                 </div>
 
                 <div class="row">
                     <div class="col-md-8">
-                        <label for="ownerAddress">Address of Owner</label>
-                        <input type="text" class="form-control" id="ownerAddress">
+                        <label for="ownerAddress">Address of Owner<span class="required-asterisk">*</span></label>
+                        <input type="text" class="form-control" id="ownerAddress" required>
                     </div>
                         
                 </div>
                 <div class="row">
                     <div class="col-md-8">
-                        <label for="projectLocation">Location of the Project</label>
-                    <input type="text" class="form-control" id="projectLocation">
+                        <label for="projectLocation">Location of the Project<span class="required-asterisk">*</span></label>
+                    <input type="text" class="form-control" id="projectLocation" required>
                     </div>
                     
                  </div>
                  <div class="container">
                     <div class="form-group">
                         <label for="NOUnits">Number of Units<span class="required-asterisk">*</span></label>
-                        <select class="form-control" id="NOUnits">
+                        <select class="form-control" id="NOUnits" required>
                             <option value="1" selected>1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -457,7 +459,7 @@
 
 <!-- Appointment Modal -->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title fs-5" id="appointmentModalLabel">Appointment Schedule</h5>
@@ -578,7 +580,7 @@ function generateUnitFields(numUnits) {
             </div>
             <div class="col">
                 <label for="UnitFloorArea${i}">Floor Area for Unit ${i} (sqm)</label>
-                <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area" required>
+                <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area">
             </div>
         `;
         unitFieldsContainer.appendChild(unitDiv);
@@ -891,7 +893,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 icon: "success"
             });
             logFirestoreChanges("OccupancyPermits", permitId);
-
+            
+            const uploadModal = bootstrap.Modal.getInstance(document.getElementById('occupancyUploadModal'));
+                    const appointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
+                    
+                    if (uploadModal) uploadModal.hide();
+                    if (appointmentModal) appointmentModal.hide();
         } catch (error) {
             // Handle errors
             console.error("Error during submission:", error);
@@ -1094,6 +1101,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+    const nextStepButton = document.getElementById("nextStepButton");
+
     // Add event listeners for buttons
     document.getElementById('openPermitModalBtn').addEventListener('click', openPermitSelectionModal);
     document.getElementById('closePermitModalBtn').addEventListener('click', closePermitSelectionModal);
@@ -1108,7 +1117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const modal = document.getElementById('permitSelectionModal');
         const permitList = document.getElementById('permitList');
-        permitList.innerHTML = '';  // Clear previous entries
+        permitList.innerHTML = ''; // Clear previous entries
 
         // Fetch building permits for the logged-in user
         const buildingPermitsRef = collection(db, "buildingPermits");
@@ -1133,118 +1142,157 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function selectPermit(permitId) {
-    try {
-        const permitRef = doc(db, "buildingPermits", permitId);
-        const permitSnap = await getDoc(permitRef);
+        try {
+            const permitRef = doc(db, "buildingPermits", permitId);
+            const permitSnap = await getDoc(permitRef);
 
-        if (permitSnap.exists()) {
-            const permitData = permitSnap.data();
+            if (permitSnap.exists()) {
+                const permitData = permitSnap.data();
 
-            // Autofill static form fields and apply highlight effect
-            autofillField('buildingPermitNo', permitData.buildingPermitNo);
-            autofillField('ownerName', permitData.ownerName);
-            autofillField('ownerAddress', permitData.addressTelNo);
-            autofillField('projectLocation', permitData.projectLocation);
-            autofillField('totalFloorArea', permitData.TotalFloorArea);
-            autofillField('NOStorey', permitData.NOStorey);
+                // Autofill static form fields
+                autofillField('buildingPermitNo', permitData.buildingPermitNo);
+                autofillField('ownerName', permitData.ownerName);
+                autofillField('ownerAddress', permitData.addressTelNo);
+                autofillField('projectLocation', permitData.projectLocation);
+                autofillField('totalFloorArea', permitData.TotalFloorArea);
+                autofillField('totalEstimatedCost', permitData.TotalEstimatedCost);
 
-            // Autofill dropdown for NOUnits
-            const noUnitsDropdown = document.getElementById("NOUnitsDropdown");
-            if (noUnitsDropdown) {
-                noUnitsDropdown.value = permitData.NOUnits || ''; // Set the dropdown value
-                noUnitsDropdown.classList.add('highlight'); // Add highlight class
-                setTimeout(() => noUnitsDropdown.classList.remove('highlight'), 2000); // Remove highlight
-                noUnitsDropdown.dispatchEvent(new Event('change')); // Trigger change event if needed
+                // Validate data availability
+                if (!permitData.TotalFloorArea) {
+                    console.warn("Total Floor Area is missing in the permit data.");
+                }
+                if (!permitData.TotalEstimatedCost) {
+                    console.warn("Total Estimated Cost is missing in the permit data.");
+                }
+
+                // Autofill dropdown for NOUnits
+                const noUnitsDropdown = document.getElementById("NOUnitsDropdown");
+                if (noUnitsDropdown) {
+                    noUnitsDropdown.value = permitData.NOUnits || ''; // Set the dropdown value
+                    noUnitsDropdown.classList.add('highlight'); // Add highlight class
+                    setTimeout(() => noUnitsDropdown.classList.remove('highlight'), 2000); // Remove highlight
+                    noUnitsDropdown.dispatchEvent(new Event('change')); // Trigger change event if needed
+                }
+
+                // Dynamic fields for unit data
+                const unitFieldsContainer = document.getElementById("unitFieldsContainer");
+                const unitsData = permitData.unitsData || [];
+
+                unitFieldsContainer.innerHTML = ""; // Clear existing dynamic fields
+                unitsData.forEach((unit, index) => {
+                    const unitIndex = index + 1;
+
+                    const unitDiv = document.createElement("div");
+                    unitDiv.className = "row mb-3";
+
+                    unitDiv.innerHTML = `
+                        <div class="col">
+                            <label for="BlockNumber${unitIndex}">Block Number for Unit ${unitIndex}</label>
+                            <input type="text" class="form-control" id="BlockNumber${unitIndex}" placeholder="Block Number" required>
+                        </div>
+                        <div class="col">
+                            <label for="LotNumber${unitIndex}">Lot Number for Unit ${unitIndex}</label>
+                            <input type="text" class="form-control" id="LotNumber${unitIndex}" placeholder="Lot Number" required>
+                        </div>
+                        <div class="col">
+                            <label for="NOStorey${unitIndex}">Number of Storeys for Unit ${unitIndex}</label>
+                            <input type="number" class="form-control" id="NOStorey${unitIndex}" placeholder="Number of Storeys" required>
+                        </div>
+                        <div class="col">
+                            <label for="UnitFloorArea${unitIndex}">Floor Area for Unit ${unitIndex}</label>
+                            <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${unitIndex}" placeholder="Floor Area" required>
+                        </div>
+                    `;
+
+                    unitFieldsContainer.appendChild(unitDiv);
+
+                    // Autofill and highlight dynamic fields
+                    autofillField(`BlockNumber${unitIndex}`, unit.blockNumber);
+                    autofillField(`LotNumber${unitIndex}`, unit.lotNumber);
+                    autofillField(`NOStorey${unitIndex}`, unit.NOStorey);
+                    autofillField(`UnitFloorArea${unitIndex}`, unit.floorArea);
+                });
+
+                // Update totals
+                updateTotals();
+
+                // Validate required fields
+                checkRequiredFields();
+
+                // Notification for success
+                Swal.fire({
+                    title: 'Fields Populated',
+                    text: 'All relevant fields have been successfully populated.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+
+                closePermitSelectionModal();
+            } else {
+                console.error("No such document!");
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Permit data not found!',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
-
-            // Handle dynamic unit data
-            const unitFieldsContainer = document.getElementById("unitFieldsContainer");
-            const unitsData = permitData.unitsData || []; // Ensure unitsData exists
-
-            // Generate dynamic fields based on unitsData
-            unitFieldsContainer.innerHTML = ""; // Clear existing dynamic fields
-            unitsData.forEach((unit, index) => {
-                const unitIndex = index + 1;
-
-                const unitDiv = document.createElement("div");
-                unitDiv.className = "row mb-3";
-
-                unitDiv.innerHTML = `
-                    <div class="col">
-                        <label for="BlockNumber${unitIndex}">Block Number for Unit ${unitIndex}</label>
-                        <input type="text" class="form-control" id="BlockNumber${unitIndex}" placeholder="Block Number">
-                    </div>
-                    <div class="col">
-                        <label for="LotNumber${unitIndex}">Lot Number for Unit ${unitIndex}</label>
-                        <input type="text" class="form-control" id="LotNumber${unitIndex}" placeholder="Lot Number">
-                    </div>
-                    <div class="col">
-                        <label for="NOStorey${unitIndex}">Number of Storeys for Unit ${unitIndex}</label>
-                        <input type="number" class="form-control" id="NOStorey${unitIndex}" placeholder="Number of Storeys">
-                    </div>
-                    <div class="col">
-                        <label for="UnitFloorArea${unitIndex}">Floor Area for Unit ${unitIndex}</label>
-                        <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${unitIndex}" placeholder="Floor Area" required>
-                    </div>
-                `;
-
-                unitFieldsContainer.appendChild(unitDiv);
-
-                // Apply autofill and highlight effect for dynamic fields
-                autofillField(`BlockNumber${unitIndex}`, unit.blockNumber);
-                autofillField(`LotNumber${unitIndex}`, unit.lotNumber);
-                autofillField(`NOStorey${unitIndex}`, unit.NOStorey);
-                autofillField(`UnitFloorArea${unitIndex}`, unit.floorArea);
-            });
-
-            // Update totals after autofill
-            updateTotals();
-
-            // Show SweetAlert2 notification after autofilling all fields
-            Swal.fire({
-                title: 'Fields Populated',
-                text: 'All relevant fields have been successfully populated.',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-
-            closePermitSelectionModal();
-        } else {
-            console.error("No such document!");
+        } catch (error) {
+            console.error("Error fetching permit details:", error);
             Swal.fire({
                 title: 'Error',
-                text: 'Permit data not found!',
+                text: 'An error occurred while fetching permit details.',
                 icon: 'error',
                 confirmButtonText: 'OK'
             });
         }
-    } catch (error) {
-        console.error("Error fetching permit details:", error);
-        Swal.fire({
-            title: 'Error',
-            text: 'An error occurred while fetching permit details.',
-            icon: 'error',
-            confirmButtonText: 'OK'
+    }
+
+    // Function to autofill a field and apply highlight effect
+    function autofillField(fieldId, value) {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.value = value || ''; // Set field value
+            field.classList.add('highlight'); // Add highlight class
+
+            // Remove highlight effect after 2 seconds
+            setTimeout(() => {
+                field.classList.remove('highlight');
+            }, 2000);
+        }
+    }
+
+    // Function to check if all required fields are filled
+    function checkRequiredFields() {
+        const requiredFields = document.querySelectorAll("#occupancyUploadModal [required]");
+        let allFilled = true;
+
+        requiredFields.forEach((field) => {
+            if (field.type === "checkbox" || field.type === "radio") {
+                if (!field.checked) {
+                    allFilled = false;
+                }
+            } else if (!field.value.trim()) {
+                allFilled = false;
+            }
         });
+
+        nextStepButton.disabled = !allFilled;
     }
-}
 
-// Function to autofill a field and apply highlight effect
-function autofillField(fieldId, value) {
-    const field = document.getElementById(fieldId);
-    if (field) {
-        field.value = value || ''; // Set field value
-        field.classList.add('highlight'); // Add highlight class
+    // Attach event listeners to all required fields
+    const requiredFields = document.querySelectorAll("#occupancyUploadModal [required]");
+    requiredFields.forEach((field) => {
+        if (field.type === "checkbox" || field.type === "radio") {
+            field.addEventListener("change", checkRequiredFields);
+        } else {
+            field.addEventListener("input", checkRequiredFields);
+        }
+    });
 
-        // Remove highlight effect after 2 seconds
-        setTimeout(() => {
-            field.classList.remove('highlight');
-        }, 2000);
-    }
-}
-
+    // Run validation on page load to set the initial button state
+    checkRequiredFields();
 });
-
 
     // Start monitoring authentication state when the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', () => {

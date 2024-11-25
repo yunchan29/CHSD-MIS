@@ -228,8 +228,10 @@
                     </div>
                     <!-- Content -->
                     <div class="row g-3">
+                       <div class="col-md-6">
                         <label for="ownerName">Owner/Applicant Name:</label>
-                         <input type="text" id="ownerName" name="ownerName" class="form-control" placeholder="Last Name, First Name, Middle Name">
+                        <input type="text" id="ownerName" name="ownerName" class="form-control" placeholder="Last Name, First Name, Middle Name" required>
+                       </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4">
@@ -395,7 +397,7 @@
 
     <!-- Appointment Modal -->
     <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable wide-modal">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fs-5" id="appointmentModalLabel">Appointment Schedule</h5>
@@ -492,6 +494,37 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Disable the nextStepButton until all required fields are occupied
+    document.addEventListener("DOMContentLoaded", function () {
+    const nextStepButton = document.getElementById("nextStepButton");
+
+    // Function to check if all required fields are filled
+    function checkRequiredFields() {
+        const requiredFields = document.querySelectorAll("#electricalInspectionModal [required]");
+        let allFilled = true;
+
+        requiredFields.forEach((field) => {
+            if (!field.value.trim()) {
+                allFilled = false;
+            }
+        });
+
+        nextStepButton.disabled = !allFilled; // Disable button if not all fields are filled
+    }
+
+    // Attach event listeners to all required fields
+    const requiredFields = document.querySelectorAll("#electricalInspectionModal [required]");
+    requiredFields.forEach((field) => {
+        field.addEventListener("input", checkRequiredFields);
+    });
+
+    // Initially disable the button
+    nextStepButton.disabled = true;
+});
+
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
         <script src="/transition.js"></script>
