@@ -129,7 +129,7 @@ async function handleUserLogin(event) {
     event.preventDefault();
     const email = document.getElementById('user-email').value;
     const password = document.getElementById('user-password').value;
-    
+
     // Show the loading screen
     document.getElementById('loading-screen').style.display = 'flex';
 
@@ -137,14 +137,43 @@ async function handleUserLogin(event) {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
+        // Reload user data to get the latest email verification status
+        await user.reload();
+
+        if (!user.emailVerified) {
+            console.log("User email not verified:", email);
+
+            Swal.fire({
+                title: 'Email Not Verified',
+                text: 'Please verify your email before logging in.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+
+            // Sign the user out immediately if email is not verified
+            await signOut(auth);
+
+            // Hide the loading screen
+            document.getElementById('loading-screen').style.display = 'none';
+
+            return; // Exit the function to block access
+        }
+
         console.log("User signed in:", user.uid);
 
+        // Redirect verified users to the dashboard
         window.location.href = "/ClientPages/clientDashboard.html";
     } catch (error) {
         console.error("Error signing in:", error.code, error.message);
-        alert("Login failed: " + error.message);
-        
-        // Hide the loading screen in case of an error
+
+        Swal.fire({
+            title: 'Login Failed',
+            text: error.message,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    } finally {
+        // Hide the loading screen
         document.getElementById('loading-screen').style.display = 'none';
     }
 }
@@ -163,7 +192,7 @@ async function handleSignUp(event) {
 
     const selectedAvatar = document.querySelector('input[name="avatar"]:checked');
     const uploadedImageFile = document.getElementById('client-upload-image').files[0];
-    const uploadedIDFile = document.getElementById('fileInput').files[0]; // Added for ID upload
+    const uploadedIDFile = document.getElementById('fileInput').files[0];
 
     if (password !== confirmPassword) {
         alert("Passwords do not match.");
@@ -179,27 +208,23 @@ async function handleSignUp(event) {
         const userId = user.uid;
 
         let avatarUrl = null;
-        let idUrl = null; // URL for the uploaded ID file
+        let idUrl = null;
 
-        // If the user selected an avatar, use that
+        // Handle avatar upload
         if (selectedAvatar) {
             avatarUrl = `/resources/pictures/${selectedAvatar.value}`;
         }
-
-        // If the user uploaded an avatar image, upload it to Firebase Storage
         if (uploadedImageFile) {
-            const storageRef = ref(storage, `userAvatars/${userId}/${uploadedImageFile.name}`);
-            await uploadBytes(storageRef, uploadedImageFile);
-            avatarUrl = await getDownloadURL(storageRef);
-            console.log("Uploaded avatar and obtained URL:", avatarUrl);
+            const avatarRef = ref(storage, `userAvatars/${userId}/${uploadedImageFile.name}`);
+            await uploadBytes(avatarRef, uploadedImageFile);
+            avatarUrl = await getDownloadURL(avatarRef);
         }
 
-        // If the user uploaded an ID, upload it to Firebase Storage
+        // Handle ID upload
         if (uploadedIDFile) {
-            const idStorageRef = ref(storage, `userIDs/${userId}/${uploadedIDFile.name}`);
-            await uploadBytes(idStorageRef, uploadedIDFile);
-            idUrl = await getDownloadURL(idStorageRef);
-            console.log("Uploaded ID and obtained URL:", idUrl);
+            const idRef = ref(storage, `userIDs/${userId}/${uploadedIDFile.name}`);
+            await uploadBytes(idRef, uploadedIDFile);
+            idUrl = await getDownloadURL(idRef);
         }
 
         // Send email verification
@@ -208,57 +233,62 @@ async function handleSignUp(event) {
 
         Swal.fire({
             title: 'Verification Email Sent!',
-            text: 'A verification email has been sent to your email address. Please verify your email before logging in.',
+            text: 'Check your email and verify it before logging in.',
             icon: 'info',
             confirmButtonText: 'OK'
         });
 
-        // Save user information to Firestore (even before verification)
+        // Save user data to Firestore
         const userRef = doc(db, 'users', userId);
         await setDoc(userRef, {
-            firstName: firstName,
-            middleName: middleName,
-            lastName: lastName,
-            email: email,
-            clientAddress: clientAddress,
-            avatarUrl: avatarUrl,
-            idUrl: idUrl, // Save the ID file URL in Firestore
-            emailVerified: false, // Set email verification status to false
-            createdAt: serverTimestamp() // Add server timestamp here
+            firstName,
+            middleName,
+            lastName,
+            email,
+            clientAddress,
+            avatarUrl,
+            idUrl,
+            emailVerified: false, // Initially set to false
+            createdAt: serverTimestamp()
         });
 
         console.log("User data saved to Firestore under collection 'users'.");
 
-        // Monitor email verification status before allowing user to proceed
+        // Monitor email verification status
         const checkEmailVerification = setInterval(async () => {
-            await user.reload(); // Reload user data to get latest email verification status
+            await user.reload(); // Reload user data to get the latest email verification status
             if (user.emailVerified) {
-                clearInterval(checkEmailVerification); // Stop checking once the email is verified
+                clearInterval(checkEmailVerification); // Stop checking once verified
                 console.log("User email verified:", email);
 
-                // Update Firestore to mark the user as verified
-                await updateDoc(userRef, {
-                    emailVerified: true
+                // Update Firestore with verified email status
+                await updateDoc(userRef, { emailVerified: true });
+
+                Swal.fire({
+                    title: 'Email Verified!',
+                    text: 'Your email is now verified. Please log in to proceed.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
                 });
 
-                // Sign out the user after email verification
+                // Sign out the user to ensure they log in with updated credentials
                 await signOut(auth);
                 console.log("User signed out after email verification.");
 
-                // Redirect to login page
+                // Redirect to the login page
                 window.location.replace("/ClientPages/clientLogin.html");
-                logFirestoreChanges("yourCollectionName", "yourDocumentId");
             }
         }, 3000); // Check every 3 seconds
 
     } catch (error) {
-        console.error("Error signing up:", error.code, error.message);
+        console.error("Error during sign-up:", error.code, error.message);
         alert("Sign Up failed: " + error.message);
-        
-        // Hide the loading screen in case of an error
+    } finally {
+        // Hide the loading screen
         document.getElementById('loading-screen').style.display = 'none';
     }
 }
+
 
 // Function to monitor authentication state and display user info
 function monitorAuthState() {
