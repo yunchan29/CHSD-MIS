@@ -134,7 +134,7 @@
     
                 const q = query(
                     collection(db, "Housing"),
-                   
+                    where("status", "==", "Pending"),
                     where("createdAt", "<=", zeroo),
                     where("followup", "==", true)
                 );
