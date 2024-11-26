@@ -357,28 +357,43 @@
 
 
 
-  <div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
+<!-- Validation Modal -->
+<div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="validationModalLabel">Validation</h5>
+                <h5 class="modal-title" id="validationModalLabel">Validate File</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="filePreviewContainer" style="display: none;"> <!-- Hidden by default -->
+                <div id="filePreviewContainer" class="mb-3" style="display: none;">
+                    <!-- Preview Container for PDF or Image -->
                     <iframe id="filePreview" style="width: 100%; height: 400px;" frameborder="0"></iframe>
                 </div>
-                <div class="mt-3">
-                    <label>Validation:</label><br>
-                    <input type="radio" name="validationOptions" value="approved" id="approvedOption">
-                    <label for="approvedOption">Approve</label><br>
-                    <input type="radio" name="validationOptions" value="disapproved" id="disapprovedOption">
-                    <label for="disapprovedOption">Disapprove</label>
+                <!-- Validation Options -->
+                <div>
+                    <label class="form-label">Validation Options:</label>
+                    <div class="btn-group w-100" role="group" aria-label="Validation Options">
+                        <input type="radio" class="btn-check" name="validationOptions" value="approved" id="approvedOption" autocomplete="off">
+                        <label class="btn btn-outline-success d-flex align-items-center justify-content-center" for="approvedOption">
+                            <i class="fas fa-check-circle me-2"></i> Approve
+                        </label>
+                        
+                        <input type="radio" class="btn-check" name="validationOptions" value="disapproved" id="disapprovedOption" autocomplete="off">
+                        <label class="btn btn-outline-danger d-flex align-items-center justify-content-center" for="disapprovedOption">
+                            <i class="fas fa-times-circle me-2"></i> Disapprove
+                        </label>
+                    </div>
                 </div>
-               
+                <!-- Comments Section -->
+                <div class="mt-3">
+                    <label for="validationComments" class="form-label">Comments:</label>
+                    <textarea class="form-control" id="validationComments" rows="3" placeholder="Add your comments here..."></textarea>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="saveValidationBtn">Save</button>
+                <button type="button" class="btn btn-secondary" id="backToViewUploadsBtn">Back to Uploads</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
