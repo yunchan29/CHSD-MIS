@@ -439,6 +439,10 @@
     </div>
 </div>
 
+<div class="notifications-container" id="notification-container" style="display:none; max-height: 400px; overflow-y: auto; overflow-x: hidden;">
+    <!-- Notifications will be dynamically added here -->
+</div>
+
   <!-- Generate Electrical Cert Modal -->
   <div class="modal fade" id="generateElectricalCertModal" tabindex="-1" aria-labelledby="generateElectricalCertModalLabel" aria-hidden="true">
     <div class="wide-modal modal-dialog modal-dialog-centered">
@@ -1588,7 +1592,6 @@ function openViewDetailsModal(permitData) {
     };
 }
 
-// Function to Archive an Electrical Certificate
 async function handleArchiveElectricalCert(event) {
     event.preventDefault();
 
@@ -1624,9 +1627,20 @@ async function handleArchiveElectricalCert(event) {
 
                     // Remove the row from the table
                     const tableBody = document.querySelector("#profileTableBody");
-                    const rowToRemove = tableBody.querySelector(`button[data-permit-id="${electricalCertId}"]`).closest('tr');
-                    if (rowToRemove) rowToRemove.remove();
+                    const buttonElement = tableBody.querySelector(`button[data-permit-id="${electricalCertId}"]`);
+                    if (buttonElement) {
+                        const rowToRemove = buttonElement.closest('tr');
+                        if (rowToRemove) {
+                            rowToRemove.remove();
+                        } else {
+                            console.warn(`Row for permit ID ${electricalCertId} not found.`);
+                        }
+                    } else {
+                        console.warn(`Button with data-permit-id="${electricalCertId}" not found.`);
+                        showNotification("Failed to find the corresponding button for the row.", "error");
+                    }
 
+                    // Success feedback
                     showNotification("Document archived successfully!", "success");
 
                     // Close the modal
@@ -1635,12 +1649,15 @@ async function handleArchiveElectricalCert(event) {
                         viewDetailsModal.hide();
                     }
 
-                    // Success feedback
                     Swal.fire({
-                        title: "Archived!",
-                        text: "Your file has been archived successfully.",
-                        icon: "success"
-                    });
+    title: "Archived!",
+    text: "Your file has been archived successfully.",
+    icon: "success"
+}).then(() => {
+    // Reload the page after the user clicks OK
+    window.location.reload();
+});
+
 
                 } else {
                     showNotification("Document not found!", "error");

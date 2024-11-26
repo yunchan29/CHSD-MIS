@@ -124,7 +124,10 @@ async function handleAdminLogin(event) {
     }
 }
 
-// Function to handle user login
+let loginAttempts = {};
+const MAX_ATTEMPTS = 3;
+const COOLDOWN_PERIOD = 300000; // 5 minutes in milliseconds
+
 async function handleUserLogin(event) {
     event.preventDefault();
     const email = document.getElementById('user-email').value;
@@ -132,6 +135,33 @@ async function handleUserLogin(event) {
 
     // Show the loading screen
     document.getElementById('loading-screen').style.display = 'flex';
+
+    const currentTime = Date.now();
+
+    // Initialize user login attempts if not present
+    if (!loginAttempts[email]) {
+        loginAttempts[email] = { count: 0, lastAttempt: 0 };
+    }
+
+    const userAttempts = loginAttempts[email];
+
+    // Check if cooldown period is active
+    if (userAttempts.count >= MAX_ATTEMPTS && currentTime - userAttempts.lastAttempt < COOLDOWN_PERIOD) {
+        const remainingTime = Math.ceil((COOLDOWN_PERIOD - (currentTime - userAttempts.lastAttempt)) / 1000);
+        const minutes = Math.floor(remainingTime / 60);
+        const seconds = remainingTime % 60;
+
+        Swal.fire({
+            title: 'Account Locked',
+            text: `Too many login attempts. Please wait ${minutes} minutes and ${seconds} seconds and try again.`,
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+
+        // Hide the loading screen
+        document.getElementById('loading-screen').style.display = 'none';
+        return;
+    }
 
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -161,17 +191,33 @@ async function handleUserLogin(event) {
 
         console.log("User signed in:", user.uid);
 
+        // Reset login attempts on successful login
+        delete loginAttempts[email];
+
         // Redirect verified users to the dashboard
         window.location.href = "/ClientPages/clientDashboard.html";
     } catch (error) {
         console.error("Error signing in:", error.code, error.message);
 
-        Swal.fire({
-            title: 'Login Failed',
-            text: error.message,
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
+        // Increment login attempts on failure
+        userAttempts.count += 1;
+        userAttempts.lastAttempt = currentTime;
+
+        if (userAttempts.count >= MAX_ATTEMPTS) {
+            Swal.fire({
+                title: 'Account Locked',
+                text: `Too many failed attempts. Please wait 5 minutes and try again.`,
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            Swal.fire({
+                title: 'Login Failed',
+                text: `Attempt ${userAttempts.count} of ${MAX_ATTEMPTS}. ${error.message}`,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
     } finally {
         // Hide the loading screen
         document.getElementById('loading-screen').style.display = 'none';
