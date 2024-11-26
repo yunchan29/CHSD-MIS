@@ -150,7 +150,7 @@
             <!-- Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="application-process-tab" data-bs-toggle="tab" data-bs-target="#applicationProcess" type="button" role="tab" aria-controls="applicationProcess" aria-selected="false"><h6>Online Application Process</h6></button>
+                    <button class="nav-link active" id="application-process-tab" data-bs-toggle="tab" data-bs-target="#applicationProcess" type="button" role="tab" aria-controls="applicationProcess" aria-selected="false"><h6>Application Process</h6></button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="permits-tab" data-bs-toggle="tab" data-bs-target="#permits" type="button" role="tab" aria-controls="permits" aria-selected="true"><h6>Requirements</h6></button>
@@ -452,28 +452,101 @@
 </div>
 
                 <div class="tab-pane fade show active" id="applicationProcess" role="tabpanel" aria-labelledby="application-process-tab">
-                    <div class="stepByStep container mt-3">
-                        <h5>Step-by-step Process for Online Application</h5>
-<ol>
-    <li>Determine if you have an existing account. If not, <a style="border-bottom: 1px solid;" href="/ClientPages/clientSignup.html">Sign up</a> to create a new account.</li>
-    <li><a style="border-bottom: 1px solid;" href="/ClientPages/clientLogin.html">Log in</a> to your account.</li>
-    <li>Access your applicant record and select the type of application you need:</li>
-    <ul>
-        <li>Housing Application</li>
-        <li>Building Permit Application</li>
-        <li>Occupancy Permit Application</li>
-        <li>Electrical Inspection Application</li>
-    </ul>
-    <li>Fill out the necessary application form online, ensuring all required information is provided.</li>
-    <li>Submit the required documents digitally through the system.</li>
-    <li>Wait for an email notification instructing you to submit physical copies of the required documents.</li>
-    <li>Submit the physical copies of documents to the designated office.</li>
-    <li>Wait for another email notification informing you to proceed with the payment.</li>
-    <li>Pay the necessary fees at the treasury.</li>
-    <li>Receive your permit or application approval via email or collect it from the office.</li>
-</ol>
+                  <div class="contentContainer">
+                    <div class="container mt-3">
+                        <h5>Step-by-step Process</h5>
+                        <div class="row">
+                            <!-- Left-side Tabbed Pane -->
+                            <div class="col-md-3">
+                                <ul class="nav flex-column nav-pills" id="stepTabs" role="tablist">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="online-permits-tab" data-bs-toggle="pill" data-bs-target="#online-permits" role="tab" aria-controls="online-permits" aria-selected="true">Online Application (Permits & Certificates)</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" id="walkin-permits-tab" data-bs-toggle="pill" data-bs-target="#walkin-permits" role="tab" aria-controls="walkin-permits" aria-selected="false">Walk-in Application (Permits & Certificates)</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" id="online-housing-tab" data-bs-toggle="pill" data-bs-target="#online-housing" role="tab" aria-controls="online-housing" aria-selected="false">Online Application (Housing)</button>
+                                    </li>
+                                </ul>
+                            </div>
+                    
+                            <!-- Right-side Tab Content -->
+                            <div class="col-md-9">
+                                <div class="tab-content" id="stepTabsContent">
+                    
+                                    <!-- Online Application (Permits & Certificates) -->
+                                    <div class="tab-pane fade show active" id="online-permits" role="tabpanel" aria-labelledby="online-permits-tab">
+                                        <h6>Online Application (Permits & Certificates)</h6>
+                                        <ol>
+                                            <li>If you don’t have an account, <a href="/ClientPages/clientSignup.html" style="border-bottom: 1px solid;">Sign up</a> to create one.</li>
+                                            <li><a href="/ClientPages/clientLogin.html" style="border-bottom: 1px solid;">Log in</a> to your account.</li>
+                                            <li>Select the application type:
+                                                <ul>
+                                                    <li>Building Permit</li>
+                                                    <li>Occupancy Permit</li>
+                                                    <li>Electrical Inspection</li>
+                                                </ul>
+                                            </li>
+                                            <li>Fill out the required application form online and upload all required documents digitally.</li>
+                                            <li>Wait for validation of your documents and for your application status to update.</li>
+                                            <li>Payment Options:
+                                                <ul>
+                                                    <li><b>Option 1:</b> Wait until your status updates to “To Pay” for easier processing and pay online.</li>
+                                                    <li><b>Option 2:</b> Visit the treasury office on your scheduled appointment date to pay directly.</li>
+                                                </ul>
+                                            </li>
+                                            <li>Once approved, receive your permit or certificate:
+                                                <ul>
+                                                    <li>Pick up the permit or certificate from the City Housing and Settlements Department Office</li>
+                                                </ul>
+                                            </li>
+                                        </ol>
+                                    </div>
+                    
+                                    <div class="tab-pane fade" id="walkin-permits" role="tabpanel" aria-labelledby="walkin-permits-tab">
+                                        <h6>Walk-in Application (Permits & Certificates)</h6>
+                                        <ol>
+                                            <li>Visit the City Housing and Settlements Department Office to begin your application.</li>
+                                            <li>Select the application type:
+                                                <ul>
+                                                    <li>Building Permit</li>
+                                                    <li>Occupancy Permit</li>
+                                                    <li>Electrical Inspection</li>
+                                                </ul>
+                                            </li>
+                                            <li>The officers will ask if you’d like to create an account for applicant status monitoring:
+                                                <ul>
+                                                    <li><b>If Yes:</b> The officer will assist you in creating an account to monitor your application's progress online.</li>
+                                                    <li><b>If No:</b> Officers will still notify you about your application status via text messages.</li>
+                                                </ul>
+                                            </li>
+                                            <li>Submit hard copies of all required documents based on your application type.</li>
+                                            <li>Pay the required fees at the treasury.</li>
+                                            <li>Receive your permit or certificate in person from the office after approval.</li>
+                                        </ol>
+                                    </div>
+                                    
+                    
+                               <!-- Online Application (Housing) -->
+<div class="tab-pane fade" id="online-housing" role="tabpanel" aria-labelledby="online-housing-tab">
+    <h6>Online Application (Housing)</h6>
+    <ol>
+        <li>If you do not have an account, <a href="/ClientPages/clientSignup.html" style="border-bottom: 1px solid;">sign up</a> to create one.</li>
+        <li><a href="/ClientPages/clientLogin.html" style="border-bottom: 1px solid;">Log in</a> to your account.</li>
+        <li>Complete the online housing application form, ensuring all required details are provided.</li>
+        <li>A checklist of requirements will be generated based on the information you provide, including your current life circumstances (e.g., marital status, employment status).</li>
+        <li>Submit the required documents as outlined in the generated checklist to the City Housing and Settlements Office.</li>
+        <li>Wait for a call or text notification from a housing officer regarding the next steps in your application.</li>
+    </ol>
+</div>
 
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                  </div>
+                    
                 </div>
                 
                 
