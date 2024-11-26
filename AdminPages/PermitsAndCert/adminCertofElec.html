@@ -178,6 +178,7 @@
                         <tr>
                           <th>Owner</th>
                           <th>Representative</th>
+                          <th>Application Type</th>
                           <th>Submitted at</th>
                           <th>Status</th>
                           <th>Action</th>
@@ -328,6 +329,31 @@
         </div>
     </div>
 </div>
+
+ <!-- Separate Modal for Viewing the Valid ID -->
+ <div class="modal fade" id="validIdModal" tabindex="-1" aria-labelledby="validIdModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="validIdModalLabel">View Valid ID</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalValidIdImage" src="" alt="Valid ID" style="max-width: 100%; height: auto;">
+            </div>
+            <div class="modal-footer">
+                <button id="approveBtn" class="btn btn-success">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+                <button id="disapproveBtn" class="btn btn-danger">
+                    <i class="fas fa-times"></i> Disapprove
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 
@@ -562,15 +588,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Step Progress Bar -->
-                <div class="step-progress mb-4">
-                    <div class="step completed">
-                        <div class="circle"></div>
-                        <div class="label">Upload Requirements</div>
-                    </div>
-                    <div class="step">
-                        <div class="circle"></div>
-                        <div class="label">Appointment</div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="applicantMethod">Applicant Type:</label>
+                        <select class="form-control" id="applicantMethod" disabled>
+                            <option value="walk-in">Walk-in</option>
+                            <option value="online">Online Application</option>
+                        </select>
                     </div>
                 </div>
                 <!-- Content -->
@@ -586,75 +610,58 @@
                             <option value="LED - Residential">LED - Residential</option>
                             <option value="Fluorescent - Residential">Fluorescent - Residential</option>
                             <option value="Incandescent - Residential">Incandescent - Residential</option>
-                            <option value="LED - Commercial">LED - Commercial</option>
-                            <option value="Fluorescent - Commercial">Fluorescent - Commercial</option>
-                            <option value="Halogen - Commercial">Halogen - Commercial</option>
-                            <option value="Other">Other</option>
                         </select>
                     </div>
-                    
+                
                     <div class="col-md-4">
                         <label for="switch">Switch</label>
                         <select class="form-control" id="switch">
                             <option value="">Select Switch Type</option>
-                            <option value="Single Pole (Residential)">Single Pole (Residential)</option>
-                            <option value="Double Pole (Residential)">Double Pole (Residential)</option>
-                            <option value="Three-Way (Residential)">Three-Way (Residential)</option>
-                            <option value="Single Pole (Commercial)">Single Pole (Commercial)</option>
-                            <option value="Double Pole (Commercial)">Double Pole (Commercial)</option>
+                            <option value="Single Pole">Single Pole</option>
+                            <option value="Double Pole">Double Pole</option>
+                            <option value="Three-Way">Three-Way</option>
                         </select>
                     </div>
-                    
+                
                     <div class="col-md-4">
                         <label for="electricalMotor">Electrical Motor</label>
                         <select class="form-control" id="electricalMotor">
                             <option value="">Select Motor Type</option>
-                            <option value="0.5 HP (Residential)">0.5 HP (Residential)</option>
-                            <option value="1 HP (Residential)">1 HP (Residential)</option>
-                            <option value="3 HP (Commercial)">3 HP (Commercial)</option>
-                            <option value="5 HP (Commercial)">5 HP (Commercial)</option>
-                            <option value="10 HP (Industrial)">10 HP (Industrial)</option>
+                            <option value="0.5 HP">0.5 HP</option>
+                            <option value="1 HP">1 HP</option>
                         </select>
                     </div>
-                    
+                
                     <div class="col-md-6">
                         <label for="convOutlet">Convenience Outlet</label>
                         <select class="form-control" id="convOutlet">
                             <option value="">Select Number of Outlets</option>
-                            <option value="1 Outlet - 15A (Residential)">1 Outlet - 15A (Residential)</option>
-                            <option value="2 Outlets - 15A (Residential)">2 Outlets - 15A (Residential)</option>
-                            <option value="1 Outlet - 20A (Commercial)">1 Outlet - 20A (Commercial)</option>
-                            <option value="2 Outlets - 20A (Commercial)">2 Outlets - 20A (Commercial)</option>
-                            <option value="Other">Other</option>
+                            <option value="1 Outlet - 15A">1 Outlet - 15A</option>
+                            <option value="2 Outlets - 15A">2 Outlets - 15A</option>
                         </select>
                     </div>
-                    
+                
                     <div class="col-md-6">
                         <label for="otherApparatus">Other Apparatus</label>
                         <select class="form-control" id="otherApparatus">
                             <option value="">Select Apparatus Type</option>
-                            <option value="Generator (Residential)">Generator (Residential)</option>
-                            <option value="UPS (Residential)">UPS (Residential)</option>
-                            <option value="Generator (Commercial)">Generator (Commercial)</option>
-                            <option value="UPS (Commercial)">UPS (Commercial)</option>
+                            <option value="Generator">Generator</option>
+                            <option value="UPS">UPS</option>
                             <option value="Inverter (Solar)">Inverter (Solar)</option>
-                            <option value="Other">Other</option>
                         </select>
                     </div>
-                    
                     <div class="col-md-6">
                         <label for="totalKVA">Total KVA</label>
                         <select class="form-control" id="totalKVA">
                             <option value="">Select KVA Rating</option>
-                            <option value="1 KVA (Residential)">1 KVA (Residential)</option>
-                            <option value="2 KVA (Residential)">2 KVA (Residential)</option>
-                            <option value="5 KVA (Commercial)">5 KVA (Commercial)</option>
-                            <option value="10 KVA (Commercial)">10 KVA (Commercial)</option>
-                            <option value="50 KVA (Industrial)">50 KVA (Industrial)</option>
-                            <option value="Other">Other</option>
+                            <option value="1 KVA">1 KVA</option>
+                            <option value="2 KVA">2 KVA</option>
+                            <option value="3 KVA">3 KVA</option>
+                            <option value="5 KVA">5 KVA</option>
                         </select>
                     </div>
                     
+                
                     <div class="col-md-12">
                         <label for="natureOfWork">Nature of Work</label>
                         <select class="form-control" id="natureOfWork">
@@ -663,7 +670,6 @@
                             <option value="Repair">Repair</option>
                             <option value="Maintenance">Maintenance</option>
                             <option value="Modification">Modification</option>
-                            <option value="Temporary Service">Temporary Service</option>
                         </select>
                     </div>
                 </div>
@@ -677,75 +683,51 @@
                     <tbody>
                         <tr>
                             <td>Photocopy of Meralco Service Application</td>
-                            <td class="file-column">
-                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                         ondrop="handleDrop(event, 'meralcoServiceFile')" ondragover="handleDragOver(event)">
-                                        <p>Drag & drop file</p>
-                                    </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('meralcoServiceFile').click()">Upload</button>
-                                    <input type="file" class="file-input" id="meralcoServiceFile" style="display: none;" onchange="uploadFile(this)">
-                                    <div id="meralcoServiceFileName" class="file-column"></div> <!-- Display file details here -->
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="meralcoServiceCheckbox" name="requirements" value="Photocopy of Meralco Service Application">
+                                    <label class="form-check-label confirm-label" for="meralcoServiceCheckbox">Confirm</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Photocopy of Barangay Clearance</td>
-                            <td class="file-column">
-                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                         ondrop="handleDrop(event, 'barangayClearanceFile')" ondragover="handleDragOver(event)">
-                                        <p>Drag & drop file</p>
-                                    </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('barangayClearanceFile').click()">Upload</button>
-                                    <input type="file" class="file-input" id="barangayClearanceFile" style="display: none;" onchange="uploadFile(this)">
-                                    <div id="barangayClearanceFileName" class="file-column"></div> <!-- Display file details here -->
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="barangayClearanceCheckbox" name="requirements" value="Photocopy of Barangay Clearance">
+                                    <label class="form-check-label confirm-label" for="barangayClearanceCheckbox">Confirm</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Proof of Ownership</td>
-                            <td class="file-column">
-                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                         ondrop="handleDrop(event, 'ownershipFile')" ondragover="handleDragOver(event)">
-                                        <p>Drag & drop file</p>
-                                    </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('ownershipFile').click()">Upload</button>
-                                    <input type="file" class="file-input" id="ownershipFile" style="display: none;" onchange="uploadFile(this)">
-                                    <div id="ownershipFileName" class="file-column"></div> <!-- Display file details here -->
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="ownershipCheckbox" name="requirements" value="Proof of Ownership">
+                                    <label class="form-check-label confirm-label" for="ownershipCheckbox">Confirm</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Photocopy of Certificate of Occupancy-Building Permit</td>
-                            <td class="file-column">
-                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                         ondrop="handleDrop(event, 'occupancyFile')" ondragover="handleDragOver(event)">
-                                        <p>Drag & drop file</p>
-                                    </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('occupancyFile').click()">Upload</button>
-                                    <input type="file" class="file-input" id="occupancyFile" style="display: none;" onchange="uploadFile(this)">
-                                    <div id="occupancyFileName" class="file-column"></div> <!-- Display file details here -->
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="occupancyCheckbox" name="requirements" value="Photocopy of Certificate of Occupancy-Building Permit">
+                                    <label class="form-check-label confirm-label" for="occupancyCheckbox">Confirm</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Picture of Structure and Contact Number</td>
-                            <td class="file-column">
-                                <div class="upload-btn-wrapper" style="display: flex; align-items: center;">
-                                    <div class="drag-drop-area" style="border: 1px dashed #ccc; padding: 10px; margin-right: 10px;" 
-                                         ondrop="handleDrop(event, 'structurePhotoFile')" ondragover="handleDragOver(event)">
-                                        <p>Drag & drop file</p>
-                                    </div>
-                                    <button class="btn btn-upload" style="margin-left: 10px;" onclick="document.getElementById('structurePhotoFile').click()">Upload</button>
-                                    <input type="file" class="file-input" id="structurePhotoFile" style="display: none;" onchange="uploadFile(this)">
-                                    <div id="structurePhotoFileName" class="file-column"></div> <!-- Display file details here -->
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="structurePhotoCheckbox" name="requirements" value="Picture of Structure and Contact Number">
+                                    <label class="form-check-label confirm-label" for="structurePhotoCheckbox">Confirm</label>
                                 </div>
                             </td>
                         </tr>
                     </tbody>
+                    
                     
                 </table>
             </div>
@@ -785,7 +767,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
       const db = getFirestore(app);
       const storage = getStorage(app);
 
-    document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('DOMContentLoaded', () => {
     let formSubmitted = false;
 
     document.getElementById('submitAppointment').addEventListener('click', async (event) => {
@@ -807,6 +789,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
         const otherApparatus = document.getElementById("otherApparatus").value.trim();
         const totalKVA = document.getElementById("totalKVA").value.trim();
         const natureOfWork = document.getElementById("natureOfWork").value.trim();
+        const applicationMethod = document.getElementById("applicantMethod").value;
 
         // Required field validation
         const requiredFields = [
@@ -821,23 +804,27 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
             }
         }
 
-        // File inputs for Electrical Inspection
-        const requiredFileInputs = [
-            { id: 'meralcoServiceFile', name: 'Meralco Service', namePrefix: 'meralcoService' },
-            { id: 'barangayClearanceFile', name: 'Barangay Clearance', namePrefix: 'barangayClearance' },
-            { id: 'ownershipFile', name: 'Proof of Ownership', namePrefix: 'ownership' },
-            { id: 'occupancyFile', name: 'Occupancy', namePrefix: 'occupancy' },
-            { id: 'structurePhotoFile', name: 'Structure Photo', namePrefix: 'structurePhoto' }
+        // Checklist validation
+        const checklistItems = [
+            { id: 'meralcoServiceCheckbox', name: 'Meralco Service' },
+            { id: 'barangayClearanceCheckbox', name: 'Barangay Clearance' },
+            { id: 'ownershipCheckbox', name: 'Proof of Ownership' },
+            { id: 'occupancyCheckbox', name: 'Occupancy' },
+            { id: 'structurePhotoCheckbox', name: 'Structure Photo' }
         ];
 
-        // Validate that each required file is uploaded
-        for (const { id, name } of requiredFileInputs) {
-            const fileInput = document.getElementById(id);
-            if (!fileInput || !fileInput.files[0]) {
-                alert(`Please upload the ${name} file.`);
+        const checkedItems = {};
+        for (const item of checklistItems) {
+            const checkbox = document.getElementById(item.id);
+            if (!checkbox || !checkbox.checked) {
+                alert(`Please confirm the ${item.name} checklist item.`);
                 submitButton.disabled = false;
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
+                }
                 return;
             }
+            checkedItems[item.name] = true;
         }
 
         try {
@@ -863,46 +850,16 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
                 electricalMotor,
                 convOutlet,
                 otherApparatus,
+                applicationMethod,
                 totalKVA,
                 natureOfWork,
+                checklist: checkedItems, // Save checklist data
                 status: 'Pending',
                 createdAt: serverTimestamp(),
             };
 
             // Add a new document to Firestore for Electrical Inspection
-            const inspectionDocRef = await addDoc(collection(db, "ElectricalCert"), inspectionData);
-            const inspectionId = inspectionDocRef.id;
-            const storagePath = `ElectricalCert/${inspectionId}`;
-
-            // Handle file uploads and storage
-            const uploadPromises = requiredFileInputs.map(async fileInputObj => {
-                const fileInput = document.getElementById(fileInputObj.id);
-                if (fileInput && fileInput.files[0]) {
-                    const file = fileInput.files[0];
-                    const sanitizedFileName = fileInputObj.namePrefix + '_' + file.name.replace(/\s+/g, '');
-                    const fileRef = ref(storage, `${storagePath}/${sanitizedFileName}`);
-                    const snapshot = await uploadBytes(fileRef, file);
-                    return getDownloadURL(snapshot.ref);
-                } else {
-                    console.error(`File input missing or undefined for ${fileInputObj.name}`);
-                    return null;
-                }
-            });
-
-            // Wait for all uploads and store URLs
-            const fileURLs = await Promise.all(uploadPromises);
-
-            const fileURLMapping = {
-                meralcoServiceURL: fileURLs[0],
-                barangayClearanceURL: fileURLs[1],
-                ownershipURL: fileURLs[2],
-                occupancyURL: fileURLs[3],
-                structurePhotoURL: fileURLs[4],
-            };
-
-            // Update Firestore document with file URLs
-            const inspectionDoc = doc(db, "ElectricalCert", inspectionId);
-            await updateDoc(inspectionDoc, fileURLMapping);
+            await addDoc(collection(db, "ElectricalCert"), inspectionData);
             
             // Set formSubmitted to true after successful submission
             formSubmitted = true;
@@ -919,8 +876,10 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
                     
                     if (uploadModal) uploadModal.hide();
                     if (appointmentModal) appointmentModal.hide();
+                    window.location.reload();
                 }
             });
+
 
         } catch (error) {
             console.error("Error during submission:", error);
@@ -933,7 +892,6 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
         }
     });
 });
-
 
 
  // Function to Dynamically Append Buttons to the View Details Modal for Electrical Certificates
@@ -1193,16 +1151,20 @@ async function loadElectricalProfiles() {
         const fragment = document.createDocumentFragment();
         certificatesData.forEach(data => {
             const row = document.createElement("tr");
-
+            const applicationMethodMap = {
+    online: "Online Application",
+    "walk-in": "Walk-in"
+}; 
             const representativeName = userDataMap[data.ownerUid] || "N/A";
             const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
-
+            const applicationMethodM = applicationMethodMap[data.applicationMethod] || "N/A";
             // Set the 'Process' button based on status
             const isPending = data.status === "Pending";
 
             row.innerHTML = `
                 <td>${data.ownerName || "N/A"}</td>
                 <td>${representativeName}</td>
+                <td>${applicationMethodM}</td>
                 <td>${createdAt}</td>
                 <td>${data.status || "N/A"}</td>
                 <td>
@@ -1489,46 +1451,88 @@ document.addEventListener('DOMContentLoaded', () => {
     saveValidationBtn.addEventListener('click', saveValidation);
 });
 
-// Function to Control Progressive Status Selection for Electrical Certificates
-function updateStatusOptions(currentStatus) {
+ // Function to control progressive status selection and update the progress bar
+ function updateStatusOptions(currentStatus) {
     const statusSelect = document.getElementById("statusSelect");
+    const progressBar = document.getElementById("statusProgressBar");
 
+    // Define status progression steps and valid transitions
     const statusProgression = {
         "Pending": ["Pending", "Processing"],
         "Processing": ["Processing", "To Pay"],
-        "To Pay": ["To Pay", "For Inspection"],
-        "For Inspection": ["For Inspection", "For Approval"],
+        "To Pay": ["To Pay", "For Approval"],
         "For Approval": ["For Approval", "For Release"],
         "For Release": ["For Release", "Claimed"],
         "Claimed": ["Claimed"]
     };
 
+    const progressSteps = {
+        "Pending": { step: 1, width: 0 },
+        "Processing": { step: 2, width: 20 },
+        "To Pay": { step: 3, width: 40 },
+        "For Approval": { step: 4, width: 60 },
+        "For Release": { step: 5, width: 80 },
+        "Claimed": { step: 6, width: 100 }
+    };
+
+    // Get valid statuses for the current status
     const validStatuses = statusProgression[currentStatus] || [];
 
+    // Show or hide options based on the valid statuses
     const options = statusSelect.querySelectorAll("option");
     options.forEach(option => {
-        if (validStatuses.includes(option.value)) {
-            option.style.display = "block"; // Show valid options
-        } else {
-            option.style.display = "none"; // Hide invalid options
-        }
+        option.style.display = validStatuses.includes(option.value) ? "block" : "none";
     });
 
-    // Set the statusSelect to the currentStatus
+    // Set the statusSelect value to the currentStatus
     statusSelect.value = currentStatus;
-}
 
+    // Update progress bar based on currentStatus
+    const { step, width } = progressSteps[currentStatus] || { step: 1, width: 0 };
+    progressBar.style.width = `${width}%`;
+    progressBar.setAttribute('aria-valuenow', width);
+    progressBar.textContent = `Step ${step} of 6`;
+}
 
 // Function to Open the View Details Modal
 function openViewDetailsModal(permitData) {
     // Populate Modal Fields
     const appointmentDate = permitData.appointmentDate ? new Date(permitData.appointmentDate.seconds * 1000).toLocaleString() : "N/A";
     document.getElementById("permitOwnerName").textContent = permitData.ownerName || "N/A";
-    document.getElementById("issuedOnDate").textContent = permitData.issuedOn || "N/A";
+   
     document.getElementById("appointmentDateSched").textContent = appointmentDate || "N/A";
     document.getElementById("permitIdDisplay").textContent = permitData.id || "N/A";
     document.getElementById("hiddenPermitId").value = permitData.id || "";
+    const applicationMethodMap = {
+  online: "Online Application",
+  "walk-in": "Walk-in",
+};
 
+document.getElementById('applicantType').textContent = applicationMethodMap[permitData.applicationMethod];
+const createdAt = permitData.createdAt;
+
+if (createdAt) {
+    // Convert the seconds to milliseconds and create a new Date object
+    const date = new Date(createdAt.seconds * 1000);
+
+    // Format the date into a readable string (e.g., 'MM/DD/YYYY HH:mm:ss')
+    const formattedDateM = date.toLocaleString(); // Adjust locale if needed
+
+    // Set the formatted date as text content
+    document.getElementById("issuedOnDate").textContent = formattedDateM;  
+}
+     // Handle valid ID button
+     const validId = permitData.validId || null;
+    const ownerValidIdElement = document.getElementById("ownerValidId");
+    const viewValidIdBtn = document.getElementById("viewValidIdBtn");
+
+    if (validId) {
+        ownerValidIdElement.textContent = validId; // Store the URL in the hidden span
+        viewValidIdBtn.style.display = "inline-block"; // Show the "View" button
+    } else {
+        ownerValidIdElement.textContent = ""; // Clear the span
+        viewValidIdBtn.style.display = "none"; // Hide the button if no valid ID
+    }
     // Update Status Options
     updateStatusOptions(permitData.status || "Pending");
 
@@ -1576,7 +1580,93 @@ function openViewDetailsModal(permitData) {
             showNotification("Failed to update certificate status.", "error");
         }
     };
+    
+    // Handle Valid ID Modal Interaction
+    viewValidIdBtn.addEventListener("click", () => {
+        viewDetailsModal.hide(); // Hide View Details Modal
+        validIdModal.show(); // Show Valid ID Modal
+
+        // Add listener for validation completion
+        validIdModalElement.addEventListener(
+            "hidden.bs.modal",
+            () => {
+                viewDetailsModal.show(); // Reopen View Details Modal when Valid ID Modal is closed
+            },
+            { once: true } // Ensure listener is added only once
+        );
+    });
+
 }
+
+// Approval/Disapproval Logic
+document.addEventListener("DOMContentLoaded", () => {
+    const approveBtn = document.getElementById("approveBtn");
+    const disapproveBtn = document.getElementById("disapproveBtn");
+    const approvalStatusElement = document.getElementById("approvalStatus");
+    const validIdModalElement = document.getElementById("validIdModal");
+    const validIdModal = new bootstrap.Modal(validIdModalElement);
+
+    approveBtn.addEventListener("click", () => updateApprovalStatus(true));
+    disapproveBtn.addEventListener("click", () => updateApprovalStatus(false));
+
+    async function updateApprovalStatus(isApproved) {
+        const permitId = document.getElementById("hiddenPermitId").value; // Get the permit ID from the hidden input
+
+        try {
+            const permitDocRef = doc(db, "ElectricalCert", permitId); // Reference to the permit document
+            const permitDoc = await getDoc(permitDocRef);
+
+            // Check if 'isApproved' field exists; if not, add it
+            if (!permitDoc.exists() || !permitDoc.data().hasOwnProperty("isApproved")) {
+                await setDoc(permitDocRef, { isApproved }, { merge: true });
+            } else {
+                await updateDoc(permitDocRef, { isApproved });
+            }
+
+            // Update the UI
+            approvalStatusElement.textContent = isApproved ? "Approved" : "Not Approved";
+            approvalStatusElement.classList.toggle("text-success", isApproved);
+            approvalStatusElement.classList.toggle("text-danger", !isApproved);
+
+           // Show feedback using SweetAlert
+await Swal.fire({
+    icon: isApproved ? "success" : "error",
+    title: isApproved ? "Approved!" : "Disapproved!",
+    text: isApproved
+        ? "The ID has been successfully verified."
+        : "The ID verification has been disapproved.",
+    confirmButtonText: "OK",
+});
+
+
+            // Close Valid ID Modal
+            validIdModal.hide();
+        } catch (error) {
+            console.error("Error updating approval status:", error);
+            Swal.fire("Error", "Failed to update permit status.", "error");
+        }
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const viewValidIdBtn = document.getElementById("viewValidIdBtn");
+    const ownerValidIdElement = document.getElementById("ownerValidId");
+
+    // Bind event listener for the "View" button
+    viewValidIdBtn.addEventListener("click", () => {
+        const validIdUrl = ownerValidIdElement.textContent; // Retrieve the URL from the hidden span
+        const modalImage = document.getElementById("modalValidIdImage");
+
+        if (validIdUrl) {
+            modalImage.src = validIdUrl; // Set the modal image source
+            const validIdModal = new bootstrap.Modal(document.getElementById("validIdModal"));
+            validIdModal.show(); // Show the modal
+        } else {
+            alert("No valid ID available."); // Handle cases where no ID exists
+        }
+    });
+});
+
 
 async function handleArchiveElectricalCert(event) {
     event.preventDefault();

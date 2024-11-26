@@ -225,6 +225,7 @@
                     <tr>
                       <th>Owner</th>
                       <th>Representative</th>
+                      <th>Application Type</th>
                       <th>Submitted at</th>
                       <th>Status</th>
                       <th>Action</th>
@@ -795,6 +796,33 @@
     </div>
 </div>
 
+ <!-- Separate Modal for Viewing the Valid ID -->
+ <div class="modal fade" id="validIdModal" tabindex="-1" aria-labelledby="validIdModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="validIdModalLabel">View Valid ID</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalValidIdImage" src="" alt="Valid ID" style="max-width: 100%; height: auto;">
+            </div>
+            <div class="modal-footer">
+                <button id="approveBtn" class="btn btn-success">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+                <button id="disapproveBtn" class="btn btn-danger">
+                    <i class="fas fa-times"></i> Disapprove
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -1049,7 +1077,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
         const ownerAddress = document.getElementById("ownerAddress").value.trim();
         const projectLocation = document.getElementById("projectLocation").value.trim();
         const buildingPermitNo = document.getElementById("buildingPermitNo").value.trim();
-        const applicantMethod = document.getElementById("applicantMethod").value.trim();
+        const applicantMethod = document.getElementById("applicationMethod").value.trim();
 
         // Collect dynamic fields (Units Data)
         const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
@@ -1496,13 +1524,17 @@ async function loadOccupancyProfiles() {
 
             const representativeName = userDataMap[data.ownerUid] || "N/A";
             const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
-
+            const applicationMethodMap = {
+    online: "Online Application",
+    "walk-in": "Walk-in"
+}; 
             // Set the 'Process' button based on status
             const isPending = data.status === "Pending";
-
+            const applicationMethod = applicationMethodMap[data.applicantMethod] || "N/A";
             row.innerHTML = `
                 <td>${data.ownerName || "N/A"}</td>
                 <td>${representativeName}</td>
+                <td>${applicationMethod}</td>
                 <td>${createdAt}</td>
                 <td>${data.status || "N/A"}</td>
                 <td>
@@ -1619,12 +1651,41 @@ function openViewDetailsModal(permitData) {
     // Populate Modal Fields
     const appointmentDate = permitData.appointmentDate ? new Date(permitData.appointmentDate.seconds * 1000).toLocaleString() : "N/A";
     document.getElementById("permitOwnerName").textContent = permitData.ownerName || "N/A";
-    document.getElementById("issuedOnDate").textContent = permitData.issuedOn || "N/A";
     document.getElementById("appointmentDateSched").textContent = appointmentDate || "N/A";
     document.getElementById("permitIdDisplay").textContent = permitData.buildingPermitNo || "N/A";
     document.getElementById("hiddenPermitId").value = permitData.id || "";
     document.getElementById("displayOwnerName").textContent = permitData.ownerName;
+    const applicationMethodMapM = {
+  online: "Online Application",
+  "walk-in": "Walk-in",
+};
 
+document.getElementById('applicantType').textContent = applicationMethodMapM[permitData.applicantMethod];
+const createdAt = permitData.createdAt;
+
+if (createdAt) {
+    // Convert the seconds to milliseconds and create a new Date object
+    const date = new Date(createdAt.seconds * 1000);
+
+    // Format the date into a readable string (e.g., 'MM/DD/YYYY HH:mm:ss')
+    const formattedDate = date.toLocaleString(); // Adjust locale if needed
+
+    // Set the formatted date as text content
+    document.getElementById("issuedOnDate").textContent = formattedDate;
+}
+    
+     // Handle valid ID button
+     const validId = permitData.validId || null;
+    const ownerValidIdElement = document.getElementById("ownerValidId");
+    const viewValidIdBtn = document.getElementById("viewValidIdBtn");
+
+    if (validId) {
+        ownerValidIdElement.textContent = validId; // Store the URL in the hidden span
+        viewValidIdBtn.style.display = "inline-block"; // Show the "View" button
+    } else {
+        ownerValidIdElement.textContent = ""; // Clear the span
+        viewValidIdBtn.style.display = "none"; // Hide the button if no valid ID
+    }
     // Update Status Options
     updateStatusOptions(permitData.status || "Pending");
 
@@ -1672,7 +1733,94 @@ function openViewDetailsModal(permitData) {
             showNotification("Failed to update permit status.", "error");
         }
     };
+
+    
+    // Handle Valid ID Modal Interaction
+    viewValidIdBtn.addEventListener("click", () => {
+        viewDetailsModal.hide(); // Hide View Details Modal
+        validIdModal.show(); // Show Valid ID Modal
+
+        // Add listener for validation completion
+        validIdModalElement.addEventListener(
+            "hidden.bs.modal",
+            () => {
+                viewDetailsModal.show(); // Reopen View Details Modal when Valid ID Modal is closed
+            },
+            { once: true } // Ensure listener is added only once
+        );
+    });
+
 }
+
+// Approval/Disapproval Logic
+document.addEventListener("DOMContentLoaded", () => {
+    const approveBtn = document.getElementById("approveBtn");
+    const disapproveBtn = document.getElementById("disapproveBtn");
+    const approvalStatusElement = document.getElementById("approvalStatus");
+    const validIdModalElement = document.getElementById("validIdModal");
+    const validIdModal = new bootstrap.Modal(validIdModalElement);
+
+    approveBtn.addEventListener("click", () => updateApprovalStatus(true));
+    disapproveBtn.addEventListener("click", () => updateApprovalStatus(false));
+
+    async function updateApprovalStatus(isApproved) {
+        const permitId = document.getElementById("hiddenPermitId").value; // Get the permit ID from the hidden input
+
+        try {
+            const permitDocRef = doc(db, "ElectricalCert", permitId); // Reference to the permit document
+            const permitDoc = await getDoc(permitDocRef);
+
+            // Check if 'isApproved' field exists; if not, add it
+            if (!permitDoc.exists() || !permitDoc.data().hasOwnProperty("isApproved")) {
+                await setDoc(permitDocRef, { isApproved }, { merge: true });
+            } else {
+                await updateDoc(permitDocRef, { isApproved });
+            }
+
+            // Update the UI
+            approvalStatusElement.textContent = isApproved ? "Approved" : "Not Approved";
+            approvalStatusElement.classList.toggle("text-success", isApproved);
+            approvalStatusElement.classList.toggle("text-danger", !isApproved);
+
+           // Show feedback using SweetAlert
+await Swal.fire({
+    icon: isApproved ? "success" : "error",
+    title: isApproved ? "Approved!" : "Disapproved!",
+    text: isApproved
+        ? "The ID has been successfully verified."
+        : "The ID verification has been disapproved.",
+    confirmButtonText: "OK",
+});
+
+
+            // Close Valid ID Modal
+            validIdModal.hide();
+        } catch (error) {
+            console.error("Error updating approval status:", error);
+            Swal.fire("Error", "Failed to update permit status.", "error");
+        }
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const viewValidIdBtn = document.getElementById("viewValidIdBtn");
+    const ownerValidIdElement = document.getElementById("ownerValidId");
+
+    // Bind event listener for the "View" button
+    viewValidIdBtn.addEventListener("click", () => {
+        const validIdUrl = ownerValidIdElement.textContent; // Retrieve the URL from the hidden span
+        const modalImage = document.getElementById("modalValidIdImage");
+
+        if (validIdUrl) {
+            modalImage.src = validIdUrl; // Set the modal image source
+            const validIdModal = new bootstrap.Modal(document.getElementById("validIdModal"));
+            validIdModal.show(); // Show the modal
+        } else {
+            alert("No valid ID available."); // Handle cases where no ID exists
+        }
+    });
+});
+
 
 // Function to Archive an Occupancy Permit
 async function handleArchiveOccupancyPermit(event) {

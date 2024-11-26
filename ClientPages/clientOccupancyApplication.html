@@ -266,6 +266,15 @@
                 </div>
                 <p>Note: Fill up all the fields to proceed to the next step.</p>
                         <p><i>Required fields are marked with <span class="required-asterisk">*</span></i></p>
+                        <div class="row">
+                            <div class="col">
+                                <label for="applicationMethod">Application Type:</label>
+                                <select class="form-control" id="applicationMethod">
+                                    <option value="online">Online Application</option>
+                                    <option value="walk-in">Walk-in</option>
+                                </select>
+                            </div>
+                        </div>
                 <div class="row">
                     <div class="col-md-4">
                         <label for="buildingPermitOption">Building Permit Option<span class="required-asterisk">*</span></label>
@@ -765,6 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const ownerAddress = document.getElementById("ownerAddress").value;
         const projectLocation = document.getElementById("projectLocation").value;
         const buildingPermitNo = document.getElementById("buildingPermitNo").value;
+        const applicantMethod = document.getElementById("applicationMethod").value;
 
         // Collect dynamic fields (Units Data)
         const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
@@ -845,6 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 projectLocation,
                 buildingPermitNo,
                 ownerAddress,
+                applicantMethod,
                 totalFloorArea,
                 numUnits,
                 unitsData, // Save the dynamic data

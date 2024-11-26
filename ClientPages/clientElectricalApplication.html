@@ -227,6 +227,15 @@
                         </div>
                     </div>
                     <!-- Content -->
+                    <div class="row" style="display:none;">
+                        <div class="col">
+                            <label for="applicationMethod">Application Type</label>
+                            <select class="form-control" id="applicationMethod">
+                                <option value="online">Online Application</option>
+                                <option value="walk-in">Walk-in</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="row g-3">
                        <div class="col-md-6">
                         <label for="ownerName">Owner/Applicant Name:</label>
@@ -662,6 +671,7 @@
         const otherApparatus = document.getElementById("otherApparatus").value;
         const totalKVA = document.getElementById("totalKVA").value;
         const natureOfWork = document.getElementById("natureOfWork").value;
+        const applicationMethod = document.getElementById("applicationMethod").value;
 
         const requiredFields = [
             { field: appointmentDate, name: 'Appointment Date' },
@@ -711,6 +721,7 @@
                 otherApparatus,
                 totalKVA,
                 natureOfWork,
+                applicationMethod,
                 status: 'Pending',
                 createdAt: serverTimestamp(),
             };
