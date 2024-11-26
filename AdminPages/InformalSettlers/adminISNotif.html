@@ -148,7 +148,7 @@
                 ? Timestamp.fromMillis(Number(localStorage.getItem("lastChecked")))
                 : Timestamp.fromDate(new Date(0)); // Default to a very old date if no timestamp is stored
     
-            const collections = ["buildingPermits", "OccupancyPermits", "ElectricalCert", "Housing"];
+            const collections = ["Housing"];
             const promises = collections.map((col) => {
                 const colRef = collection(db, col);
                 const q = query(colRef, where("createdAt", ">", lastChecked), orderBy("createdAt", "asc"));
@@ -190,14 +190,11 @@
             applications.forEach((app) => {
                 // Determine the collection type for the notification
                 const typeMap = {
-                    buildingPermits: "Building Permit",
-                    OccupancyPermits: "Occupancy Permit",
-                    ElectricalCert: "Electrical Certificate",
                     Housing: "Housing Application"
                 };
     
                 const type = typeMap[app.collection] || "Application";
-                const ownerName = app.ownerName || "Unknown"; // Replace with the correct field for owner name
+                const ownerName = app.householdHeadName || "Unknown"; // Replace with the correct field for owner name
     
                 // Generate the notification message
                 const notificationMessage = `${type} for ${ownerName} has been submitted.`;
