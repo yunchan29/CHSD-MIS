@@ -87,6 +87,32 @@
     margin: 10mm;
   }
 }
+
+#watermark {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Ensures it stays behind content */
+        opacity: 1; /* Adjust for desired transparency */
+        font-size: 3rem;
+        color: gray;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none; /* Make sure it's non-interactive */
+        transform: rotate(-45deg);
+    }
+
+    /* Spread watermark text across the page */
+    #watermark span {
+        display: inline-block;
+        white-space: nowrap;
+        margin: 2rem; /* Spacing between each watermark text */
+        opacity: 0.2;
+    }
+
 .confirm-label {
             padding: 0.2rem 0.5rem;
             background-color: #007bff;
@@ -422,9 +448,8 @@
 
 
 
-    <!--Generate Occupancy Permit-->
-  
-  <div class="modal fade" id="occupancyPermitModal" tabindex="-1" aria-labelledby="occupancyPermitModalLabel" aria-hidden="true">
+<!--Generate Occupancy Permit-->
+<div class="modal fade" id="occupancyPermitModal" tabindex="-1" aria-labelledby="occupancyPermitModalLabel" aria-hidden="true">
     <div class="wide-modal modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -432,192 +457,109 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+          <div class="printArea" id="printHSDContent">
             <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
-                <!-- Left Logo -->
-                <img src="/resources/pictures/calambaLogo.png" alt="Calamba Logo" style="height: 50px; width: 50px; margin-left: auto;">
-                <!-- Center Title -->
-                <div class="text-center" style="margin: 0 10px;">
-                    <h5 class="mb-0">CITY HOUSING AND SETTLEMENTS DEPARTMENT</h5>
-                    <p class="mb-0">City Government of Calamba</p>
-                </div>
-                <!-- Right Logo -->
-                <img src="/resources/pictures/chsd.png" alt="CHSD Logo" style="height: 50px; width: 50px; margin-right: auto;">
-            </div> 
+              <!-- Left Logo -->
+              <img src="/resources/pictures/calambaLogo.png" alt="Calamba Logo" style="height: 50px; width: 50px; margin-left: auto;">
+              <!-- Center Title -->
+              <div class="text-center" style="margin: 0 10px;">
+                <h5 class="mb-0">CITY HOUSING AND SETTLEMENTS DEPARTMENT</h5>
+                <p class="mb-0">City Government of Calamba</p>
+              </div>
+              <!-- Right Logo -->
+              <img src="/resources/pictures/chsd.png" alt="CHSD Logo" style="height: 50px; width: 50px; margin-right: auto;">
+            </div>
             <br>
-            
-            <h6 class="text-center">CERTIFICATE OF BUILDING COMPLETION</h6>
-            <p class="">This is to certify that the construction of of the residential building covered by <strong>Building Permit No.<span id="aaaBuildingPermitNo"></span></strong> under BP220 issued on <strong><span id="aaaIssuedOn"></span> </strong> has been constructed and completed under out inspection and supervision pursuant to Section 306 and the National Building Code (PD 1096). Its IRR and conforms the architectural well being, structural stability, electrical, plumbing, interior design, and the fire-protective properties in accordance with the plans and specifications submitted and on file with the City Housing and Settlements Department.</p>
+  
+            <h4 class="text-center">CERTIFICATE OF BUILDING COMPLETION</h4>
+            <p>This is to certify that the construction of the residential building covered by <strong>Building Permit No. <span id="aaaBuildingPermitNo"></span></strong> under BP220 issued on <strong><span id="aaaIssuedOn"></span></strong> has been constructed and completed under our inspection and supervision pursuant to Section 306 and the National Building Code (PD 1096). Its IRR conforms to the architectural well-being, structural stability, electrical, plumbing, interior design, and fire-protective properties in accordance with the plans and specifications submitted and on file with the City Housing and Settlements Department.</p>
+  
             <div class="container">
-                
-                <div class="row">
-                       <div class="col-md-8">
-                        
-                        <p><strong>Name of Owner: </strong><span id="certOwnerName"></span></p>
-                       </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>Name of Owner: </strong><span id="certOwnerName"></span></p>
                 </div>
-                <div class="row">
-                    <div class="col-md-8">
-                        <p><strong>Address of Owner: </strong><span id="certOwnerAddress"></span></p>
-                    </div>
-                        
+                <div class="col-md-6">
+                  <p><strong>Address of Owner: </strong><span id="certOwnerAddress"></span></p>
                 </div>
-                <div class="row">
-                    <div class="col-md-8">
+              </div>
+              <div class="row">
+                <div class="col-md-8">
+                  <p><strong>Location Of The Project: </strong><span id="certProjectLocation"></span></p>
+                </div>
+              </div>
+       
+  
+              <hr>
+              <p class="text-center">Full-Time Inspector And Supervisor of Construction Works (Representing the Owner)</p>
+  
+              <hr>
+              <div class="row">
+                <div class="col-md-6 signature-box">
+                  <br><br>
+                  <p>Architect or Civil Engineer</p>
+                  <p><i>(Signed and Sealed Over Printed Name)</i></p>
+                </div>
+                <div class="col-md-6 signature-box">
+                  <br><br>
+                  <p>Architect or Civil Engineer</p>
+                  <p><i>(Signed and Sealed Over Printed Name)</i></p>
+                </div>
+              </div>
+  
+              <div class="row">
+                <div class="col-md-3 info-box">PRC No.:</div>
+                <div class="col-md-3 info-box">Validity:</div>
+                <div class="col-md-3 info-box">PRC No.:</div>
+                <div class="col-md-3 info-box">Validity:</div>
+              </div>
+  
+              <div class="row">
+                <div class="col-md-3 info-box">PTR No.:</div>
+                <div class="col-md-3 info-box">Date Issued:</div>
+                <div class="col-md-3 info-box">PTR No.:</div>
+                <div class="col-md-3 info-box">Date Issued:</div>
+              </div>
+  
+              <br>
+              <p>HSD Form No.3</p>
+  
+              <h4 class="text-center">CERTIFICATE OF OCCUPANCY under BP220</h4>
+              <div class="row">
+                <div class="col-md-4">
+                  <p><strong>CO BP220 No.: </strong><span id="certBuildingPermitNo"></span></p>
+                </div>
+              
+              </div>
+              <div id="unitsDataContainer"></div> <!-- Units Container -->
+  
+              <p><i>This certificate of occupancy is issued pursuant to Section 1(b) of Executive Order No. 71, Series of 1993.</i></p>
+              <div class="row">
+                  <div class="col">
+               
+                    <div class="form-group">
+                        <!-- Issued By Field -->
+                        <label for="issuedBy"><strong>Issued By:</strong></label>
+                        <input type="text" id="issuedBy" class="form-control" placeholder="Enter name of the person issuing the document">
                     
-                    <p><strong>Location Of The Project: </strong><span id="certProjectLocation"></span></p>
+                        <!-- Position Field (Styled to look like a label but still inputable) -->
+                        <label for="position" class="mt-3" style="font-size: 0.9rem; color: gray;">Position</label>
+                        <input type="text" id="position" class="form-control" placeholder="Enter position of the issuer" style="font-size: 0.9rem; color: gray;">
                     </div>
                     
-                 </div>
-                 <div class="row">
-                    <div class="col-md-4">
-                        <p><strong>Total Floor Area: </strong><span id="certTotalFloorArea"></span></p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Number of Storeys: </strong><span id="certNOStorey"></span></p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Number of Units: </strong><span id="certNOUnits"></span></p>
-                    </div>
-                 </div>
-                 
-        
-                 <hr>
-        
-                            <p class="text-center">Full Time Inspector And Supervisor of Construction Works(Representing the Owner)</p>
-                            
-                            <hr>
-                            <div class="row">
-                                <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
-                                    <br>
-                                    <br>
-                                    <p class="text-center">Architect or Civil Engineer</p>
-                                    <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
-                                </div>
-                            
-                                <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
-                                    <br>
-                                    <br>
-                                    <p class="text-center">Architect or Civil Engineer</p>
-                                    <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>PRC No.:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>Validity:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>PRC No.:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>Validity:</p>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>PTR No.:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>Date Issued:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>PTR No.:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>Date Issued:</p>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
-                                    <br>
-                                    <br>
-                                    <p class="text-center">Architect or Civil Engineer</p>
-                                    <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
-                                </div>
-                            
-                                <div class="col-md-6" style="border: 0.5px solid black; padding: 2px;">
-                                    <br>
-                                    <br>
-                                    <p class="text-center">Architect or Civil Engineer</p>
-                                    <p class="text-center"><i>(Signed and Sealed Over Printed Name)</i></p>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>PRC No.:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>Validity:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>PRC No.:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>Validity:</p>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>PTR No.:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>Date Issued:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>PTR No.:</p>
-                                </div>
-                                <div class="col-md-3" style="border: 0.5px solid black; padding: 2px;">
-                                    <p>Date Issued:</p>
-                                </div>
-                                <br>
-                                <p>HSD Form No.3</p>
-                                <h6 class="text-center">CERTIFICATE OF OCCUPANCY under BP220</h6>
-                                <div class="row">
-                                    <div class="col-md-4">
-                            
-                                         <p><strong>CO BP220 No.: </strong><span id="certBuildingPermitNo"></span></p>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <label for="issuedOn">Issued on:
-                                        </label>
-                                        <input type="date" class="form-control" id="issuedOn">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                     <div class="col-md-12">
-                                        <label for="lotNumber">Lot and Block Number:</label>
-                                        <input type="text" class="form-control" id="lotNumber">
-                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label for="NOUnits">No. of Units</label>
-                                        <input type="number" class="form-control" id="NOUnits">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="totalFloorArea">
-                                            Total Floor Area
-                                        </label>
-                                        <input type="number" class="form-control" id="totalFloorArea">
-                                    </div>
-                                </div>
-        
-                                <p><i>This certificate of occupancy is issued purusant to Section 1(b) of Executive Order No. 71, Series of 1993.</i></p>
-        </div></div></div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-primary" id="printHSDForm">Print</button>
         </div>
       </div>
     </div>
   </div>
+  
 
   <!-- Order of Payment Modal -->
 <div class="modal fade" id="orderOfPaymentModal" tabindex="-1" aria-labelledby="OrderOfPaymentModalLabel" aria-hidden="true">
@@ -894,67 +836,105 @@
     });
     
     </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const printHSDButton = document.getElementById("printHSDForm");
-            if (printHSDButton) {
-                printHSDButton.addEventListener("click", function() {
-                    const printContent = document.querySelector("#printHSDContent").cloneNode(true);
-    
-                    // Get the building permit number from the form
-                    const buildingPermitNo = document.getElementById("hsdFormOwnerName").textContent.trim();
-    
-                    // Create watermark
-                    const watermark = document.createElement("div");
-                    watermark.id = "watermark";
-                    
-                    // Repeat the watermark text across the page
-                    for (let i = 0; i < 10; i++) {
-                        const watermarkText = document.createElement("span");
-                        watermarkText.textContent = buildingPermitNo;
-                        watermark.appendChild(watermarkText);
-                    }
-                    
-                    printContent.appendChild(watermark);
-    
-                    // Clone the page content for printing
-                    const originalContent = document.body.innerHTML;
-                    document.body.innerHTML = printContent.outerHTML;
-    
-                    // Trigger print
-                    window.print();
-    
-                    // Restore original content
-                    document.body.innerHTML = originalContent;
-                    window.location.reload();
-                });
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const printHSDButton = document.getElementById("printHSDForm");
+    if (printHSDButton) {
+        printHSDButton.addEventListener("click", function () {
+            const printContent = document.querySelector("#printHSDContent").cloneNode(true);
+
+            // Get the building permit number from the form
+            const buildingPermitNo = document.getElementById("certBuildingPermitNo").textContent.trim();
+
+            // Get the 'Issued By' value from the input field
+            const issuedByInput = document.getElementById("issuedBy");
+            const issuedByValue = issuedByInput ? issuedByInput.value.trim() : "N/A";
+
+            // Get the 'Position' value from the input field
+            const positionInput = document.getElementById("position");
+            const positionValue = positionInput ? positionInput.value.trim() : "N/A";
+
+            // Replace the 'Issued By' input with its value and place it under the label
+            const issuedByField = printContent.querySelector("#issuedBy");
+            if (issuedByField) {
+                const issuedByLabel = issuedByField.previousElementSibling; // The "Issued By" label
+                if (issuedByLabel) {
+                    const nameElement = document.createElement("div");
+                    nameElement.textContent = issuedByValue;
+                    nameElement.style.fontWeight = "bold";
+                    issuedByLabel.insertAdjacentElement("afterend", nameElement);
+                }
+                issuedByField.remove(); // Remove the input field
             }
-    
-            const printOrderButton = document.getElementById("printOrderOfPayment");
-            if (printOrderButton) {
-                printOrderButton.addEventListener("click", function() {
-                    const printContent = document.querySelector("#printOrderContent").cloneNode(true);
-    
-                    const inputs = printContent.querySelectorAll('input');
-                    inputs.forEach(function(input) {
-                        const value = input.value || '';
-                        const span = document.createElement('span');
-                        span.textContent = value;
-                        span.style.fontWeight = 'bold';
-                        input.replaceWith(span);
-                    });
-    
-                    const originalContent = document.body.innerHTML;
-                    document.body.innerHTML = printContent.outerHTML;
-    
-                    window.print();
-    
-                    document.body.innerHTML = originalContent;
-                    window.location.reload();
-                });
+
+            // Hide the word "Position" and add the position value directly
+            const positionField = printContent.querySelector("#position");
+            if (positionField) {
+                const positionLabel = positionField.previousElementSibling; // The "Position" label
+                if (positionLabel) {
+                    positionLabel.style.display = "none"; // Hide the label
+                }
+                const positionElement = document.createElement("div");
+                positionElement.textContent = positionValue;
+                positionElement.style.fontStyle = "italic";
+                positionElement.style.color = "gray";
+                positionField.insertAdjacentElement("afterend", positionElement);
+                positionField.remove(); // Remove the input field
             }
+
+            // Add watermark
+            const watermark = document.createElement("div");
+            watermark.id = "watermark";
+
+            // Repeat the watermark text across the page
+            for (let i = 0; i < 10; i++) {
+                const watermarkText = document.createElement("span");
+                watermarkText.textContent = buildingPermitNo;
+                watermark.appendChild(watermarkText);
+            }
+
+            printContent.appendChild(watermark);
+
+            // Clone the page content for printing
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent.outerHTML;
+
+            // Trigger print
+            window.print();
+
+            // Restore original content
+            document.body.innerHTML = originalContent;
+            window.location.reload();
         });
-    </script>
+    }
+
+    const printOrderButton = document.getElementById("printOrderOfPayment");
+    if (printOrderButton) {
+        printOrderButton.addEventListener("click", function () {
+            const printContent = document.querySelector("#printOrderContent").cloneNode(true);
+
+            const inputs = printContent.querySelectorAll("input");
+            inputs.forEach(function (input) {
+                const value = input.value || "";
+                const span = document.createElement("span");
+                span.textContent = value;
+                span.style.fontWeight = "bold";
+                input.replaceWith(span);
+            });
+
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent.outerHTML;
+
+            window.print();
+
+            document.body.innerHTML = originalContent;
+            window.location.reload();
+        });
+    }
+});
+
+</script>
+
 <script>
     // Select form elements
 const NOUnitsInput = document.getElementById("NOUnits");
@@ -1297,7 +1277,7 @@ function appendButtons(data) {
     viewDetailsModalBtnGrp.appendChild(container);
 }
 
-// Function to Open the Occupancy Permit Modal
+// Function to Open the Occupancy Permit Modal with Dynamic Data
 async function openGenerateOccupancyPermitModal(permitData) {
     try {
         console.log("Occupancy Permit Data received:", permitData); // Log permitData to ensure it's not empty
@@ -1318,26 +1298,52 @@ async function openGenerateOccupancyPermitModal(permitData) {
         document.getElementById('certOwnerName').textContent = data.ownerName || "N/A";
         document.getElementById('certOwnerAddress').textContent = data.ownerAddress || "N/A";
         document.getElementById('certProjectLocation').textContent = data.projectLocation || "N/A";
-        document.getElementById('certTotalFloorArea').textContent = data.totalFloorArea || "N/A";
-        document.getElementById('certNOUnits').textContent = data.NOUnits || "N/A";
-        document.getElementById('certNOStorey').textContent = data.NOStorey || "N/A";
         document.getElementById('certBuildingPermitNo').textContent = data.buildingPermitNo || "N/A";
         document.getElementById("aaaBuildingPermitNo").textContent = data.buildingPermitNo || "N/A";
-      
-const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000) : null;
 
-if (createdAt && !isNaN(createdAt)) {
-    const formattedDate = createdAt.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-    });
-    document.getElementById("aaaIssuedOn").textContent = formattedDate;
-} else {
-    document.getElementById("aaaIssuedOn").textContent = "Date not available";
-}
+     
 
-  
+     // Populate unit data
+const unitsContainer = document.getElementById('unitsDataContainer');
+unitsContainer.innerHTML = ''; // Clear existing unit data
+data.unitsData.forEach((unit, index) => {
+    const unitDiv = document.createElement('div');
+    unitDiv.classList.add('unit-details', 'row'); // Add Bootstrap row class
+    unitDiv.innerHTML = `
+        <div class="col-md-12">
+            <p><strong>Unit ${index + 1}:</strong></p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Block Number:</strong> ${unit.blockNumber || "N/A"}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Lot Number:</strong> ${unit.lotNumber || "N/A"}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>No. of Storeys:</strong> ${unit.NOStorey || "N/A"}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Floor Area:</strong> ${unit.floorArea || "N/A"} sqm</p>
+        </div>
+    `;
+    unitsContainer.appendChild(unitDiv);
+});
+
+
+        // Format Created At date for display
+        const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000) : null;
+        if (createdAt && !isNaN(createdAt)) {
+            const formattedDate = createdAt.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            document.getElementById("aaaIssuedOn").textContent = formattedDate;
+    
+        } else {
+            document.getElementById("aaaIssuedOn").textContent = "Date not available";
+        }
+
         console.log("Occupancy Permit fields populated");
 
         // Show the Occupancy Permit Modal
@@ -1348,7 +1354,6 @@ if (createdAt && !isNaN(createdAt)) {
         alert("Failed to load Occupancy Permit data.");
     }
 }
-
 
 
 async function generateOrderOfPayment(data) {
@@ -1576,10 +1581,12 @@ async function loadOccupancyProfiles() {
 }
 
 
-// Function to Control Progressive Status Selection
-function updateStatusOptions(currentStatus) {
+ // Function to control progressive status selection and update the progress bar
+ function updateStatusOptions(currentStatus) {
     const statusSelect = document.getElementById("statusSelect");
+    const progressBar = document.getElementById("statusProgressBar");
 
+    // Define status progression steps and valid transitions
     const statusProgression = {
         "Pending": ["Pending", "Processing"],
         "Processing": ["Processing", "To Pay"],
@@ -1589,19 +1596,32 @@ function updateStatusOptions(currentStatus) {
         "Claimed": ["Claimed"]
     };
 
+    const progressSteps = {
+        "Pending": { step: 1, width: 0 },
+        "Processing": { step: 2, width: 20 },
+        "To Pay": { step: 3, width: 40 },
+        "For Approval": { step: 4, width: 60 },
+        "For Release": { step: 5, width: 80 },
+        "Claimed": { step: 6, width: 100 }
+    };
+
+    // Get valid statuses for the current status
     const validStatuses = statusProgression[currentStatus] || [];
 
+    // Show or hide options based on the valid statuses
     const options = statusSelect.querySelectorAll("option");
     options.forEach(option => {
-        if (validStatuses.includes(option.value)) {
-            option.style.display = "block"; // Show valid options
-        } else {
-            option.style.display = "none"; // Hide invalid options
-        }
+        option.style.display = validStatuses.includes(option.value) ? "block" : "none";
     });
 
-    // Set the statusSelect to the currentStatus
+    // Set the statusSelect value to the currentStatus
     statusSelect.value = currentStatus;
+
+    // Update progress bar based on currentStatus
+    const { step, width } = progressSteps[currentStatus] || { step: 1, width: 0 };
+    progressBar.style.width = `${width}%`;
+    progressBar.setAttribute('aria-valuenow', width);
+    progressBar.textContent = `Step ${step} of 6`;
 }
 
 // Function to Open the View Details Modal

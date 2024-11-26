@@ -1031,6 +1031,26 @@ overflow-x:hidden;
     transition: background-color 0.3s;
 }
 
+.info-box {
+    border: 0.5px solid black;
+    padding: 2px; /* Reduced padding */
+    font-size: 13px; /* Smaller font size for compact layout */
+    text-align: center; /* Center-align text for uniformity */
+    line-height: 1.2; /* Reduced line spacing */
+}
+
+.signature-box {
+    border: 0.5px solid black;
+    padding: 1px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.signature-box p {
+    margin: 0; /* Remove default paragraph margins */
+    padding: 2px 0;
+}
+
 .client-notification:hover {
     background-color: #e2e6ea; /* Slight hover effect */
 }
