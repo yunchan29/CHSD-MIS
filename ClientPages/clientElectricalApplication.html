@@ -777,6 +777,7 @@
                     if (appointmentModal) appointmentModal.hide();
                 }
             });
+            logFirestoreChanges("ElectricalCert", inspectionId);
 
         } catch (error) {
             console.error("Error during submission:", error);
@@ -788,6 +789,37 @@
             submitButton.disabled = false;
         }
     });
+
+    async function logFirestoreChanges(ElectricalCert, inspectionId) {
+  // Reference to the specific document in the collection
+  const docRef = doc(db, ElectricalCert, inspectionId);
+
+  // Listen for real-time updates on the document
+  onSnapshot(docRef, async (docSnapshot) => {
+    if (docSnapshot.exists()) {
+    
+      
+      // Create a log entry with document data, collection name, timestamp, and type of operation
+      const logEntry = {
+        documentId: docSnapshot.id,
+        collection: ElectricalCert,
+        timestamp: new Date().toISOString(),
+        operation: "Create" // Update this to reflect your operation type if needed
+      };
+      
+      // Write the log entry to the 'logs' collection
+      try {
+        await addDoc(collection(db, "logs"), logEntry);
+        console.log(`Logged change for document ${inspectionId} in collection ${ElectricalCert}`);
+      } catch (error) {
+        console.error("Error writing log entry:", error);
+      }
+    } else {
+      console.log(`Document ${ElectricalCert}/${inspectionId} does not exist.`);
+    }
+  });
+}
+    
 
     // Handle step transitions with formSubmitted check
     const nextStepButton = document.getElementById('nextStepButton');

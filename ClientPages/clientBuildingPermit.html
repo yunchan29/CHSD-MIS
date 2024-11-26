@@ -1369,6 +1369,7 @@
                 text: "Application Submitted",
                 icon: "success"
             });
+            logFirestoreChanges("buildingPermits", permitId);
 
         } catch (error) {
             console.error("Error during submission:", error);
@@ -1381,6 +1382,36 @@
     });
 });
 
+
+async function logFirestoreChanges(buildingPermits, permitId) {
+  // Reference to the specific document in the collection
+  const docRef = doc(db, buildingPermits, permitId);
+
+  // Listen for real-time updates on the document
+  onSnapshot(docRef, async (docSnapshot) => {
+    if (docSnapshot.exists()) {
+    
+      
+      // Create a log entry with document data, collection name, timestamp, and type of operation
+      const logEntry = {
+        documentId: docSnapshot.id,
+        collection: buildingPermits,
+        timestamp: new Date().toISOString(),
+        operation: "Create" // Update this to reflect your operation type if needed
+      };
+      
+      // Write the log entry to the 'logs' collection
+      try {
+        await addDoc(collection(db, "logs"), logEntry);
+        console.log(`Logged change for document ${permitId} in collection ${buildingPermits}`);
+      } catch (error) {
+        console.error("Error writing log entry:", error);
+      }
+    } else {
+      console.log(`Document ${OccupancyPermits}/${permitId} does not exist.`);
+    }
+  });
+}
     
 
 

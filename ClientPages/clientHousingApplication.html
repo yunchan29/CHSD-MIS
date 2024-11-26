@@ -1355,7 +1355,46 @@
         });
         </script>
         
-
+        <script>
+            // Function to set the minimum date to tomorrow
+            function setMinDate() {
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(today.getDate() + 1); // Set to tomorrow
+        
+                const dd = String(tomorrow.getDate()).padStart(2, '0');
+                const mm = String(tomorrow.getMonth() + 1).padStart(2, '0'); // January is 0!
+                const yyyy = tomorrow.getFullYear();
+                const minDate = yyyy + '-' + mm + '-' + dd; // Format as YYYY-MM-DD
+                document.getElementById('appointmentDate').setAttribute('min', minDate);
+            }
+        
+            // Function to disable weekends
+            function disableWeekends() {
+                const dateInput = document.getElementById('appointmentDate');
+                dateInput.addEventListener('input', function () {
+                    const selectedDate = new Date(this.value);
+                    const day = selectedDate.getUTCDay();
+                    
+                    // Check if the selected day is Saturday (6) or Sunday (0)
+                    if (day === 6 || day === 0) {
+                        // SweetAlert2 for user-friendly alert
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Invalid Date',
+                            text: 'Please select a weekday (Monday-Friday).',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            this.value = ''; // Clear the input after alert
+                        });
+                    }
+                });
+            }
+        
+            setMinDate();
+            disableWeekends();
+        </script>
+        
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -1702,6 +1741,8 @@ async function addHousingApplication(event) {
         }
     }, 100);
 }
+
+
 
 
 
