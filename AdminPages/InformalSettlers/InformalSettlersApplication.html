@@ -1852,6 +1852,8 @@ async function handleArchiveHousingApplication(event) {
                 timer: 2000,
                 showConfirmButton: false
             });
+            
+            window.location.reload();
         } else {
             showNotification("Housing application not found!", "error");
         }
