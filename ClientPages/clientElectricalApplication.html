@@ -236,6 +236,12 @@
                             </select>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="buildingPermitNo">Building Permit Number:</label>
+                            <input type="text" class="form-control" id="buildingPermitNo">
+                            </div>
+                        </div>
                     <div class="row g-3">
                        <div class="col-md-6">
                         <label for="ownerName">Owner/Applicant Name:</label>
@@ -672,7 +678,7 @@
         const totalKVA = document.getElementById("totalKVA").value;
         const natureOfWork = document.getElementById("natureOfWork").value;
         const applicationMethod = document.getElementById("applicationMethod").value;
-
+      
         const requiredFields = [
             { field: appointmentDate, name: 'Appointment Date' },
             { field: ownerName, name: 'Owner Name' }
@@ -696,18 +702,42 @@
         ];
 
         try {
-            // Ensure the user is authenticated
-            const user = await new Promise((resolve, reject) => {
+           // Authenticate user
+           const user = await new Promise((resolve, reject) => {
                 onAuthStateChanged(auth, user => {
                     if (user) {
                         resolve(user);
                     } else {
                         reject(new Error("No user is authenticated."));
                     }
-                });
+                }, reject);
             });
 
             const userId = user.uid;
+
+            // Retrieve the user's idUrl from the "users" collection
+            const userDoc = await getDoc(doc(db, "users", userId));
+            if (!userDoc.exists()) {
+                throw new Error("User document not found.");
+            }
+
+            const validId = userDoc.data().idUrl; // Retrieve the idUrl field
+
+            // Generate building permit number
+            const currentYear = new Date().getFullYear();
+            const permitCounterRef = doc(db, "permitCounters", currentYear.toString());
+            const permitCounterDoc = await getDoc(permitCounterRef);
+
+            let newPermitNumber;
+            if (permitCounterDoc.exists()) {
+                newPermitNumber = permitCounterDoc.data().lastNumber + 1;
+            } else {
+                newPermitNumber = 1;
+            }
+
+            const buildingPermitNo = `${currentYear}-${newPermitNumber.toString().padStart(4, '0')}`;
+            await setDoc(permitCounterRef, { lastNumber: newPermitNumber });
+
 
             // Prepare inspection data for Firestore
             const inspectionData = {
@@ -721,6 +751,7 @@
                 otherApparatus,
                 totalKVA,
                 natureOfWork,
+                buildingPermitNo,
                 applicationMethod,
                 status: 'Pending',
                 createdAt: serverTimestamp(),

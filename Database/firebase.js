@@ -1051,6 +1051,17 @@ async function loadUserPermitStatus() {
                     <i class="fa-solid fa-calendar"></i> Resched
                 </button>
             `;
+            
+            
+            const printCertificate = `
+                <a class="btn btn-success text-white" 
+                   data-bs-toggle="modal" 
+                   data-bs-target="#" 
+                   data-id="${permitId}" 
+                   data-comments-summary='${JSON.stringify(commentsSummary)}'>
+                    <i class="fa-solid fa-print"></i> Print
+                </a>
+            `;
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -1065,6 +1076,7 @@ async function loadUserPermitStatus() {
                         ${viewRemarksButton} 
                         ${followupButton} 
                         ${rescheduleButton}
+                        ${printCertificate}
                     </div>
                 </td>
             `;

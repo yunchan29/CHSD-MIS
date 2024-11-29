@@ -905,6 +905,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 text: "Application Submitted",
                 icon: "success"
             });
+
+            window.location.reload();
+            
             logFirestoreChanges("OccupancyPermits", permitId);
             
             const uploadModal = bootstrap.Modal.getInstance(document.getElementById('occupancyUploadModal'));
