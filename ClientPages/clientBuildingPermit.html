@@ -423,6 +423,8 @@
                                 <!-- Number of Units Field -->
                                 <div class="form-group">
                                     <label for="NOUnits">Number of Units<span class="required-asterisk">*</span></label>
+                                   <div class="col-md-1">
+                                  
                                     <select class="form-control" id="NOUnits">
                                         <option value="1" selected>1</option>
                                         <option value="2">2</option>
@@ -430,6 +432,7 @@
                                         <option value="4">4</option>
                                         <option value="5">5</option>
                                     </select>
+                                   </div>
                                 </div>
                             
                                 <!-- Placeholder for dynamically added unit fields -->
@@ -828,19 +831,16 @@
             unitDiv.className = "row mb-3";
 
             unitDiv.innerHTML = `
-                <div class="col">
-                    <label for="BlockNumber${i}">Block Number for Unit ${i}</label>
-                    <input type="text" class="form-control" id="BlockNumber${i}" placeholder="Block Number">
+                <div class="col-6">
+                    <label for="Address${i}">Address for Unit ${i}</label>
+                   <input type="text" class="form-control" id="Address${i}" placeholder="House Number, Block, Lot, Phase Number, Street" required>
+
                 </div>
-                <div class="col">
-                    <label for="LotNumber${i}">Lot Number for Unit ${i}</label>
-                    <input type="text" class="form-control" id="LotNumber${i}" placeholder="Lot Number">
-                </div>
-                <div class="col">
+                <div class="col-3">
                     <label for="NOStorey${i}">Number of Storeys for Unit ${i}</label>
                     <input type="number" class="form-control" id="NOStorey${i}" placeholder="Number of Storeys">
                 </div>
-                <div class="col">
+                <div class="col-3">
                     <label for="UnitFloorArea${i}">Floor Area for Unit ${i}</label>
                     <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area" required>
                 </div>
@@ -882,6 +882,7 @@
     // Initialize form with 1 unit field
     initializeUnitFields();
 </script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
     // Prevent dropdown from closing when clicking on buttons or notifications
@@ -1243,31 +1244,38 @@
             }
         }
 
-        // Gather dynamically generated unit fields
-        const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
-        const unitsData = [];
+      // Gather dynamically generated unit fields
+const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
+const unitsData = [];
 
-        for (let i = 1; i <= numUnits; i++) {
-            const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
-            const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
-            const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
-            const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
+for (let i = 1; i <= numUnits; i++) {
+    const address = document.getElementById(`Address${i}`)?.value.trim();
+    const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
+    const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
 
-            if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
-                alert(`Please fill out all fields for Unit ${i}.`);
-                return;
-            }
+    // Validate all fields
+    if (!address || !NOStorey || !floorArea) {
+        alert(`Please fill out all fields for Unit ${i}.`);
+        return;
+    }
 
-            unitsData.push({
-                blockNumber,
-                lotNumber,
-                NOStorey: parseInt(NOStorey),
-                floorArea: parseFloat(floorArea)
-            });
-        }
+    unitsData.push({
+        address,
+        NOStorey: parseInt(NOStorey),
+        floorArea: parseFloat(floorArea),
+    });
+}
 
-        const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
-        const totalEstimatedCost = totalFloorArea * 10000;
+// Calculate totals
+const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
+const totalEstimatedCost = totalFloorArea * 10000;
+
+// Example: Log the collected data
+console.log({
+    unitsData,
+    totalFloorArea,
+    totalEstimatedCost,
+});
 
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) {

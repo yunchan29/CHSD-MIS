@@ -1262,6 +1262,7 @@
         }
     });
 </script>
+
 <script>
     const NOUnitsInput = document.getElementById("NOUnits");
     const unitFieldsContainer = document.getElementById("unitFieldsContainer");
@@ -1285,19 +1286,16 @@
             unitDiv.className = "row mb-3";
 
             unitDiv.innerHTML = `
-                <div class="col">
-                    <label for="BlockNumber${i}">Block Number for Unit ${i}</label>
-                    <input type="text" class="form-control" id="BlockNumber${i}" placeholder="Block Number">
+                <div class="col-6">
+                    <label for="Address${i}">Address for Unit ${i}</label>
+                   <input type="text" class="form-control" id="Address${i}" placeholder="House Number, Block, Lot, Phase Number, Street" required>
+
                 </div>
-                <div class="col">
-                    <label for="LotNumber${i}">Lot Number for Unit ${i}</label>
-                    <input type="text" class="form-control" id="LotNumber${i}" placeholder="Lot Number">
-                </div>
-                <div class="col">
+                <div class="col-3">
                     <label for="NOStorey${i}">Number of Storeys for Unit ${i}</label>
                     <input type="number" class="form-control" id="NOStorey${i}" placeholder="Number of Storeys">
                 </div>
-                <div class="col">
+                <div class="col-3">
                     <label for="UnitFloorArea${i}">Floor Area for Unit ${i}</label>
                     <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area" required>
                 </div>
@@ -1616,25 +1614,23 @@ document.getElementById('statusSelect').addEventListener('change', function () {
             const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
             const unitsData = [];
 
-            // Gather dynamically generated unit fields
             for (let i = 1; i <= numUnits; i++) {
-                const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
-                const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
-                const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
-                const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
+    const address = document.getElementById(`Address${i}`)?.value.trim();
+    const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
+    const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
 
-                if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
-                    alert(`Please fill out all fields for Unit ${i}.`);
-                    return;
-                }
+    // Validate all fields
+    if (!address || !NOStorey || !floorArea) {
+        alert(`Please fill out all fields for Unit ${i}.`);
+        return;
+    }
 
-                unitsData.push({
-                    blockNumber,
-                    lotNumber,
-                    NOStorey: parseInt(NOStorey),
-                    floorArea: parseFloat(floorArea)
-                });
-            }
+    unitsData.push({
+        address,
+        NOStorey: parseInt(NOStorey),
+        floorArea: parseFloat(floorArea),
+    });
+}
 
             const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
             const totalEstimatedCost = totalFloorArea * 10000;
@@ -2224,7 +2220,7 @@ async function loadProfiles() {
                 <td>${data.status || "N/A"}</td>
                 <td>
                     <button class="btn btn-primary btn-sm process-btn" data-permit-id="${data.id}">
-                        ${data.status === "Pending" ? "Process" : "View Details"}
+                        ${data.status === "Pending" ? "For Processing" : "View Details"}
                     </button>
                 </td>
             `;

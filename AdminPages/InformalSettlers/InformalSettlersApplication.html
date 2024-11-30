@@ -860,7 +860,7 @@
                     <div class="col-md-12">
                         <label for="statusSelect" class="form-label">Status</label>
                         <select id="statusSelect" class="form-select">
-                            <option value="Pending">Pending</option>
+                            <option value="Pending">For Interview</option>
                             <option value="Processing">Processing</option>
                            
                             <option value="Submitted">Submitted</option>
@@ -1442,7 +1442,7 @@ function renderProfiles(profiles) {
             <td>${data.status || "N/A"}</td>
             <td>
                 <button class="btn btn-primary btn-sm process-btn" data-id="${data.id}">
-                    ${data.status === "Pending" ? "Process" : "View Details"}
+                    ${data.status === "Pending" ? "For Interview" : "View Details"}
                 </button>
             </td>
         `;

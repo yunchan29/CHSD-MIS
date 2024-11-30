@@ -954,83 +954,78 @@
 </script>
 
 <script>
-    // Select form elements
-const NOUnitsInput = document.getElementById("NOUnits");
-const unitFieldsContainer = document.getElementById("unitFieldsContainer");
-const totalFloorAreaInput = document.getElementById("TotalFloorArea");
-const totalEstimatedCostInput = document.getElementById("TotalEstimatedCost");
+    const NOUnitsInput = document.getElementById("NOUnits");
+    const unitFieldsContainer = document.getElementById("unitFieldsContainer");
+    const totalFloorAreaInput = document.getElementById("TotalFloorArea");
+    const totalEstimatedCostInput = document.getElementById("TotalEstimatedCost");
 
-// Initialize the form with 1 unit field displayed by default
-function initializeUnitFields() {
-    const initialNumUnits = parseInt(NOUnitsInput.value) || 1;
-    generateUnitFields(initialNumUnits);
-    updateTotals();
-}
-
-// Function to generate dynamic fields for each unit
-function generateUnitFields(numUnits) {
-    // Clear existing unit fields
-    unitFieldsContainer.innerHTML = "";
-
-    for (let i = 1; i <= numUnits; i++) {
-        const unitDiv = document.createElement("div");
-        unitDiv.className = "row mb-3";
-
-        unitDiv.innerHTML = `
-            <div class="col">
-                <label for="BlockNumber${i}">Block Number for Unit ${i}</label>
-                <input type="text" class="form-control" id="BlockNumber${i}" placeholder="Block Number">
-            </div>
-            <div class="col">
-                <label for="LotNumber${i}">Lot Number for Unit ${i}</label>
-                <input type="text" class="form-control" id="LotNumber${i}" placeholder="Lot Number">
-            </div>
-            <div class="col">
-                <label for="NOStorey${i}">Number of Storeys for Unit ${i}</label>
-                <input type="number" class="form-control" id="NOStorey${i}" placeholder="Number of Storeys">
-            </div>
-            <div class="col">
-                <label for="UnitFloorArea${i}">Floor Area for Unit ${i} (sqm)</label>
-                <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area" required>
-            </div>
-        `;
-        unitFieldsContainer.appendChild(unitDiv);
-    }
-}
-
-// Event listener for changes in the Number of Units dropdown
-NOUnitsInput.addEventListener("change", function () {
-    const numUnits = parseInt(NOUnitsInput.value) || 0;
-    generateUnitFields(numUnits);
-    updateTotals();
-});
-
-// Function to calculate total floor area and estimated cost
-function updateTotals() {
-    const floorAreaInputs = document.querySelectorAll(".unit-floor-area");
-    let totalFloorArea = 0;
-
-    // Sum up all floor areas
-    floorAreaInputs.forEach(input => {
-        const floorArea = parseFloat(input.value) || 0;
-        totalFloorArea += floorArea;
-    });
-
-    // Update total floor area and estimated cost
-    totalFloorAreaInput.value = totalFloorArea.toFixed(2); // Optional: Fix to 2 decimal places
-    totalEstimatedCostInput.value = (totalFloorArea * 10000).toFixed(2); // Assuming cost = floor area * 10,000
-}
-
-// Event listener for changes in any floor area input
-unitFieldsContainer.addEventListener("input", function (event) {
-    if (event.target.classList.contains("unit-floor-area")) {
+    // Initialize with 1 unit field displayed by default
+    function initializeUnitFields() {
+        const initialNumUnits = parseInt(NOUnitsInput.value) || 1;
+        generateUnitFields(initialNumUnits);
         updateTotals();
     }
-});
 
-// Initialize the form on page load
-initializeUnitFields();
+    // Function to generate fields based on selected number of units
+    function generateUnitFields(numUnits) {
+        // Clear any existing unit fields
+        unitFieldsContainer.innerHTML = "";
 
+        for (let i = 1; i <= numUnits; i++) {
+            const unitDiv = document.createElement("div");
+            unitDiv.className = "row mb-3";
+
+            unitDiv.innerHTML = `
+                <div class="col-6">
+                    <label for="Address${i}">Address for Unit ${i}</label>
+                   <input type="text" class="form-control" id="Address${i}" placeholder="House Number, Block, Lot, Phase Number, Street" required>
+
+                </div>
+                <div class="col-3">
+                    <label for="NOStorey${i}">Number of Storeys for Unit ${i}</label>
+                    <input type="number" class="form-control" id="NOStorey${i}" placeholder="Number of Storeys">
+                </div>
+                <div class="col-3">
+                    <label for="UnitFloorArea${i}">Floor Area for Unit ${i}</label>
+                    <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area" required>
+                </div>
+            `;
+            unitFieldsContainer.appendChild(unitDiv);
+        }
+    }
+
+    // Listen for changes to the Number of Units field
+    NOUnitsInput.addEventListener("change", function () {
+        const numUnits = parseInt(NOUnitsInput.value) || 0;
+        generateUnitFields(numUnits);
+        updateTotals();
+    });
+
+    // Function to calculate totals
+    function updateTotals() {
+        const floorAreaInputs = document.querySelectorAll(".unit-floor-area");
+        let totalFloorArea = 0;
+
+        // Sum all floor area inputs
+        floorAreaInputs.forEach(input => {
+            const floorArea = parseFloat(input.value) || 0;
+            totalFloorArea += floorArea;
+        });
+
+        // Set total floor area and total estimated cost
+        totalFloorAreaInput.value = totalFloorArea;
+        totalEstimatedCostInput.value = totalFloorArea * 10000;
+    }
+
+    // Listen for changes to floor area inputs
+    unitFieldsContainer.addEventListener("input", function (event) {
+        if (event.target.classList.contains("unit-floor-area")) {
+            updateTotals();
+        }
+    });
+
+    // Initialize form with 1 unit field
+    initializeUnitFields();
 </script>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1083,26 +1078,22 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
         const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
         const unitsData = [];
         for (let i = 1; i <= numUnits; i++) {
-            const blockNumber = document.getElementById(`BlockNumber${i}`)?.value.trim();
-            const lotNumber = document.getElementById(`LotNumber${i}`)?.value.trim();
-            const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
-            const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
+    const address = document.getElementById(`Address${i}`)?.value.trim();
+    const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
+    const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
 
-            // Validate fields for each unit
-            if (!blockNumber || !lotNumber || !NOStorey || !floorArea) {
-                alert(`Please fill out all fields for Unit ${i}.`);
-                submitButton.disabled = false;
-                loadingScreen.style.display = 'none';
-                return;
-            }
+    // Validate all fields
+    if (!address || !NOStorey || !floorArea) {
+        alert(`Please fill out all fields for Unit ${i}.`);
+        return;
+    }
 
-            unitsData.push({
-                blockNumber,
-                lotNumber,
-                NOStorey: parseInt(NOStorey),
-                floorArea: parseFloat(floorArea)
-            });
-        }
+    unitsData.push({
+        address,
+        NOStorey: parseInt(NOStorey),
+        floorArea: parseFloat(floorArea),
+    });
+}
 
         // Calculate total floor area
         const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
@@ -2231,38 +2222,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Generate dynamic fields based on unitsData
                 unitFieldsContainer.innerHTML = ""; // Clear existing dynamic fields
                 unitsData.forEach((unit, index) => {
-                    const unitIndex = index + 1;
+    const unitIndex = index + 1;
 
-                    const unitDiv = document.createElement("div");
-                    unitDiv.className = "row mb-3";
+    const unitDiv = document.createElement("div");
+    unitDiv.className = "row mb-3";
 
-                    unitDiv.innerHTML = `
-                        <div class="col">
-                            <label for="BlockNumber${unitIndex}">Block Number for Unit ${unitIndex}</label>
-                            <input type="text" class="form-control" id="BlockNumber${unitIndex}" placeholder="Block Number">
-                        </div>
-                        <div class="col">
-                            <label for="LotNumber${unitIndex}">Lot Number for Unit ${unitIndex}</label>
-                            <input type="text" class="form-control" id="LotNumber${unitIndex}" placeholder="Lot Number">
-                        </div>
-                        <div class="col">
-                            <label for="NOStorey${unitIndex}">Number of Storeys for Unit ${unitIndex}</label>
-                            <input type="number" class="form-control" id="NOStorey${unitIndex}" placeholder="Number of Storeys">
-                        </div>
-                        <div class="col">
-                            <label for="UnitFloorArea${unitIndex}">Floor Area for Unit ${unitIndex}</label>
-                            <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${unitIndex}" placeholder="Floor Area" required>
-                        </div>
-                    `;
+    unitDiv.innerHTML = `
+        <div class="col-6">
+            <label for="Address${unitIndex}">Address for Unit ${unitIndex}</label>
+            <input type="text" class="form-control" id="Address${unitIndex}" 
+                   placeholder="House Number, Block, Lot, Phase Number, Street" required>
+        </div>
+        <div class="col-3">
+            <label for="NOStorey${unitIndex}">Number of Storeys for Unit ${unitIndex}</label>
+            <input type="number" class="form-control" id="NOStorey${unitIndex}" 
+                   placeholder="Number of Storeys" required>
+        </div>
+        <div class="col-3">
+            <label for="UnitFloorArea${unitIndex}">Floor Area for Unit ${unitIndex}</label>
+            <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${unitIndex}" 
+                   placeholder="Floor Area" required>
+        </div>
+    `;
 
-                    unitFieldsContainer.appendChild(unitDiv);
+    unitFieldsContainer.appendChild(unitDiv);
 
-                    // Apply autofill and highlight effect for dynamic fields
-                    autofillField(`BlockNumber${unitIndex}`, unit.blockNumber);
-                    autofillField(`LotNumber${unitIndex}`, unit.lotNumber);
-                    autofillField(`NOStorey${unitIndex}`, unit.NOStorey);
-                    autofillField(`UnitFloorArea${unitIndex}`, unit.floorArea);
-                });
+    // Autofill and highlight dynamic fields
+    autofillField(`Address${unitIndex}`, unit.address);
+    autofillField(`NOStorey${unitIndex}`, unit.NOStorey);
+    autofillField(`UnitFloorArea${unitIndex}`, unit.floorArea);
+});
 
                 // Update totals after autofill
                 updateTotals();

@@ -237,9 +237,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col-md-6">
                             <label for="buildingPermitNo">Building Permit Number:</label>
-                            <input type="text" class="form-control" id="buildingPermitNo">
+                            <input type="text" class="form-control" id="buildingPermitNo" disabled>
                             </div>
                         </div>
                     <div class="row g-3">
@@ -633,7 +633,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, doc, getDocs, query, where, orderBy, limit, onSnapshot, startAfter } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDoc, serverTimestamp, updateDoc, doc, getDocs, query, where, orderBy, limit, onSnapshot, startAfter } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
     
         // Firebase configuration
@@ -655,171 +655,131 @@
     
         document.addEventListener('DOMContentLoaded', () => {
     let formSubmitted = false; // Variable to track submission status
+   
 
-    document.getElementById('submitAppointment').addEventListener('click', async (event) => {
-        event.preventDefault();
+   // Generate and set building permit number when the modal is shown
+async function setBuildingPermitNumber() {
+    try {
+        const buildingPermitNo = await generateBuildingPermitNo();
+        console.log("Generated Building Permit No:", buildingPermitNo); // Debugging log
 
-        const submitButton = document.getElementById('submitAppointment');
-        submitButton.disabled = true;
-
-        const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-            loadingScreen.style.display = 'flex';
+        const buildingPermitField = document.getElementById('buildingPermitNo');
+        if (buildingPermitField) {
+            buildingPermitField.value = buildingPermitNo; // Set value in the modal
         }
+    } catch (error) {
+        console.error("Error generating Building Permit No:", error);
+    }
+}
+
+// Event listener for showing the modal
+document.getElementById('appointmentModal').addEventListener('show.bs.modal', setBuildingPermitNumber);
+
+// Main submission logic
+document.getElementById('submitAppointment').addEventListener('click', async (event) => {
+    event.preventDefault();
+
+    const submitButton = document.getElementById('submitAppointment');
+    const loadingScreen = document.getElementById('loading-screen');
+
+    try {
+        submitButton.disabled = true;
+        if (loadingScreen) loadingScreen.style.display = 'flex';
 
         // Collect input values
-        const appointmentDate = document.getElementById('appointmentDate').value.trim();
-        const ownerName = document.getElementById("ownerName").value;
-        const light = document.getElementById("light").value;
-        const switchType = document.getElementById("switch").value;
-        const electricalMotor = document.getElementById("electricalMotor").value;
-        const convOutlet = document.getElementById("convOutlet").value;
-        const otherApparatus = document.getElementById("otherApparatus").value;
-        const totalKVA = document.getElementById("totalKVA").value;
-        const natureOfWork = document.getElementById("natureOfWork").value;
-        const applicationMethod = document.getElementById("applicationMethod").value;
-      
+        const inputs = {
+            appointmentDate: document.getElementById('appointmentDate').value.trim(),
+            ownerName: document.getElementById("ownerName").value,
+            light: document.getElementById("light").value,
+            switchType: document.getElementById("switch").value,
+            electricalMotor: document.getElementById("electricalMotor").value,
+            convOutlet: document.getElementById("convOutlet").value,
+            otherApparatus: document.getElementById("otherApparatus").value,
+            totalKVA: document.getElementById("totalKVA").value,
+            natureOfWork: document.getElementById("natureOfWork").value,
+            applicationMethod: document.getElementById("applicationMethod").value,
+        };
+
+        // Validate required fields
         const requiredFields = [
-            { field: appointmentDate, name: 'Appointment Date' },
-            { field: ownerName, name: 'Owner Name' }
+            { field: inputs.appointmentDate, name: 'Appointment Date' },
+            { field: inputs.ownerName, name: 'Owner Name' },
         ];
 
         for (const { field, name } of requiredFields) {
-            if (!field) {
-                alert(`Please fill out the ${name} field.`);
-                submitButton.disabled = false;
-                return;
-            }
+            if (!field) throw new Error(`Please fill out the ${name} field.`);
         }
 
-        // File inputs for Electrical Inspection
-        const requiredFileInputs = [
+        // Authenticate user
+        const user = await new Promise((resolve, reject) => {
+            onAuthStateChanged(auth, resolve, reject);
+        });
+        if (!user) throw new Error("No user is authenticated.");
+
+        const userId = user.uid;
+
+        // Fetch user document
+        const userDoc = await getDoc(doc(db, "users", userId));
+        if (!userDoc.exists()) throw new Error("User document not found.");
+
+        // Retrieve the generated building permit number
+        const buildingPermitNo = document.getElementById('buildingPermitNo').value;
+
+        // Debug log for confirmation
+        console.log("Using Building Permit No:", buildingPermitNo);
+
+        // Prepare inspection data
+        const inspectionData = {
+            ...inputs,
+            ownerUid: userId,
+            buildingPermitNo,
+            status: 'Pending',
+            createdAt: serverTimestamp(),
+        };
+
+        // Add new Firestore document
+        const inspectionDocRef = await addDoc(collection(db, "ElectricalCert"), inspectionData);
+        const inspectionId = inspectionDocRef.id;
+        const storagePath = `ElectricalCert/${inspectionId}`;
+
+        // File inputs
+        const fileInputs = [
             { id: 'meralcoServiceFile', namePrefix: 'meralcoService' },
             { id: 'barangayClearanceFile', namePrefix: 'barangayClearance' },
             { id: 'ownershipFile', namePrefix: 'ownership' },
             { id: 'occupancyFile', namePrefix: 'occupancy' },
-            { id: 'structurePhotoFile', namePrefix: 'structurePhoto' }
+            { id: 'structurePhotoFile', namePrefix: 'structurePhoto' },
         ];
 
-        try {
-           // Authenticate user
-           const user = await new Promise((resolve, reject) => {
-                onAuthStateChanged(auth, user => {
-                    if (user) {
-                        resolve(user);
-                    } else {
-                        reject(new Error("No user is authenticated."));
-                    }
-                }, reject);
-            });
+        // Handle file uploads
+        const fileURLs = await handleFileUploads(fileInputs, storagePath);
 
-            const userId = user.uid;
+        // Update Firestore document with file URLs
+        await updateDoc(doc(db, "ElectricalCert", inspectionId), fileURLs);
 
-            // Retrieve the user's idUrl from the "users" collection
-            const userDoc = await getDoc(doc(db, "users", userId));
-            if (!userDoc.exists()) {
-                throw new Error("User document not found.");
-            }
+        // Show success message
+        Swal.fire({
+            title: "Success!",
+            text: "Application Submitted",
+            icon: "success",
+        }).then(() => {
+            hideModals(['electricalInspectionModal', 'appointmentModal']);
+        });
 
-            const validId = userDoc.data().idUrl; // Retrieve the idUrl field
+        // Log changes
+        logFirestoreChanges("ElectricalCert", inspectionId);
 
-            // Generate building permit number
-            const currentYear = new Date().getFullYear();
-            const permitCounterRef = doc(db, "permitCounters", currentYear.toString());
-            const permitCounterDoc = await getDoc(permitCounterRef);
+    } catch (error) {
+        // Log error to console and show alert
+        console.error("Error during submission:", error);
+        alert(`Error submitting application: ${error.message}`);
+    } finally {
+        // Hide loading screen and re-enable submit button
+        if (loadingScreen) loadingScreen.style.display = 'none';
+        submitButton.disabled = false;
+    }
+});
 
-            let newPermitNumber;
-            if (permitCounterDoc.exists()) {
-                newPermitNumber = permitCounterDoc.data().lastNumber + 1;
-            } else {
-                newPermitNumber = 1;
-            }
-
-            const buildingPermitNo = `${currentYear}-${newPermitNumber.toString().padStart(4, '0')}`;
-            await setDoc(permitCounterRef, { lastNumber: newPermitNumber });
-
-
-            // Prepare inspection data for Firestore
-            const inspectionData = {
-                appointmentDate: new Date(appointmentDate),
-                ownerUid: userId,
-                ownerName,
-                light,
-                switchType,
-                electricalMotor,
-                convOutlet,
-                otherApparatus,
-                totalKVA,
-                natureOfWork,
-                buildingPermitNo,
-                applicationMethod,
-                status: 'Pending',
-                createdAt: serverTimestamp(),
-            };
-
-            // Add a new document to Firestore for Electrical Inspection
-            const inspectionDocRef = await addDoc(collection(db, "ElectricalCert"), inspectionData);
-            const inspectionId = inspectionDocRef.id;
-            const storagePath = `ElectricalCert/${inspectionId}`;
-
-            // Handle file uploads and storage
-            const uploadPromises = requiredFileInputs.map(async fileInputObj => {
-                const fileInput = document.getElementById(fileInputObj.id);
-                if (fileInput && fileInput.files[0]) {
-                    const file = fileInput.files[0];
-                    const fileRef = ref(storage, `${storagePath}/${fileInputObj.namePrefix}_${file.name}`);
-                    const snapshot = await uploadBytes(fileRef, file);
-                    return getDownloadURL(snapshot.ref);
-                } else {
-                    console.error(`File input missing or undefined for ${fileInputObj.namePrefix}`);
-                    return null;
-                }
-            });
-
-            // Wait for all uploads and store URLs
-            const fileURLs = await Promise.all(uploadPromises);
-
-            const fileURLMapping = {
-                meralcoServiceURL: fileURLs[0],
-                barangayClearanceURL: fileURLs[1],
-                ownershipURL: fileURLs[2],
-                occupancyURL: fileURLs[3],
-                structurePhotoURL: fileURLs[4],
-            };
-
-            // Update Firestore document with file URLs
-            const inspectionDoc = doc(db, "ElectricalCert", inspectionId);
-            await updateDoc(inspectionDoc, fileURLMapping);
-            
-            // Set formSubmitted to true after successful submission
-            formSubmitted = true;
-
-            Swal.fire({
-                title: "Success!",
-                text: "Application Submitted",
-                icon: "success"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Hide both modals after confirmation
-                    const uploadModal = bootstrap.Modal.getInstance(document.getElementById('electricalInspectionModal'));
-                    const appointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
-                    
-                    if (uploadModal) uploadModal.hide();
-                    if (appointmentModal) appointmentModal.hide();
-                }
-            });
-            logFirestoreChanges("ElectricalCert", inspectionId);
-
-        } catch (error) {
-            console.error("Error during submission:", error);
-            alert(`Error submitting application: ${error.message}`);
-        } finally {
-            if (loadingScreen) {
-                loadingScreen.style.display = 'none';
-            }
-            submitButton.disabled = false;
-        }
-    });
 
     async function logFirestoreChanges(ElectricalCert, inspectionId) {
   // Reference to the specific document in the collection

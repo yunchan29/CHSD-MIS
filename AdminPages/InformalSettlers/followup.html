@@ -148,35 +148,42 @@
                 }
     
                 housingDiv.innerHTML = ""; // Clear existing rows
-    
-                querySnapshot.forEach(doc => {
-                    const data = doc.data();
-                    const row = document.createElement("tr");
-    
-                    let householdName = data.householdHeadName || "N/A";
-                    let createdAt = data.createdAt?.toDate().toLocaleDateString() || "N/A";
-                    let status = data.status || "N/A";
-                    let docId = doc.id; // Get document ID for updating
-    
-                    row.innerHTML = `
-                        <td>${householdName}</td>
-                        <td>${createdAt}</td>
-                        <td>${status}</td>
-                        <td><button class="btn btn-primary process-btn" data-id="${docId}">Process</button></td>
-                    `;
-    
-                    housingDiv.appendChild(row);
-                });
-    
-                // Add event listeners to "Process" buttons
-                const processButtons = document.querySelectorAll(".process-btn");
-                processButtons.forEach(button => {
-                    button.addEventListener("click", async (e) => {
-                        const docId = e.target.getAttribute("data-id");
-                        await processRequest(docId);
-                    });
-                });
-    
+    // Map statuses for display
+const statusMapping = {
+    'Pending': 'For Interview',
+    'Processing': 'Processing',
+    'Submitted': 'Submitted',
+    'N/A': 'N/A' // Default for undefined status
+};
+
+querySnapshot.forEach(doc => {
+    const data = doc.data();
+    const row = document.createElement("tr");
+
+    let householdName = data.householdHeadName || "N/A";
+    let createdAt = data.createdAt?.toDate().toLocaleDateString() || "N/A";
+    let status = data.status ? statusMapping[data.status] || data.status : "N/A"; // Map the status
+    let docId = doc.id; // Get document ID for updating
+
+    row.innerHTML = `
+        <td>${householdName}</td>
+        <td>${createdAt}</td>
+        <td>${status}</td>
+        <td><button class="btn btn-primary process-btn" data-id="${docId}">Process</button></td>
+    `;
+
+    housingDiv.appendChild(row);
+});
+
+// Add event listeners to "Process" buttons
+const processButtons = document.querySelectorAll(".process-btn");
+processButtons.forEach(button => {
+    button.addEventListener("click", async (e) => {
+        const docId = e.target.getAttribute("data-id");
+        await processRequest(docId);
+    });
+});
+
             } catch (error) {
                 console.error("Error loading follow-up requests:", error);
             } finally {
