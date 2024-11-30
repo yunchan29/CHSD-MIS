@@ -886,6 +886,240 @@
     </div>
 </div>
 
+ <!-- Interview Modal -->
+ <div class="modal fade" id="interviewModal" tabindex="-1" aria-labelledby="interviewModalLabel" aria-hidden="true">
+    <div class="wide-modal modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="contentContainer">
+                <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
+                    <!-- Left Logo -->
+                    <img src="/resources/pictures/calambaLogo.png" alt="Calamba Logo" style="height: 50px; width: 50px; margin-left: auto;">
+                    <!-- Center Title -->
+                    <div class="text-center" style="margin: 0 10px;">
+                        <h5 class="mb-0">CITY HOUSING AND SETTLEMENTS DEPARTMENT</h5>
+                        <p class="mb-0">City Government of Calamba</p>
+                    </div>
+                    <!-- Right Logo -->
+                    <img src="/resources/pictures/chsd.png" alt="CHSD Logo" style="height: 50px; width: 50px; margin-right: auto;">
+                </div> 
+                <h4 class="text-center">Interview</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="headName">Name:</label>
+                    <input type="text" class="form-control" id="headName" disabled>    
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <label for="updateBarangay">Barangay</label>
+                    <select class="form-control" id="updateBarangay">
+                        <option value="">Select Barangay</option>
+                                            <option>Barangay Uno</option>
+                                            <option>Barangay Dos</option>
+                                            <option>Barangay Tres</option>
+                                            <option>Barangay Kwatro</option>
+                                            <option>Barangay Singko</option>
+                                            <option>Barangay Sais</option>
+                                            <option>Barangay Syete</option>
+                                            <option>Bagong Kalsada</option>
+                                            <option>Banadero</option>
+                                            <option>Banlic</option>
+                                            <option>Barandal</option>
+                                            <option>Batino</option>
+                                            <option>Bubuyan</option>
+                                            <option>Bucal</option>
+                                            <option>Bunggo</option>
+                                            <option>Burol</option>
+                                            <option>Camaligan</option>
+                                            <option>Canlubang</option>
+                                            <option>Halang</option>
+                                            <option>Hornalan</option>
+                                            <option>Kay-Anlog</option>
+                                            <option>Laguerta</option>
+                                            <option>Lamesa</option>
+                                            <option>Lawa</option>
+                                            <option>Lecheria</option>
+                                            <option>Lingga</option>
+                                            <option>Looc</option>
+                                            <option>Mabato</option>
+                                            <option>Makiling</option>
+                                            <option>Majada Out</option>
+                                            <option>Mapagong</option>
+                                            <option>Masili</option>
+                                            <option>Maunong</option>
+                                            <option>Mayapa</option>
+                                            <option>Milagrosa</option>
+                                            <option>Palingon</option>
+                                            <option>Paciano Rizal</option>
+                                            <option>Palo Alto</option>
+                                            <option>Pansol</option>
+                                            <option>Parian</option>
+                                            <option>Prinza</option>
+                                            <option>Punta</option>
+                                            <option>Puting Lupa</option>
+                                            <option>Real</option>
+                                            <option>Saimsim</option>
+                                            <option>Sampiruhan</option>
+                                            <option>San Cristobal</option>
+                                            <option>San Jose</option>
+                                            <option>San Juan</option>
+                                            <option>Sirang Lupa</option>
+                                            <option>Sucol</option>
+                                            <option>Turbina</option>
+                                            <option>Ulango</option>
+                                            <option>Uwisan</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="updateSitio">Sitio/Purok</label>
+                    <input type="text" class="form-control" id="updateSitio" name="updateSitio">  
+                 </div>
+            
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <label for="updateClassificationArea">Classification Area</label>
+                    <select class="form-control" id="updateClassificationArea">
+                        <option>Not Danger Zone</option>
+                        <option>Danger Zone</option>
+                    </select>
+                </div>
+                <div class="col">
+                     <label for="updateCellphone">Cellphone Number</label>
+                     <input type="number" class="form-control" id="updateCellphone">
+                </div>
+            </div>
+            
+            <h5>Lot Information</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="updateLotOwner">Owner</label>
+                    <input type="text" class="form-control" id="updateLotOwner">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="updateConstruction">Construction/Building Materials Used</label>
+                    <select class="form-control" id="updateConstruction">
+                        <option>Concrete</option>
+                        <option>Wood/Nipa</option>
+                        <option>Plastic Roof Only</option>
+                        <option>Tent</option>
+                        <option>Mixed Materials</option>
+                        <option>Sharer</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="updateStoreys">Number Of Storeys</label>
+                    <input type="number" id="updateStoreys" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="updateEstimatedFloorArea">Estimated Floor Area</label>
+                    <input type="number" class="form-control" id="updateEstimatedFloorArea">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="updateComfortRoom">Comfort Room</label>
+                    <select class="form-control" id="updateComfortRoom">
+                        <option>With Septic Tank Vault</option>
+                        <option>Without Septic</option>
+                        <option>None</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="updateUtilities">Utilities/Facilities Present Power(Electricity)</label>
+                    <select class="form-control" id="updateUtilities">
+                        <option>Meralco</option>
+                        <option>Connected To Other Subscriber</option>
+                        <option>None</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="updateSourceOfWater">Source of Water</label>
+                    <select class="form-control" id="updateSourceOfWater">
+                        <option value="">Select Source of Water</option>
+                        <option value="local_water_district">Local Water District</option>
+                        <option value="deep_well">Deep Well</option>
+                        <option value="shallow_well">Shallow Well</option>
+                        <option value="water_delivery">Water Delivery (Private Supplier)</option>
+                        <option value="communal_faucet">Communal Faucet System (Barangay/Community)</option>
+                        <option value="rainwater">Rainwater Collection</option>
+                    </select>
+                </div>
+                
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="updateModeOfHouse">Mode Of House/Structure Acquistion</label>
+                    <select class="form-control" id="updateModeOfHouse">
+                        <option>Sold Rights</option>
+                        <option>Transfer Rights</option>
+                        <option>Constructed</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="updateInfoAboutLot">Information About The Surveyed Lot</label>
+                    <select class="form-control" id="updateInfoAboutLot">
+                        <option>Caretaker</option>
+                        <option>Co-Owner</option>
+                        <option>Renter</option>
+                        <option>RFO</option>
+                        <option>Sharer</option>
+                    </select>
+                </div>
+            
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="updateRelationshipWithOwner">Relationship With The Owner</label>
+                    <select class="form-control" id="updateRelationshipWithOwner">
+                        <option>Lot Owner</option>
+                        <option>Child</option>
+                        <option>Parent</option>
+                        <option>Relative</option>
+                        <option>Others</option>upda
+                    </select>
+                </div>
+            
+                <div class="col-md-6">
+                    <label for="updateTypeOfStructure">Type Of Structure</label>
+                    <select class="form-control" id="updateTypeOfStructure">
+                        <option>Residential</option>
+                        <option>Commercial</option>
+                        <option>Apartment</option>
+                        <option>Institution</option>
+                        <option>Others</option>
+                    </select>
+                </div>
+            </div>
+            
+                
+                
+                                    
+              </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="joelismalacamerz">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <div id="notification-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050; display: none;">
     <!-- Notifications will be dynamically added here -->
 </div>
@@ -1426,7 +1660,6 @@ async function loadProfiles() {
     }
 }
 
-// Render Profiles in the DOM
 function renderProfiles(profiles) {
     const profilesTableBody = document.querySelector("tbody");
     profilesTableBody.innerHTML = ''; // Clear previous entries
@@ -1435,6 +1668,8 @@ function renderProfiles(profiles) {
         const row = document.createElement("tr");
         const representativeName = data.householdHeadName || "N/A";
         const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "N/A";
+        
+        const isPending = data.status === "Pending";
 
         row.innerHTML = `
             <td>${representativeName}</td>
@@ -1442,20 +1677,29 @@ function renderProfiles(profiles) {
             <td>${data.status || "N/A"}</td>
             <td>
                 <button class="btn btn-primary btn-sm process-btn" data-id="${data.id}">
-                    ${data.status === "Pending" ? "For Interview" : "View Details"}
+                    ${isPending ? "For Interview" : "View Details"}
                 </button>
+                ${!isPending ? `<button class="btn btn-success btn-sm edit-btn" data-id="${data.id}">Edit</button>` : ""}
             </td>
         `;
         profilesTableBody.appendChild(row);
 
-        // Add event listener for "Process" button (only for Pending status)
+        // Add event listener for "Process" button
         row.querySelector(".process-btn").addEventListener("click", () => {
-            if (data.status === "Pending") {
+            if (isPending) {
                 confirmProcessHousing(data); // Confirm before processing
             } else {
                 openViewDetailsModal(data); // Open the details modal
             }
         });
+
+        // Add event listener for "Edit" button, if it exists
+        const editButton = row.querySelector(".edit-btn");
+        if (editButton) {
+            editButton.addEventListener("click", () => {
+                joelMalacamanFunction(data, data.id); // Pass data and id
+            });
+        }
     });
 }
 
@@ -1689,11 +1933,11 @@ function showNotification(message, type) {
         </div>
         <div class="row mb-2">
             <div class="col-md-6"><strong>Relationship with Owner:</strong> ${data.relationshipWithOwner}</div>
-            <div class="col-md-6"><strong>Amount to Pay:</strong> ${data.amountToPay}</div>
+                <div class="col-md-6"><strong>Year of Residency:</strong> ${data.yearOfResidency}</div>
         </div>
         <div class="row mb-2">
             <div class="col-md-6"><strong>Info About Lot:</strong> ${data.infoAboutLot}</div>
-            <div class="col-md-6"><strong>Year of Residency:</strong> ${data.yearOfResidency}</div>
+        
         </div>
 
 
@@ -1720,6 +1964,100 @@ function showNotification(message, type) {
     modalInstance.show();
 }
 
+
+
+
+async function joelMalacamanFunction(data, documentId) {
+    try {
+        // Ensure documentId is valid
+        if (!documentId) {
+            console.error("Invalid document ID.");
+            Swal.fire({
+                title: "Error!",
+                text: "Invalid document reference. Cannot update.",
+                icon: "error",
+            });
+            return;
+        }
+
+        // Populate form fields
+        const setFormField = (id, value) => {
+            const field = document.getElementById(id);
+            if (field) field.value = value || "";
+        };
+
+        setFormField("headName", data.householdHeadName);
+        setFormField("updateSitio", data.sitioPurok);
+        setFormField("updateClassificationArea", data.classificationArea);
+        setFormField("updateBarangay", data.barangay);
+        setFormField("updateCellphone", data.telephone);
+        setFormField("updateLotOwner", data.lotOwner);
+        setFormField("updateConstruction", data.construction);
+        setFormField("updateStoreys", data.NOStoreys);
+        setFormField("updateEstimatedFloorArea", data.estimatedFloorArea);
+        setFormField("updateComfortRoom", data.comfortRoom);
+        setFormField("updateUtilities", data.utilities);
+        setFormField("updateSourceOfWater", data.sourceOfWater);
+        setFormField("updateModeOfHouse", data.modeOfHouse);
+        setFormField("updateInfoAboutLot", data.infoAboutLot);
+        setFormField("updateRelationshipWithOwner", data.relationshipWithOwner);
+        setFormField("updateTypeOfStructure", data.typeOfStructure);
+
+        // Show the modal
+        const interviewModalElement = document.getElementById("interviewModal");
+        if (interviewModalElement) {
+            const interviewModal = new bootstrap.Modal(interviewModalElement);
+            interviewModal.show();
+        }
+
+        // Attach a single event listener for saving updates
+        const saveButton = document.getElementById("joelismalacamerz");
+        saveButton.replaceWith(saveButton.cloneNode(true));
+        const newSaveButton = document.getElementById("joelismalacamerz");
+
+        newSaveButton.addEventListener("click", async () => {
+            try {
+                const updatedData = {
+                    householdHeadName: document.getElementById("headName").value,
+                    sitioPurok: document.getElementById("updateSitio").value,
+                    classificationArea: document.getElementById("updateClassificationArea").value,
+                    barangay: document.getElementById("updateBarangay").value,
+                    telephone: document.getElementById("updateCellphone").value,
+                    lotOwner: document.getElementById("updateLotOwner").value,
+                    construction: document.getElementById("updateConstruction").value,
+                    NOStoreys: document.getElementById("updateStoreys").value,
+                    estimatedFloorArea: document.getElementById("updateEstimatedFloorArea").value,
+                    comfortRoom: document.getElementById("updateComfortRoom").value,
+                    utilities: document.getElementById("updateUtilities").value,
+                    sourceOfWater: document.getElementById("updateSourceOfWater").value,
+                    modeOfHouse: document.getElementById("updateModeOfHouse").value,
+                    infoAboutLot: document.getElementById("updateInfoAboutLot").value,
+                    relationshipWithOwner: document.getElementById("updateRelationshipWithOwner").value,
+                    typeOfStructure: document.getElementById("updateTypeOfStructure").value,
+                };
+
+                const documentRef = doc(db, "Housing", documentId);
+                await updateDoc(documentRef, updatedData);
+
+                Swal.fire({
+                    title: "Success!",
+                    text: "Application updated successfully.",
+                    icon: "success",
+                });
+                window.location.reload();
+            } catch (error) {
+                console.error("Error updating document:", error);
+                Swal.fire({
+                    title: "Error!",
+                    text: "Failed to update the application. Please try again.",
+                    icon: "error",
+                });
+            }
+        });
+    } catch (error) {
+        console.error("Error initializing the update process:", error);
+    }
+}
 
 
   // Function to Handle Status Update
