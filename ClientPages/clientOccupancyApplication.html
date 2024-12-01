@@ -753,84 +753,97 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// Document Ready
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('submitAppointment').addEventListener('click', async (event) => {
         event.preventDefault();
 
         const submitButton = document.getElementById('submitAppointment');
-        submitButton.disabled = true;
-
         const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-            loadingScreen.style.display = 'flex';
-        }
-
-        // Collect static input values
-        const appointmentDate = document.getElementById('appointmentDate').value.trim();
-        const ownerName = document.getElementById("ownerName").value;
-        const ownerAddress = document.getElementById("ownerAddress").value;
-        const projectLocation = document.getElementById("projectLocation").value;
-        const buildingPermitNo = document.getElementById("buildingPermitNo").value;
-        const applicantMethod = document.getElementById("applicationMethod").value;
-
-        // Collect dynamic fields (Units Data)
-        const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
-        const unitsData = [];
-        for (let i = 1; i <= numUnits; i++) {
-    const address = document.getElementById(`Address${i}`)?.value.trim();
-    const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
-    const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
-
-    // Validate all fields
-    if (!address || !NOStorey || !floorArea) {
-        alert(`Please fill out all fields for Unit ${i}.`);
-        return;
-    }
-
-    unitsData.push({
-        address,
-        NOStorey: parseInt(NOStorey),
-        floorArea: parseFloat(floorArea),
-    });
-}
-
-        // Calculate total floor area
-        const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
-
-        // Required static fields validation
-        const requiredFields = [
-            { field: appointmentDate, name: 'Appointment Date' },
-            { field: ownerName, name: 'Owner Name' }
-        ];
-        for (const { field, name } of requiredFields) {
-            if (!field) {
-                alert(`Please fill out the ${name} field.`);
-                submitButton.disabled = false;
-                loadingScreen.style.display = 'none';
-                return;
-            }
-        }
-
-        // Validate file uploads
-        const requiredFileInputs = [
-            { id: 'buildingPermitCompletionFile', namePrefix: 'buildingPermitCompletion', name: 'Building Permit Completion' },
-            { id: 'approvedBuildingPermitFile', namePrefix: 'approvedBuildingPermit', name: 'Approved Building Permit' },
-            { id: 'approvedPlanFile', namePrefix: 'approvedPlan', name: 'Approved Plan' },
-            { id: 'structurePhotosFile', namePrefix: 'structurePhotos', name: 'Structure Photos' },
-            { id: 'sketchFile', namePrefix: 'sketch', name: 'Sketch' }
-        ];
-        for (const fileInputObj of requiredFileInputs) {
-            const fileInput = document.getElementById(fileInputObj.id);
-            if (!fileInput || !fileInput.files[0]) {
-                alert(`Please upload the ${fileInputObj.name} file.`);
-                submitButton.disabled = false;
-                loadingScreen.style.display = 'none';
-                return;
-            }
-        }
 
         try {
+            submitButton.disabled = true;
+            if (loadingScreen) {
+                loadingScreen.style.display = 'flex';
+            }
+
+            // Collect static input values
+            const appointmentDate = document.getElementById('appointmentDate').value.trim();
+            const ownerName = document.getElementById("ownerName").value.trim();
+            const ownerAddress = document.getElementById("ownerAddress").value.trim();
+            const projectLocation = document.getElementById("projectLocation").value.trim();
+            const buildingPermitNo = document.getElementById("buildingPermitNo").value.trim();
+            const applicantMethod = document.getElementById("applicationMethod").value.trim();
+
+            // Validate building permit number globally
+            if (!buildingPermitNo) {
+                if (loadingScreen) loadingScreen.style.display = 'none';
+                throw new Error("Building Permit Number is required.");
+            }
+
+            const permitQuery = query(
+                collection(db, "OccupancyPermits"),
+                where("buildingPermitNo", "==", buildingPermitNo)
+            );
+            const permitSnapshot = await getDocs(permitQuery);
+
+            if (!permitSnapshot.empty) {
+                if (loadingScreen) loadingScreen.style.display = 'none';
+                throw new Error("This Building Permit Number has already been used for an occupancy application.");
+            }
+
+            // Collect dynamic fields (Units Data)
+            const numUnits = parseInt(document.getElementById("NOUnits").value) || 0;
+            const unitsData = [];
+            for (let i = 1; i <= numUnits; i++) {
+                const address = document.getElementById(`Address${i}`)?.value.trim();
+                const NOStorey = document.getElementById(`NOStorey${i}`)?.value.trim();
+                const floorArea = document.getElementById(`UnitFloorArea${i}`)?.value.trim();
+
+                if (!address || !NOStorey || !floorArea) {
+                    if (loadingScreen) loadingScreen.style.display = 'none';
+                    throw new Error(`Please fill out all fields for Unit ${i}.`);
+                }
+
+                unitsData.push({
+                    address,
+                    NOStorey: parseInt(NOStorey),
+                    floorArea: parseFloat(floorArea),
+                });
+            }
+
+            // Calculate total floor area
+            const totalFloorArea = unitsData.reduce((sum, unit) => sum + unit.floorArea, 0);
+
+            // Validate static fields
+            const requiredFields = [
+                { field: appointmentDate, name: 'Appointment Date' },
+                { field: ownerName, name: 'Owner Name' },
+                { field: ownerAddress, name: 'Owner Address' },
+                { field: projectLocation, name: 'Project Location' },
+            ];
+            for (const { field, name } of requiredFields) {
+                if (!field) {
+                    if (loadingScreen) loadingScreen.style.display = 'none';
+                    throw new Error(`Please fill out the ${name} field.`);
+                }
+            }
+
+            // Validate file uploads
+            const requiredFileInputs = [
+                { id: 'buildingPermitCompletionFile', name: 'Building Permit Completion' },
+                { id: 'approvedBuildingPermitFile', name: 'Approved Building Permit' },
+                { id: 'approvedPlanFile', name: 'Approved Plan' },
+                { id: 'structurePhotosFile', name: 'Structure Photos' },
+                { id: 'sketchFile', name: 'Sketch' },
+            ];
+            for (const fileInputObj of requiredFileInputs) {
+                const fileInput = document.getElementById(fileInputObj.id);
+                if (!fileInput || !fileInput.files[0]) {
+                    if (loadingScreen) loadingScreen.style.display = 'none';
+                    throw new Error(`Please upload the ${fileInputObj.name} file.`);
+                }
+            }
+
             // Ensure user is authenticated
             const user = await new Promise((resolve, reject) => {
                 onAuthStateChanged(auth, user => {
@@ -852,12 +865,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 applicantMethod,
                 totalFloorArea,
                 numUnits,
-                unitsData, // Save the dynamic data
+                unitsData,
                 status: 'Pending',
                 createdAt: serverTimestamp(),
             };
 
-            // Add a new document to Firestore and get the generated document ID
+            // Add a new document to Firestore
             const permitDocRef = await addDoc(collection(db, "OccupancyPermits"), permitData);
             const permitId = permitDocRef.id;
             const storagePath = `OccupancyPermits/${permitId}`;
@@ -865,18 +878,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Handle file uploads
             const uploadPromises = requiredFileInputs.map(async fileInputObj => {
                 const fileInput = document.getElementById(fileInputObj.id);
-                if (fileInput && fileInput.files[0]) {
-                    const file = fileInput.files[0];
-                    const fileRef = ref(storage, `${storagePath}/${fileInputObj.namePrefix}_${file.name}`);
-                    const snapshot = await uploadBytes(fileRef, file);
-                    return getDownloadURL(snapshot.ref);
-                } else {
-                    console.error(`File input missing or undefined for ${fileInputObj.namePrefix}`);
-                    return null;
-                }
+                const file = fileInput.files[0];
+                const fileRef = ref(storage, `${storagePath}/${fileInputObj.id}_${file.name}`);
+                const snapshot = await uploadBytes(fileRef, file);
+                return getDownloadURL(snapshot.ref);
             });
 
-            // Wait for all uploads and store URLs
             const fileURLs = await Promise.all(uploadPromises);
 
             const fileURLMapping = {
@@ -892,35 +899,28 @@ document.addEventListener('DOMContentLoaded', () => {
             await updateDoc(permitDoc, fileURLMapping);
 
             // Success feedback
-            Swal.fire({
+            if (loadingScreen) loadingScreen.style.display = 'none';
+            await Swal.fire({
                 title: "Success!",
                 text: "Application Submitted",
-                icon: "success"
+                icon: "success",
             });
 
             window.location.reload();
-            
-            logFirestoreChanges("OccupancyPermits", permitId);
-            
-            const uploadModal = bootstrap.Modal.getInstance(document.getElementById('occupancyUploadModal'));
-                    const appointmentModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
-                    
-                    if (uploadModal) uploadModal.hide();
-                    if (appointmentModal) appointmentModal.hide();
         } catch (error) {
-            // Handle errors
+            if (loadingScreen) loadingScreen.style.display = 'none';
             console.error("Error during submission:", error);
-            alert(`Error submitting application: ${error.message}`);
+            await Swal.fire({
+                title: "Error",
+                text: error.message,
+                icon: "error",
+            });
+            window.location.reload();
         } finally {
-            // Reset loading and submit button
-            if (loadingScreen) {
-                loadingScreen.style.display = 'none';
-            }
             submitButton.disabled = false;
         }
     });
 });
-
 
     // Handle step transitions
     document.addEventListener("DOMContentLoaded", function() {
@@ -1225,13 +1225,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Validate required fields
                 checkRequiredFields();
 
-                // Notification for success
+                // Success Notification
                 Swal.fire({
-                    title: 'Fields Populated',
-                    text: 'All relevant fields have been successfully populated.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
+    icon: 'success',
+    title: 'Fields Autofilled!',
+    text: 'All set and ready to go!',
+    confirmButtonText: 'Okay'
+});
 
                 closePermitSelectionModal();
             } else {

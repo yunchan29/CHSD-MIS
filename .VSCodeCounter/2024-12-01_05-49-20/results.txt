@@ -1,0 +1,43 @@
+Date : 2024-12-01 05:49:20
+Directory : d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages
+Total : 18 files,  8672 codes, 188 comments, 1463 blanks, all 10323 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| HTML       |         15 |      8,656 |        188 |      1,462 |     10,306 |
+| JavaScript |          3 |         16 |          0 |          1 |         17 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                   | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                      |         18 |      8,672 |        188 |      1,463 |     10,323 |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                                               | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\applicationproto.html            | HTML       |        273 |         12 |         31 |        316 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientApplication.html           | HTML       |        274 |         12 |         57 |        343 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientBuildingPermit.html        | HTML       |      1,438 |         27 |        265 |      1,730 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientDashboard.html             | HTML       |        547 |         19 |        102 |        668 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientElectricalApplication.html | HTML       |        974 |         19 |        155 |      1,148 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientHousingApplication.html    | HTML       |      1,316 |         16 |        282 |      1,614 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientLogin.html                 | HTML       |        269 |          1 |         37 |        307 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientNotif.html                 | HTML       |        219 |         10 |         40 |        269 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientOccupancyApplication.html  | HTML       |      1,329 |         21 |        231 |      1,581 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientProfile.html               | HTML       |        422 |         13 |         59 |        494 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientRequirements.html          | HTML       |        572 |         12 |         62 |        646 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\clientSignup.html                | HTML       |        729 |         14 |        110 |        853 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\nav2.html                        | HTML       |         51 |          5 |          7 |         63 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\nav2.js                          | JavaScript |          8 |          0 |          0 |          8 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\nav3.html                        | HTML       |         42 |          5 |          5 |         52 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\nav3.js                          | JavaScript |          8 |          0 |          0 |          8 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\navBarScript.js                  | JavaScript |          0 |          0 |          1 |          1 |
+| d:\CCC\3rd Year\2nd Sem\Capstone\City Housing and Settlements Department Website\CHSD-MIS\ClientPages\profileBackup.html               | HTML       |        201 |          2 |         19 |        222 |
+| Total                                                                                                                                  |            |      8,672 |        188 |      1,463 |     10,323 |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
