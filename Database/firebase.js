@@ -995,6 +995,69 @@ async function fetchPermitCounts() {
 // Call the function to fetch and display permit counts
 fetchPermitCounts();
 
+async function openViewHSDFormModal(permitData) {
+    try {
+        console.log("Permit Data received:", permitData); // Log permitData to ensure it's not empty
+
+        // Fetch the data from the buildingPermits collection based on the permitId
+        const hsdFormData = await getDoc(doc(db, "buildingPermits", permitData.id));
+
+        if (!hsdFormData.exists()) {
+            console.error("HSD Form (Building Permit) not found!");
+            alert("HSD Form data is missing!");
+            return;
+        }
+
+        const data = hsdFormData.data();
+        console.log("HSD Form Data retrieved:", data); // Log the fetched data to ensure it's being retrieved correctly
+
+        // Populate HSD Form Modal Fields
+        document.getElementById('hsdFormOwnerName').textContent = data.ownerName;
+        document.getElementById('hsdFormAddress').textContent = data.addressTelNo || "N/A";
+        document.getElementById('hsdFormDateSubmitted').textContent = data.issuedOn;
+        document.getElementById("hsdPhoneNumber").textContent = data.phoneNumber;
+        document.getElementById("hsdFormProjectLocation").textContent = data.projectLocation;
+        document.getElementById("hsdFormScopeOfWork").textContent = data.scopeOfWork;
+        document.getElementById("hsdFormProjectJustification").textContent = data.projectJustification;
+        document.getElementById("hsdFormTotalFloorArea").textContent = data.totalFloorArea || "N/A";
+        document.getElementById("hsdFormTotalEstimatedCost").textContent = data.totalEstimatedCost || "N/A";
+        document.getElementById("hsdFormBuildingPermitNo").textContent = data.buildingPermitNo;
+        document.getElementById("hsdFormProjectTitle").textContent = data.projectTitle;
+
+        // Clear existing unit details
+        const unitDetailsContainer = document.getElementById("hsdFormUnitDetails");
+        unitDetailsContainer.innerHTML = "";
+
+        if (Array.isArray(data.unitsData) && data.unitsData.length > 0) {
+            data.unitsData.forEach((unit, index) => {
+                const unitElement = document.createElement("div");
+                unitElement.className = "unit-details mb-3";
+
+                unitElement.innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col-md-2"><h6>Unit ${index + 1}</h6></div>
+                        <div class="col-md-4"><p><strong>Address:</strong> ${unit.address || "N/A"}</p></div>
+                        <div class="col-md-3"><p><strong>No. of Storeys:</strong> ${unit.NOStorey || "N/A"}</p></div>
+                        <div class="col-md-3"><p><strong>Floor Area:</strong> ${unit.floorArea || "N/A"} sqm</p></div>
+                    </div>
+                `;
+                unitDetailsContainer.appendChild(unitElement);
+            });
+        } else {
+            unitDetailsContainer.innerHTML = "<p>No unit details available.</p>";
+        }
+
+        console.log("HSD Form fields populated");
+
+        // Show the HSD Form Modal
+        const viewHSDFormModal = new bootstrap.Modal(document.getElementById('viewHSDFormModal'));
+        viewHSDFormModal.show();
+    } catch (error) {
+        console.error("Error opening HSD Form modal:", error);
+        alert("Failed to load HSD form data.");
+    }
+}
+
 async function loadUserPermitStatus() {
     try {
         const user = auth.currentUser;
@@ -1051,16 +1114,12 @@ async function loadUserPermitStatus() {
                     <i class="fa-solid fa-calendar"></i> Resched
                 </button>
             `;
-            
-            
-            const printCertificate = `
-                <a class="btn btn-success text-white" 
-                   data-bs-toggle="modal" 
-                   data-bs-target="#" 
-                   data-id="${permitId}" 
-                   data-comments-summary='${JSON.stringify(commentsSummary)}'>
+
+            const printCertificateButton = `
+                <button class="btn btn-success text-white print-certificate-btn" 
+                        data-id="${permitId}">
                     <i class="fa-solid fa-print"></i> Print
-                </a>
+                </button>
             `;
 
             const row = document.createElement('tr');
@@ -1076,83 +1135,15 @@ async function loadUserPermitStatus() {
                         ${viewRemarksButton} 
                         ${followupButton} 
                         ${rescheduleButton}
-                        ${printCertificate}
+                        ${printCertificateButton}
                     </div>
                 </td>
             `;
             tableBody.appendChild(row);
 
-            const rescheduleBtn = row.querySelector('.reschedule-btn');
-rescheduleBtn.addEventListener('click', async (event) => {
-    const docId = event.target.getAttribute('data-id');
-    const permitType = event.target.getAttribute('data-permit-type');
-    const calendarModal = new bootstrap.Modal(document.getElementById('calendarModal'));
-    calendarModal.show();
-
-    const dateInput = document.getElementById('datePicker');
-    dateInput.value = ''; // Reset the date input
-    dateInput.setAttribute('min', new Date().toISOString().split('T')[0]); // Disable past dates
-
-    // Add event listener for date selection
-    dateInput.addEventListener('change', async function handleDateChange(event) {
-        const selectedDate = new Date(event.target.value);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        if (selectedDate <= today || [0, 6].includes(selectedDate.getDay())) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Selection',
-                text: 'Rescheduling on weekends or past dates is not allowed.',
-            });
-            dateInput.value = ''; // Reset invalid selection
-            return;
-        }
-
-        const confirmation = await Swal.fire({
-            icon: 'question',
-            title: 'Confirm Reschedule',
-            text: `Do you want to reschedule the appointment to ${selectedDate.toLocaleDateString()}?`,
-            showCancelButton: true,
-            confirmButtonText: 'Yes, Reschedule',
-        });
-
-        if (confirmation.isConfirmed) {
-            try {
-                const permitDoc = doc(
-                    db,
-                    permitType === "Building Permit" 
-                        ? "buildingPermits" 
-                        : permitType === "Certificate of Occupancy" 
-                        ? "OccupancyPermits" 
-                        : permitType === "Housing Application" 
-                        ? "Housing" 
-                        : "ElectricalCert", 
-                    docId
-                );
-                await updateDoc(permitDoc, { appointmentDate: Timestamp.fromDate(selectedDate) });
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Rescheduled!',
-                    text: 'Appointment rescheduled successfully!',
-                });
-                calendarModal.hide();
-            } catch (error) {
-                console.error("Error rescheduling appointment:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error rescheduling appointment. Please try again.',
-                });
-            }
-        }
-        
-        // Remove event listener after handling
-        dateInput.removeEventListener('change', handleDateChange);
-    });
-});
-
+            // Attach event listener for the Print button
+            const printButton = row.querySelector('.print-certificate-btn');
+            printButton.addEventListener('click', () => openViewHSDFormModal({ id: permitId }));
         };
 
         const extractCommentsSummary = (fileValidationStatus) => {
@@ -1166,7 +1157,7 @@ rescheduleBtn.addEventListener('click', async (event) => {
 
         const isFollowUpAllowed = (permit) => {
             const today = new Date();
-            const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 0));
+            const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30));
             return permit.status === "Pending" && permit.createdAt && permit.createdAt.toDate() <= thirtyDaysAgo;
         };
 
@@ -1192,42 +1183,8 @@ rescheduleBtn.addEventListener('click', async (event) => {
     } finally {
         document.getElementById('fetching-loading-screen').style.display = 'none';
     }
-
-    document.getElementById('submitFollowUpRequest').addEventListener('click', async () => {
-        const followUpButton = document.querySelector('.followup-btn[data-bs-target="#followUpModal"]');
-        const docId = followUpButton ? followUpButton.getAttribute('data-id') : null;
-        const phoneNumber = document.getElementById('phoneNumber').value;
-        const householdAddress = document.getElementById('householdAddress').value;
-
-        if (!docId || !phoneNumber || !householdAddress) {
-            console.error("Required fields are missing");
-            return;
-        }
-
-        try {
-            const permitDoc = doc(db, "Housing", docId);
-            await updateDoc(permitDoc, {
-                followup: true,
-                telephone: phoneNumber,
-                householdAddress
-            });
-            Swal.fire({
-                icon: 'success',
-                title: 'Follow-up Requested!',
-                text: 'Your follow-up request has been submitted successfully.'
-            });
-            document.querySelector(`.followup-btn[data-id="${docId}"]`).innerHTML = '<i class="fa-solid fa-bullhorn"></i> Requested';
-            bootstrap.Modal.getInstance(document.getElementById('followUpModal')).hide();
-        } catch (error) {
-            console.error("Error requesting follow-up:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'There was an issue submitting your follow-up request. Please try again.'
-            });
-        }
-    });
 }
+
 
 
 document.getElementById('viewRemarks').addEventListener('show.bs.modal', function (event) {
