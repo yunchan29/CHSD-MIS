@@ -681,17 +681,17 @@ function togglePassword(inputId, iconId) {
     if (nameData && nameData.firstName && nameData.lastName) {
         // Show confirmation dialog with SweetAlert
         Swal.fire({
-            title: 'Is this your name?',
-            html: `
-                <strong>Last Name:</strong> ${nameData.lastName}<br>
-                <strong>First Name:</strong> ${nameData.firstName}<br>
-                <strong>Middle Name:</strong> ${nameData.middleName || '(none)'}
-            `,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, that\'s correct',
-            cancelButtonText: 'No'
-        }).then((result) => {
+    title: 'Confirm Scanned Name Details',
+    html: `
+        <strong>Last Name:</strong> ${nameData.lastName}<br>
+        <strong>First Name:</strong> ${nameData.firstName}<br>
+        <strong>Middle Name:</strong> ${nameData.middleName || '(None)'}
+    `,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, Use These Details',
+    cancelButtonText: 'No'
+}).then((result) => {
             if (result.isConfirmed) {
                 // If the user confirms, populate the fields
                 console.log("User confirmed the name data:", nameData);
