@@ -395,7 +395,12 @@
                                 </div>
                             </div>
                         </div>
-                        
+                        <div class="row">
+                            <div class="col">
+                                <label for="projectTitle">Project Title</label>
+                                <input type="text" id="projectTitle" class="form-control">
+                            </div>
+                            </div>
                         <div class="mb-3">
                             <div class="row g-3">
                                 <label for="form-check" class="form-label">Project Justification<span class="required-asterisk">*</span></label>
@@ -1203,6 +1208,7 @@
         const ownerMiddleName = document.getElementById('ownerMiddleName').value.trim();
         const ownerMaidenName = document.getElementById('ownerMaidenName').value.trim();
         const appointmentDate = document.getElementById('appointmentDate').value;
+        const projectTitle = document.getElementById("projectTitle").value;
 
         const ownerName = `${ownerLastName} ${ownerFirstName} ${ownerMiddleName} ${ownerMaidenName}`.trim();
         const scopeOfWork = document.querySelector('input[name="scopeOfWork"]:checked')?.nextElementSibling?.textContent || '';
@@ -1329,6 +1335,7 @@ console.log({
                 phoneNumber,
                 addressTelNo,
                 projectLocation,
+                projectTitle,
                 validId,
                 scopeOfWork,
                 projectJustification,

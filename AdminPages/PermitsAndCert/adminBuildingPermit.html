@@ -1001,6 +1001,12 @@
                        
                     </div>
 
+                     
+                    <div class="row">
+                        <div class="col">
+                            <p><strong>Project Title:</strong> <span id="hsdFormProjectTitle"></span></p>
+                        </div>
+                    </div>
                     <!-- Row 3 -->
                     <div class="row mb-3">
                         <div class="col-md-4">
@@ -2573,31 +2579,31 @@ async function openViewHSDFormModal(permitData) {
         document.getElementById("hsdFormTotalFloorArea").textContent = data.totalFloorArea || "N/A";
         document.getElementById("hsdFormTotalEstimatedCost").textContent = data.totalEstimatedCost || "N/A";
         document.getElementById("hsdFormBuildingPermitNo").textContent = data.buildingPermitNo;
+        document.getElementById("hsdFormProjectTitle").textContent = data.projectTitle;
 
         // Clear existing unit details
         const unitDetailsContainer = document.getElementById("hsdFormUnitDetails");
         unitDetailsContainer.innerHTML = "";
 
-        // Check if `unitsData` exists and iterate over it
-        if (Array.isArray(data.unitsData) && data.unitsData.length > 0) {
-            data.unitsData.forEach((unit, index) => {
-                const unitElement = document.createElement("div");
-                unitElement.className = "unit-details mb-3";
+   // Check if `unitsData` exists and iterate over it
+if (Array.isArray(data.unitsData) && data.unitsData.length > 0) {
+    data.unitsData.forEach((unit, index) => {
+        const unitElement = document.createElement("div");
+        unitElement.className = "unit-details mb-3";
 
-                unitElement.innerHTML = `
-                <div class="row align-items-center">
-            <div class="col-md-2"><h6>Unit ${index + 1}</h6></div>
-            <div class="col-md-2"><p><strong>Block No.:</strong> ${unit.blockNumber || "N/A"}</p></div>
-            <div class="col-md-2"><p><strong>Lot No.:</strong> ${unit.lotNumber || "N/A"}</p></div>
-            <div class="col-md-3"><p><strong>No. of Storeys:</strong> ${unit.NOStorey || "N/A"}</p></div>
-            <div class="col-md-3"><p><strong>Floor Area:</strong> ${unit.floorArea || "N/A"} sqm</p></div>
-        </div>
-                `;
-                unitDetailsContainer.appendChild(unitElement);
-            });
-        } else {
-            unitDetailsContainer.innerHTML = "<p>No unit details available.</p>";
-        }
+        unitElement.innerHTML = `
+            <div class="row align-items-center">
+                <div class="col-md-2"><h6>Unit ${index + 1}</h6></div>
+                <div class="col-md-4"><p><strong>Address:</strong> ${unit.address || "N/A"}</p></div>
+                <div class="col-md-3"><p><strong>No. of Storeys:</strong> ${unit.NOStorey || "N/A"}</p></div>
+                <div class="col-md-3"><p><strong>Floor Area:</strong> ${unit.floorArea || "N/A"} sqm</p></div>
+            </div>
+        `;
+        unitDetailsContainer.appendChild(unitElement);
+    });
+} else {
+    unitDetailsContainer.innerHTML = "<p>No unit details available.</p>";
+}
 
         console.log("HSD Form fields populated");
 
