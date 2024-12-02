@@ -93,6 +93,18 @@
         max-width: 100% !important;
     }
 }
+
+@media(max-width:991px){
+    .subtitle{
+    opacity: 0.7;
+    font-size: 2vw ;
+}
+   
+}
+.subtitle{
+    font-size:0.9vw;
+    opacity:0.7;
+}
     
         .form-control {
             margin-bottom: 1rem; 
@@ -275,87 +287,115 @@
                                 </select>
                             </div>
                         </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <label for="buildingPermitOption">Building Permit Option<span class="required-asterisk">*</span></label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="buildingPermitOption">
+                                    Building Permit Option<span class="required-asterisk">*</span>
+                                    <span class="subtitle">(<i>Opsyon para sa Building Permit</i>)</span>
+                                </label>
                         
-                        <!-- Toggle Buttons for Selection -->
-                        <div class="btn-group d-flex" role="group">
-                            <input type="radio" class="btn-check" name="permitOption" id="typeOption" autocomplete="off" checked>
-                            <label class="btn btn-outline-secondary flex-fill" for="typeOption">Type Permit No.</label>
-                
-                            <input type="radio" class="btn-check" name="permitOption" id="selectOption" autocomplete="off">
-                            <label class="btn btn-outline-secondary flex-fill" for="selectOption">Select Permit</label>
-                        </div>
-                
-                        <!-- Dynamic Instructional Text -->
-                        <small id="instructionText" class="form-text text-muted mt-2">
-                            Please type the Building Permit Number.
-                        </small>
-                
-                        <!-- Input for Typing Permit Number -->
-                        <div id="permitInputContainer" class="mt-2">
-                            <input type="text" id="buildingPermitNo" class="form-control" placeholder="ex. 2024-XXXX" required>
-                        </div>
-                
-                        <!-- Button for Selecting Permit from Modal -->
-                        <div id="permitSelectContainer" class="mt-2 d-none">
-                            <button type="button" id="openPermitModalBtn" class="btn btn-outline-secondary w-100">Select Permit from List</button>
-                        </div>
-                
-                        <!-- Readonly Display of Selected Permit Number -->
-                        <div id="selectedPermitDisplay" class="mt-2 d-none">
-                            <input type="text" id="selectedPermitNumber" class="form-control" readonly>
-                            <small class="form-text text-muted">Selected Permit Number</small>
-                        </div>
-                    </div>
-                </div>
-                
-                
-                <div class="row">
-                   <div class="col-md-6">
-                    <label for="ownerName">Owner/Applicant Name:<span class="required-asterisk">*</span></label>
-                    <input type="text" class="form-control" id="ownerName" placeholder="Enter Name" required>
-                   </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-8">
-                        <label for="ownerAddress">Address of Owner<span class="required-asterisk">*</span></label>
-                        <input type="text" class="form-control" id="ownerAddress" required>
-                    </div>
+                                <!-- Toggle Buttons for Selection -->
+                                <div class="btn-group d-flex" role="group">
+                                    <input type="radio" class="btn-check" name="permitOption" id="typeOption" autocomplete="off" checked>
+                                    <label class="btn btn-outline-secondary flex-fill" for="typeOption">Type Permit No.</label>
                         
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
-                        <label for="projectLocation">Location of the Project<span class="required-asterisk">*</span></label>
-                    <input type="text" class="form-control" id="projectLocation" required>
-                    </div>
-                    
-                 </div>
-                 <div class="container">
-                    <div class="form-group">
-                        <label for="NOUnits">Number of Units<span class="required-asterisk">*</span></label>
-                        <select class="form-control" id="NOUnits" required>
-                            <option value="1" selected>1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </div>
-                    <div id="unitFieldsContainer"></div>
-                    <div class="row">
-                        <div class="col">
-                            <label for="TotalFloorArea">Total Floor Area</label>
-                            <input type="number" class="form-control" id="TotalFloorArea" readonly>
+                                    <input type="radio" class="btn-check" name="permitOption" id="selectOption" autocomplete="off">
+                                    <label class="btn btn-outline-secondary flex-fill" for="selectOption">Select Permit</label>
+                                </div>
+                        
+                                <!-- Dynamic Instructional Text -->
+                                <small id="instructionText" class="form-text text-muted mt-2">
+                                    Please type the Building Permit Number.
+                                    <span class="subtitle">(<i>Pakilagay ang Numero ng Building Permit</i>)</span>
+                                </small>
+                        
+                                <!-- Input for Typing Permit Number -->
+                                <div id="permitInputContainer" class="mt-2">
+                                    <input type="text" id="buildingPermitNo" class="form-control" placeholder="ex. 2024-XXXX" required>
+                                </div>
+                        
+                                <!-- Button for Selecting Permit from Modal -->
+                                <div id="permitSelectContainer" class="mt-2 d-none">
+                                    <button type="button" id="openPermitModalBtn" class="btn btn-outline-secondary w-100">
+                                        Select Permit from List
+                                        <span class="subtitle">(<i>Piliin ang Building Permit mula sa Listahan</i>)</span>
+                                    </button>
+                                </div>
+                        
+                                <!-- Readonly Display of Selected Permit Number -->
+                                <div id="selectedPermitDisplay" class="mt-2 d-none">
+                                    <input type="text" id="selectedPermitNumber" class="form-control" readonly>
+                                    <small class="form-text text-muted">
+                                        Selected Permit Number
+                                        <span class="subtitle">(<i>Napiling Numero ng Permit</i>)</span>
+                                    </small>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col">
-                            <label for="TotalEstimatedCost">Total Estimated Cost</label>
-                            <input type="number" class="form-control" id="TotalEstimatedCost" disabled>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="ownerName">
+                                    Owner/Applicant Name<span class="required-asterisk">*</span>
+                                    <span class="subtitle">(<i>Pangalan ng May-ari o Aplikante</i>)</span>
+                                </label>
+                                <input type="text" class="form-control" id="ownerName" placeholder="Enter Name" required>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="ownerAddress">
+                                    Address of Owner<span class="required-asterisk">*</span>
+                                    <span class="subtitle">(<i>Address ng May-ari</i>)</span>
+                                </label>
+                                <input type="text" class="form-control" id="ownerAddress" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="projectLocation">
+                                    Location of the Project<span class="required-asterisk">*</span>
+                                    <span class="subtitle">(<i>Lokasyon ng Proyekto</i>)</span>
+                                </label>
+                                <input type="text" class="form-control" id="projectLocation" required>
+                            </div>
+                        </div>
+                        
+                        <div class="container">
+                            <div class="form-group">
+                                <label for="NOUnits">
+                                    Number of Units<span class="required-asterisk">*</span>
+                                    <span class="subtitle">(<i>Bilang ng mga Yunit</i>)</span>
+                                </label>
+                                <select class="form-control" id="NOUnits" required>
+                                    <option value="1" selected>1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                            <div id="unitFieldsContainer"></div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="TotalFloorArea">
+                                        Total Floor Area
+                                        <span class="subtitle">(<i>Kabuuang Lawak ng Sahig</i>)</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="TotalFloorArea" readonly>
+                                </div>
+                                <div class="col">
+                                    <label for="TotalEstimatedCost">
+                                        Total Estimated Cost
+                                        <span class="subtitle">(<i>Kabuuang Tinantyang Gastos</i>)</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="TotalEstimatedCost" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        
                 
                 <!-- Content -->
                 <table class="table">

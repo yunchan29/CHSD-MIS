@@ -10,6 +10,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
+
+@media(max-width:991px){
+    .subtitle{
+    opacity: 0.7;
+    font-size: 2vw ;
+}
+   
+}
+.subtitle{
+    font-size:0.9vw;
+    opacity:0.7;
+}
         /* CSS for the content container */
         .content {
             flex: 1;
@@ -238,19 +250,25 @@
                     </div>
                     <div class="row" style="display:none;">
                         <div class="col-md-6">
-                            <label for="buildingPermitNo">Building Permit Number:</label>
+                            <label for="buildingPermitNo">Building Permit Number:<span class="subtitle"> (<i>Numero ng Building Permit</i>)</span></label>
                             <input type="text" class="form-control" id="buildingPermitNo" disabled>
-                            </div>
                         </div>
-                    <div class="row g-3">
-                       <div class="col-md-6">
-                        <label for="ownerName">Owner/Applicant Name:</label>
-                        <input type="text" id="ownerName" name="ownerName" class="form-control" placeholder="Last Name, First Name, Middle Name" required>
-                       </div>
                     </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="ownerName">Owner/Applicant Name:<span class="subtitle"> (<i>Pangalan ng Aplikante</i>)</span></label>
+                            <input type="text" id="ownerName" name="ownerName" class="form-control" placeholder="Last Name, First Name, Middle Name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contactNumber">Contact Number:<span class="subtitle"> (<i>Numero ng Telepono</i>)</span></label>
+                            <input type="text" id="contactNumber" name="contactNumber" class="form-control" placeholder="ex. 09123456789" required>
+                        </div>
+                    </div>
+                    
                     <div class="row">
                         <div class="col-md-4">
-                            <label for="light">Light</label>
+                            <label for="light">Light:<span class="subtitle"> (<i>Ilaw</i>)</span></label>
                             <select class="form-control" id="light">
                                 <option value="">Select Light Type</option>
                                 <option value="LED - Residential">LED - Residential</option>
@@ -260,7 +278,7 @@
                         </div>
                     
                         <div class="col-md-4">
-                            <label for="switch">Switch</label>
+                            <label for="switch">Switch:</label>
                             <select class="form-control" id="switch">
                                 <option value="">Select Switch Type</option>
                                 <option value="Single Pole">Single Pole</option>
@@ -270,16 +288,18 @@
                         </div>
                     
                         <div class="col-md-4">
-                            <label for="electricalMotor">Electrical Motor</label>
+                            <label for="electricalMotor">Electrical Motor:<span class="subtitle"> (<i>Uri ng motor</i>)</span></label>
                             <select class="form-control" id="electricalMotor">
                                 <option value="">Select Motor Type</option>
                                 <option value="0.5 HP">0.5 HP</option>
                                 <option value="1 HP">1 HP</option>
                             </select>
                         </div>
+                    </div>
                     
+                    <div class="row">
                         <div class="col-md-6">
-                            <label for="convOutlet">Convenience Outlet</label>
+                            <label for="convOutlet">Convenience Outlet:<span class="subtitle"> (<i>Convenience Outlet</i>)</span></label>
                             <select class="form-control" id="convOutlet">
                                 <option value="">Select Number of Outlets</option>
                                 <option value="1 Outlet - 15A">1 Outlet - 15A</option>
@@ -288,7 +308,7 @@
                         </div>
                     
                         <div class="col-md-6">
-                            <label for="otherApparatus">Other Apparatus</label>
+                            <label for="otherApparatus">Other Apparatus:<span class="subtitle"> (<i>Iba pang Aparato</i>)</span></label>
                             <select class="form-control" id="otherApparatus">
                                 <option value="">Select Apparatus Type</option>
                                 <option value="Generator">Generator</option>
@@ -296,8 +316,11 @@
                                 <option value="Inverter (Solar)">Inverter (Solar)</option>
                             </select>
                         </div>
+                    </div>
+                    
+                    <div class="row">
                         <div class="col-md-6">
-                            <label for="totalKVA">Total KVA</label>
+                            <label for="totalKVA">Total KVA:<span class="subtitle"> (<i>Kabuuang KVA</i>)</span></label>
                             <select class="form-control" id="totalKVA">
                                 <option value="">Select KVA Rating</option>
                                 <option value="1 KVA">1 KVA</option>
@@ -306,10 +329,21 @@
                                 <option value="5 KVA">5 KVA</option>
                             </select>
                         </div>
-                        
                     
+                        <div class="col-md-6">
+                            <label for="wiringPlan">Wiring Plan:<span class="subtitle"> (<i>Plano ng Kable</i>)</span></label>
+                            <select class="form-control" id="wiringPlan">
+                                <option value="">Select Wiring Plan Type</option>
+                                <option value="Single Line Diagram">Single Line Diagram</option>
+                                <option value="Load Schedule">Load Schedule</option>
+                                <option value="Power Layout">Power Layout</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
                         <div class="col-md-12">
-                            <label for="natureOfWork">Nature of Work</label>
+                            <label for="natureOfWork">Nature of Work:<span class="subtitle"> (<i>Uri ng Gawain</i>)</span></label>
                             <select class="form-control" id="natureOfWork">
                                 <option value="">Select Nature of Work</option>
                                 <option value="New Installation">New Installation</option>
@@ -319,6 +353,7 @@
                             </select>
                         </div>
                     </div>
+                    
                     
                     <table class="table">
                         <thead>

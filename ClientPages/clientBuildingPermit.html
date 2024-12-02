@@ -32,7 +32,18 @@
         max-width: 100% !important;
     }
 }
+
+@media(max-width:991px){
+    .subtitle{
+    opacity: 0.7;
+    font-size: 2vw ;
+}
    
+}
+.subtitle{
+    font-size:0.9vw;
+    opacity:0.7;
+}
         .wider-modal{
             max-width:90%;
         }
@@ -321,21 +332,21 @@
 
                         </div>
                       <div class="row g-3">
-    <label for="ownerName">Owner/Applicant Name:</label>
+    <label for="ownerName">Owner/Applicant Name<span class="subtitle">(<i>Pangalan ng aplikante</i>)</span>:</label>
     <div class="col-md-3">
-        <label for="ownerLastName">Last Name<span class="required-asterisk">*</span></label>
+        <label for="ownerLastName">Last Name<span class="required-asterisk">*</span><span class="subtitle">(<i>Apelyido</i>)</span></label>
         <input type="text" class="form-control" id="ownerLastName" placeholder="Last Name" required>
     </div>
     <div class="col-md-3">
-        <label for="ownerFirstName">First Name<span class="required-asterisk">*</span></label>
+        <label for="ownerFirstName">First Name<span class="required-asterisk">*</span><span class="subtitle">(<i>Unang pangalan</i>)</span></label>
         <input type="text" class="form-control" id="ownerFirstName" placeholder="First Name*" required>
     </div>
     <div class="col-md-3">
-        <label for="ownerMiddleName">Middle Name</label>
+        <label for="ownerMiddleName">Middle Name<span class="subtitle">(<i>Gitnang pangalan</i>)</span></label>
         <input type="text" class="form-control" id="ownerMiddleName" placeholder="Middle Name">
     </div>
     <div class="col-md-3">
-        <label for="ownerMaidenName">Maiden Name</label>
+        <label for="ownerMaidenName">Maiden Name<span class="subtitle">(<i>Apelyido bago magpakasal</i>)</span></label>
         <input type="text" class="form-control" id="ownerMaidenName" placeholder="Maiden Name">
     </div>
 </div>
@@ -362,13 +373,13 @@
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="addressTelNo">Address<span class="required-asterisk">*</span></label>
+                                <label for="addressTelNo">Address<span class="required-asterisk">*</span><span class="subtitle">(<i>Tinitirahan</i>)</span></label>
                                 <input type="text" class="form-control" id="addressTelNo" placeholder="Address*" required>
                             </div>
 
 
                             <div class="col-md-6">
-                                <label for="projectLocation">Project Location<span class="required-asterisk">*</span></label>
+                                <label for="projectLocation">Project Location<span class="required-asterisk">*</span> <span class="subtitle">(<i>Lokasyon ng proyekto</i>)</span>:</label>
                                 <input type="text" class="form-control" id="projectLocation" placeholder="Project Location*" required>
                             </div>
                         </div>
@@ -376,7 +387,7 @@
                     
                         <div class="mb-3">
                             <div class="row g-3">
-                                <label for="form-check" class="form-label">Scope of Work<span class="required-asterisk">*</span></label>
+                                <label for="form-check" class="form-label">Scope of Work<span class="required-asterisk">*</span><span class="subtitle">(<i>Saklaw ng proyekto</i>)</span>:</label>
                                 <div class="col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="scopeOfWork" value="option1" id="option1" required>
@@ -397,13 +408,13 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <label for="projectTitle">Project Title</label>
+                                <label for="projectTitle">Project Title<span class="required-asterisk">*</span><span class="subtitle">(<i>Titulo ng proyekto</i>)</span></label>
                                 <input type="text" id="projectTitle" class="form-control">
                             </div>
                             </div>
                         <div class="mb-3">
                             <div class="row g-3">
-                                <label for="form-check" class="form-label">Project Justification<span class="required-asterisk">*</span></label>
+                                <label for="form-check" class="form-label">Project Justification<span class="required-asterisk">*</span><span class="subtitle">(<i>Katwiran ng proyekto</i>)</span></label>
                                 <div class="col-md-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="projectJustification" value="justification1" id="justification1" required>
@@ -427,7 +438,7 @@
                             <div class="container">
                                 <!-- Number of Units Field -->
                                 <div class="form-group">
-                                    <label for="NOUnits">Number of Units<span class="required-asterisk">*</span></label>
+                                    <label for="NOUnits">Number of Units<span class="required-asterisk">*</span><span class="subtitle">(<i>Bilang ng mga yunit</i>)</span></label>
                                    <div class="col-md-1">
                                   
                                     <select class="form-control" id="NOUnits">
@@ -446,11 +457,11 @@
                                 <!-- Total Floor Area and Estimated Cost -->
                                 <div class="row">
                                     <div class="col">
-                                        <label for="TotalFloorArea">Total Floor Area</label>
+                                        <label for="TotalFloorArea">Total Floor Area<span class="subtitle"> (<i>Kabuuang lawak ng sahig</i>)</span></label>
                                         <input type="number" class="form-control" id="TotalFloorArea" readonly>
                                     </div>
                                     <div class="col">
-                                        <label for="TotalEstimatedCost">Total Estimated Cost</label>
+                                        <label for="TotalEstimatedCost">Total Estimated Cost<span class="subtitle"> (<i>Kabuuang tinantyang gastos</i>)</span></label>
                                         <input type="number" class="form-control" id="TotalEstimatedCost" disabled>
                                     </div>
                                 </div>
@@ -837,16 +848,16 @@
 
             unitDiv.innerHTML = `
                 <div class="col-6">
-                    <label for="Address${i}">Address for Unit ${i}</label>
+                    <label for="Address${i}">Address for Unit ${i} (House Number, Block, Lot, Phase Number, Street) <span class="subtitle"> (<i>Address para sa yunit ${i}</i>)</span></label>
                    <input type="text" class="form-control" id="Address${i}" placeholder="House Number, Block, Lot, Phase Number, Street" required>
 
                 </div>
                 <div class="col-3">
-                    <label for="NOStorey${i}">Number of Storeys for Unit ${i}</label>
+                    <label for="NOStorey${i}">Number of Storeys for Unit ${i} <span class="subtitle"> (<i>Bilang ng palapag para sa yunit ${i}</i>)</span></label>
                     <input type="number" class="form-control" id="NOStorey${i}" placeholder="Number of Storeys">
                 </div>
                 <div class="col-3">
-                    <label for="UnitFloorArea${i}">Floor Area for Unit ${i}</label>
+                    <label for="UnitFloorArea${i}">Floor Area for Unit ${i} <span class="subtitle"> (<i>Kabuuang lawak ng palapag para sa yunit ${i}</i>)</span></label>
                     <input type="number" class="form-control unit-floor-area" id="UnitFloorArea${i}" placeholder="Floor Area" required>
                 </div>
             `;
