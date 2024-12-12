@@ -84,6 +84,67 @@
         color: red;
         cursor: pointer;
     }
+        /* General print styles */
+@media print {
+  /* Hide everything except the content we want to print */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make the printable area visible */
+  .printArea, .printArea * {
+    visibility: visible;
+  }
+
+  /* Remove custom margins and allow browser defaults */
+  #printOrderContent {
+    position: static; /* Let the content position normally */
+    width: auto;      /* Allow width to auto-adjust */
+    margin: 0 !important; /* Remove any custom margin */
+    padding: 0 !important; /* Remove any custom padding */
+  }
+  /* Ensure the printed content appears at the top */
+  .printArea {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Adjust for A4 paper */
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}
+
+#watermark {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Ensures it stays behind content */
+        opacity: 1; /* Adjust for desired transparency */
+        font-size: 3rem;
+        color: gray;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none; /* Make sure it's non-interactive */
+        transform: rotate(-45deg);
+    }
+
+    /* Spread watermark text across the page */
+    #watermark span {
+        display: inline-block;
+        white-space: nowrap;
+        margin: 2rem; /* Spacing between each watermark text */
+        opacity: 0.2;
+    }
+
    
 
     </style>
@@ -479,6 +540,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+            <div class="printArea" id="printHSDContent">
             <div class="d-flex justify-content-center align-items-center mb-2 mt-2">
                 <!-- Left Logo -->
                 <img src="/resources/pictures/calambaLogo.png" alt="Calamba Logo" style="height: 40px; width: 40px; margin-left: auto;">
@@ -489,7 +551,7 @@
                 </div>
                 <!-- Right Logo -->
                 <img src="/resources/pictures/chsd.png" alt="CHSD Logo" style="height: 40px; width: 40px; margin-right: auto;">
-            </div>
+           </div> </div>
             <h6 class="text-center">CERTIFICATE OF FINAL ELECTRICAL INSPECTION</h6>
             <div class="row">
                 <div class="col-md-2">
@@ -587,7 +649,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-primary" id="printHSDForm">Print</button>
         </div>
       </div>
     </div>
@@ -755,7 +817,77 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>document.addEventListener("DOMContentLoaded", function () {
+    const printHSDButton = document.getElementById("printHSDForm");
+    if (printHSDButton) {
+        printHSDButton.addEventListener("click", function () {
+            const printContent = document.querySelector("#printHSDContent").cloneNode(true);
+            const positionInput = document.getElementById("position");
+            const positionValue = positionInput ? positionInput.value.trim() : "N/A";
 
+            const positionField = printContent.querySelector("#position");
+            if (positionField) {
+                const positionLabel = positionField.previousElementSibling; 
+                if (positionLabel) {
+                    positionLabel.style.display = "none"; 
+                }
+                const positionElement = document.createElement("div");
+                positionElement.textContent = positionValue;
+                positionElement.style.fontStyle = "italic";
+                positionElement.style.color = "gray";
+                positionField.insertAdjacentElement("afterend", positionElement);
+                positionField.remove(); 
+            }
+
+            const watermark = document.createElement("div");
+            watermark.id = "watermark";
+
+            //The buildingPermitNo variable is not defined in this code snippet.  It needs to be defined or obtained from the DOM before this code will work correctly.  I've added a placeholder to show how it might be done.  You should replace this with your actual method of obtaining the building permit number.
+
+            const buildingPermitNo = document.getElementById("certBuildingPermitNo")?.textContent.trim() || "N/A";
+
+            for (let i = 0; i < 10; i++) {
+                const watermarkText = document.createElement("span");
+                watermarkText.textContent = buildingPermitNo;
+                watermark.appendChild(watermarkText);
+            }
+
+            printContent.appendChild(watermark);
+
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent.outerHTML;
+
+            window.print();
+
+            document.body.innerHTML = originalContent;
+            window.location.reload();
+        });
+    }
+
+    const printOrderButton = document.getElementById("printOrderOfPayment");
+    if (printOrderButton) {
+        printOrderButton.addEventListener("click", function () {
+            const printContent = document.querySelector("#printOrderContent").cloneNode(true);
+
+            const inputs = printContent.querySelectorAll("input");
+            inputs.forEach(function (input) {
+                const value = input.value || "";
+                const span = document.createElement("span");
+                span.textContent = value;
+                span.style.fontWeight = "bold";
+                input.replaceWith(span);
+            });
+
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent.outerHTML;
+
+            window.print();
+
+            document.body.innerHTML = originalContent;
+            window.location.reload();
+        });
+    }
+});</script>
 
     <script type="module" src="/Database/firebase.js"></script>
     <script type="module">
