@@ -279,21 +279,45 @@
                
                 <div class="container">
                     <h5>Profile</h5>
-                    <div class="row mt-4">
-                        <div class="col">
-                            <a class="btn btn-dark text-white" data-bs-toggle="modal"
-                                data-bs-target="#buildingPermitModal"><i class="fa-solid fa-plus"></i> Add
-                                Profile</a>
-                         
+                    <div class="row g-2 mb-3">
+                        <!-- Add Profile Button -->
+                        <div class="col-md-2">
+                            <a class="btn btn-dark text-white w-100" data-bs-toggle="modal" data-bs-target="#buildingPermitModal">
+                                <i class="fa-solid fa-plus"></i> Add Profile
+                            </a>
                         </div>
-
-                        <div class="d-flex justify-content-end mb-3">
-                            <input type="text" class="form-control search-bar" id="searchInput" placeholder="Search">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button"><i
-                                        class="fas fa-search"></i></button>
+                    
+                        <!-- Monthly Reports Button -->
+                        <div class="col-md-2">
+                            <a class="btn btn-primary text-white w-100" id="generateMonthlyReports">
+                                <i class="fa-solid fa-file-export"></i> Monthly Reports
+                            </a>
+                        </div>
+                    
+                        <!-- Annual Reports Button -->
+                        <div class="col-md-2">
+                            <a class="btn btn-success text-white w-100" id="generateAnnualReports">
+                                <i class="fa-solid fa-file-export"></i> Annual Reports
+                            </a>
+                        </div>
+                    
+                        <!-- Empty Column for Future Use -->
+                        <div class="col-md-2">
+                            <!-- Intentionally left blank -->
+                        </div>
+                    
+                        <!-- Search Bar -->
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchInput" placeholder="Search">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
                         </div>
+                    </div>
+                    
+                    
 
                         <h4 class="text-center">Building Permit</h4>
 
@@ -1360,6 +1384,8 @@
         }
     });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     /* Style for watermark */
@@ -1579,7 +1605,7 @@ document.getElementById('statusSelect').addEventListener('change', function () {
                         <script type="module">
                                import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getAuth, createUserWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, setDoc, deleteDoc, serverTimestamp, query, startAfter, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc, setDoc, deleteDoc, serverTimestamp, query, startAfter, orderBy, limit, Timestamp, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
       import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
       // Firebase configuration
       const firebaseConfig = {
@@ -2277,6 +2303,123 @@ async function loadProfiles() {
     }
 }
 
+
+async function generateMonthlyReports(month, year) {
+  const buildingPermitsRef = collection(db, "buildingPermits");
+
+  // Define the start and end of the specified month using "createdAt" timestamps
+  const startOfMonth = Timestamp.fromDate(new Date(year, month - 1, 1, 0, 0, 0)); // Start at the beginning of the first day
+  const endOfMonth = Timestamp.fromDate(new Date(year, month, 0, 23, 59, 59)); // End at the last second of the last day
+
+  // Query to fetch building permits within the date range
+  const q = query(
+    buildingPermitsRef,
+    where("createdAt", ">=", startOfMonth),
+    where("createdAt", "<=", endOfMonth)
+  );
+
+  try {
+    const querySnapshot = await getDocs(q);
+    const reports = [];
+
+    // Collect report data
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      reports.push({
+        id: doc.id,
+        ownerName: data.ownerName || "N/A",
+        projectLocation: data.projectLocation || "N/A",
+        createdAt: data.createdAt?.toDate().toLocaleDateString() || "N/A",
+      });
+    });
+
+    if (reports.length === 0) {
+      await Swal.fire({
+        icon: 'info',
+        title: 'No Records Found',
+        text: 'No records found for the specified month and year.',
+      });
+      return;
+    }
+
+    // Generate the PDF report using jsPDF
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    // Add the report title
+    const title = `Monthly Report for ${month}/${year}`;
+    pdf.setFontSize (16);
+    pdf.text(title, 10, 10);
+
+    // Add headers and data rows
+    const headers = ["Permit ID", "Owner Name", "Project Location", "Date Created"];
+    let startY = 20;
+
+    pdf.setFontSize(12);
+    pdf.text(headers.join(" | "), 10, startY);
+
+    reports.forEach((report) => {
+      startY += 10;
+      const row = [report.id, report.ownerName, report.projectLocation, report.createdAt];
+      pdf.text(row.join(" | "), 10, startY);
+    });
+
+    // Save the generated PDF
+    const fileName = `Monthly_Report_${month}_${year}.pdf`;
+    pdf.save(fileName);
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'Report Generated',
+      text: `Report successfully generated and saved as ${fileName}`,
+    });
+  } catch (error) {
+    console.error("Error generating monthly reports:", error);
+    await Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'An error occurred while generating the report. Please try again.',
+    });
+  }
+}
+
+// Attach event listener to the generate report button
+document.addEventListener("DOMContentLoaded", async () => {
+  document.getElementById("generateMonthlyReports").addEventListener("click", async () => {
+    const { value: month } = await Swal.fire({
+      title: 'Enter Month',
+      input: 'number',
+      inputLabel: 'Month (1-12)',
+      inputAttributes: {
+        min: 1,
+        max: 12,
+        required: true
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Next',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (month === undefined) return; // User canceled
+
+    const { value: year } = await Swal.fire({
+      title: 'Enter Year',
+      input: 'number',
+      inputLabel: 'Year',
+      inputAttributes: {
+        min: 1000,
+        required: true
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Generate',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (year === undefined) return; // User canceled
+
+    generateMonthlyReports(parseInt(month), parseInt(year));
+  });
+});
 // Function to confirm processing of the permit using SweetAlert2
 async function confirmProcessPermit(permitData) {
     const result = await Swal.fire({
