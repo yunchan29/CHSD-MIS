@@ -1384,7 +1384,12 @@
         }
     });
 </script>
+<!-- jsPDF CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- jsPDF AutoTable Plugin CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
@@ -2303,17 +2308,17 @@ async function loadProfiles() {
     }
 }
 
-
-async function generateMonthlyReports(month, year) {
-  const buildingPermitsRef = collection(db, "buildingPermits");
+// Function to generate monthly reports
+async function generateMonthlyReports(collectionName, month, year) {
+  const collectionRef = collection(db, collectionName);
 
   // Define the start and end of the specified month using "createdAt" timestamps
-  const startOfMonth = Timestamp.fromDate(new Date(year, month - 1, 1, 0, 0, 0)); // Start at the beginning of the first day
-  const endOfMonth = Timestamp.fromDate(new Date(year, month, 0, 23, 59, 59)); // End at the last second of the last day
+  const startOfMonth = Timestamp.fromDate(new Date(year, month - 1, 1, 0, 0, 0));
+  const endOfMonth = Timestamp.fromDate(new Date(year, month, 0, 23, 59, 59));
 
-  // Query to fetch building permits within the date range
+  // Query to fetch documents within the date range
   const q = query(
-    buildingPermitsRef,
+    collectionRef,
     where("createdAt", ">=", startOfMonth),
     where("createdAt", "<=", endOfMonth)
   );
@@ -2326,7 +2331,7 @@ async function generateMonthlyReports(month, year) {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       reports.push({
-        id: doc.id,
+        id: data.buildingPermitNo || data.electricalCertNo || "N/A",
         ownerName: data.ownerName || "N/A",
         projectLocation: data.projectLocation || "N/A",
         createdAt: data.createdAt?.toDate().toLocaleDateString() || "N/A",
@@ -2335,50 +2340,83 @@ async function generateMonthlyReports(month, year) {
 
     if (reports.length === 0) {
       await Swal.fire({
-        icon: 'info',
-        title: 'No Records Found',
-        text: 'No records found for the specified month and year.',
+        icon: "info",
+        title: "No Records Found",
+        text: "No records found for the specified month and year.",
       });
       return;
     }
 
-    // Generate the PDF report using jsPDF
+    // Map collection names for the PDF subtitle
+    const collectionNameMapping = {
+      buildingPermits: "Building Permits",
+      OccupancyPermits: "Occupancy Permits",
+      ElectricalCert: "Certificate of Final Electrical Inspection",
+    };
+
+    const mappedName = collectionNameMapping[collectionName] || "Unknown Collection";
+
+    // Generate the PDF report using jsPDF with autoTable
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF();
 
     // Add the report title
-    const title = `Monthly Report for ${month}/${year}`;
-    pdf.setFontSize (16);
-    pdf.text(title, 10, 10);
+    const title = `Monthly Report`;
+    const subtitle = `${mappedName} - ${new Date(year, month - 1).toLocaleString("default", {
+      month: "long",
+    })} ${year}`;
 
-    // Add headers and data rows
-    const headers = ["Permit ID", "Owner Name", "Project Location", "Date Created"];
-    let startY = 20;
+    pdf.setFontSize(18);
+    pdf.setTextColor(40);
+    pdf.text(title, pdf.internal.pageSize.width / 2, 15, { align: "center" });
 
-    pdf.setFontSize(12);
-    pdf.text(headers.join(" | "), 10, startY);
+    pdf.setFontSize(14);
+    pdf.setTextColor(80);
+    pdf.text(subtitle, pdf.internal.pageSize.width / 2, 25, { align: "center" });
 
-    reports.forEach((report) => {
-      startY += 10;
-      const row = [report.id, report.ownerName, report.projectLocation, report.createdAt];
-      pdf.text(row.join(" | "), 10, startY);
+    // Prepare table headers and rows
+    const headers = [["Permit Number", "Owner Name", "Project Location", "Date Created"]];
+    const rows = reports.map((report) => [
+      report.id,
+      report.ownerName,
+      report.projectLocation,
+      report.createdAt,
+    ]);
+
+    // Add table with autoTable
+    pdf.autoTable({
+      startY: 35,
+      head: headers,
+      body: rows,
+      styles: {
+        fontSize: 10,
+        cellPadding: 5,
+      },
+      headStyles: {
+        fillColor: [22, 160, 133],
+        textColor: 255,
+        fontSize: 12,
+        halign: "center",
+      },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      margin: { top: 10, left: 10, right: 10 },
     });
 
     // Save the generated PDF
-    const fileName = `Monthly_Report_${month}_${year}.pdf`;
+    const fileName = `Monthly_Report_${collectionName}_${month}_${year}.pdf`;
     pdf.save(fileName);
 
     await Swal.fire({
-      icon: 'success',
-      title: 'Report Generated',
+      icon: "success",
+      title: "Report Generated",
       text: `Report successfully generated and saved as ${fileName}`,
     });
   } catch (error) {
     console.error("Error generating monthly reports:", error);
     await Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'An error occurred while generating the report. Please try again.',
+      icon: "error",
+      title: "Error",
+      text: "An error occurred while generating the report. Please try again.",
     });
   }
 }
@@ -2386,40 +2424,67 @@ async function generateMonthlyReports(month, year) {
 // Attach event listener to the generate report button
 document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("generateMonthlyReports").addEventListener("click", async () => {
-    const { value: month } = await Swal.fire({
-      title: 'Enter Month',
-      input: 'number',
-      inputLabel: 'Month (1-12)',
-      inputAttributes: {
-        min: 1,
-        max: 12,
-        required: true
+    const { value: result } = await Swal.fire({
+      title: "Generate Monthly Report",
+      html: `
+        <div class="container">
+          <div class="row">
+            <div class="col-12 mb-3">
+              <label for="collection-select" class="form-label">Select Collection</label>
+              <select id="collection-select" class="form-select">
+                <option value="buildingPermits">Building Permits</option>
+                <option value="OccupancyPermits">Occupancy Permits</option>
+                <option value="ElectricalCert">Electrical Certificates</option>
+              </select>
+            </div>
+            <div class="col-12 mb-3">
+              <label for="month-select" class="form-label">Month</label>
+              <select id="month-select" class="form-select">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label for="year-input" class="form-label">Year</label>
+              <input type="number" id="year-input" class="form-control" placeholder="Enter Year" min="1000">
+            </div>
+          </div>
+        </div>
+      `,
+      preConfirm: () => {
+        const collectionName = document.getElementById("collection-select").value;
+        const month = document.getElementById("month-select").value;
+        const year = document.getElementById("year-input").value;
+        if (!collectionName || !month || !year) {
+          Swal.showValidationMessage("All fields are required!");
+          return false;
+        }
+        return { collectionName, month: parseInt(month), year: parseInt(year) };
       },
       showCancelButton: true,
-      confirmButtonText: 'Next',
-      cancelButtonText: 'Cancel',
-    });
-
-    if (month === undefined) return; // User canceled
-
-    const { value: year } = await Swal.fire({
-      title: 'Enter Year',
-      input: 'number',
-      inputLabel: 'Year',
-      inputAttributes: {
-        min: 1000,
-        required: true
+      confirmButtonText: "Generate",
+      cancelButtonText: "Cancel",
+      customClass: {
+        popup: "swal-wide",
       },
-      showCancelButton: true,
-      confirmButtonText: 'Generate',
-      cancelButtonText: 'Cancel',
     });
 
-    if (year === undefined) return; // User canceled
-
-    generateMonthlyReports(parseInt(month), parseInt(year));
+    if (result) {
+      generateMonthlyReports(result.collectionName, result.month, result.year);
+    }
   });
 });
+
 // Function to confirm processing of the permit using SweetAlert2
 async function confirmProcessPermit(permitData) {
     const result = await Swal.fire({
